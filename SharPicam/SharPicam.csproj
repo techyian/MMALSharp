@@ -47,8 +47,15 @@
     <Compile Include="Native\MMALBuffer.cs" />
     <Compile Include="Native\MMALClock.cs" />
     <Compile Include="Native\MMALCommon.cs" />
+    <Compile Include="Native\MMALComponent.cs" />
+    <Compile Include="Native\MMALConnection.cs" />
+    <Compile Include="Native\MMALEncodings.cs" />
+    <Compile Include="Native\MMALEvents.cs" />
     <Compile Include="Native\MMALFormat.cs" />
     <Compile Include="Native\MMALParameters.cs" />
+    <Compile Include="Native\MMALPool.cs" />
+    <Compile Include="Native\MMALPort.cs" />
+    <Compile Include="Native\MMALQueue.cs" />
     <Compile Include="Native\MMALUtil.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

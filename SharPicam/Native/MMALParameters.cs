@@ -1994,7 +1994,223 @@ namespace SharPicam.Native
 
     public static class MMALParameters
     {
+        public enum MMAL_PARAM_MIRROR_T
+        {
+            MMAL_PARAM_MIRROR_NONE,
+            MMAL_PARAM_MIRROR_VERTICAL,
+            MMAL_PARAM_MIRROR_HORIZONTAL,
+            MMAL_PARAM_MIRROR_BOTH
+        }
+
+        public const string MMAL_COMPONENT_DEFAULT_VIDEO_DECODER = "vc.ril.video_decode";
+        public const string MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER = "vc.ril.video_encode";
+        public const string MMAL_COMPONENT_DEFAULT_VIDEO_RENDERER = "vc.ril.video_render";
+        public const string MMAL_COMPONENT_DEFAULT_IMAGE_DECODER = "vc.ril.image_decode";
+        public const string MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER = "vc.ril.image_encode";
+        public const string MMAL_COMPONENT_DEFAULT_CAMERA = "vc.ril.camera";
+        public const string MMAL_COMPONENT_DEFAULT_VIDEO_CONVERTER = "vc.video_convert";
+        public const string MMAL_COMPONENT_DEFAULT_SPLITTER = "vc.splitter";
+        public const string MMAL_COMPONENT_DEFAULT_SCHEDULER = "vc.scheduler";
+        public const string MMAL_COMPONENT_DEFAULT_VIDEO_INJECTER = "vc.video_inject";
+        public const string MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER = "vc.ril.video_splitter";
+        public const string MMAL_COMPONENT_DEFAULT_AUDIO_DECODER = "none";
+        public const string MMAL_COMPONENT_DEFAULT_AUDIO_RENDERER = "vc.ril.audio_render";
+        public const string MMAL_COMPONENT_DEFAULT_MIRACAST = "vc.miracast";
+        public const string MMAL_COMPONENT_DEFAULT_CLOCK = "vc.clock";
+        public const string MMAL_COMPONENT_DEFAULT_CAMERA_INFO = "vc.camera_info";
+
+        // The following two components aren't in the MMAL headers, but do exist
+
+        public const string MMAL_COMPONENT_DEFAULT_NULL_SINK = "vc.null_sink";
+        public const string MMAL_COMPONENT_DEFAULT_RESIZER = "vc.ril.resize";
+
 
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_PARAMETER_UINT64_T
+    {
+        public MMAL_PARAMETER_HEADER_T hdr;
+        public ulong value;
+
+        public MMAL_PARAMETER_UINT64_T(MMAL_PARAMETER_HEADER_T hdr, ulong value)
+        {
+            this.hdr = hdr;
+            this.value = value;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_PARAMETER_INT64_T
+    {
+        public MMAL_PARAMETER_HEADER_T hdr;
+        public long value;
+
+        public MMAL_PARAMETER_INT64_T(MMAL_PARAMETER_HEADER_T hdr, long value)
+        {
+            this.hdr = hdr;
+            this.value = value;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_PARAMETER_UINT32_T
+    {
+        public MMAL_PARAMETER_HEADER_T hdr;
+        public uint value;
+
+        public MMAL_PARAMETER_UINT32_T(MMAL_PARAMETER_HEADER_T hdr, uint value)
+        {
+            this.hdr = hdr;
+            this.value = value;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_PARAMETER_INT32_T
+    {
+        public MMAL_PARAMETER_HEADER_T hdr;
+        public int value;
+
+        public MMAL_PARAMETER_INT32_T(MMAL_PARAMETER_HEADER_T hdr, int value)
+        {
+            this.hdr = hdr;
+            this.value = value;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_PARAMETER_RATIONAL_T
+    {
+        public MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_RATIONAL_T value;
+
+        public MMAL_PARAMETER_RATIONAL_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_RATIONAL_T value)
+        {
+            this.hdr = hdr;
+            this.value = value;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_PARAMETER_BOOLEAN_T
+    {
+        public MMAL_PARAMETER_HEADER_T hdr;
+        public int value;
+
+        public MMAL_PARAMETER_BOOLEAN_T(MMAL_PARAMETER_HEADER_T hdr, int value)
+        {
+            this.hdr = hdr;
+            this.value = value;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_PARAMETER_STRING_T
+    {
+        public MMAL_PARAMETER_HEADER_T hdr;
+        public string value;
+
+        public MMAL_PARAMETER_STRING_T(MMAL_PARAMETER_HEADER_T hdr, string value)
+        {
+            this.hdr = hdr;
+            this.value = value;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_PARAMETER_SCALEFACTOR_T
+    {
+        public MMAL_PARAMETER_HEADER_T hdr;
+        public uint scaleX, scaleY;
+        
+        public MMAL_PARAMETER_SCALEFACTOR_T(MMAL_PARAMETER_HEADER_T hdr, uint scaleX, uint scaleY)
+        {
+            this.hdr = hdr;
+            this.scaleX = scaleX;
+            this.scaleY = scaleY;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_PARAMETER_MIRROR_T
+    {
+        public MMAL_PARAMETER_HEADER_T hdr;
+        public MMALParameters.MMAL_PARAM_MIRROR_T value;
+
+        public MMAL_PARAMETER_MIRROR_T(MMAL_PARAMETER_HEADER_T hdr, MMALParameters.MMAL_PARAM_MIRROR_T value)
+        {
+            this.hdr = hdr;
+            this.value = value;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_PARAMETER_URI_T
+    {
+        public MMAL_PARAMETER_HEADER_T hdr;
+        public string value;
+
+        public MMAL_PARAMETER_URI_T(MMAL_PARAMETER_HEADER_T hdr, string value)
+        {
+            this.hdr = hdr;
+            this.value = value;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_PARAMETER_ENCODING_T
+    {
+        public MMAL_PARAMETER_HEADER_T hdr;
+        public uint[] value;
+
+        public MMAL_PARAMETER_ENCODING_T(MMAL_PARAMETER_HEADER_T hdr, uint[] value)
+        {
+            this.hdr = hdr;
+            this.value = value;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_PARAMETER_FRAME_RATE_T
+    {
+        public MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_RATIONAL_T value;
+
+        public MMAL_PARAMETER_FRAME_RATE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_RATIONAL_T value)
+        {
+            this.hdr = hdr;
+            this.value = value;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_PARAMETER_CONFIGFILE_T
+    {
+        public MMAL_PARAMETER_HEADER_T hdr;
+        public uint value;
+
+        public MMAL_PARAMETER_CONFIGFILE_T(MMAL_PARAMETER_HEADER_T hdr, uint value)
+        {
+            this.hdr = hdr;
+            this.value = value;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_PARAMETER_CONFIGFILE_CHUNK_T
+    {
+        public MMAL_PARAMETER_HEADER_T hdr;
+        public uint size, offset;
+        public string data;
+
+        public MMAL_PARAMETER_CONFIGFILE_CHUNK_T(MMAL_PARAMETER_HEADER_T hdr, uint size, uint offset, string data)
+        {
+            this.hdr = hdr;
+            this.size = size;
+            this.offset = offset;
+            this.data = data;
+        }
+    }
+    
 }
