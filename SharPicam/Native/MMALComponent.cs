@@ -11,7 +11,7 @@ namespace SharPicam.Native
     {
         //name: char* * comp: MMAL_COMPONENT_T**    
         [DllImport("libmmal.so", EntryPoint = "mmal_component_create", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_component_create(string name, MMAL_COMPONENT_T** comp);
+        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_component_create(string name, IntPtr* comp);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_component_acquire", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern void mmal_component_acquire(MMAL_COMPONENT_T* comp);
