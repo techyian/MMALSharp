@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions.cs" />
+    <Compile Include="MMALCameraComponent.cs" />
     <Compile Include="MMALComponentBase.cs" />
     <Compile Include="MMALObject.cs" />
     <Compile Include="MMALPortImpl.cs" />

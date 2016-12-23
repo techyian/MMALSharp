@@ -9,7 +9,7 @@ namespace SharPicam
 {
     public class MMALObject
     {
-        public static void MMALCheck(MMALUtil.MMAL_STATUS_T status, string prefix = "")
+        public static void MMALCheck(MMALUtil.MMAL_STATUS_T status, string prefix)
         {
             if (status != MMALUtil.MMAL_STATUS_T.MMAL_SUCCESS)
             {

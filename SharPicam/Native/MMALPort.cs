@@ -86,7 +86,7 @@ namespace SharPicam.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_PORT_T
     {
-        public MMAL_PORT_PRIVATE_T* priv;
+        public IntPtr priv;
         public char* name;
         public MMALPort.MMAL_PORT_TYPE_T type;
         public ushort index, indexAll;
@@ -94,13 +94,13 @@ namespace SharPicam.Native
         public MMAL_ES_FORMAT_T* format;
         public uint bufferNumMin, bufferSizeMin, bufferAlignmentMin, bufferNumRecommended, 
                     bufferSizeRecommended, bufferNum, bufferSize;
-        public MMAL_COMPONENT_T component;
+        public MMAL_COMPONENT_T* component;
         public IntPtr userData;
         public uint capabilities;
 
-        public MMAL_PORT_T(MMAL_PORT_PRIVATE_T* priv, char* name, MMALPort.MMAL_PORT_TYPE_T type, ushort index, ushort indexAll,
+        public MMAL_PORT_T(IntPtr priv, char* name, MMALPort.MMAL_PORT_TYPE_T type, ushort index, ushort indexAll,
                            uint isEnabled, MMAL_ES_FORMAT_T* format, uint bufferNumMin, uint bufferSizeMin, uint bufferAlignmentMin, 
-                           uint bufferNumRecommended, uint bufferSizeRecommended, uint bufferNum, uint bufferSize, MMAL_COMPONENT_T component, 
+                           uint bufferNumRecommended, uint bufferSizeRecommended, uint bufferNum, uint bufferSize, MMAL_COMPONENT_T* component, 
                            IntPtr userData, uint capabilities)
         {
             this.priv = priv;

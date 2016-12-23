@@ -13,7 +13,7 @@ namespace SharPicam
         {
             BcmHost.bcm_host_init();
 
-            MMALComponentBase.CreateComponent(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA);
+            var camera = new MMALCameraComponent();
             
             BcmHost.bcm_host_deinit();
         }
