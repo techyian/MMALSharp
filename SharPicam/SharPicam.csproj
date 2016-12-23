@@ -14,7 +14,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -45,8 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions.cs" />
+    <Compile Include="MMALBufferImpl.cs" />
     <Compile Include="MMALCameraComponent.cs" />
     <Compile Include="MMALComponentBase.cs" />
+    <Compile Include="MMALConnectionImpl.cs" />
     <Compile Include="MMALObject.cs" />
     <Compile Include="MMALPortImpl.cs" />
     <Compile Include="Native\BcmHost.cs" />

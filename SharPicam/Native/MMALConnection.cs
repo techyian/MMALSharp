@@ -19,7 +19,7 @@ namespace SharPicam.Native
         public unsafe delegate int MMAL_CONNECTION_CALLBACK_T(MMAL_CONNECTION_T* conn);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_connection_create", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_connection_create(MMAL_CONNECTION_T** connection, MMAL_PORT_T* output, MMAL_PORT_T* input, uint flags);
+        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_connection_create(IntPtr* connection, MMAL_PORT_T* output, MMAL_PORT_T* input, uint flags);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_connection_acquire", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern void mmal_connection_acquire(MMAL_CONNECTION_T* connection);

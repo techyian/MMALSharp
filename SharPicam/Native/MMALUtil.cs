@@ -81,13 +81,13 @@ namespace SharPicam.Native
         public static unsafe extern MMAL_STATUS_T mmal_port_parameter_get_rational(MMAL_PORT_T* port, uint id, ref MMAL_RATIONAL_T value);
         
         [DllImport("libmmal.so", EntryPoint = "mmal_port_parameter_set_string", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMAL_STATUS_T mmal_port_parameter_set_string(MMAL_PORT_T* port, uint id, string value);
+        public static unsafe extern MMAL_STATUS_T mmal_port_parameter_set_string(MMAL_PORT_T* port, uint id, [MarshalAs(UnmanagedType.LPTStr)] string value);
         
         [DllImport("libmmal.so", EntryPoint = "mmal_port_parameter_set_bytes", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern MMAL_STATUS_T mmal_port_parameter_set_bytes(MMAL_PORT_T* port, uint id, byte* data, uint size);
         
         [DllImport("libmmal.so", EntryPoint = "mmal_util_port_set_uri", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMAL_STATUS_T mmal_util_port_set_uri(MMAL_PORT_T* port, string uri);
+        public static unsafe extern MMAL_STATUS_T mmal_util_port_set_uri(MMAL_PORT_T* port, [MarshalAs(UnmanagedType.LPTStr)] string uri);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_util_set_display_region", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern MMAL_STATUS_T mmal_util_set_display_region(MMAL_PORT_T* port, MMAL_DISPLAYREGION_T* region);
@@ -138,7 +138,7 @@ namespace SharPicam.Native
         public static unsafe extern MMAL_PORT_T mmal_util_get_port(MMAL_COMPONENT_T* comp, MMALPort.MMAL_PORT_TYPE_T pType, uint index);
         
         [DllImport("libmmal.so", EntryPoint = "mmal_4cc_to_string", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern string mmal_4cc_to_string(string buffer, ushort len, uint fourcc);
+        public static unsafe extern string mmal_4cc_to_string([MarshalAs(UnmanagedType.LPTStr)] string buffer, ushort len, uint fourcc);
 
     }
 

@@ -17,6 +17,7 @@ namespace SharPicam
                 return (*this.Ptr).isEnabled == 1;
             }
         }
+        public MMALPortImpl Control { get; set; }
         public List<MMALPortImpl> Inputs { get; set; }
         public List<MMALPortImpl> Outputs { get; set; }
         public List<MMALPortImpl> Clocks { get; set; }
@@ -35,43 +36,41 @@ namespace SharPicam
             Clocks = new List<MMALPortImpl>();
             Ports = new List<MMALPortImpl>();
 
-            if((*ptr).inputNum > 0)
-            {
-                var inputs = *(*ptr).input;
+            this.Control = new MMALPortImpl((*ptr).control);
+
+            if ((*ptr).inputNum > 0)
+            {                
                 for (int i = 0; i < (*ptr).inputNum; i++)
                 {
-                    MMAL_PORT_T* t = &inputs[i];
-                    Inputs.Add(new MMALPortImpl(t));
+                    var t = *(*ptr).input[i];
+                    Inputs.Add(new MMALPortImpl(&t));
                 }
             }
                 
             if((*ptr).outputNum > 0)
-            {
-                var outputs = *(*ptr).output;
+            {                
                 for (int i = 0; i < (*ptr).outputNum; i++)
                 {
-                    MMAL_PORT_T* t = &outputs[i];
-                    Outputs.Add(new MMALPortImpl(t));
+                    var t = *(*ptr).output[i];                    
+                    Outputs.Add(new MMALPortImpl(&t));
                 }
             }        
             
             if((*ptr).clockNum > 0)
-            {
-                var clocks = *(*ptr).clock;
+            {                
                 for (int i = 0; i < (*ptr).clockNum; i++)
                 {
-                    MMAL_PORT_T* t = &clocks[i];
-                    Clocks.Add(new MMALPortImpl(t));
+                    var t = *(*ptr).clock[i];
+                    Clocks.Add(new MMALPortImpl(&t));
                 }
             }
 
             if((*ptr).portNum > 0)
-            {
-                var ports = *(*ptr).port;
+            {                
                 for (int i = 0; i < (*ptr).portNum; i++)
                 {
-                    MMAL_PORT_T* t = &ports[i];
-                    Ports.Add(new MMALPortImpl(t));
+                    var t = *(*ptr).port[i];
+                    Ports.Add(new MMALPortImpl(&t));
                 }
             }
         }

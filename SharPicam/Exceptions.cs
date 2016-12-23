@@ -7,6 +7,12 @@ using System.Threading.Tasks;
 
 namespace SharPicam
 {
+    public class PiCameraError : Exception
+    {
+        public PiCameraError() : base() { }
+        public PiCameraError(string msg) : base(msg) { }
+    }
+
     public class MMALError : Exception
     {
         private MMALUtil.MMAL_STATUS_T Status { get; set; }
