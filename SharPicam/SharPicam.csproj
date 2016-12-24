@@ -46,11 +46,14 @@
   <ItemGroup>
     <Compile Include="Exceptions.cs" />
     <Compile Include="MMALBufferImpl.cs" />
-    <Compile Include="MMALCameraComponent.cs" />
+    <Compile Include="Components\MMALCameraComponent.cs" />
     <Compile Include="MMALComponentBase.cs" />
     <Compile Include="MMALConnectionImpl.cs" />
+    <Compile Include="Components\MMALNullSinkComponent.cs" />
     <Compile Include="MMALObject.cs" />
+    <Compile Include="MMALPoolImpl.cs" />
     <Compile Include="MMALPortImpl.cs" />
+    <Compile Include="MMALQueueImpl.cs" />
     <Compile Include="Native\BcmHost.cs" />
     <Compile Include="Native\MMALBuffer.cs" />
     <Compile Include="Native\MMALClock.cs" />

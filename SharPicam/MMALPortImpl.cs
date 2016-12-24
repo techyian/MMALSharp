@@ -132,6 +132,7 @@ namespace SharPicam
             }
         }
 
+
         public Action<MMALBufferImpl> Callback { get; set; }
         
         public MMALPortImpl(MMAL_PORT_T* ptr)

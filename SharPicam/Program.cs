@@ -7,14 +7,28 @@ using System.Threading.Tasks;
 
 namespace SharPicam
 {
-    class Program
+    public unsafe class Program
     {
         public static void Main(string[] args)
         {
             BcmHost.bcm_host_init();
 
             var camera = new MMALCameraComponent();
-            
+            var nullSink = new MMALNullSinkComponent();
+
+            var previewPort = camera.Outputs.ElementAt(MMALCameraComponent.MMAL_CAMERA_PREVIEW_PORT);
+            var videoPort = camera.Outputs.ElementAt(MMALCameraComponent.MMAL_CAMERA_VIDEO_PORT);
+            var stillPort = camera.Outputs.ElementAt(MMALCameraComponent.MMAL_CAMERA_CAPTURE_PORT);
+
+            var nullSinkInputPort = nullSink.Inputs.ElementAt(0);
+            var nullSinkConnection = MMALConnectionImpl.CreateConnection(previewPort.Ptr, nullSinkInputPort.Ptr);
+
+            stillPort.EnablePort(camera.CameraBufferCallback);
+
+            camera.Control.SetParameter(MMALParametersCamera.MMAL_PARAMETER_SHUTTER_SPEED, 0);
+
+            var length = 
+
             BcmHost.bcm_host_deinit();
         }
     }
