@@ -11,10 +11,12 @@ namespace SharPicam
     {
         public MMAL_POOL_T* Ptr { get; set; }
         public MMALPortImpl Port { get; set; }
+        public MMALQueueImpl Queue { get; set; }
 
         public MMALPoolImpl(MMALPortImpl port)
         {
             this.Ptr = MMALUtil.mmal_port_pool_create(port.Ptr, port.BufferNum, port.BufferSize);
+            this.Queue = new MMALQueueImpl((*this.Ptr).queue);            
         }
         
         public void Destroy()

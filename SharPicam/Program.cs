@@ -25,9 +25,16 @@ namespace SharPicam
 
             stillPort.EnablePort(camera.CameraBufferCallback);
 
+            Console.WriteLine("Shutter speed set");
             camera.Control.SetParameter(MMALParametersCamera.MMAL_PARAMETER_SHUTTER_SPEED, 0);
 
-            var length = 
+            var length = camera.CameraPool.Queue.QueueLength();
+
+            for(int i = 0; i < length; i++)
+            {
+                var buffer = camera.CameraPool.Queue.GetBuffer();
+                stillPort.SendBuffer(buffer.Ptr);
+            }
 
             BcmHost.bcm_host_deinit();
         }

@@ -42,8 +42,7 @@ namespace SharPicam
             {                
                 for (int i = 0; i < (*ptr).inputNum; i++)
                 {
-                    var t = *(*ptr).input[i];
-                    Inputs.Add(new MMALPortImpl(&t));
+                    Inputs.Add(new MMALPortImpl(&(*(*ptr).input[i])));
                 }
             }
                 
@@ -51,8 +50,7 @@ namespace SharPicam
             {                
                 for (int i = 0; i < (*ptr).outputNum; i++)
                 {
-                    var t = *(*ptr).output[i];                    
-                    Outputs.Add(new MMALPortImpl(&t));
+                    Outputs.Add(new MMALPortImpl(&(*(*ptr).output[i])));
                 }
             }        
             
@@ -60,17 +58,15 @@ namespace SharPicam
             {                
                 for (int i = 0; i < (*ptr).clockNum; i++)
                 {
-                    var t = *(*ptr).clock[i];
-                    Clocks.Add(new MMALPortImpl(&t));
+                    Clocks.Add(new MMALPortImpl(&(*(*ptr).clock[i])));
                 }
             }
 
             if((*ptr).portNum > 0)
             {                
                 for (int i = 0; i < (*ptr).portNum; i++)
-                {
-                    var t = *(*ptr).port[i];
-                    Ports.Add(new MMALPortImpl(&t));
+                {                    
+                    Ports.Add(new MMALPortImpl(&(*(*ptr).port[i])));
                 }
             }
         }
@@ -79,13 +75,9 @@ namespace SharPicam
         {
             IntPtr ptr = IntPtr.Zero;
             MMALCheck(MMALComponent.mmal_component_create(name, &ptr), "Unable to create component");
-
-            System.Console.WriteLine("Ptr address " + ptr.ToString());
-
+                        
             var compPtr = (MMAL_COMPONENT_T*)ptr.ToPointer();
-
-            System.Console.WriteLine("Ptr address " + ptr.ToString());
-
+                        
             return compPtr;
         }
 

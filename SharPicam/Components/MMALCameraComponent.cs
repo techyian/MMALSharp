@@ -21,6 +21,8 @@ namespace SharPicam
             if (this.Outputs.Count == 0)
                 throw new PiCameraError("Camera doesn't have any output ports.");
 
+            this.Control.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_NUM, 0);
+
             var previewPort = this.Outputs.ElementAt(MMAL_CAMERA_PREVIEW_PORT);
             var videoPort = this.Outputs.ElementAt(MMAL_CAMERA_VIDEO_PORT);
             var stillPort = this.Outputs.ElementAt(MMAL_CAMERA_CAPTURE_PORT);
@@ -32,24 +34,33 @@ namespace SharPicam
                                                                 1944u,
                                                                 0u,
                                                                 1u,
-                                                                2592u,
-                                                                1944u,
+                                                                300u,
+                                                                300u,
                                                                 3u,
                                                                 0u,
                                                                 0u,
                                                                 MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T.MMAL_PARAM_TIMESTAMP_MODE_RESET_STC
                                                                 );
 
-            this.Control.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_CONFIG, camConfig);
-                        
+            Console.WriteLine("Camera config set");
+            //this.Control.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_CONFIG, camConfig);
+
+            Console.WriteLine("Setting encoding.");
+                                    
             (*previewPort.Ptr).format->encoding = MMALEncodings.MMAL_ENCODING_OPAQUE;
             (*previewPort.Ptr).format->encodingVariant = MMALEncodings.MMAL_ENCODING_I420;
+
+            Console.WriteLine("Setting ES.");
 
             (*previewPort.Ptr).format->es->video.width = 2592u;
             (*previewPort.Ptr).format->es->video.height = 1944u;
 
+            Console.WriteLine("Commit preview");
+
             previewPort.Commit();
             previewPort.FullCopy((*videoPort.Ptr).format);
+
+            Console.WriteLine("Commit video");
 
             videoPort.Commit();
 
@@ -65,12 +76,18 @@ namespace SharPicam
             (*stillPort.Ptr).format->es->video.frameRate.num = 0;
             (*stillPort.Ptr).format->es->video.frameRate.den = 1;
 
+            Console.WriteLine("Commit still");
+
             stillPort.Commit();
 
             stillPort.BufferSize = Math.Max(stillPort.BufferSize, stillPort.BufferSizeMin);
             stillPort.BufferNum = stillPort.BufferNumRecommended;
 
+            Console.WriteLine("Enable component");
+
             this.EnableComponent();
+
+            Console.WriteLine("Create pool");
 
             this.CameraPool = new MMALPoolImpl(stillPort);
         }

@@ -93,10 +93,10 @@ namespace SharPicam.Native
         public static unsafe extern MMAL_STATUS_T mmal_util_set_display_region(MMAL_PORT_T* port, MMAL_DISPLAYREGION_T* region);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_util_camera_use_stc_timestamp", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMAL_STATUS_T mmal_util_camera_use_stc_timestamp(MMAL_PORT_T* port, MMALParametersCamera.MMAL_CAMERA_STC_MODE_T mode);
+        public static unsafe extern MMAL_STATUS_T mmal_util_camera_use_stc_timestamp(MMAL_PORT_T* port, MMAL_CAMERA_STC_MODE_T mode);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_util_get_core_port_stats", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMAL_STATUS_T mmal_util_get_core_port_stats(MMAL_PORT_T* port, MMALParametersCommon.MMAL_CORE_STATS_DIR dir, int reset, ref MMAL_CORE_STATISTICS_T stats);
+        public static unsafe extern MMAL_STATUS_T mmal_util_get_core_port_stats(MMAL_PORT_T* port, MMAL_CORE_STATS_DIR dir, int reset, ref MMAL_CORE_STATISTICS_T stats);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_status_to_string", CallingConvention = CallingConvention.Cdecl)]
         public static extern string mmal_status_to_string(MMAL_STATUS_T status);
@@ -145,9 +145,9 @@ namespace SharPicam.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_RECT_T
     {
-        public uint x, y, height, width;
+        public int x, y, height, width;
 
-        public MMAL_RECT_T(uint x, uint y, uint height, uint width)
+        public MMAL_RECT_T(int x, int y, int height, int width)
         {
             this.x = x;
             this.y = y;
@@ -159,9 +159,9 @@ namespace SharPicam.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_RATIONAL_T
     {
-        public uint num, den;
+        public int num, den;
 
-        public MMAL_RATIONAL_T(uint num, uint den)
+        public MMAL_RATIONAL_T(int num, int den)
         {
             this.num = num;
             this.den = den;

@@ -119,11 +119,11 @@ namespace SharPicam.Native
         public uint encoding, encodingVariant;
         public MMAL_ES_SPECIFIC_FORMAT_T* es;
         public uint bitrate, flags, extraDataSize;
-        public IntPtr extraData;
+        public byte* extraData;
 
         public MMAL_ES_FORMAT_T(MMALFormat.MMAL_ES_TYPE_T type, uint encoding, uint encodingVariant,
                                 MMAL_ES_SPECIFIC_FORMAT_T* es, uint bitrate, uint flags, uint extraDataSize,
-                                IntPtr extraData)
+                                byte* extraData)
         {
             this.type = type;
             this.encoding = encoding;
