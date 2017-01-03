@@ -34,8 +34,8 @@ namespace SharPicam
                                                                 1944u,
                                                                 0u,
                                                                 1u,
-                                                                300u,
-                                                                300u,
+                                                                2592u,
+                                                                1944u,
                                                                 3u,
                                                                 0u,
                                                                 0u,
@@ -43,7 +43,9 @@ namespace SharPicam
                                                                 );
 
             Console.WriteLine("Camera config set");
+        
             //this.Control.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_CONFIG, camConfig);
+            this.Control.SetCameraConfig(camConfig);
 
             Console.WriteLine("Setting encoding.");
                                     
@@ -64,23 +66,35 @@ namespace SharPicam
 
             videoPort.Commit();
 
-            (*stillPort.Ptr).format->encoding = MMALEncodings.MMAL_ENCODING_I420;
-            (*stillPort.Ptr).format->encodingVariant = MMALEncodings.MMAL_ENCODING_I420;
+            stillPort.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_BGR24;
+            stillPort.Ptr->format->encodingVariant = 0;
+                                               
+            Console.WriteLine(stillPort.Ptr->format->es->video.width);
+            Console.WriteLine(stillPort.Ptr->format->es->video.height);
 
-            (*stillPort.Ptr).format->es->video.width = 2592u;
-            (*stillPort.Ptr).format->es->video.height = 1944u;
-            (*stillPort.Ptr).format->es->video.crop.x = 0;
-            (*stillPort.Ptr).format->es->video.crop.y = 0;
-            (*stillPort.Ptr).format->es->video.crop.width = 300;
-            (*stillPort.Ptr).format->es->video.crop.height = 300;
-            (*stillPort.Ptr).format->es->video.frameRate.num = 0;
-            (*stillPort.Ptr).format->es->video.frameRate.den = 1;
+            //Look into why width/height must be 640/480. Is it the encoding?
+            stillPort.Ptr->format->es->video.width = MMALUtil.VCOS_ALIGN_UP(640, 32);
+            stillPort.Ptr->format->es->video.height = MMALUtil.VCOS_ALIGN_UP(480, 32);
+            stillPort.Ptr->format->es->video.crop.x = 0;
+            stillPort.Ptr->format->es->video.crop.y = 0;
+            stillPort.Ptr->format->es->video.crop.width = 300;
+            stillPort.Ptr->format->es->video.crop.height = 300;
+            stillPort.Ptr->format->es->video.frameRate.num = 0;
+            stillPort.Ptr->format->es->video.frameRate.den = 1;
 
+            Console.WriteLine(stillPort.Ptr->format->es->video.width);
+            Console.WriteLine(stillPort.Ptr->format->es->video.height);
+                                    
             Console.WriteLine("Commit still");
+
+            Console.WriteLine("Recommended buffer number " + stillPort.BufferNumRecommended);
 
             stillPort.Commit();
 
             stillPort.BufferSize = Math.Max(stillPort.BufferSize, stillPort.BufferSizeMin);
+
+            Console.WriteLine("Recommended buffer number " + stillPort.BufferNumRecommended);
+
             stillPort.BufferNum = stillPort.BufferNumRecommended;
 
             Console.WriteLine("Enable component");
@@ -100,6 +114,10 @@ namespace SharPicam
         public void CameraBufferCallback(MMALBufferImpl buffer)
         {
             Console.WriteLine("Inside camera buffer callback");
+
+            Console.WriteLine("Buffer length " + buffer.Length);
+            Console.WriteLine("Buffer offset " + buffer.Offset);
+            buffer.Properties();
         }
 
     }

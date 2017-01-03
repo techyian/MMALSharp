@@ -54,13 +54,14 @@ namespace SharPicam
         {            
             this.Ptr = ptr;
             this.Name = Marshal.PtrToStringAnsi((IntPtr)(*this.Ptr).name);
+            this.Enable();
         }
 
         public static MMALConnectionImpl CreateConnection(MMAL_PORT_T* output, MMAL_PORT_T* input)
         {
             IntPtr ptr = IntPtr.Zero;
             MMALCheck(MMALConnection.mmal_connection_create(&ptr, output, input, MMALConnection.MMAL_CONNECTION_FLAG_TUNNELLING | MMALConnection.MMAL_CONNECTION_FLAG_ALLOCATION_ON_INPUT), "Unable to create connection");
-
+            
             return new MMALConnectionImpl((MMAL_CONNECTION_T*)ptr);
         }
 

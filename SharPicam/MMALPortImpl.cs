@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SharPicam
@@ -207,9 +208,10 @@ namespace SharPicam
             }
         }
 
-
+        public CountdownEvent CountdownEvent = new CountdownEvent(1);
         public Action<MMALBufferImpl> Callback { get; set; }
-        
+        public MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
+
         public MMALPortImpl(MMAL_PORT_T* ptr)
         {
             this.Ptr = ptr;
@@ -221,11 +223,11 @@ namespace SharPicam
         {            
             this.Callback = callback;
 
-            var nativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
+            this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
 
             if (!Enabled)
                 Console.WriteLine("Enabling port.");
-                MMALCheck(MMALPort.mmal_port_enable(this.Ptr, nativeCallback), "Unable to enable port.");
+                MMALCheck(MMALPort.mmal_port_enable(this.Ptr, this.NativeCallback), "Unable to enable port.");
         }
 
         public void DisablePort()
@@ -337,8 +339,13 @@ namespace SharPicam
             }
         }
 
-        public void SetGenericParameter(int key, dynamic value)
+        public void SetCameraConfig(MMAL_PARAMETER_CAMERA_CONFIG_T value)
         {
+            //MMALCheck(MMALPort.mmal_port_parameter_set(this.Ptr, &value.hdr), "Unable to set parameter.");
+        }
+
+        public void SetGenericParameter(int key, dynamic value)
+        {            
             Console.WriteLine("Id " + value.hdr.id);
 
             Console.WriteLine("Enabled " + this.Enabled);
@@ -349,23 +356,29 @@ namespace SharPicam
             
             var ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_HEADER_T>());
 
-            Marshal.StructureToPtr((MMAL_PARAMETER_HEADER_T)value.hdr, ptr, false);
-
+            var val = value;
+            var hdr = (MMAL_PARAMETER_HEADER_T)val.hdr;
+            Marshal.StructureToPtr(hdr, ptr, false);
+                        
             Console.WriteLine("About to set parameter");
-
-            MMALCheck(MMALPort.mmal_port_parameter_set(this.Ptr, (MMAL_PARAMETER_HEADER_T*) ptr), "Unable to set parameter.");
+                        
+            MMALCheck(MMALPort.mmal_port_parameter_set(this.Ptr, ref hdr), "Unable to set parameter.");
             Marshal.FreeHGlobal(ptr);
         }
 
         public void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
-        {
+        {            
             var bufferImpl = new MMALBufferImpl(buffer);
 
             Console.WriteLine("Inside native port callback");
 
-            bufferImpl.Release();
+            Console.WriteLine("Passed port address " + ((IntPtr)port).ToString());
 
+            bufferImpl.Release();
+            
             this.Callback(bufferImpl);
+
+            //CountdownEvent.Signal();
         }
 
     }
