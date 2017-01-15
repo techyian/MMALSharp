@@ -5,51 +5,69 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SharPicam.MMALCallerHelper;
 
 namespace SharPicam
 {
     public unsafe class MMALBufferImpl : MMALObject
     {
         public MMAL_BUFFER_HEADER_T* Ptr { get; set; }
+
+        public IntPtr Data
+        {
+            get
+            {
+                return this.Ptr->data;
+            }
+        }
+
+        public uint Cmd
+        {
+            get
+            {
+                return this.Ptr->cmd;
+            }
+        }
+
         public uint AllocSize {
             get
             {
-                return (*this.Ptr).allocSize;
+                return this.Ptr->allocSize;
             }
         }
         public uint Length
         {
             get
             {
-                return (*this.Ptr).length;
+                return this.Ptr->length;
             }
         }
         public uint Offset
         {
             get
             {
-                return (*this.Ptr).offset;
+                return this.Ptr->offset;
             }
         }
         public uint Flags
         {
             get
             {
-                return (*this.Ptr).flags;
+                return this.Ptr->flags;
             }
         }
         public long Pts
         {
             get
             {
-                return (*this.Ptr).pts;
+                return this.Ptr->pts;
             }
         }
         public long Dts
         {
             get
             {
-                return (*this.Ptr).dts;
+                return this.Ptr->dts;
             }
         }
 
@@ -121,7 +139,7 @@ namespace SharPicam
             //When disposing of the memory stream, it is vital that the call to MMALBuffer.mmal_buffer_header_mem_unlock is called.
             try
             {
-                var stream = new UnmanagedMemoryStream((*this.Ptr).data, this.Length, this.Length, FileAccess.ReadWrite);
+                var stream = new UnmanagedMemoryStream((byte*)this.Ptr->data, this.Length, this.Length, FileAccess.ReadWrite);
                 return stream;
             }
             catch(Exception e)

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharPicam
+namespace SharPicam.Components
 {
     public class MMALNullSinkComponent : MMALComponentBase
     {

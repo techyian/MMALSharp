@@ -5,68 +5,70 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static SharPicam.MMALCallerHelper;
 
 namespace SharPicam
 {
-    public unsafe class MMALComponentBase : MMALObject
+    public abstract unsafe class MMALComponentBase : MMALObject, IDisposable
     {
         public MMAL_COMPONENT_T* Ptr { get; set; }
         public string Name { get; set; }
         public bool Enabled {
             get {
-                return (*this.Ptr).isEnabled == 1;
+                return this.Ptr->isEnabled == 1;
             }
         }
-        public MMALPortImpl Control { get; set; }
+        public MMALControlPortImpl Control { get; set; }
         public List<MMALPortImpl> Inputs { get; set; }
         public List<MMALPortImpl> Outputs { get; set; }
         public List<MMALPortImpl> Clocks { get; set; }
         public List<MMALPortImpl> Ports { get; set; }
-                
+        public MMALPoolImpl BufferPool { get; set; }
+
         protected MMALComponentBase(string name)
         {
             var ptr = CreateComponent(name);
 
             this.Ptr = ptr;
 
-            this.Name = Marshal.PtrToStringAnsi((IntPtr)((*ptr).name));
+            this.Name = Marshal.PtrToStringAnsi((IntPtr)ptr->name);
 
             Inputs = new List<MMALPortImpl>();
             Outputs = new List<MMALPortImpl>();
             Clocks = new List<MMALPortImpl>();
             Ports = new List<MMALPortImpl>();
 
-            this.Control = new MMALPortImpl((*ptr).control);
+            this.Control = new MMALControlPortImpl(ptr->control, this);
 
-            if ((*ptr).inputNum > 0)
+            if (ptr->inputNum > 0)
             {                
-                for (int i = 0; i < (*ptr).inputNum; i++)
-                {
-                    Inputs.Add(new MMALPortImpl(&(*(*ptr).input[i])));
+                for (int i = 0; i < ptr->inputNum; i++)
+                {                    
+                    Inputs.Add(new MMALPortImpl(&(*ptr->input[i]), this));
                 }
             }
                 
-            if((*ptr).outputNum > 0)
+            if(ptr->outputNum > 0)
             {                
-                for (int i = 0; i < (*ptr).outputNum; i++)
+                for (int i = 0; i < ptr->outputNum; i++)
                 {
-                    Outputs.Add(new MMALPortImpl(&(*(*ptr).output[i])));
+                    Outputs.Add(new MMALPortImpl(&(*ptr->output[i]), this));
                 }
             }        
             
-            if((*ptr).clockNum > 0)
+            if(ptr->clockNum > 0)
             {                
-                for (int i = 0; i < (*ptr).clockNum; i++)
+                for (int i = 0; i < ptr->clockNum; i++)
                 {
-                    Clocks.Add(new MMALPortImpl(&(*(*ptr).clock[i])));
+                    Clocks.Add(new MMALPortImpl(&(*ptr->clock[i]), this));
                 }
             }
 
             if((*ptr).portNum > 0)
             {                
-                for (int i = 0; i < (*ptr).portNum; i++)
+                for (int i = 0; i < ptr->portNum; i++)
                 {                    
-                    Ports.Add(new MMALPortImpl(&(*(*ptr).port[i])));
+                    Ports.Add(new MMALPortImpl(&(*ptr->port[i]), this));
                 }
             }
         }
@@ -106,5 +108,10 @@ namespace SharPicam
             MMALCheck(MMALComponent.mmal_component_enable(this.Ptr), "Unable to disable component");
         }
 
+        public void Dispose()
+        {
+            Console.WriteLine("Disposing component.");
+            this.DestroyComponent();
+        }
     }
 }

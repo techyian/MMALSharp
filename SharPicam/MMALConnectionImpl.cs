@@ -5,10 +5,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static SharPicam.MMALCallerHelper;
 
 namespace SharPicam
 {
-    public unsafe class MMALConnectionImpl : MMALObject
+    public unsafe class MMALConnectionImpl : MMALObject, IDisposable
     {
         public MMAL_CONNECTION_T* Ptr { get; set; }
 
@@ -82,5 +83,10 @@ namespace SharPicam
             MMALCheck(MMALConnection.mmal_connection_destroy(this.Ptr), "Unable to destroy connection");
         }
 
+        public void Dispose()
+        {
+            Console.WriteLine("Disposing connection.");
+            this.Destroy();
+        }
     }
 }

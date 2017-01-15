@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SharPicam
 {
-    public unsafe class MMALQueueImpl : MMALObject
+    public unsafe class MMALQueueImpl : MMALObject, IDisposable
     {
         public MMAL_QUEUE_T* Ptr { get; set; }
 
@@ -22,6 +22,16 @@ namespace SharPicam
             return new MMALBufferImpl(ptr);
         }
 
+        public static MMALBufferImpl GetBuffer(MMAL_QUEUE_T* ptr)
+        {
+            var bufPtr = MMALQueue.mmal_queue_get(ptr);
+
+            if((IntPtr)bufPtr == IntPtr.Zero)            
+                return null;
+
+            return new MMALBufferImpl(bufPtr);
+        }
+
         public uint QueueLength()
         {
             var length = MMALQueue.mmal_queue_length(this.Ptr);
@@ -33,5 +43,10 @@ namespace SharPicam
             MMALQueue.mmal_queue_destroy(this.Ptr);
         }
 
+        public void Dispose()
+        {
+            Console.WriteLine("Disposing queue.");
+            this.Destroy();
+        }
     }
 }

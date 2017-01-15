@@ -96,12 +96,12 @@ namespace SharPicam.Native
         public MMAL_BUFFER_HEADER_T* next;
         public IntPtr priv;
         public uint cmd;
-        public byte* data;
+        public IntPtr data;
         public uint allocSize, length, offset, flags;
         public long pts, dts;
         public IntPtr type, userData;
 
-        public MMAL_BUFFER_HEADER_T(MMAL_BUFFER_HEADER_T* next, IntPtr priv, uint cmd, byte* data, uint allocSize,
+        public MMAL_BUFFER_HEADER_T(MMAL_BUFFER_HEADER_T* next, IntPtr priv, uint cmd, IntPtr data, uint allocSize,
                                     uint length, uint offset, uint flags, long pts, long dts, IntPtr type, IntPtr userData)
         {
             this.next = next;

@@ -5,13 +5,13 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static SharPicam.MMALPortExtensions;
+using static SharPicam.MMALParameterHelpers;
 
-namespace SharPicam
+namespace SharPicam.Components
 {
     public unsafe class MMALCameraComponent : MMALComponentBase
-    {
-        public MMALPoolImpl CameraPool { get; set; }
-
+    {        
         public static int MMAL_CAMERA_PREVIEW_PORT = 0;
         public static int MMAL_CAMERA_VIDEO_PORT = 1;
         public static int MMAL_CAMERA_CAPTURE_PORT = 2;
@@ -21,12 +21,24 @@ namespace SharPicam
             if (this.Outputs.Count == 0)
                 throw new PiCameraError("Camera doesn't have any output ports.");
 
-            this.Control.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_NUM, 0);
+            SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_NUM, 0, this.Control.Ptr);
+
+            this.Control.ObjName = "Control port";
 
             var previewPort = this.Outputs.ElementAt(MMAL_CAMERA_PREVIEW_PORT);
+            previewPort.ObjName = "Preview port";
+            
             var videoPort = this.Outputs.ElementAt(MMAL_CAMERA_VIDEO_PORT);
-            var stillPort = this.Outputs.ElementAt(MMAL_CAMERA_CAPTURE_PORT);
+            videoPort.ObjName = "Video port";
 
+            var stillPort = this.Outputs.ElementAt(MMAL_CAMERA_CAPTURE_PORT);
+            stillPort.ObjName = "Still port";
+
+            var eventRequest = new MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T(new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCommon.MMAL_PARAMETER_CHANGE_EVENT_REQUEST, (uint)Marshal.SizeOf<MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T>()),
+                                                                         (uint)MMALParametersCamera.MMAL_PARAMETER_CAMERA_SETTINGS, 1);
+
+            //this.Control.SetChangeEventRequest(eventRequest);
+                                                                                     
             this.Control.EnablePort(CameraControlCallback);
 
             var camConfig = new MMAL_PARAMETER_CAMERA_CONFIG_T(new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCamera.MMAL_PARAMETER_CAMERA_CONFIG, (uint)Marshal.SizeOf<MMAL_PARAMETER_CAMERA_CONFIG_T>()),
@@ -41,80 +53,97 @@ namespace SharPicam
                                                                 0u,
                                                                 MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T.MMAL_PARAM_TIMESTAMP_MODE_RESET_STC
                                                                 );
-
+            
             Console.WriteLine("Camera config set");
         
-            //this.Control.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_CONFIG, camConfig);
             this.Control.SetCameraConfig(camConfig);
-
-            Console.WriteLine("Setting encoding.");
-                                    
-            (*previewPort.Ptr).format->encoding = MMALEncodings.MMAL_ENCODING_OPAQUE;
-            (*previewPort.Ptr).format->encodingVariant = MMALEncodings.MMAL_ENCODING_I420;
-
-            Console.WriteLine("Setting ES.");
-
-            (*previewPort.Ptr).format->es->video.width = 2592u;
-            (*previewPort.Ptr).format->es->video.height = 1944u;
+            this.Control.SetControlParameters(new MMALCameraParameters());
+                     
+            previewPort.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_OPAQUE;
+            previewPort.Ptr->format->encodingVariant = MMALEncodings.MMAL_ENCODING_I420;
+            previewPort.Ptr->format->es->video.width = 2592u;
+            previewPort.Ptr->format->es->video.height = 1944u;
 
             Console.WriteLine("Commit preview");
 
             previewPort.Commit();
-            previewPort.FullCopy((*videoPort.Ptr).format);
-
+            previewPort.FullCopy(videoPort.Ptr->format);
+                        
             Console.WriteLine("Commit video");
 
             videoPort.Commit();
 
-            stillPort.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_BGR24;
-            stillPort.Ptr->format->encodingVariant = 0;
-                                               
-            Console.WriteLine(stillPort.Ptr->format->es->video.width);
-            Console.WriteLine(stillPort.Ptr->format->es->video.height);
+            if (videoPort.Ptr->bufferNum < 3)
+                videoPort.Ptr->bufferNum = 3;
 
-            //Look into why width/height must be 640/480. Is it the encoding?
-            stillPort.Ptr->format->es->video.width = MMALUtil.VCOS_ALIGN_UP(640, 32);
-            stillPort.Ptr->format->es->video.height = MMALUtil.VCOS_ALIGN_UP(480, 32);
+            stillPort.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_I420;
+            stillPort.Ptr->format->encodingVariant = MMALEncodings.MMAL_ENCODING_I420;
+                        
+            stillPort.Ptr->format->es->video.width = MMALUtil.VCOS_ALIGN_UP(640u, 32);
+            stillPort.Ptr->format->es->video.height = MMALUtil.VCOS_ALIGN_UP(480u, 32);
             stillPort.Ptr->format->es->video.crop.x = 0;
             stillPort.Ptr->format->es->video.crop.y = 0;
-            stillPort.Ptr->format->es->video.crop.width = 300;
-            stillPort.Ptr->format->es->video.crop.height = 300;
+            stillPort.Ptr->format->es->video.crop.width = 2592;
+            stillPort.Ptr->format->es->video.crop.height = 1944;
             stillPort.Ptr->format->es->video.frameRate.num = 0;
             stillPort.Ptr->format->es->video.frameRate.den = 1;
-
-            Console.WriteLine(stillPort.Ptr->format->es->video.width);
-            Console.WriteLine(stillPort.Ptr->format->es->video.height);
-                                    
+            
             Console.WriteLine("Commit still");
-
-            Console.WriteLine("Recommended buffer number " + stillPort.BufferNumRecommended);
 
             stillPort.Commit();
 
             stillPort.BufferSize = Math.Max(stillPort.BufferSize, stillPort.BufferSizeMin);
-
-            Console.WriteLine("Recommended buffer number " + stillPort.BufferNumRecommended);
-
             stillPort.BufferNum = stillPort.BufferNumRecommended;
-
+ 
             Console.WriteLine("Enable component");
 
             this.EnableComponent();
 
             Console.WriteLine("Create pool");
 
-            this.CameraPool = new MMALPoolImpl(stillPort);
+            this.BufferPool = new MMALPoolImpl(stillPort);
         }
 
         public void CameraControlCallback(MMALBufferImpl buffer)
         {
             Console.WriteLine("Inside camera control callback");
+
+            if (buffer.Cmd == MMALEvents.MMAL_EVENT_PARAMETER_CHANGED)
+            {
+                Console.WriteLine("Buffer cmd == MMAL_EVENT_PARAMETER_CHANGED");
+
+                var data = (MMAL_EVENT_PARAMETER_CHANGED_T*)buffer.Data;
+                Console.WriteLine("Header id = " + data->hdr.id);
+
+                if(data->hdr.id == MMALParametersCamera.MMAL_PARAMETER_CAMERA_SETTINGS)
+                {
+                    var settings = (MMAL_PARAMETER_CAMERA_SETTINGS_T*)data;
+
+                    Console.WriteLine("Analog gain num " + settings->analogGain.num);
+                    Console.WriteLine("Analog gain den " + settings->analogGain.den);
+                    Console.WriteLine("Exposure " + settings->exposure);
+                    Console.WriteLine("Focus position " + settings->focusPosition);
+                    
+                }
+
+            }
+            else if(buffer.Cmd == MMALEvents.MMAL_EVENT_ERROR)
+            {
+                Console.WriteLine("No data received from sensor. Check all connections, including the Sunny one on the camera board");
+            }
+            else
+            {
+                Console.WriteLine("Received unexpected camera control callback event");
+            }
+
+
         }
         
         public void CameraBufferCallback(MMALBufferImpl buffer)
         {
             Console.WriteLine("Inside camera buffer callback");
 
+            Console.WriteLine("Buffer alloc size " + buffer.AllocSize);
             Console.WriteLine("Buffer length " + buffer.Length);
             Console.WriteLine("Buffer offset " + buffer.Offset);
             buffer.Properties();

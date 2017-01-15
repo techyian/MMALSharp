@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SharPicam.MMALCallerHelper;
 
 namespace SharPicam
 {
-    public unsafe class MMALPoolImpl : MMALObject
+    public unsafe class MMALPoolImpl : MMALObject, IDisposable
     {
         public MMAL_POOL_T* Ptr { get; set; }
         public MMALPortImpl Port { get; set; }
@@ -29,5 +30,10 @@ namespace SharPicam
             MMALCheck(MMALPool.mmal_pool_resize(this.Ptr, numHeaders, size), "Unable to resize pool");
         }
 
+        public void Dispose()
+        {
+            Console.WriteLine("Disposing pool.");
+            this.Destroy();
+        }
     }
 }

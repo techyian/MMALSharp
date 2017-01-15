@@ -62,5 +62,17 @@ namespace SharPicam
                     return Prefix + " : Unknown status error";
             }                        
         }
-    }    
+    }
+
+    public static class MMALCallerHelper
+    {
+        public static void MMALCheck(MMALUtil.MMAL_STATUS_T status, string prefix)
+        {
+            if (status != MMALUtil.MMAL_STATUS_T.MMAL_SUCCESS)
+            {
+                throw new MMALError(status, prefix);
+            }
+        }
+    }
+    
 }

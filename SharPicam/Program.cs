@@ -1,4 +1,5 @@
-﻿using SharPicam.Native;
+﻿using SharPicam.Components;
+using SharPicam.Native;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using static SharPicam.Native.MMALParametersCamera;
+using static SharPicam.MMALParameterHelpers;
 
 namespace SharPicam
 {
@@ -16,6 +18,7 @@ namespace SharPicam
             BcmHost.bcm_host_init();
 
             var camera = new MMALCameraComponent();
+            //var encoder = new MMALEncoderComponent();
             var nullSink = new MMALNullSinkComponent();
 
             var previewPort = camera.Outputs.ElementAt(MMALCameraComponent.MMAL_CAMERA_PREVIEW_PORT);
@@ -24,31 +27,38 @@ namespace SharPicam
 
             var nullSinkInputPort = nullSink.Inputs.ElementAt(0);
             var nullSinkConnection = MMALConnectionImpl.CreateConnection(previewPort.Ptr, nullSinkInputPort.Ptr);
+           
+            camera.Control.SetShutterSpeed(0);
             
             stillPort.EnablePort(camera.CameraBufferCallback);
 
-            Console.WriteLine("Shutter speed set");
-            camera.Control.SetParameter(MMAL_PARAMETER_SHUTTER_SPEED, 0);
+            var length = 0u;
+            while (camera.BufferPool.Queue.QueueLength() == 0)
+            {
+                Console.WriteLine("Queue empty. Waiting...");
+                Thread.Sleep(1000);
+            }
 
-            var length = camera.CameraPool.Queue.QueueLength();
+            length = camera.BufferPool.Queue.QueueLength();
 
             Console.WriteLine("Buffer queue length " + length);
 
             for (int i = 0; i < length; i++)
             {
-                var buffer = camera.CameraPool.Queue.GetBuffer();
+                var buffer = camera.BufferPool.Queue.GetBuffer();
                 stillPort.SendBuffer(buffer.Ptr);
             }
 
             Console.WriteLine("Attempt capture");
-            stillPort.SetParameter(MMAL_PARAMETER_CAPTURE, 1);          
-            Console.WriteLine("Sent port address " + ((IntPtr)stillPort.Ptr).ToString());
+            SetParameter(MMAL_PARAMETER_CAPTURE, 1, stillPort.Ptr);
 
-            Thread.Sleep(3000);
+            Console.ReadLine();
 
+            camera.Control.DisablePort();
             stillPort.DisablePort();
-
-            Thread.Sleep(3000);
+            nullSinkConnection.Dispose();
+            camera.Dispose();
+            nullSink.Dispose();
 
             BcmHost.bcm_host_deinit();            
         }
