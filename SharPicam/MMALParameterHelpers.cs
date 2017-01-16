@@ -159,7 +159,7 @@ namespace SharPicam
             }
             catch
             {
-                
+                Console.WriteLine("Something went wrong whilst setting parameter " + key);
             }
         }
 
