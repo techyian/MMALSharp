@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static SharPicam.MMALPortExtensions;
 using static SharPicam.MMALParameterHelpers;
+using System.IO;
 
 namespace SharPicam.Components
 {
@@ -147,6 +148,45 @@ namespace SharPicam.Components
             Console.WriteLine("Buffer length " + buffer.Length);
             Console.WriteLine("Buffer offset " + buffer.Offset);
             buffer.Properties();
+
+            var bufferStream = buffer.DataStream();
+
+            if(bufferStream.Item1 != MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CORRUPTED &&
+               bufferStream.Item1 != MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED)
+            {
+                try
+                {
+                    using (var fileStream = File.OpenWrite("/home/pi/test.jpg"))
+                    {
+                        fileStream.Seek(fileStream.Length, SeekOrigin.Begin);
+                        bufferStream.Item2.CopyTo(fileStream);                        
+                    }                                            
+                }
+                catch
+                {
+                    Console.WriteLine("Could not open file for writing");
+                }                
+            }
+            else
+            {
+                using (var fileStream = File.Create("/home/pi/test.jpg", 4000))
+                {
+                    
+                    if (bufferStream.Item2 != null)
+                    {
+                        bufferStream.Item2.Seek(0, SeekOrigin.Begin);
+                        bufferStream.Item2.CopyTo(fileStream);
+                        bufferStream.Item2.Dispose();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Data stream null.");
+                    }
+                }
+            }
+
+                      
+            
         }
 
     }

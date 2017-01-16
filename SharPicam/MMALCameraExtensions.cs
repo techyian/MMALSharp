@@ -12,42 +12,43 @@ using static SharPicam.Native.MMALParametersCamera;
 
 namespace SharPicam
 {
-    public unsafe static class MMALPortExtensions
+    public unsafe static class MMALCameraExtensions
     {
-        public static void SetControlParameters(this MMALControlPortImpl port, MMALCameraParameters parameters)
+        public static void SetControlParameters(this MMALCamera camera)
         {
-            SetSaturation(port, parameters.Saturation);
-            SetSharpness(port, parameters.Sharpness);
-            SetContrast(port, parameters.Contrast);
-            SetBrightness(port, parameters.Brightness);
-            SetISO(port, parameters.ISO);
-            SetVideoStabilisation(port, parameters.VideoStabilisation);
-            SetExposureCompensation(port, parameters.ExposureCompensation);
-            SetExposureMode(port, parameters.ExposureMode);
-            SetMeteringMode(port, parameters.ExposureMeterMode);
-            SetAwbMode(port, parameters.AwbMode);
-            SetAwbGains(port, parameters.AwbGainsR, parameters.AwbGainsB);
-            SetImageFx(port, parameters.ImageEffect);
-            SetColourFx(port, parameters.Effects);            
+            SetSaturation(camera, camera.Saturation);
+            SetSharpness(camera, camera.Sharpness);
+            SetContrast(camera, camera.Contrast);
+            SetBrightness(camera, camera.Brightness);
+            SetISO(camera, camera.ISO);
+            SetVideoStabilisation(camera, camera.VideoStabilisation);
+            SetExposureCompensation(camera, camera.ExposureCompensation);
+            SetExposureMode(camera, camera.ExposureMode);
+            SetMeteringMode(camera, camera.ExposureMeterMode);
+            SetAwbMode(camera, camera.AwbMode);
+            SetAwbGains(camera, camera.AwbGainsR, camera.AwbGainsB);
+            SetImageFx(camera, camera.ImageEffect);
+            SetColourFx(camera, camera.Effects);            
         }
 
-        public static void SetCameraConfig(this MMALControlPortImpl port, MMAL_PARAMETER_CAMERA_CONFIG_T value)
+        public static void SetCameraConfig(this MMALCamera camera, MMAL_PARAMETER_CAMERA_CONFIG_T value)
         {
-            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &value.hdr), "Unable to set camera config.");
+
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &value.hdr), "Unable to set camera config.");
         }
 
-        public static void SetChangeEventRequest(this MMALControlPortImpl port, MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T value)
+        public static void SetChangeEventRequest(this MMALCamera camera, MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T value)
         {
-            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &value.hdr), "Unable to set camera event request.");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &value.hdr), "Unable to set camera event request.");
         }
 
-        public static void SetSaturation(this MMALPortBase port, int saturation)
+        public static void SetSaturation(this MMALCamera camera, int saturation)
         {
             var value = new MMAL_RATIONAL_T(saturation, 100);
 
             if (saturation >= -100 && saturation <= 100)
             {
-                SetParameter(MMAL_PARAMETER_SATURATION, value, port.Ptr);
+                SetParameter(MMAL_PARAMETER_SATURATION, value, camera.Camera.Control.Ptr);
             }
             else
             {
@@ -56,13 +57,13 @@ namespace SharPicam
                 
         }
 
-        public static void SetSharpness(this MMALPortBase port, int sharpness)
+        public static void SetSharpness(this MMALCamera camera, int sharpness)
         {
             var value = new MMAL_RATIONAL_T(sharpness, 100);
 
             if (sharpness >= -100 && sharpness <= 100)
             {
-                SetParameter(MMAL_PARAMETER_SHARPNESS, value, port.Ptr);
+                SetParameter(MMAL_PARAMETER_SHARPNESS, value, camera.Camera.Control.Ptr);
             }
             else
             {
@@ -70,13 +71,13 @@ namespace SharPicam
             }
                         
         }
-        public static void SetContrast(this MMALPortBase port, int contrast)
+        public static void SetContrast(this MMALCamera camera, int contrast)
         {
             var value = new MMAL_RATIONAL_T(contrast, 100);
 
             if (contrast >= -100 && contrast <= 100)
             {
-                SetParameter(MMAL_PARAMETER_CONTRAST, value, port.Ptr);
+                SetParameter(MMAL_PARAMETER_CONTRAST, value, camera.Camera.Control.Ptr);
             }
             else
             {
@@ -85,13 +86,13 @@ namespace SharPicam
                      
         }
 
-        public static void SetBrightness(this MMALPortBase port, int brightness)
+        public static void SetBrightness(this MMALCamera camera, int brightness)
         {
             var value = new MMAL_RATIONAL_T(brightness, 100);
 
             if (brightness >= -100 && brightness <= 100)
             {
-                SetParameter(MMAL_PARAMETER_BRIGHTNESS, value, port.Ptr);
+                SetParameter(MMAL_PARAMETER_BRIGHTNESS, value, camera.Camera.Control.Ptr);
             }
             else
             {
@@ -100,46 +101,46 @@ namespace SharPicam
             
         }
 
-        public static void SetISO(this MMALPortBase port, int iso)
+        public static void SetISO(this MMALCamera camera, int iso)
         {
-            SetParameter(MMAL_PARAMETER_ISO, iso, port.Ptr);                        
+            SetParameter(MMAL_PARAMETER_ISO, iso, camera.Camera.Control.Ptr);                        
         }
 
-        public static void SetVideoStabilisation(this MMALPortBase port, bool vstabilisation)
+        public static void SetVideoStabilisation(this MMALCamera camera, bool vstabilisation)
         {
-            SetParameter(MMAL_PARAMETER_VIDEO_STABILISATION, vstabilisation, port.Ptr);            
+            SetParameter(MMAL_PARAMETER_VIDEO_STABILISATION, vstabilisation, camera.Camera.Control.Ptr);            
         }
 
-        public static void SetExposureCompensation(this MMALPortBase port, int expCompensation)
+        public static void SetExposureCompensation(this MMALCamera camera, int expCompensation)
         {
-            SetParameter(MMAL_PARAMETER_EXPOSURE_COMP, expCompensation, port.Ptr);
+            SetParameter(MMAL_PARAMETER_EXPOSURE_COMP, expCompensation, camera.Camera.Control.Ptr);
         }
 
-        public static void SetExposureMode(this MMALPortBase port, MMAL_PARAM_EXPOSUREMODE_T mode)
+        public static void SetExposureMode(this MMALCamera camera, MMAL_PARAM_EXPOSUREMODE_T mode)
         {
             MMAL_PARAMETER_EXPOSUREMODE_T exp_mode = new MMAL_PARAMETER_EXPOSUREMODE_T(new MMAL_PARAMETER_HEADER_T((uint)MMAL_PARAMETER_EXPOSURE_MODE, (uint)Marshal.SizeOf<MMAL_PARAMETER_EXPOSUREMODE_T>()),
                                                                                                         mode);
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &exp_mode.hdr), "Unable to set exposure mode");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &exp_mode.hdr), "Unable to set exposure mode");
         }
 
-        public static void SetMeteringMode(this MMALPortBase port, MMAL_PARAM_EXPOSUREMETERINGMODE_T mode)
+        public static void SetMeteringMode(this MMALCamera camera, MMAL_PARAM_EXPOSUREMETERINGMODE_T mode)
         {
             MMAL_PARAMETER_EXPOSUREMETERINGMODE_T exp_mode = new MMAL_PARAMETER_EXPOSUREMETERINGMODE_T(new MMAL_PARAMETER_HEADER_T((uint)MMAL_PARAMETER_EXP_METERING_MODE, (uint)Marshal.SizeOf<MMAL_PARAMETER_EXPOSUREMETERINGMODE_T>()),
                                                                                                         mode);
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &exp_mode.hdr), "Unable to set exposure metering mode");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &exp_mode.hdr), "Unable to set exposure metering mode");
         }
 
-        public static void SetAwbMode(this MMALPortBase port, MMAL_PARAM_AWBMODE_T mode)
+        public static void SetAwbMode(this MMALCamera camera, MMAL_PARAM_AWBMODE_T mode)
         {
             MMAL_PARAMETER_AWBMODE_T awb_mode = new MMAL_PARAMETER_AWBMODE_T(new MMAL_PARAMETER_HEADER_T((uint)MMAL_PARAMETER_AWB_MODE, (uint)Marshal.SizeOf<MMAL_PARAMETER_AWBMODE_T>()),
                                                                                                         mode);
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &awb_mode.hdr), "Unable to set awb mode");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &awb_mode.hdr), "Unable to set awb mode");
         }
 
-        public static void SetAwbGains(this MMALPortBase port, double r_gain, double b_gain)
+        public static void SetAwbGains(this MMALCamera camera, double r_gain, double b_gain)
         {
             MMAL_PARAMETER_AWB_GAINS_T awb_gains = new MMAL_PARAMETER_AWB_GAINS_T(new MMAL_PARAMETER_HEADER_T((uint)MMAL_PARAMETER_CUSTOM_AWB_GAINS, (uint)Marshal.SizeOf<MMAL_PARAMETER_AWB_GAINS_T>()),
                                                                                                         new MMAL_RATIONAL_T(0,0), new MMAL_RATIONAL_T(0, 0));
@@ -149,18 +150,18 @@ namespace SharPicam
             awb_gains.rGain.den = 65536;
             awb_gains.bGain.den = 65536;
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &awb_gains.hdr), "Unable to set awb gains");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &awb_gains.hdr), "Unable to set awb gains");
         }
         
-        public static void SetImageFx(this MMALPortBase port, MMAL_PARAM_IMAGEFX_T imageFx)
+        public static void SetImageFx(this MMALCamera camera, MMAL_PARAM_IMAGEFX_T imageFx)
         {
             MMAL_PARAMETER_IMAGEFX_T imgFX = new MMAL_PARAMETER_IMAGEFX_T(new MMAL_PARAMETER_HEADER_T((uint)MMAL_PARAMETER_IMAGE_EFFECT, (uint)Marshal.SizeOf<MMAL_PARAMETER_IMAGEFX_T>()),
                                                                                                         imageFx);
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &imgFX.hdr), "Unable to set image fx");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &imgFX.hdr), "Unable to set image fx");
         }
 
-        public static void SetColourFx(this MMALPortBase port, ColourEffects colourFx)
+        public static void SetColourFx(this MMALCamera camera, ColourEffects colourFx)
         {
             MMAL_PARAMETER_COLOURFX_T colFX = new MMAL_PARAMETER_COLOURFX_T(new MMAL_PARAMETER_HEADER_T((uint)MMAL_PARAMETER_COLOUR_EFFECT, (uint)Marshal.SizeOf<MMAL_PARAMETER_COLOURFX_T>()),
                                                                                                         0, 0, 0);
@@ -169,18 +170,18 @@ namespace SharPicam
             colFX.u = colourFx.U;
             colFX.v = colourFx.V;
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &colFX.hdr), "Unable to set colour fx");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &colFX.hdr), "Unable to set colour fx");
         }
 
-        public static void SetRotation(this MMALPortBase port, int rotation)
+        public static void SetRotation(this MMALCamera camera, int rotation)
         {
             int rot = ((rotation % 360) / 90) * 90;
 
-            SetParameter(MMAL_PARAMETER_ROTATION, rot, port.Ptr);
+            SetParameter(MMAL_PARAMETER_ROTATION, rot, camera.Camera.Control.Ptr);
 
         }
 
-        public static void SetFlips(this MMALPortBase port, bool hflip, bool vflip)
+        public static void SetFlips(this MMALCamera camera, bool hflip, bool vflip)
         {
             MMAL_PARAMETER_MIRROR_T mirror = new MMAL_PARAMETER_MIRROR_T(new MMAL_PARAMETER_HEADER_T((uint)MMAL_PARAMETER_MIRROR, (uint)Marshal.SizeOf<MMAL_PARAMETER_MIRROR_T>()),
                                                                                                         MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE);
@@ -192,11 +193,11 @@ namespace SharPicam
             else if (vflip)
                 mirror.value = MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_VERTICAL;
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &mirror.hdr), "Unable to set flips");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &mirror.hdr), "Unable to set flips");
 
         }
 
-        public static void SetROI(this MMALPortBase port, MMAL_RECT_T rect)
+        public static void SetROI(this MMALCamera camera, MMAL_RECT_T rect)
         {
             MMAL_PARAMETER_INPUT_CROP_T crop = new MMAL_PARAMETER_INPUT_CROP_T(new MMAL_PARAMETER_HEADER_T((uint)MMAL_PARAMETER_INPUT_CROP, (uint)Marshal.SizeOf<MMAL_PARAMETER_INPUT_CROP_T>()), rect);
 
@@ -205,26 +206,26 @@ namespace SharPicam
             crop.rect.width = (65536 * rect.width);
             crop.rect.height = (65536 * rect.height);
             
-            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &crop.hdr), "Unable to set ROI");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &crop.hdr), "Unable to set ROI");
 
         }
 
-        public static void SetShutterSpeed(this MMALPortBase port, int speed)
+        public static void SetShutterSpeed(this MMALCamera camera, int speed)
         {
-            SetParameter(MMAL_PARAMETER_SHUTTER_SPEED, speed, port.Ptr);
+            SetParameter(MMAL_PARAMETER_SHUTTER_SPEED, speed, camera.Camera.Control.Ptr);
         }
 
-        public static void SetDRC(this MMALPortBase port, MMAL_PARAMETER_DRC_STRENGTH_T strength)
+        public static void SetDRC(this MMALCamera camera, MMAL_PARAMETER_DRC_STRENGTH_T strength)
         {
             MMAL_PARAMETER_DRC_T drc = new MMAL_PARAMETER_DRC_T(new MMAL_PARAMETER_HEADER_T((uint)MMAL_PARAMETER_DYNAMIC_RANGE_COMPRESSION, (uint)Marshal.SizeOf<MMAL_PARAMETER_DRC_T>()),
                                                                                                         strength);
                         
-            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &drc.hdr), "Unable to set DRC");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &drc.hdr), "Unable to set DRC");
         }
 
-        public static void SetStatsPass(this MMALPortBase port, int statsPass)
+        public static void SetStatsPass(this MMALCamera camera, int statsPass)
         {
-            SetParameter(MMAL_PARAMETER_CAPTURE_STATS_PASS, statsPass, port.Ptr);
+            SetParameter(MMAL_PARAMETER_CAPTURE_STATS_PASS, statsPass, camera.Camera.Control.Ptr);
         }
 
 

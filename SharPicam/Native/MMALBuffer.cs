@@ -7,21 +7,27 @@ using System.Threading.Tasks;
 
 namespace SharPicam.Native
 {
-    public static class MMALBuffer
+    public enum MMALBufferProperties
     {
-        public static int MMAL_BUFFER_HEADER_FLAG_EOS = (1 << 0);
-        public static int MMAL_BUFFER_HEADER_FLAG_FRAME_START = (1 << 1);
-        public static int MMAL_BUFFER_HEADER_FLAG_FRAME_END = (1 << 2);
-        public static int MMAL_BUFFER_HEADER_FLAG_FRAME = (MMAL_BUFFER_HEADER_FLAG_FRAME_START | MMAL_BUFFER_HEADER_FLAG_FRAME_END);
-        public static int MMAL_BUFFER_HEADER_FLAG_KEYFRAME = (1 << 3);
-        public static int MMAL_BUFFER_HEADER_FLAG_DISCONTINUITY = (1 << 4);
-        public static int MMAL_BUFFER_HEADER_FLAG_CONFIG = (1 << 5);
-        public static int MMAL_BUFFER_HEADER_FLAG_ENCRYPTED = (1 << 6);
-        public static int MMAL_BUFFER_HEADER_FLAG_CODECSIDEINFO = (1 << 7);
-        public static int MMAL_BUFFER_HEADER_FLAGS_SNAPSHOT = (1 << 8);
-        public static int MMAL_BUFFER_HEADER_FLAG_CORRUPTED = (1 << 9);
-        public static int MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED = (1 << 10);
-        public static int MMAL_BUFFER_HEADER_FLAG_DECODEONLY = (1 << 11);
+        MMAL_BUFFER_HEADER_FLAG_EOS = (1 << 0),
+        MMAL_BUFFER_HEADER_FLAG_FRAME_START = (1 << 1),
+        MMAL_BUFFER_HEADER_FLAG_FRAME_END = (1 << 2),
+        MMAL_BUFFER_HEADER_FLAG_FRAME = (MMAL_BUFFER_HEADER_FLAG_FRAME_START | MMAL_BUFFER_HEADER_FLAG_FRAME_END),
+        MMAL_BUFFER_HEADER_FLAG_KEYFRAME = (1 << 3),
+        MMAL_BUFFER_HEADER_FLAG_DISCONTINUITY = (1 << 4),
+        MMAL_BUFFER_HEADER_FLAG_CONFIG = (1 << 5),
+        MMAL_BUFFER_HEADER_FLAG_ENCRYPTED = (1 << 6),
+        MMAL_BUFFER_HEADER_FLAG_CODECSIDEINFO = (1 << 7),
+        MMAL_BUFFER_HEADER_FLAGS_SNAPSHOT = (1 << 8),
+        MMAL_BUFFER_HEADER_FLAG_CORRUPTED = (1 << 9),
+        MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED = (1 << 10),
+        MMAL_BUFFER_HEADER_FLAG_DECODEONLY = (1 << 11),
+        MMAL_BUFFER_HEADER_FLAG_UNKNOWN = 9998,
+        MMAL_BUFFER_HEADER_FLAG_COMPLETEFRAME = 9999,
+    }
+
+    public static class MMALBuffer
+    {       
 
         public static int MMAL_BUFFER_HEADER_VIDEO_FLAG_INTERLACED = (1 << 0);
         public static int MMAL_BUFFER_HEADER_VIDEO_FLAG_TOP_FIELD_FIRST = (1 << 2);
@@ -62,6 +68,7 @@ namespace SharPicam.Native
     {
         public uint planes;
 
+        [MarshalAs( UnmanagedType.ByValArray, SizeConst = 4)]
         public uint[] offset, pitch;
         public uint flags;
 
@@ -96,12 +103,12 @@ namespace SharPicam.Native
         public MMAL_BUFFER_HEADER_T* next;
         public IntPtr priv;
         public uint cmd;
-        public IntPtr data;
+        public byte* data;
         public uint allocSize, length, offset, flags;
         public long pts, dts;
         public IntPtr type, userData;
 
-        public MMAL_BUFFER_HEADER_T(MMAL_BUFFER_HEADER_T* next, IntPtr priv, uint cmd, IntPtr data, uint allocSize,
+        public MMAL_BUFFER_HEADER_T(MMAL_BUFFER_HEADER_T* next, IntPtr priv, uint cmd, byte* data, uint allocSize,
                                     uint length, uint offset, uint flags, long pts, long dts, IntPtr type, IntPtr userData)
         {
             this.next = next;

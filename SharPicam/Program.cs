@@ -18,48 +18,49 @@ namespace SharPicam
             BcmHost.bcm_host_init();
 
             var camera = new MMALCameraComponent();
-            //var encoder = new MMALEncoderComponent();
+            var encoder = new MMALEncoderComponent();
             var nullSink = new MMALNullSinkComponent();
 
             var previewPort = camera.Outputs.ElementAt(MMALCameraComponent.MMAL_CAMERA_PREVIEW_PORT);
             var videoPort = camera.Outputs.ElementAt(MMALCameraComponent.MMAL_CAMERA_VIDEO_PORT);
             var stillPort = camera.Outputs.ElementAt(MMALCameraComponent.MMAL_CAMERA_CAPTURE_PORT);
 
+            var encInput = encoder.Inputs.ElementAt(0);
+            var encOutput = encoder.Outputs.ElementAt(0);
+
             var nullSinkInputPort = nullSink.Inputs.ElementAt(0);
             var nullSinkConnection = MMALConnectionImpl.CreateConnection(previewPort.Ptr, nullSinkInputPort.Ptr);
-                                   
-            stillPort.EnablePort(camera.CameraBufferCallback);
+
+            var encConection = MMALConnectionImpl.CreateConnection(stillPort.Ptr, encInput.Ptr);                       
+
+            encOutput.EnablePort(camera.CameraBufferCallback);
             
             camera.Control.SetShutterSpeed(0);
             
             var length = 0u;
-            while (camera.BufferPool.Queue.QueueLength() == 0)
+            while (encoder.BufferPool.Queue.QueueLength() == 0)
             {
                 Console.WriteLine("Queue empty. Waiting...");
                 Thread.Sleep(1000);
             }
 
-            length = camera.BufferPool.Queue.QueueLength();
+            length = encoder.BufferPool.Queue.QueueLength();
 
             Console.WriteLine("Buffer queue length " + length);
 
             for (int i = 0; i < length; i++)
             {
-                var buffer = camera.BufferPool.Queue.GetBuffer();
-                stillPort.SendBuffer(buffer.Ptr);
+                var buffer = encoder.BufferPool.Queue.GetBuffer();
+                encOutput.SendBuffer(buffer.Ptr);
             }
 
             Console.WriteLine("Attempt capture");
-            SetParameter(MMAL_PARAMETER_CAPTURE, 1, stillPort.Ptr);
+            SetParameter(MMAL_PARAMETER_CAPTURE, true, stillPort.Ptr);
 
-            Console.ReadLine();
-
-            camera.Control.DisablePort();
-            stillPort.DisablePort();
-            nullSinkConnection.Dispose();
-            camera.Dispose();
-            nullSink.Dispose();
-
+            while (encOutput.Triggered == 0) ;
+                                    
+            encOutput.DisablePort();
+                        
             BcmHost.bcm_host_deinit();            
         }
     }

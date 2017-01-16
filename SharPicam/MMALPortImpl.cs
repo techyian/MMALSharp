@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static SharPicam.MMALCallerHelper;
 
 namespace SharPicam
 {
@@ -61,16 +62,17 @@ namespace SharPicam
             var bufferImpl = new MMALBufferImpl(buffer);
 
             Console.WriteLine(this.ObjName);
-            Console.WriteLine("Inside native port callback - POINTER " + ((IntPtr)this.Ptr).ToString());
-
-            Console.WriteLine("Am I an event buffer? " + (bufferImpl.Cmd > 0).ToString());
-            
-            Console.WriteLine("Releasing buffer");
-
-            bufferImpl.Release();
-
-            this.Callback(bufferImpl);
+                                                
+            if(bufferImpl.Length > 0)
+            {
+                this.Callback(bufferImpl);
+            }
                         
+            MMALBuffer.mmal_buffer_header_mem_unlock(bufferImpl.Ptr);
+
+            Console.WriteLine("Releasing buffer");
+            bufferImpl.Release();
+                                    
             if (this.Enabled && this.ComponentReference.BufferPool != null)
             {
                 Console.WriteLine("Port still enabled and buffer pool not null.");
@@ -78,12 +80,7 @@ namespace SharPicam
                 var newBuffer = MMALQueueImpl.GetBuffer(this.ComponentReference.BufferPool.Queue.Ptr);
 
                 if (newBuffer != null)
-                {
-                    Console.WriteLine("-New buffer properties-");
-                    newBuffer.Properties();
-
-                    Console.WriteLine("New buffer alloc size - " + newBuffer.AllocSize);
-                    
+                {                    
                     Console.WriteLine("Got buffer. Sending to port.");
 
                     this.SendBuffer(newBuffer.Ptr);
@@ -99,8 +96,11 @@ namespace SharPicam
                 Console.WriteLine("Not enabled or component buffer pool null.");
             }
 
-            this.Triggered = 1;
-            this.ResetEvent.Set();                        
+            if(bufferImpl.Properties() == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END || bufferImpl.Properties() == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED)
+            {
+                this.Triggered = 1;
+            }
+            
         }
 
     }

@@ -48,6 +48,7 @@
     <Compile Include="Exceptions.cs" />
     <Compile Include="MMALBufferImpl.cs" />
     <Compile Include="Components\MMALCameraComponent.cs" />
+    <Compile Include="MMALCamera.cs" />
     <Compile Include="MMALCameraParameters.cs" />
     <Compile Include="MMALComponentBase.cs" />
     <Compile Include="MMALConnectionImpl.cs" />
@@ -56,7 +57,7 @@
     <Compile Include="MMALParameterHelpers.cs" />
     <Compile Include="MMALPoolImpl.cs" />
     <Compile Include="MMALPortBase.cs" />
-    <Compile Include="MMALPortExtensions.cs" />
+    <Compile Include="MMALCameraExtensions.cs" />
     <Compile Include="MMALPortImpl.cs" />
     <Compile Include="MMALQueueImpl.cs" />
     <Compile Include="Native\BcmHost.cs" />
