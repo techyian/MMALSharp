@@ -132,6 +132,7 @@ namespace SharPicam
                 {
                     case "MMAL_PARAMETER_BOOLEAN_T":
                         int i = (bool)value ? 1 : 0;
+                        Console.WriteLine("Value of boolean is " + i);
                         MMALCheck(MMALUtil.mmal_port_parameter_set_boolean(ptr, (uint)key, i), "Unable to get boolean value");
                         break;
                     case "MMAL_PARAMETER_UINT64_T":
