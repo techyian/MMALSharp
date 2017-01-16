@@ -27,11 +27,11 @@ namespace SharPicam
 
             var nullSinkInputPort = nullSink.Inputs.ElementAt(0);
             var nullSinkConnection = MMALConnectionImpl.CreateConnection(previewPort.Ptr, nullSinkInputPort.Ptr);
-           
+                                   
+            stillPort.EnablePort(camera.CameraBufferCallback);
+            
             camera.Control.SetShutterSpeed(0);
             
-            stillPort.EnablePort(camera.CameraBufferCallback);
-
             var length = 0u;
             while (camera.BufferPool.Queue.QueueLength() == 0)
             {
