@@ -84,92 +84,102 @@ namespace SharPicam
         {
             this.Ptr = ptr;
         }
-                
-        public MMALBufferProperties Properties()
+              
+        public void PrintProperties()
         {
-            Console.WriteLine("-- Buffer Properties --");
+            Console.WriteLine("---Begin buffer properties---");
+            foreach(MMALBufferProperties prop in Properties())
+            {
+                Console.WriteLine(prop.ToString());
+            }
+            Console.WriteLine("---End buffer properties---");
+        }
+          
+        public List<MMALBufferProperties> Properties()
+        {
+            List<MMALBufferProperties> properties = new List<MMALBufferProperties>();
+
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS)
             {
-                Console.WriteLine("EOS");
-                return MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
+                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_START) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_START)
             {
-                Console.WriteLine("Frame start");
-                return MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_START;
+                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_START);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END)
             {
-                Console.WriteLine("Frame end");
-                return MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END;
+                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END);
             }
             if (((int)this.Flags & ((int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_START | (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END)) == ((int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_START & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END))
             {
-                Console.WriteLine("Complete frame");
-                return MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_COMPLETEFRAME;
+                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_COMPLETEFRAME);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_KEYFRAME) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_KEYFRAME)
             {
-                Console.WriteLine("Key frame");
-                return MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_KEYFRAME;
+                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_KEYFRAME);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_DISCONTINUITY) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_DISCONTINUITY)
             {
-                Console.WriteLine("Discontinuity");
-                return MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_DISCONTINUITY;
+                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_DISCONTINUITY);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG)
             {
-                Console.WriteLine("Config");
-                return MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG;
+                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_ENCRYPTED) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_ENCRYPTED)
             {
-                Console.WriteLine("Encrypted");
-                return MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_ENCRYPTED;
+                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_ENCRYPTED);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CODECSIDEINFO) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CODECSIDEINFO)
             {
-                Console.WriteLine("Codec Side Info");
-                return MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CODECSIDEINFO;
+                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CODECSIDEINFO);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAGS_SNAPSHOT) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAGS_SNAPSHOT)
             {
-                Console.WriteLine("Snapshot");
-                return MMALBufferProperties.MMAL_BUFFER_HEADER_FLAGS_SNAPSHOT;
+                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAGS_SNAPSHOT);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CORRUPTED) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CORRUPTED)
             {
-                Console.WriteLine("Corrupted");
-                return MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CORRUPTED;
+                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CORRUPTED);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED)
             {
-                Console.WriteLine("Transmission failed");
-                return MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED;
+                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
             }
 
-            Console.WriteLine("-- End buffer properties --");
-            return MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_UNKNOWN;            
+            return properties;            
         }
 
-        public Tuple<MMALBufferProperties, UnmanagedMemoryStream> DataStream()
+        public byte[] DataStream()
         {
             MMALCheck(MMALBuffer.mmal_buffer_header_mem_lock(this.Ptr), "Unable to lock buffer header.");
-
-            //When disposing of the memory stream, it is vital that the call to MMALBuffer.mmal_buffer_header_mem_unlock is called.
+                        
             try
-            {
-                var ptr = this.Ptr->data + this.Offset;
+            {                
+                var target = new byte[this.Ptr->length];
                                 
-                var stream = new UnmanagedMemoryStream(ptr, this.Length, this.Length, FileAccess.ReadWrite);
-                return new Tuple<MMALBufferProperties, UnmanagedMemoryStream>(this.Properties(), stream);
+                fixed(byte* pTarget = target)
+                {
+                    var pt = pTarget;
+                    var ps = this.Ptr->data + this.Offset;
+                    
+                    for (int i = 0; i < this.Ptr->length; i++)
+                    {
+                        *pt = *ps;
+                        pt++;
+                        ps++;
+                    }
+                }
+
+                MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
+                return target;                                
             }
             catch(Exception e)
             {
                 //If something goes wrong, unlock the header.
                 MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
-                Console.WriteLine("Unable to handle data stream. Returning null.");
+                Console.WriteLine("Unable to handle data. Returning null.");
                 return null;
             }            
         }

@@ -13,7 +13,28 @@ namespace SharPicam
     public unsafe class MMALControlPortImpl : MMALPortBase
     {
         public MMALControlPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
-                
+
+        public Action<MMALBufferImpl> Callback { get; set; }
+        public void EnablePort(Action<MMALBufferImpl> callback)
+        {
+            this.Callback = callback;
+
+            this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
+
+            IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
+
+            Console.WriteLine("Enabling port.");
+
+            if (callback == null)
+            {
+                Console.WriteLine("Callback null");
+                MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
+            }
+            else
+                MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
+
+        }
+
         public override void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             var bufferImpl = new MMALBufferImpl(buffer);
@@ -39,7 +60,7 @@ namespace SharPicam
 
                     Console.WriteLine("Got buffer. Sending to port.");
 
-                    this.SendBuffer(newBuffer.Ptr);
+                    this.SendBuffer(newBuffer);
 
                     Console.WriteLine("Buffer sent to port.");
                 }
@@ -55,21 +76,50 @@ namespace SharPicam
 
     public unsafe class MMALPortImpl : MMALPortBase
     {
+        public byte[] Storage { get; set; }
+
         public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
+
+
+        public Func<MMALBufferImpl, byte[]> Callback { get; set; }
+        public void EnablePort(Func<MMALBufferImpl, byte[]> callback)
+        {
+            this.Callback = callback;
+
+            this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
+
+            IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
+
+            Console.WriteLine("Enabling port.");
+
+            if (callback == null)
+            {
+                Console.WriteLine("Callback null");
+                MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
+            }
+            else
+                MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
+
+        }
 
         public override void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             var bufferImpl = new MMALBufferImpl(buffer);
 
-            Console.WriteLine(this.ObjName);
+            Console.WriteLine("Port object name = " + this.ObjName);
+
+            bufferImpl.PrintProperties();
                                                 
             if(bufferImpl.Length > 0)
             {
-                this.Callback(bufferImpl);
-            }
-                        
-            MMALBuffer.mmal_buffer_header_mem_unlock(bufferImpl.Ptr);
+                var data = this.Callback(bufferImpl);
 
+                if (data != null && Storage != null)
+                    Storage = Storage.Concat(data).ToArray();
+                else if (data != null && Storage == null)
+                    Storage = data;
+            }
+            
             Console.WriteLine("Releasing buffer");
             bufferImpl.Release();
                                     
@@ -83,7 +133,7 @@ namespace SharPicam
                 {                    
                     Console.WriteLine("Got buffer. Sending to port.");
 
-                    this.SendBuffer(newBuffer.Ptr);
+                    this.SendBuffer(newBuffer);
 
                     Console.WriteLine("Buffer sent to port.");
                 }
@@ -96,11 +146,13 @@ namespace SharPicam
                 Console.WriteLine("Not enabled or component buffer pool null.");
             }
 
-            if(bufferImpl.Properties() == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END || bufferImpl.Properties() == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED)
+            if(bufferImpl.Properties().Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END || 
+                                                c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED || 
+                                                c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS))
             {
+                Console.WriteLine("Setting triggered flag");
                 this.Triggered = 1;
-            }
-            
+            }            
         }
 
     }

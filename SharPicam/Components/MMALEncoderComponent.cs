@@ -9,9 +9,7 @@ using static SharPicam.MMALParameterHelpers;
 namespace SharPicam.Components
 {
     public unsafe class MMALEncoderComponent : MMALComponentBase
-    {
-
-
+    {        
         public MMALEncoderComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
         {
             var input = this.Inputs.ElementAt(0);
