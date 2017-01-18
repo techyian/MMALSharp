@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using static SharPicam.Native.MMALParametersCamera;
 using static SharPicam.MMALParameterHelpers;
 using System.IO;
+using System.Diagnostics;
 
 namespace SharPicam
 {
@@ -18,9 +19,22 @@ namespace SharPicam
         {
             using (MMALCamera cam = new MMALCamera())
             {
-                cam.TakePicture("/home/pi/test1.jpg").Wait();
+                cam.TakePicture("/home/pi/test1.jpg").Wait();                
             }
-                                               
+
+            ProcessThreadCollection currentThreads = Process.GetCurrentProcess().Threads;
+
+            if(currentThreads != null)
+            {
+                foreach (ProcessThread thread in currentThreads)
+                {
+                    Console.WriteLine("Thread");
+                }
+            }
+
+            
+
+            
         }
     }
 }

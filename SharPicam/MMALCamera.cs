@@ -170,13 +170,12 @@ namespace SharPicam
                 
         public async Task TakePicture(string filename)
         {
-            await Task.Factory.StartNew(() => {
+            await Task.Run(async () => {
 
                 var previewPort = this.Camera.PreviewPort;
                 var videoPort = this.Camera.VideoPort;
                 var stillPort = this.Camera.StillPort;
                 
-
                 var encInput = this.Encoder.Inputs.ElementAt(0);
                 var encOutput = this.Encoder.Outputs.ElementAt(0);
                 encOutput.Storage = null;
@@ -199,22 +198,29 @@ namespace SharPicam
                 Console.WriteLine("Attempt capture");
                 stillPort.SetImageCapture(true);
 
-                //Should ideally have this running on a timer in case something goes wrong with the callbacks.
-                while (encOutput.Triggered == 0) ;
-                
-                encOutput.DisablePort();
-                
-                Console.WriteLine("Triggered flag has been set.");
+                encOutput.TokenSource = new CancellationTokenSource();
 
-                File.WriteAllBytes(filename, encOutput.Storage);
+                await Task.Delay(30000, encOutput.TokenSource.Token).ContinueWith(c =>
+                {                    
+                    encOutput.DisablePort();
+                                        
+                    File.WriteAllBytes(filename, encOutput.Storage);
+
+                    encOutput.Storage = null;
+
+                    nullSinkConnection.Destroy();
+                    encConection.Destroy();
+                });
                 
-                encOutput.Storage = null;
+                
             });                                              
         }
-
+        
         public void Dispose()
         {            
             this.Camera.Dispose();
+            this.Encoder.Dispose();
+            this.NullSink.Dispose();
             BcmHost.bcm_host_deinit();
         }
     }

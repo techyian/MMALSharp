@@ -77,6 +77,7 @@ namespace SharPicam
     public unsafe class MMALPortImpl : MMALPortBase
     {
         public byte[] Storage { get; set; }
+        public CancellationTokenSource TokenSource { get; set; }
 
         public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
 
@@ -151,7 +152,7 @@ namespace SharPicam
                                                 c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS))
             {
                 Console.WriteLine("Setting triggered flag");
-                this.Triggered = 1;
+                TokenSource.Cancel();
             }            
         }
 

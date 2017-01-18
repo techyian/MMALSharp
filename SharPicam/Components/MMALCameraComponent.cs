@@ -91,19 +91,16 @@ namespace SharPicam.Components
             this.StillPort.Ptr->format->es->video.frameRate.num = 0;
             this.StillPort.Ptr->format->es->video.frameRate.den = 1;
             
-            Console.WriteLine("Commit still");
-
+            Console.WriteLine("Commit still");            
             this.StillPort.Commit();
-
-            this.StillPort.BufferSize = Math.Max(this.StillPort.BufferSize, this.StillPort.BufferSizeMin);
+            
+            this.StillPort.BufferSize = Math.Max(this.StillPort.BufferSize, this.StillPort.BufferSizeRecommended);
             this.StillPort.BufferNum = this.StillPort.BufferNumRecommended;
- 
+            
             Console.WriteLine("Enable component");
-
             this.EnableComponent();
-
+            
             Console.WriteLine("Create pool");
-
             this.BufferPool = new MMALPoolImpl(this.StillPort);
         }
 
@@ -161,6 +158,6 @@ namespace SharPicam.Components
             
             return buffer.DataStream();                        
         }
-
+        
     }
 }

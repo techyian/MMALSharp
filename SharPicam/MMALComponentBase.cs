@@ -9,7 +9,7 @@ using static SharPicam.MMALCallerHelper;
 
 namespace SharPicam
 {
-    public abstract unsafe class MMALComponentBase : MMALObject, IDisposable
+    public abstract unsafe class MMALComponentBase : MMALObject
     {
         public MMAL_COMPONENT_T* Ptr { get; set; }
         public string Name { get; set; }
@@ -108,10 +108,22 @@ namespace SharPicam
             MMALCheck(MMALComponent.mmal_component_enable(this.Ptr), "Unable to disable component");
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             Console.WriteLine("Disposing component.");
+            
+            foreach(var port in Inputs)
+            {
+                port.DisablePort();
+            }
+            foreach (var port in Outputs)
+            {
+                port.DisablePort();
+            }
+            
+            this.DisableComponent();
             this.DestroyComponent();
         }
+        
     }
 }
