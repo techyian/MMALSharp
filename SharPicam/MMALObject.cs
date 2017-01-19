@@ -9,7 +9,12 @@ namespace SharPicam
 {
     public class MMALObject
     {
-        
+        public static List<WeakReference> Objects = new List<WeakReference>();
+
+        public MMALObject()
+        {
+            Objects.Add(new WeakReference(this));
+        }
 
     }
 }

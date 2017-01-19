@@ -19,7 +19,7 @@ namespace SharPicam
         {
             using (MMALCamera cam = new MMALCamera())
             {
-                cam.TakePicture("/home/pi/test1.jpg").Wait();                
+                //cam.TakePicture("/home/pi/test1.jpg").Wait();                
             }
 
             ProcessThreadCollection currentThreads = Process.GetCurrentProcess().Threads;

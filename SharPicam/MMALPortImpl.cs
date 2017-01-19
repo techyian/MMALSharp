@@ -35,7 +35,7 @@ namespace SharPicam
 
         }
 
-        public override void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        public static void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             var bufferImpl = new MMALBufferImpl(buffer);
 
@@ -103,7 +103,7 @@ namespace SharPicam
 
         }
 
-        public override void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        public static void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             var bufferImpl = new MMALBufferImpl(buffer);
 
