@@ -34,33 +34,48 @@ namespace SharPicam
                 MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
 
         }
-
+        
         public static void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             var bufferImpl = new MMALBufferImpl(buffer);
 
-            Console.WriteLine(this.ObjName);
-            Console.WriteLine("Inside native control port callback");
+            MMALPortImpl portObj = null;
+            foreach (WeakReference<MMALObject> obj in Objects)
+            {
+                MMALObject target;
 
-            Console.WriteLine("Am I an event buffer? " + (bufferImpl.Cmd > 0).ToString());
-                                    
-            this.Callback(bufferImpl);
+                if (obj.TryGetTarget(out target))
+                {
+                    if (target is MMALPortImpl && ((MMALPortImpl)target).Ptr == port)
+                    {
+                        portObj = target as MMALPortImpl;
+                    }
+                }
+            }
+
+            if (portObj == null)
+            {
+                Console.WriteLine("Cannot retrieve port object. Releasing buffer");
+                bufferImpl.Release();
+                return;
+            }
+
+            portObj.Callback(bufferImpl);
 
             Console.WriteLine("Releasing buffer");
-
             bufferImpl.Release();
 
             if (bufferImpl.Cmd == 0)
             {
-                if (this.Enabled && this.ComponentReference.BufferPool != null)
+                if (portObj.Enabled && portObj.ComponentReference.BufferPool != null)
                 {
                     Console.WriteLine("Port still enabled and buffer pool not null.");
 
-                    var newBuffer = MMALQueueImpl.GetBuffer(this.ComponentReference.BufferPool.Queue.Ptr);
+                    var newBuffer = MMALQueueImpl.GetBuffer(portObj.ComponentReference.BufferPool.Queue.Ptr);
 
                     Console.WriteLine("Got buffer. Sending to port.");
 
-                    this.SendBuffer(newBuffer);
+                    portObj.SendBuffer(newBuffer);
 
                     Console.WriteLine("Buffer sent to port.");
                 }
@@ -80,9 +95,9 @@ namespace SharPicam
         public CancellationTokenSource TokenSource { get; set; }
 
         public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
-
-
+        
         public Func<MMALBufferImpl, byte[]> Callback { get; set; }
+
         public void EnablePort(Func<MMALBufferImpl, byte[]> callback)
         {
             this.Callback = callback;
@@ -106,35 +121,56 @@ namespace SharPicam
         public static void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             var bufferImpl = new MMALBufferImpl(buffer);
-
-            Console.WriteLine("Port object name = " + this.ObjName);
-
-            bufferImpl.PrintProperties();
-                                                
-            if(bufferImpl.Length > 0)
-            {
-                var data = this.Callback(bufferImpl);
-
-                if (data != null && Storage != null)
-                    Storage = Storage.Concat(data).ToArray();
-                else if (data != null && Storage == null)
-                    Storage = data;
-            }
             
+            bufferImpl.PrintProperties();
+
+
+            MMALPortImpl portObj = null;
+            foreach(WeakReference<MMALObject> obj in Objects)
+            {
+                MMALObject target;
+
+                if(obj.TryGetTarget(out target))
+                {
+                    if(target is MMALPortImpl && ((MMALPortImpl)target).Ptr == port)
+                    {
+                        portObj = target as MMALPortImpl;
+                    }
+                }
+            }
+
+            if(portObj == null)
+            {
+                Console.WriteLine("Cannot retrieve port object. Releasing buffer");
+                                                
+                bufferImpl.Release();
+                return;
+            }
+
+            if (bufferImpl.Length > 0)
+            {
+                var data = portObj.Callback(bufferImpl);
+
+                if (data != null && portObj.Storage != null)
+                    portObj.Storage = portObj.Storage.Concat(data).ToArray();
+                else if (data != null && portObj.Storage == null)
+                    portObj.Storage = data;
+            }
+
             Console.WriteLine("Releasing buffer");
             bufferImpl.Release();
                                     
-            if (this.Enabled && this.ComponentReference.BufferPool != null)
+            if (portObj.Enabled && portObj.ComponentReference.BufferPool != null)
             {
                 Console.WriteLine("Port still enabled and buffer pool not null.");
 
-                var newBuffer = MMALQueueImpl.GetBuffer(this.ComponentReference.BufferPool.Queue.Ptr);
+                var newBuffer = MMALQueueImpl.GetBuffer(portObj.ComponentReference.BufferPool.Queue.Ptr);
 
                 if (newBuffer != null)
                 {                    
                     Console.WriteLine("Got buffer. Sending to port.");
 
-                    this.SendBuffer(newBuffer);
+                    portObj.SendBuffer(newBuffer);
 
                     Console.WriteLine("Buffer sent to port.");
                 }
@@ -152,7 +188,7 @@ namespace SharPicam
                                                 c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS))
             {
                 Console.WriteLine("Setting triggered flag");
-                TokenSource.Cancel();
+                portObj.TokenSource.Cancel();
             }            
         }
 

@@ -83,10 +83,11 @@ namespace SharPicam
             MMALCheck(MMALConnection.mmal_connection_destroy(this.Ptr), "Unable to destroy connection");
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Console.WriteLine("Disposing connection.");
             this.Destroy();
+            base.Dispose();
         }
     }
 }

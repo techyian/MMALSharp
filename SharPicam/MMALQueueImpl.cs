@@ -43,10 +43,11 @@ namespace SharPicam
             MMALQueue.mmal_queue_destroy(this.Ptr);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
-            Console.WriteLine("Disposing queue.");
+            Console.WriteLine("Disposing queue.");            
             this.Destroy();
+            base.Dispose();
         }
     }
 }

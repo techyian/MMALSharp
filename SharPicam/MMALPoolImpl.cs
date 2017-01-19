@@ -30,10 +30,11 @@ namespace SharPicam
             MMALCheck(MMALPool.mmal_pool_resize(this.Ptr, numHeaders, size), "Unable to resize pool");
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Console.WriteLine("Disposing pool.");
             this.Destroy();
+            base.Dispose();
         }
     }
 }

@@ -108,21 +108,23 @@ namespace SharPicam
             MMALCheck(MMALComponent.mmal_component_enable(this.Ptr), "Unable to disable component");
         }
 
-        public virtual void Dispose()
+        public override void Dispose()
         {
             Console.WriteLine("Disposing component.");
             
             foreach(var port in Inputs)
             {
-                port.DisablePort();
+                port.DisablePort();                
             }
             foreach (var port in Outputs)
             {
-                port.DisablePort();
+                port.DisablePort();                
             }
-            
+                        
             this.DisableComponent();
             this.DestroyComponent();
+
+            base.Dispose();
         }
         
     }

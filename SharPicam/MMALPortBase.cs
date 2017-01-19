@@ -128,10 +128,6 @@ namespace SharPicam
         {
             MMALCheck(MMALPort.mmal_port_send_buffer(this.Ptr, buffer.Ptr), "Unable to send buffer header.");
         }
-            
-        public virtual void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
-        {            
-        }
-
+        
     }
 }

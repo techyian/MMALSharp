@@ -7,13 +7,20 @@ using System.Threading.Tasks;
 
 namespace SharPicam
 {
-    public class MMALObject
+    public class MMALObject : IDisposable
     {
-        public static List<WeakReference> Objects = new List<WeakReference>();
+        public static List<WeakReference<MMALObject>> Objects = new List<WeakReference<MMALObject>>();
+        private WeakReference<MMALObject> reference;
 
         public MMALObject()
         {
-            Objects.Add(new WeakReference(this));
+            reference = new WeakReference<MMALObject>(this);
+            Objects.Add(reference);
+        }
+                
+        public virtual void Dispose()
+        {            
+            Objects.Remove(reference);
         }
 
     }
