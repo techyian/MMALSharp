@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5B03E4B4-13AA-4EC8-8FD3-9DAA176EAA70}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MMALSharp</RootNamespace>
+    <AssemblyName>MMALSharp</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Components\MMALEncoderComponent.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="MMALBufferImpl.cs" />
+    <Compile Include="Components\MMALCameraComponent.cs" />
+    <Compile Include="MMALCamera.cs" />
+    <Compile Include="MMALCameraParameters.cs" />
+    <Compile Include="MMALComponentBase.cs" />
+    <Compile Include="MMALConnectionImpl.cs" />
+    <Compile Include="Components\MMALNullSinkComponent.cs" />
+    <Compile Include="MMALObject.cs" />
+    <Compile Include="MMALParameterHelpers.cs" />
+    <Compile Include="MMALPoolImpl.cs" />
+    <Compile Include="MMALPortBase.cs" />
+    <Compile Include="MMALCameraExtensions.cs" />
+    <Compile Include="MMALPortImpl.cs" />
+    <Compile Include="MMALQueueImpl.cs" />
+    <Compile Include="Native\BcmHost.cs" />
+    <Compile Include="Native\MMALBuffer.cs" />
+    <Compile Include="Native\MMALClock.cs" />
+    <Compile Include="Native\MMALCommon.cs" />
+    <Compile Include="Native\MMALComponent.cs" />
+    <Compile Include="Native\MMALConnection.cs" />
+    <Compile Include="Native\MMALEncodings.cs" />
+    <Compile Include="Native\MMALEvents.cs" />
+    <Compile Include="Native\MMALFormat.cs" />
+    <Compile Include="Native\MMALParameters.cs" />
+    <Compile Include="Native\MMALPool.cs" />
+    <Compile Include="Native\MMALPort.cs" />
+    <Compile Include="Native\MMALQueue.cs" />
+    <Compile Include="Native\MMALUtil.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
