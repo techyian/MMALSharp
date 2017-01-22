@@ -49,7 +49,7 @@
     <Compile Include="MMALBufferImpl.cs" />
     <Compile Include="Components\MMALCameraComponent.cs" />
     <Compile Include="MMALCamera.cs" />
-    <Compile Include="MMALCameraParameters.cs" />
+    <Compile Include="MMALCameraConfig.cs" />
     <Compile Include="MMALComponentBase.cs" />
     <Compile Include="MMALConnectionImpl.cs" />
     <Compile Include="Components\MMALNullSinkComponent.cs" />

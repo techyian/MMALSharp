@@ -17,6 +17,22 @@ namespace MMALSharp
             reference = new WeakReference<MMALObject>(this);
             Objects.Add(reference);
         }
+
+        public static unsafe void UpdatePort(MMALPortImpl port)
+        {            
+            for(int i = 0; i < Objects.Count; i++)
+            {
+                MMALObject target;
+
+                if (Objects[i].TryGetTarget(out target))
+                {
+                    if (target is MMALPortImpl && ((MMALPortImpl)target).Ptr == port.Ptr)
+                    {
+                        Objects[i] = new WeakReference<MMALObject>(port);
+                    }
+                }
+            } 
+        }
                 
         public virtual void Dispose()
         {            

@@ -15,7 +15,7 @@ namespace MMALSharp.Components
             var input = this.Inputs.ElementAt(0);
             var output = this.Outputs.ElementAt(0);
 
-            input.ShallowCopy(output.Ptr->format);
+            input.ShallowCopy(output);
 
             output.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_JPEG;
             output.Ptr->bufferNum = Math.Max(output.Ptr->bufferNumRecommended, output.Ptr->bufferNumMin);
@@ -24,10 +24,6 @@ namespace MMALSharp.Components
             output.Commit();
 
             SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, 90, output.Ptr);
-
-            Console.WriteLine("Enabling encoder");
-
-            this.EnableComponent();
 
             Console.WriteLine("Create pool");
 
@@ -44,5 +40,27 @@ namespace MMALSharp.Components
             buffer.Properties();
         }
 
+        public override void Initialize()
+        {
+            var input = this.Inputs.ElementAt(0);
+            var output = this.Outputs.ElementAt(0);
+
+            input.ShallowCopy(output);
+
+            output.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_JPEG;
+            output.Ptr->bufferNum = Math.Max(output.Ptr->bufferNumRecommended, output.Ptr->bufferNumMin);
+            output.Ptr->bufferSize = Math.Max(output.Ptr->bufferSizeRecommended, output.Ptr->bufferSizeMin);
+
+            output.Commit();
+
+            SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, 90, output.Ptr);
+
+            Console.WriteLine("Create pool");
+
+            if (this.BufferPool != null)
+                this.BufferPool.Destroy();
+
+            this.BufferPool = new MMALPoolImpl(output);
+        }
     }
 }

@@ -13,5 +13,9 @@ namespace MMALSharp.Components
         {
             this.EnableComponent();
         }
+
+        public override void Initialize()
+        {            
+        }
     }
 }

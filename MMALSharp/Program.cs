@@ -17,28 +17,32 @@ namespace MMALSharp
     {
         public static void Main(string[] args)
         {
-            using (MMALCamera cam = new MMALCamera())
+            MMALCameraConfig config = new MMALCameraConfig
             {
+                Sharpness = 100,
+                Rotation = 50,
+                Contrast = 10,
+                ImageEffect = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NEGATIVE 
+            };
+
+            using (MMALCamera cam = new MMALCamera(config))
+            {
+                cam.ConfigureCamera().TakePicture("/home/pi/test2.jpg");
+
+                Console.WriteLine("Brightness " + cam.Brightness);
+                Console.WriteLine("Contrast " + cam.Contrast);
+                Console.WriteLine("Sharpness " + cam.Sharpness);
+
+                //cam.Brightness = 10;
+                //cam.TakePicture("/home/pi/test3.jpg");
+                
                 /*Task.Run(async () => {
-                    await cam.TakePicture("/home/pi/test1.jpg");
+                    await cam.TakePictureAsync("/home/pi/test1.jpg");
                 }).GetAwaiter().GetResult();*/
-
-                cam.TakePicture("/home/pi/test1.jpg");                                
-            }
-                        
-            ProcessThreadCollection currentThreads = Process.GetCurrentProcess().Threads;
-
-            if(currentThreads != null)
-            {
-                foreach (ProcessThread thread in currentThreads)
-                {
-                    Console.WriteLine("Thread");
-                }
             }
 
-            
-
-            
+            Console.WriteLine("Exit");
+                  
         }
     }
 }

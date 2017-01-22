@@ -19,9 +19,9 @@ namespace MMALSharp.Components
         public MMALPortImpl PreviewPort { get; set; }
         public MMALPortImpl VideoPort { get; set; }
         public MMALPortImpl StillPort { get; set; }
-
+        
         public MMALCameraComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA)
-        {
+        {        
             if (this.Outputs.Count == 0)
                 throw new PiCameraError("Camera doesn't have any output ports.");
 
@@ -61,17 +61,20 @@ namespace MMALSharp.Components
             Console.WriteLine("Camera config set");
         
             this.SetCameraConfig(camConfig);
-            this.SetCameraDefaults();
+                        
+        }
 
-            this.PreviewPort.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_OPAQUE;            
+        public override void Initialize()
+        {
+            this.PreviewPort.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_OPAQUE;
             this.PreviewPort.Ptr->format->es->video.width = 2592u;
             this.PreviewPort.Ptr->format->es->video.height = 1944u;
 
             Console.WriteLine("Commit preview");
 
             this.PreviewPort.Commit();
-            this.PreviewPort.FullCopy(this.VideoPort.Ptr->format);
-                        
+            this.PreviewPort.FullCopy(this.VideoPort);
+
             Console.WriteLine("Commit video");
 
             this.VideoPort.Commit();
@@ -82,45 +85,20 @@ namespace MMALSharp.Components
             this.StillPort.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_OPAQUE;
             this.StillPort.Ptr->format->encodingVariant = MMALEncodings.MMAL_ENCODING_I420;
 
-            this.StillPort.Ptr->format->es->video.width = MMALUtil.VCOS_ALIGN_UP(2592u, 32);
-            this.StillPort.Ptr->format->es->video.height = MMALUtil.VCOS_ALIGN_UP(1944u, 32);
+            this.StillPort.Ptr->format->es->video.width = MMALUtil.VCOS_ALIGN_UP(640u, 32);
+            this.StillPort.Ptr->format->es->video.height = MMALUtil.VCOS_ALIGN_UP(480u, 32);
             this.StillPort.Ptr->format->es->video.crop.x = 0;
             this.StillPort.Ptr->format->es->video.crop.y = 0;
             this.StillPort.Ptr->format->es->video.crop.width = 2592;
             this.StillPort.Ptr->format->es->video.crop.height = 1944;
             this.StillPort.Ptr->format->es->video.frameRate.num = 0;
             this.StillPort.Ptr->format->es->video.frameRate.den = 1;
-            
-            Console.WriteLine("Commit still");            
+
+            Console.WriteLine("Commit still");
             this.StillPort.Commit();
-            
-            this.StillPort.BufferSize = Math.Max(this.StillPort.BufferSize, this.StillPort.BufferSizeRecommended);
-            this.StillPort.BufferNum = this.StillPort.BufferNumRecommended;
-            
-            Console.WriteLine("Enable component");
-            this.EnableComponent();
-            
-            Console.WriteLine("Create pool");
-            this.BufferPool = new MMALPoolImpl(this.StillPort);
+       
         }
-
-        public void SetCameraDefaults()
-        {
-            this.SetSaturation(0);
-            this.SetSharpness(0);
-            this.SetContrast(0);
-            this.SetBrightness(50);
-            this.SetISO(0);
-            this.SetVideoStabilisation(false);
-            this.SetExposureCompensation(0);
-            this.SetExposureMode(MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO);
-            this.SetExposureMeteringMode(MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE);
-            this.SetAwbMode(MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_AUTO);
-            this.SetAwbGains(0, 0);
-            this.SetImageFx(MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NONE);
-            this.SetColourFx(new ColourEffects());
-        }
-
+        
         public void CameraControlCallback(MMALBufferImpl buffer)
         {            
             if (buffer.Cmd == MMALEvents.MMAL_EVENT_PARAMETER_CHANGED)
@@ -148,6 +126,12 @@ namespace MMALSharp.Components
             }            
         }
         
+        public void StopCapture()
+        {
+            if(StillPort.Enabled)
+                StillPort.SetImageCapture(false);
+        }
+
         public byte[] CameraBufferCallback(MMALBufferImpl buffer)
         {
             Console.WriteLine("Inside camera buffer callback");

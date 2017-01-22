@@ -4,15 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static MMALSharp.Native.MMALParameters;
 
 namespace MMALSharp
 {
-    public class MMALCameraParameters
+    public class MMALCameraConfig
     {
-        public int Sharpness { get; set; } = 0;
-        public int Contrast { get; set; } = 0;
-        public int Brightness { get; set; } = 50;
-        public int Saturation { get; set; } = 0;
+        public double Sharpness { get; set; } = 0;
+        public double Contrast { get; set; } = 0;
+        public double Brightness { get; set; } = 50;
+        public double Saturation { get; set; } = 0;
         public int ISO { get; set; } = 0;
         public bool VideoStabilisation { get; set; } = true;
         public int ExposureCompensation { get; set; } = (int)MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
@@ -22,8 +23,7 @@ namespace MMALSharp
         public MMAL_PARAM_IMAGEFX_T ImageEffect { get; set; } = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NONE;
         public ColourEffects Effects { get; set; } = new ColourEffects();
         public int Rotation { get; set; } = 0;
-        public int HFlip { get; set; } = 0;
-        public int VFlip { get; set; } = 0;
+        public MMAL_PARAM_MIRROR_T Flips { get; set; } = MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE;        
         public ROI ROI { get; set; } = new ROI();
         public int ShutterSpeed { get; set; } = 0;
         public int AwbGainsR { get; set; } = 0;

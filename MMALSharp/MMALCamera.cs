@@ -7,162 +7,223 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
+using static MMALSharp.Native.MMALParameters;
 
 namespace MMALSharp
 {
     public class MMALCamera : IDisposable
-    {
+    {        
         public MMALCameraComponent Camera { get; set; }
         public MMALEncoderComponent Encoder { get; set; }
         public MMALNullSinkComponent NullSink { get; set; }
+        private MMALCameraConfig Config { get; set; }
 
         #region Configuration Properties
-
-        private int _sharpness;
-        public int Sharpness {
-            get { return this._sharpness; }
+                
+        public double Sharpness
+        {
+            get
+            {
+                return this.GetSharpness();
+            }
             set
             {
-                this.Camera.SetSharpness(value);
-                this._sharpness = value;
+                this.DisableCamera();
+                this.Config.Sharpness = value;
+                this.ConfigureCamera();                                
             }
         }
-
-        private int _contrast;
-        public int Contrast {
-            get { return this._contrast; }
+                
+        public double Contrast
+        {
+            get
+            {
+                return this.GetContrast();
+            }
             set
             {
-                this.Camera.SetContrast(value);
-                this._contrast = value;
+                this.DisableCamera();
+                this.Config.Contrast = value;
+                this.ConfigureCamera();
             }
         }
-
-        private int _brightness;
-        public int Brightness {
-            get { return this._brightness; }
+                
+        public double Brightness
+        {
+            get
+            {
+                return this.GetBrightness();
+            }
             set
             {
-                this.Camera.SetBrightness(value);
-                this._brightness = value;
+                this.DisableCamera();
+                this.Config.Brightness = value;
+                this.ConfigureCamera();
             }
         }
-
-        private int _saturation;
-        public int Saturation {
-            get { return this._saturation; }
+                
+        public double Saturation
+        {
+            get
+            {
+                return this.GetSaturation();
+            }
             set
             {
-                this.Camera.SetSaturation(value);
-                this._saturation = value;
+                this.DisableCamera();
+                this.Config.Saturation = value;
+                this.ConfigureCamera();
             }
         }
-
-        private int _iso;
-        public int ISO {
-            get { return this._iso; }
+                
+        public int ISO
+        {
+            get
+            {
+                return this.GetISO();
+            }
             set
             {
-                this.Camera.SetISO(value);
-                this._iso = value;
+                this.DisableCamera();
+                this.Config.ISO = value;
+                this.ConfigureCamera();
             }
         }
-
-        private bool _videoStabilisation;
-        public bool VideoStabilisation {
-            get { return this._videoStabilisation; }
+                
+        public bool VideoStabilisation
+        {
+            get
+            {
+                return this.GetVideoStabilisation();
+            }
             set
             {
-                this.Camera.SetVideoStabilisation(value);
-                this._videoStabilisation = value;
+                this.DisableCamera();
+                this.Config.VideoStabilisation = value;                
+                this.ConfigureCamera();
             }
         }
-
-        private int _exposureCompensation;
-        public int ExposureCompensation {
-            get { return this._exposureCompensation; }
+                
+        public int ExposureCompensation
+        {
+            get
+            {
+                return this.GetExposureCompensation();
+            }
             set
             {
-                this.Camera.SetExposureCompensation(value);
-                this._exposureCompensation = value;
+                this.DisableCamera();
+                this.Config.ExposureCompensation = value;                
+                this.ConfigureCamera();
             }
         }
-
-        private MMAL_PARAM_EXPOSUREMODE_T _exposureMode;
-        public MMAL_PARAM_EXPOSUREMODE_T ExposureMode {
-            get { return this._exposureMode; }
+                
+        public MMAL_PARAM_EXPOSUREMODE_T ExposureMode
+        {
+            get
+            {
+                return this.GetExposureMode();
+            }
             set
             {
-                this.Camera.SetExposureMode(value);
-                this._exposureMode = value;
+                this.DisableCamera();
+                this.Config.ExposureMode = value;                
+                this.ConfigureCamera();
             }
         }
-
-        private MMAL_PARAM_EXPOSUREMETERINGMODE_T _exposureMeterMode;
-        public MMAL_PARAM_EXPOSUREMETERINGMODE_T ExposureMeterMode {
-            get { return this._exposureMeterMode; }
+                
+        public MMAL_PARAM_EXPOSUREMETERINGMODE_T ExposureMeterMode
+        {
+            get
+            {
+                return this.GetExposureMeteringMode();
+            }
             set
             {
-                this.Camera.SetExposureMeteringMode(value);
-                this._exposureMeterMode = value;
+                this.DisableCamera();
+                this.Config.ExposureMeterMode = value;                
+                this.ConfigureCamera();
             }
         }
-
-        private MMAL_PARAM_AWBMODE_T _awbMode;
-        public MMAL_PARAM_AWBMODE_T AwbMode {
-            get { return this._awbMode; }
+                
+        public MMAL_PARAM_AWBMODE_T AwbMode
+        {
+            get
+            {
+                return this.GetAwbMode();
+            }
             set
             {
-                this.Camera.SetAwbMode(value);
-                this._awbMode = value;
+                this.DisableCamera();
+                this.Config.AwbMode = value;                
+                this.ConfigureCamera();
             }
         }
-
-        private MMAL_PARAM_IMAGEFX_T _imageEffect;
-        public MMAL_PARAM_IMAGEFX_T ImageEffect {
-            get { return this._imageEffect; }
+                
+        public MMAL_PARAM_IMAGEFX_T ImageEffect
+        {
+            get
+            {
+                return this.GetImageFx();
+            }
             set
             {
-                this.Camera.SetImageFx(value);
-                this._imageEffect = value;
+                this.DisableCamera();
+                this.Config.ImageEffect = value;
+                this.ConfigureCamera();
             }
         }
-
-        private int _rotation;
-        public int Rotation {
-            get { return this._rotation; }
+                
+        public int Rotation
+        {
+            get
+            {
+                return this.GetRotation();
+            }
             set
             {
-                this.Camera.SetRotation(value);
-                this._rotation = value;
+                this.DisableCamera();
+                this.Config.Rotation = value;
+                this.ConfigureCamera();                
             }
         }
-
-        private Tuple<bool, bool> _flips;
-        public Tuple<bool, bool> Flips {
-            get { return this._flips; }
+                
+        public MMAL_PARAM_MIRROR_T Flips
+        {
+            get
+            {
+                return this.GetFlips();
+            }
             set
             {
-                this.Camera.SetFlips(value.Item1, value.Item2);
+                this.DisableCamera();
+                this.Config.Flips = value;
+                this.ConfigureCamera();                
             }
         }
-
-        private int _shutterSpeed;
-        public int ShutterSpeed {
-            get { return this._shutterSpeed; }
+                
+        public int ShutterSpeed
+        {
+            get
+            {
+                return this.GetShutterSpeed();
+            }
             set
             {
-                this.Camera.SetShutterSpeed(value);
-                this._shutterSpeed = value;
+                this.DisableCamera();
+                this.Config.ShutterSpeed = value;
+                this.ConfigureCamera();                
             }
         }
-
+        
         #endregion
 
-
-        public MMALCamera()
+        public MMALCamera(MMALCameraConfig config)
         {
-            BcmHost.bcm_host_init();
+            this.Config = config;
+
+            BcmHost.bcm_host_init();            
             this.Camera = new MMALCameraComponent();
             this.Encoder = new MMALEncoderComponent();
             this.NullSink = new MMALNullSinkComponent();            
@@ -175,6 +236,7 @@ namespace MMALSharp
             var stillPort = this.Camera.StillPort;
 
             var encInput = this.Encoder.Inputs.ElementAt(0);
+                        
             var encOutput = this.Encoder.Outputs.ElementAt(0);
             encOutput.Storage = null;
 
@@ -194,19 +256,19 @@ namespace MMALSharp
             }
 
             Console.WriteLine("Attempt capture");
+                        
             stillPort.SetImageCapture(true);
 
-            encOutput.ResetEvent.Wait();
-
-            encOutput.DisablePort();
-
+            encOutput.Trigger.Wait();
+                        
             File.WriteAllBytes(filename, encOutput.Storage);
-
+                        
             encOutput.Storage = null;
 
-            nullSinkConnection.Destroy();
-            encConection.Destroy();
+            this.Camera.StopCapture();
             
+
+
         }
                 
         public async Task TakePictureAsync(string filename)
@@ -256,11 +318,52 @@ namespace MMALSharp
                 
             });                                              
         }
+
+        public void DisableCamera()
+        {
+            this.Encoder.DisableComponent();
+            this.NullSink.DisableComponent();
+            this.Camera.DisableComponent();
+        }
+
+        public void EnableCamera()
+        {
+            this.Encoder.EnableComponent();
+            this.NullSink.EnableComponent();
+            this.Camera.EnableComponent();
+        }
+
+        public MMALCamera ConfigureCamera()
+        {
+            this.SetSaturation(this.Config.Saturation);
+            this.SetSharpness(this.Config.Sharpness);
+            this.SetContrast(this.Config.Contrast);
+            this.SetBrightness(this.Config.Brightness);
+            this.SetISO(this.Config.ISO);
+            this.SetVideoStabilisation(this.Config.VideoStabilisation);
+            this.SetExposureCompensation(this.Config.ExposureCompensation);
+            this.SetExposureMode(this.Config.ExposureMode);
+            this.SetExposureMeteringMode(this.Config.ExposureMeterMode);
+            this.SetAwbMode(this.Config.AwbMode);
+            this.SetAwbGains(this.Config.AwbGainsR, this.Config.AwbGainsB);
+            this.SetImageFx(this.Config.ImageEffect);
+            this.SetColourFx(this.Config.Effects);
+            this.SetRotation(this.Config.Rotation);
+            this.SetShutterSpeed(this.Config.ShutterSpeed);
+
+            this.Camera.Initialize();
+            this.Encoder.Initialize();
+            this.NullSink.Initialize();
+
+            EnableCamera();
+
+            return this;
+        }
         
         public void Dispose()
         {            
-            this.Camera.Dispose();
-            this.Encoder.Dispose();
+            //this.Camera.Dispose();
+            //this.Encoder.Dispose();
             this.NullSink.Dispose();
             BcmHost.bcm_host_deinit();
         }

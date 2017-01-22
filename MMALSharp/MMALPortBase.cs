@@ -91,9 +91,13 @@ namespace MMALSharp
             }
         }
 
-        public CountdownEvent ResetEvent = new CountdownEvent(1);
-        public int Triggered = 0;        
-        public MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
+        public CountdownEvent Trigger = new CountdownEvent(1);
+        public CountdownEvent DisableTrigger = new CountdownEvent(1);
+
+        protected static Object mLock = new object();
+        protected bool Finished;
+
+        public static MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
 
         protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp)
         {
@@ -108,20 +112,25 @@ namespace MMALSharp
             if (Enabled)
                 MMALCheck(MMALPort.mmal_port_disable(this.Ptr), "Unable to disable port.");
         }
-
+        
         public void Commit()
         {
             MMALCheck(MMALPort.mmal_port_format_commit(this.Ptr), "Unable to commit port changes.");
         }
 
-        public void ShallowCopy(MMAL_ES_FORMAT_T* destination)
+        public void ShallowCopy(MMALPortBase destination)
         {
-            MMALFormat.mmal_format_copy(destination, this.Ptr->format);
+            MMALFormat.mmal_format_copy(destination.Ptr->format, this.Ptr->format);
         }
 
-        public void FullCopy(MMAL_ES_FORMAT_T* destination)
+        public void FullCopy(MMALPortBase destination)
         {
-            MMALFormat.mmal_format_full_copy(destination, this.Ptr->format);
+            MMALFormat.mmal_format_full_copy(destination.Ptr->format, this.Ptr->format);
+        }
+
+        public void Flush()
+        {
+            MMALCheck(MMALPort.mmal_port_flush(this.Ptr), "Unable to flush port.");
         }
 
         public void SendBuffer(MMALBufferImpl buffer)

@@ -83,44 +83,39 @@ namespace MMALSharp
             return compPtr;
         }
 
-        protected void AcquireComponent()
+        public void AcquireComponent()
         {
             MMALComponent.mmal_component_acquire(this.Ptr);
         }
 
-        protected void ReleaseComponent()
+        public void ReleaseComponent()
         {
             MMALCheck(MMALComponent.mmal_component_release(this.Ptr), "Unable to release component");
         }
 
-        protected void DestroyComponent()
+        public void DestroyComponent()
         {
             MMALCheck(MMALComponent.mmal_component_destroy(this.Ptr), "Unable to destroy component");
         }
 
-        protected void EnableComponent()
+        public void EnableComponent()
         {
-            MMALCheck(MMALComponent.mmal_component_enable(this.Ptr), "Unable to enable component");                        
+            if(!this.Enabled)
+                MMALCheck(MMALComponent.mmal_component_enable(this.Ptr), "Unable to enable component");                        
         }
 
-        protected void DisableComponent()
+        public void DisableComponent()
         {
-            MMALCheck(MMALComponent.mmal_component_enable(this.Ptr), "Unable to disable component");
+            if(this.Enabled)
+                MMALCheck(MMALComponent.mmal_component_disable(this.Ptr), "Unable to disable component");
         }
+
+        public abstract void Initialize();
 
         public override void Dispose()
         {
             Console.WriteLine("Disposing component.");
-            
-            foreach(var port in Inputs)
-            {
-                port.DisablePort();                
-            }
-            foreach (var port in Outputs)
-            {
-                port.DisablePort();                
-            }
-                        
+                            
             this.DisableComponent();
             this.DestroyComponent();
 
