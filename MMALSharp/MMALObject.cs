@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MMALSharp
 {
-    public class MMALObject : IDisposable
+    internal class MMALObject : IDisposable
     {
         public static List<WeakReference<MMALObject>> Objects = new List<WeakReference<MMALObject>>();
         private WeakReference<MMALObject> reference;

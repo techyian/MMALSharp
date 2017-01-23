@@ -1,4 +1,5 @@
 ﻿using MMALSharp.Components;
+using MMALSharp.Handlers;
 using MMALSharp.Native;
 using System;
 using System.Collections.Generic;
@@ -229,7 +230,7 @@ namespace MMALSharp
             this.NullSink = new MMALNullSinkComponent();            
         }
 
-        public void TakePicture(string filename)
+        public void TakePicture<T>(ICaptureHandler<T> handler)
         {
             var previewPort = this.Camera.PreviewPort;
             var videoPort = this.Camera.VideoPort;
@@ -260,13 +261,12 @@ namespace MMALSharp
             stillPort.SetImageCapture(true);
 
             encOutput.Trigger.Wait();
-                        
-            File.WriteAllBytes(filename, encOutput.Storage);
-                        
+           
+            handler.Process(encOutput.Storage);
+                                                
             encOutput.Storage = null;
 
-            this.Camera.StopCapture();
-            
+            this.Camera.StopCapture();            
         }
                 
         /*public async Task TakePictureAsync(string filename)

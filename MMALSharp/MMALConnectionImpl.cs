@@ -9,7 +9,7 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
-    public unsafe class MMALConnectionImpl : MMALObject
+    internal unsafe class MMALConnectionImpl : MMALObject
     {
         public MMAL_CONNECTION_T* Ptr { get; set; }
 
