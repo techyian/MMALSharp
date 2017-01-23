@@ -36,59 +36,14 @@ namespace MMALSharp
 
         }
         
-        public static void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        public void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             var bufferImpl = new MMALBufferImpl(buffer);
-
-            MMALPortImpl portObj = null;
-            foreach (WeakReference<MMALObject> obj in Objects)
-            {
-                MMALObject target;
-
-                if (obj.TryGetTarget(out target))
-                {
-                    if (target is MMALPortImpl && ((MMALPortImpl)target).Ptr == port)
-                    {
-                        portObj = target as MMALPortImpl;
-                    }
-                }
-            }
-
-            if (portObj == null)
-            {
-                Console.WriteLine("Cannot retrieve port object. Releasing buffer");
-
-                bufferImpl.Release();
-                return;
-            }
-
-            portObj.Callback(bufferImpl);
-
-            Console.WriteLine("CONTROL CALLBACK");
-
+           
+            this.Callback(bufferImpl);
+            
             Console.WriteLine("Releasing buffer");
-            bufferImpl.Release();
-
-            if (bufferImpl.Cmd == 0)
-            {
-                if (portObj.Enabled && portObj.ComponentReference.BufferPool != null)
-                {
-                    Console.WriteLine("Port still enabled and buffer pool not null.");
-
-                    var newBuffer = MMALQueueImpl.GetBuffer(portObj.ComponentReference.BufferPool.Queue.Ptr);
-
-                    Console.WriteLine("Got buffer. Sending to port.");
-
-                    portObj.SendBuffer(newBuffer);
-
-                    Console.WriteLine("Buffer sent to port.");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Sent event buffer. Releasing");
-            }
-                    
+            bufferImpl.Release();                        
         }
 
     }
@@ -96,16 +51,14 @@ namespace MMALSharp
     public unsafe class MMALPortImpl : MMALPortBase
     {
         public byte[] Storage { get; set; }
-        public CancellationTokenSource TokenSource { get; set; }
 
-        public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
+        public CancellationTokenSource TokenSource { get; set; }
         
         public Func<MMALBufferImpl, byte[]> Callback { get; set; }
 
         public System.Timers.Timer CountdownTimer { get; set; }
-
-        public MMALBufferImpl CurrentBuffer { get; set; }
-
+        
+        public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
 
         public void EnablePort(Func<MMALBufferImpl, byte[]> callback)
         {
@@ -134,15 +87,13 @@ namespace MMALSharp
         }
 
         public void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
-        {            
-            //lock(MMALPortImpl.mLock)
-            //{
+        {
+            lock (MMALPortImpl.mLock)
+            {
                 var bufferImpl = new MMALBufferImpl(buffer);
-
-                this.CurrentBuffer = bufferImpl;
-
+                
                 bufferImpl.PrintProperties();
-                          
+
                 if (bufferImpl.Length > 0)
                 {
                     var data = this.Callback(bufferImpl);
@@ -153,18 +104,18 @@ namespace MMALSharp
                         this.Storage = data;
                 }
 
-                if (this.CurrentBuffer.Properties().Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS ||
+                if (bufferImpl.Properties().Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS ||
                                                     c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED))
                 {
                     Console.WriteLine("Setting triggered flag");
 
                     this.Trigger.Signal();
-                    this.Finished = true;                   
+                    this.Finished = true;
                 }
 
                 Console.WriteLine("Releasing buffer");
                 bufferImpl.Release();
-                                
+
                 try
                 {
                     if (this.Enabled && this.ComponentReference.BufferPool != null)
@@ -175,7 +126,7 @@ namespace MMALSharp
                         {
                             Console.WriteLine("Got buffer. Sending to port.");
 
-                            this.SendBuffer(newBuffer);                            
+                            this.SendBuffer(newBuffer);
                         }
                         else
                             Console.WriteLine("Buffer null. Continuing.");
@@ -192,8 +143,8 @@ namespace MMALSharp
                 }
 
                 Thread.Sleep(100);
-            }            
-        //}
+            }
+        }
 
     }
 }

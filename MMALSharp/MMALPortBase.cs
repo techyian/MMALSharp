@@ -137,6 +137,8 @@ namespace MMALSharp
         {
             MMALCheck(MMALPort.mmal_port_send_buffer(this.Ptr, buffer.Ptr), "Unable to send buffer header.");
         }
+
         
+
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
+    
     public static class MMALEncodings
     {
         public static uint MMAL_ENCODING_H264 = MMALUtil.MMAL_FOURCC("H264");

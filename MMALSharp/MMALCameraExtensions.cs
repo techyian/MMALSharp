@@ -14,15 +14,15 @@ using static MMALSharp.Native.MMALParametersCamera;
 namespace MMALSharp
 {
     public unsafe static class MMALCameraComponentExtensions
-    {        
-        public static void SetCameraConfig(this MMALCameraComponent camera, MMAL_PARAMETER_CAMERA_CONFIG_T value)
+    {
+        internal static void SetCameraConfig(this MMALCameraComponent camera, MMAL_PARAMETER_CAMERA_CONFIG_T value)
         {
             MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, &value.hdr), "Unable to set camera config.");
         }
 
-        public static void SetChangeEventRequest(this MMALCameraComponent camera, MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T value)
+        internal static void SetChangeEventRequest(this MMALControlPortImpl controlPort, MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T value)
         {
-            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, &value.hdr), "Unable to set camera event request.");
+            MMALCheck(MMALPort.mmal_port_parameter_set(controlPort.Ptr, &value.hdr), "Unable to set camera event request.");
         }
 
         internal static double GetSaturation(this MMALCamera camera)

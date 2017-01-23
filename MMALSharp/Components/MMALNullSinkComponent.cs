@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.Components
 {
-    public class MMALNullSinkComponent : MMALComponentBase
+    internal class MMALNullSinkComponent : MMALComponentBase
     {
         public MMALNullSinkComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_NULL_SINK)
         {

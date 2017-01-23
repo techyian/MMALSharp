@@ -13,10 +13,10 @@ using static MMALSharp.Native.MMALParameters;
 namespace MMALSharp
 {
     public class MMALCamera : IDisposable
-    {        
-        public MMALCameraComponent Camera { get; set; }
-        public MMALEncoderComponent Encoder { get; set; }
-        public MMALNullSinkComponent NullSink { get; set; }
+    {
+        internal MMALCameraComponent Camera { get; set; }
+        internal MMALEncoderComponent Encoder { get; set; }
+        internal MMALNullSinkComponent NullSink { get; set; }
         private MMALCameraConfig Config { get; set; }
 
         #region Configuration Properties
@@ -225,7 +225,7 @@ namespace MMALSharp
 
             BcmHost.bcm_host_init();            
             this.Camera = new MMALCameraComponent();
-            this.Encoder = new MMALEncoderComponent();
+            this.Encoder = new MMALEncoderComponent(config.Encoding);
             this.NullSink = new MMALNullSinkComponent();            
         }
 
@@ -267,11 +267,9 @@ namespace MMALSharp
 
             this.Camera.StopCapture();
             
-
-
         }
                 
-        public async Task TakePictureAsync(string filename)
+        /*public async Task TakePictureAsync(string filename)
         {
             await Task.Run(async () => {
 
@@ -317,7 +315,7 @@ namespace MMALSharp
                 
                 
             });                                              
-        }
+        }*/
 
         public void DisableCamera()
         {
@@ -362,8 +360,8 @@ namespace MMALSharp
         
         public void Dispose()
         {            
-            //this.Camera.Dispose();
-            //this.Encoder.Dispose();
+            this.Camera.Dispose();
+            this.Encoder.Dispose();
             this.NullSink.Dispose();
             BcmHost.bcm_host_deinit();
         }

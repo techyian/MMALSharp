@@ -8,16 +8,16 @@ using static MMALSharp.MMALParameterHelpers;
 
 namespace MMALSharp.Components
 {
-    public unsafe class MMALEncoderComponent : MMALComponentBase
+    internal unsafe class MMALEncoderComponent : MMALComponentBase
     {        
-        public MMALEncoderComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
+        public MMALEncoderComponent(uint encoding) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
         {
             var input = this.Inputs.ElementAt(0);
             var output = this.Outputs.ElementAt(0);
 
             input.ShallowCopy(output);
 
-            output.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_JPEG;
+            output.Ptr->format->encoding = encoding;
             output.Ptr->bufferNum = Math.Max(output.Ptr->bufferNumRecommended, output.Ptr->bufferNumMin);
             output.Ptr->bufferSize = Math.Max(output.Ptr->bufferSizeRecommended, output.Ptr->bufferSizeMin);
 

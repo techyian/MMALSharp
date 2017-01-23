@@ -35,6 +35,8 @@ namespace MMALSharp
         public int AnnotateTextColour { get; set; } = -1;
         public int AnnotateBgColour { get; set; } = -1;
         public StereoMode StereoMode { get; set; } = new StereoMode();
+        public bool SetChangeEventRequest { get; set; }
+        public uint Encoding { get; set; } = MMALEncodings.MMAL_ENCODING_JPEG;
 
     }
     

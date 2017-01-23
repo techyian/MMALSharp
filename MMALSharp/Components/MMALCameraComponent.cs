@@ -10,7 +10,7 @@ using System.IO;
 
 namespace MMALSharp.Components
 {
-    public unsafe class MMALCameraComponent : MMALComponentBase
+    internal unsafe class MMALCameraComponent : MMALComponentBase
     {        
         private const int MMAL_CAMERA_PREVIEW_PORT = 0;
         private const int MMAL_CAMERA_VIDEO_PORT = 1;
@@ -20,7 +20,7 @@ namespace MMALSharp.Components
         public MMALPortImpl VideoPort { get; set; }
         public MMALPortImpl StillPort { get; set; }
         
-        public MMALCameraComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA)
+        public MMALCameraComponent(bool requireChangeEvent = false) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA)
         {        
             if (this.Outputs.Count == 0)
                 throw new PiCameraError("Camera doesn't have any output ports.");
@@ -41,7 +41,8 @@ namespace MMALSharp.Components
             var eventRequest = new MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T(new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCommon.MMAL_PARAMETER_CHANGE_EVENT_REQUEST, (uint)Marshal.SizeOf<MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T>()),
                                                                          (uint)MMALParametersCamera.MMAL_PARAMETER_CAMERA_SETTINGS, 1);
 
-            //this.Control.SetChangeEventRequest(eventRequest);
+            if(requireChangeEvent)
+                this.Control.SetChangeEventRequest(eventRequest);
                                                                                      
             this.Control.EnablePort(CameraControlCallback);
 
@@ -67,8 +68,8 @@ namespace MMALSharp.Components
         public override void Initialize()
         {
             this.PreviewPort.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_OPAQUE;
-            this.PreviewPort.Ptr->format->es->video.width = 2592u;
-            this.PreviewPort.Ptr->format->es->video.height = 1944u;
+            this.PreviewPort.Ptr->format->es->video.width = MMALUtil.VCOS_ALIGN_UP(640u, 16);
+            this.PreviewPort.Ptr->format->es->video.height = MMALUtil.VCOS_ALIGN_UP(480u, 16);
 
             Console.WriteLine("Commit preview");
 
@@ -82,15 +83,15 @@ namespace MMALSharp.Components
             if (this.VideoPort.Ptr->bufferNum < 3)
                 this.VideoPort.Ptr->bufferNum = 3;
 
-            this.StillPort.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_OPAQUE;
+            this.StillPort.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_I420;
             this.StillPort.Ptr->format->encodingVariant = MMALEncodings.MMAL_ENCODING_I420;
 
-            this.StillPort.Ptr->format->es->video.width = MMALUtil.VCOS_ALIGN_UP(640u, 32);
-            this.StillPort.Ptr->format->es->video.height = MMALUtil.VCOS_ALIGN_UP(480u, 32);
+            this.StillPort.Ptr->format->es->video.width = MMALUtil.VCOS_ALIGN_UP(640u, 16);
+            this.StillPort.Ptr->format->es->video.height = MMALUtil.VCOS_ALIGN_UP(480u, 16);
             this.StillPort.Ptr->format->es->video.crop.x = 0;
             this.StillPort.Ptr->format->es->video.crop.y = 0;
-            this.StillPort.Ptr->format->es->video.crop.width = 2592;
-            this.StillPort.Ptr->format->es->video.crop.height = 1944;
+            this.StillPort.Ptr->format->es->video.crop.width = (int)MMALUtil.VCOS_ALIGN_UP(640u, 16);
+            this.StillPort.Ptr->format->es->video.crop.height = (int)MMALUtil.VCOS_ALIGN_UP(480u, 16);
             this.StillPort.Ptr->format->es->video.frameRate.num = 0;
             this.StillPort.Ptr->format->es->video.frameRate.den = 1;
 
