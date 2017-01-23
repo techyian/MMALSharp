@@ -17,12 +17,12 @@ public static void Main(string[] args)
         {
             Sharpness = 100,            
             Contrast = 10,
-            ImageEffect = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NEGATIVE 
+            ImageEffect = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NEGATIVE			
         };
 
         using (MMALCamera cam = new MMALCamera(config))
         {
-            cam.ConfigureCamera().TakePicture("/home/pi/test2.jpg");
+            cam.ConfigureCamera().TakePicture(new FileCaptureHandler("/home/pi/test2.jpg"));
             Console.WriteLine("Brightness " + cam.Brightness);
             Console.WriteLine("Contrast " + cam.Contrast);
             Console.WriteLine("Sharpness " + cam.Sharpness);            
@@ -43,6 +43,22 @@ a number of common features are working correctly.
 This library has only been tested on a Raspberry Pi 1 Model B so far with the NoIR v1 camera module, it may or may not work with
 later Pi models and/or camera modules. 
 
+Currently only tested using JPEG encoding. The encoding can be configured in the `MMALCameraConfig` class, i.e. 
+
+```
+MMALCameraConfig config = new MMALCameraConfig
+{
+    Encoding = MMALEncodings.MMAL_ENCODING_BMP            
+};
+
+using (MMALCamera cam = new MMALCamera(config))
+{
+    cam.ConfigureCamera().TakePicture(new FileCaptureHandler("/home/pi/test2.bmp"));              
+}  
+
+```
+
+
 ##Known Issues
 
 Following taking a picture, there is an issue currently with the JPEG encoder whereby it does not send the final buffer frame. Callbacks
@@ -60,5 +76,5 @@ Raspberry Pi is a trademark of the Raspberry Pi Foundation
 
 ##Special thanks
 
-Dave Jones [@waveform80](https://github.com/waveform80) - your Python buffer header conversions have saved me numerous hours so far. 
+Dave Jones [@waveform80](https://github.com/waveform80) - your Python header conversions have saved me numerous hours so far. 
 Thank you very much.

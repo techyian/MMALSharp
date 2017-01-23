@@ -8,7 +8,7 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
-    public unsafe static class MMALParameterHelpers
+    internal unsafe static class MMALParameterHelpers
     {
         public static Dictionary<int, Type> ParameterHelper = new Dictionary<int, Type>
         {

@@ -10,7 +10,7 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
-    public unsafe class MMALBufferImpl : MMALObject
+    internal unsafe class MMALBufferImpl : MMALObject
     {
         public MMAL_BUFFER_HEADER_T* Ptr { get; set; }
 

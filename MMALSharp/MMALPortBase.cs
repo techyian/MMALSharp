@@ -11,8 +11,8 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
-   
-    public unsafe class MMALPortBase : MMALObject
+
+    internal unsafe class MMALPortBase : MMALObject
     {
         public MMAL_PORT_T* Ptr { get; set; }
         public MMAL_COMPONENT_T* Comp { get; set; }

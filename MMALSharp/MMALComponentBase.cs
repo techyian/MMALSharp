@@ -9,7 +9,7 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
-    public abstract unsafe class MMALComponentBase : MMALObject
+    internal abstract unsafe class MMALComponentBase : MMALObject
     {
         public MMAL_COMPONENT_T* Ptr { get; set; }
         public string Name { get; set; }
