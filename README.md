@@ -3,6 +3,24 @@
 MMALSharp is an unofficial C# API for the Raspberry Pi camera. It is currently an early experimental build which features the ability to 
 take pictures with your Raspberry Pi.
 
+##Building
+
+The project is currently targeting .NET framework 4.5.2, and therefore requires Mono 4.x.
+
+MMALSharp uses FAKE for building, and Paket for dependency management. 
+
+To build, simply run one of the below depending on your development environment.
+
+Windows:
+
+`build.cmd`
+
+Unix:
+
+`./build.sh`
+
+Once the library has built, you can reference it as a project within your application.
+
 ##Basic Usage
 
 Using the library is relatively simple. Initially, you are required to create an instance of the `MMALCameraConfig` class, changing any 
@@ -31,13 +49,11 @@ public static void Main(string[] args)
 
 ```
 
-##Building
 
-The project is currently targeting .NET framework 4.5.2, and therefore requires Mono 4.x.
 
 ##Status
 
-As mentioned previously, this is currently an experimental build and therefore a lot of functionality is not fully tested, however
+This is currently an experimental build and therefore a lot of functionality is not fully tested, however
 a number of common features are working correctly.
 
 This library has only been tested on a Raspberry Pi 1 Model B so far with the NoIR v1 camera module, it may or may not work with

@@ -32,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -58,7 +59,7 @@
     <Compile Include="Components\MMALCameraComponent.cs" />
     <Compile Include="MMALCamera.cs" />
     <Compile Include="MMALCameraConfig.cs" />
-    <Compile Include="MMALComponentBase.cs" />
+    <Compile Include="Components\MMALComponentBase.cs" />
     <Compile Include="MMALConnectionImpl.cs" />
     <Compile Include="Components\MMALNullSinkComponent.cs" />
     <Compile Include="MMALObject.cs" />
@@ -86,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -8,6 +8,11 @@ using static MMALSharp.Native.MMALParameters;
 
 namespace MMALSharp
 {
+    public static class MMALCameraConfigImpl
+    {
+        public static MMALCameraConfig Config { get; set; }
+    }
+
     public class MMALCameraConfig
     {
         public double Sharpness { get; set; } = 0;

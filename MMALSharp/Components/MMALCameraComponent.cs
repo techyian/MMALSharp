@@ -20,18 +20,23 @@ namespace MMALSharp.Components
         public MMALPortImpl VideoPort { get; set; }
         public MMALPortImpl StillPort { get; set; }
         
-        public MMALCameraComponent(bool requireChangeEvent = false) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA)
-        {        
+        public MMALCameraComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA)
+        {
+            this.Initialize();
+        }
+
+        public override void Initialize()
+        {
             if (this.Outputs.Count == 0)
                 throw new PiCameraError("Camera doesn't have any output ports.");
 
             SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_NUM, 0, this.Control.Ptr);
 
             this.Control.ObjName = "Control port";
-            
-            this.PreviewPort = this.Outputs.ElementAt(MMAL_CAMERA_PREVIEW_PORT);                        
+
+            this.PreviewPort = this.Outputs.ElementAt(MMAL_CAMERA_PREVIEW_PORT);
             this.PreviewPort.ObjName = "Preview port";
-            
+
             this.VideoPort = this.Outputs.ElementAt(MMAL_CAMERA_VIDEO_PORT);
             this.VideoPort.ObjName = "Video port";
 
@@ -41,9 +46,9 @@ namespace MMALSharp.Components
             var eventRequest = new MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T(new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCommon.MMAL_PARAMETER_CHANGE_EVENT_REQUEST, (uint)Marshal.SizeOf<MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T>()),
                                                                          (uint)MMALParametersCamera.MMAL_PARAMETER_CAMERA_SETTINGS, 1);
 
-            if(requireChangeEvent)
+            if (MMALCameraConfigImpl.Config.SetChangeEventRequest)
                 this.Control.SetChangeEventRequest(eventRequest);
-                                                                                     
+
             this.Control.EnablePort(CameraControlCallback);
 
             var camConfig = new MMAL_PARAMETER_CAMERA_CONFIG_T(new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCamera.MMAL_PARAMETER_CAMERA_CONFIG, (uint)Marshal.SizeOf<MMAL_PARAMETER_CAMERA_CONFIG_T>()),
@@ -58,15 +63,12 @@ namespace MMALSharp.Components
                                                                 0u,
                                                                 MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T.MMAL_PARAM_TIMESTAMP_MODE_RESET_STC
                                                                 );
-            
-            Console.WriteLine("Camera config set");
-        
-            this.SetCameraConfig(camConfig);
-                        
-        }
 
-        public override void Initialize()
-        {
+            Console.WriteLine("Camera config set");
+
+            this.SetCameraConfig(camConfig);
+
+
             this.PreviewPort.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_OPAQUE;
             this.PreviewPort.Ptr->format->es->video.width = MMALUtil.VCOS_ALIGN_UP(640u, 16);
             this.PreviewPort.Ptr->format->es->video.height = MMALUtil.VCOS_ALIGN_UP(480u, 16);

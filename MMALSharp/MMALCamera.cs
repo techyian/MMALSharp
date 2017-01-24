@@ -13,13 +13,12 @@ using static MMALSharp.Native.MMALParameters;
 
 namespace MMALSharp
 {
-    public class MMALCamera : IDisposable
+    public sealed class MMALCamera : IDisposable
     {
         internal MMALCameraComponent Camera { get; set; }
         internal MMALEncoderComponent Encoder { get; set; }
         internal MMALNullSinkComponent NullSink { get; set; }
-        private MMALCameraConfig Config { get; set; }
-
+        
         #region Configuration Properties
                 
         public double Sharpness
@@ -30,8 +29,7 @@ namespace MMALSharp
             }
             set
             {
-                this.DisableCamera();
-                this.Config.Sharpness = value;
+                MMALCameraConfigImpl.Config.Sharpness = value;
                 this.ConfigureCamera();                                
             }
         }
@@ -44,8 +42,7 @@ namespace MMALSharp
             }
             set
             {
-                this.DisableCamera();
-                this.Config.Contrast = value;
+                MMALCameraConfigImpl.Config.Contrast = value;
                 this.ConfigureCamera();
             }
         }
@@ -57,9 +54,8 @@ namespace MMALSharp
                 return this.GetBrightness();
             }
             set
-            {
-                this.DisableCamera();
-                this.Config.Brightness = value;
+            {              
+                MMALCameraConfigImpl.Config.Brightness = value;
                 this.ConfigureCamera();
             }
         }
@@ -71,9 +67,8 @@ namespace MMALSharp
                 return this.GetSaturation();
             }
             set
-            {
-                this.DisableCamera();
-                this.Config.Saturation = value;
+            {              
+                MMALCameraConfigImpl.Config.Saturation = value;
                 this.ConfigureCamera();
             }
         }
@@ -85,9 +80,8 @@ namespace MMALSharp
                 return this.GetISO();
             }
             set
-            {
-                this.DisableCamera();
-                this.Config.ISO = value;
+            {               
+                MMALCameraConfigImpl.Config.ISO = value;
                 this.ConfigureCamera();
             }
         }
@@ -99,9 +93,8 @@ namespace MMALSharp
                 return this.GetVideoStabilisation();
             }
             set
-            {
-                this.DisableCamera();
-                this.Config.VideoStabilisation = value;                
+            {             
+                MMALCameraConfigImpl.Config.VideoStabilisation = value;                
                 this.ConfigureCamera();
             }
         }
@@ -113,9 +106,8 @@ namespace MMALSharp
                 return this.GetExposureCompensation();
             }
             set
-            {
-                this.DisableCamera();
-                this.Config.ExposureCompensation = value;                
+            {            
+                MMALCameraConfigImpl.Config.ExposureCompensation = value;                
                 this.ConfigureCamera();
             }
         }
@@ -127,9 +119,8 @@ namespace MMALSharp
                 return this.GetExposureMode();
             }
             set
-            {
-                this.DisableCamera();
-                this.Config.ExposureMode = value;                
+            {               
+                MMALCameraConfigImpl.Config.ExposureMode = value;                
                 this.ConfigureCamera();
             }
         }
@@ -141,9 +132,8 @@ namespace MMALSharp
                 return this.GetExposureMeteringMode();
             }
             set
-            {
-                this.DisableCamera();
-                this.Config.ExposureMeterMode = value;                
+            {              
+                MMALCameraConfigImpl.Config.ExposureMeterMode = value;                
                 this.ConfigureCamera();
             }
         }
@@ -155,9 +145,8 @@ namespace MMALSharp
                 return this.GetAwbMode();
             }
             set
-            {
-                this.DisableCamera();
-                this.Config.AwbMode = value;                
+            {               
+                MMALCameraConfigImpl.Config.AwbMode = value;                
                 this.ConfigureCamera();
             }
         }
@@ -169,9 +158,8 @@ namespace MMALSharp
                 return this.GetImageFx();
             }
             set
-            {
-                this.DisableCamera();
-                this.Config.ImageEffect = value;
+            {              
+                MMALCameraConfigImpl.Config.ImageEffect = value;
                 this.ConfigureCamera();
             }
         }
@@ -183,9 +171,8 @@ namespace MMALSharp
                 return this.GetRotation();
             }
             set
-            {
-                this.DisableCamera();
-                this.Config.Rotation = value;
+            {              
+                MMALCameraConfigImpl.Config.Rotation = value;
                 this.ConfigureCamera();                
             }
         }
@@ -197,9 +184,8 @@ namespace MMALSharp
                 return this.GetFlips();
             }
             set
-            {
-                this.DisableCamera();
-                this.Config.Flips = value;
+            {                
+                MMALCameraConfigImpl.Config.Flips = value;
                 this.ConfigureCamera();                
             }
         }
@@ -211,9 +197,8 @@ namespace MMALSharp
                 return this.GetShutterSpeed();
             }
             set
-            {
-                this.DisableCamera();
-                this.Config.ShutterSpeed = value;
+            {               
+                MMALCameraConfigImpl.Config.ShutterSpeed = value;
                 this.ConfigureCamera();                
             }
         }
@@ -222,11 +207,11 @@ namespace MMALSharp
 
         public MMALCamera(MMALCameraConfig config)
         {
-            this.Config = config;
+            MMALCameraConfigImpl.Config = config;
 
             BcmHost.bcm_host_init();            
             this.Camera = new MMALCameraComponent();
-            this.Encoder = new MMALEncoderComponent(config.Encoding);
+            this.Encoder = new MMALEncoderComponent();
             this.NullSink = new MMALNullSinkComponent();            
         }
 
@@ -333,27 +318,29 @@ namespace MMALSharp
 
         public MMALCamera ConfigureCamera()
         {
-            this.SetSaturation(this.Config.Saturation);
-            this.SetSharpness(this.Config.Sharpness);
-            this.SetContrast(this.Config.Contrast);
-            this.SetBrightness(this.Config.Brightness);
-            this.SetISO(this.Config.ISO);
-            this.SetVideoStabilisation(this.Config.VideoStabilisation);
-            this.SetExposureCompensation(this.Config.ExposureCompensation);
-            this.SetExposureMode(this.Config.ExposureMode);
-            this.SetExposureMeteringMode(this.Config.ExposureMeterMode);
-            this.SetAwbMode(this.Config.AwbMode);
-            this.SetAwbGains(this.Config.AwbGainsR, this.Config.AwbGainsB);
-            this.SetImageFx(this.Config.ImageEffect);
-            this.SetColourFx(this.Config.Effects);
-            this.SetRotation(this.Config.Rotation);
-            this.SetShutterSpeed(this.Config.ShutterSpeed);
+            this.DisableCamera();
+
+            this.SetSaturation(MMALCameraConfigImpl.Config.Saturation);
+            this.SetSharpness(MMALCameraConfigImpl.Config.Sharpness);
+            this.SetContrast(MMALCameraConfigImpl.Config.Contrast);
+            this.SetBrightness(MMALCameraConfigImpl.Config.Brightness);
+            this.SetISO(MMALCameraConfigImpl.Config.ISO);
+            this.SetVideoStabilisation(MMALCameraConfigImpl.Config.VideoStabilisation);
+            this.SetExposureCompensation(MMALCameraConfigImpl.Config.ExposureCompensation);
+            this.SetExposureMode(MMALCameraConfigImpl.Config.ExposureMode);
+            this.SetExposureMeteringMode(MMALCameraConfigImpl.Config.ExposureMeterMode);
+            this.SetAwbMode(MMALCameraConfigImpl.Config.AwbMode);
+            this.SetAwbGains(MMALCameraConfigImpl.Config.AwbGainsR, MMALCameraConfigImpl.Config.AwbGainsB);
+            this.SetImageFx(MMALCameraConfigImpl.Config.ImageEffect);
+            this.SetColourFx(MMALCameraConfigImpl.Config.Effects);
+            this.SetRotation(MMALCameraConfigImpl.Config.Rotation);
+            this.SetShutterSpeed(MMALCameraConfigImpl.Config.ShutterSpeed);
 
             this.Camera.Initialize();
             this.Encoder.Initialize();
             this.NullSink.Initialize();
 
-            EnableCamera();
+            this.EnableCamera();
 
             return this;
         }

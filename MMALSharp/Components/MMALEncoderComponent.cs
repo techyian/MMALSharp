@@ -10,24 +10,9 @@ namespace MMALSharp.Components
 {
     internal unsafe class MMALEncoderComponent : MMALComponentBase
     {        
-        public MMALEncoderComponent(uint encoding) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
+        public MMALEncoderComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
         {
-            var input = this.Inputs.ElementAt(0);
-            var output = this.Outputs.ElementAt(0);
-
-            input.ShallowCopy(output);
-
-            output.Ptr->format->encoding = encoding;
-            output.Ptr->bufferNum = Math.Max(output.Ptr->bufferNumRecommended, output.Ptr->bufferNumMin);
-            output.Ptr->bufferSize = Math.Max(output.Ptr->bufferSizeRecommended, output.Ptr->bufferSizeMin);
-
-            output.Commit();
-
-            SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, 90, output.Ptr);
-
-            Console.WriteLine("Create pool");
-
-            this.BufferPool = new MMALPoolImpl(output);            
+            this.Initialize();           
         }
 
         public void EncoderBufferCallback(MMALBufferImpl buffer)
@@ -47,7 +32,7 @@ namespace MMALSharp.Components
 
             input.ShallowCopy(output);
 
-            output.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_JPEG;
+            output.Ptr->format->encoding = MMALCameraConfigImpl.Config.Encoding;
             output.Ptr->bufferNum = Math.Max(output.Ptr->bufferNumRecommended, output.Ptr->bufferNumMin);
             output.Ptr->bufferSize = Math.Max(output.Ptr->bufferSizeRecommended, output.Ptr->bufferSizeMin);
 

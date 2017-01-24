@@ -264,15 +264,14 @@ namespace MMALSharp
 
         public static int GetRotation(this MMALCamera camera)
         {            
-            return GetParameter(MMAL_PARAMETER_ROTATION, camera.Camera.Control.Ptr);
+            return GetParameter(MMAL_PARAMETER_ROTATION, camera.Camera.StillPort.Ptr);
         }
 
         public static void SetRotation(this MMALCamera camera, int rotation)
         {            
             int rot = ((rotation % 360) / 90) * 90;
             Console.WriteLine("Setting rotation " + rot);
-            SetParameter(MMAL_PARAMETER_ROTATION, rot, camera.Camera.Control.Ptr);
-
+            SetParameter(MMAL_PARAMETER_ROTATION, rot, camera.Camera.StillPort.Ptr);
         }
 
         public static MMAL_PARAM_MIRROR_T GetFlips(this MMALCamera camera)
@@ -281,7 +280,7 @@ namespace MMALSharp
                                                                                                         MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE);
 
             
-            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &mirror.hdr), "Unable to get flips");
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.StillPort.Ptr, &mirror.hdr), "Unable to get flips");
 
             return mirror.value;
         }
@@ -293,7 +292,7 @@ namespace MMALSharp
 
             mirror.value = flips;
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &mirror.hdr), "Unable to set flips");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.StillPort.Ptr, &mirror.hdr), "Unable to set flips");
 
         }
 
