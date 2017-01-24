@@ -86,7 +86,7 @@ investigation as to why this happens.
 
 MIT license 
 
-Copyright (c) 2010-2017 Ian Auty
+Copyright (c) 2017 Ian Auty
 
 Raspberry Pi is a trademark of the Raspberry Pi Foundation
 
