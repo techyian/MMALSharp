@@ -2,7 +2,12 @@
 pwd=`pwd`
 echo $pwd
 
-.paket/paket.bootstrapper.exe
-.paket/paket.exe restore
+sudo chmod +x .paket/paket.bootstrapper.exe
 
-mono packages/FAKE.4.50.0/tools/FAKE.exe $pwd/build.fsx BuildApp
+.paket/paket.bootstrapper.exe
+
+sudo chmod +x .paket/paket.exe
+
+.paket/paket.exe update
+
+mono packages/FAKE/tools/FAKE.exe $pwd/build.fsx BuildApp

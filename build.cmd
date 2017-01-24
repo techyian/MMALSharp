@@ -11,10 +11,11 @@ if errorlevel 1 (
   exit /b %errorlevel%
 )
 
-paket.exe restore
+paket.exe update
 if errorlevel 1 (
   exit /b %errorlevel%
 )
 
 cd ..
-packages\FAKE.4.50.0\tools\FAKE.exe "%PWD%" BuildApp
+
+packages\FAKE\tools\FAKE.exe "%PWD%" BuildApp
