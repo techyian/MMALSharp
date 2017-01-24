@@ -217,6 +217,7 @@ namespace MMALSharp
 
         public void TakePicture<T>(ICaptureHandler<T> handler)
         {
+            Console.WriteLine("Preparing to take picture");
             var previewPort = this.Camera.PreviewPort;
             var videoPort = this.Camera.VideoPort;
             var stillPort = this.Camera.StillPort;

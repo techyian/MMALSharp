@@ -18,22 +18,25 @@ namespace MMALSharp
         public Action<MMALBufferImpl> Callback { get; set; }
         public void EnablePort(Action<MMALBufferImpl> callback)
         {
-            this.Callback = callback;
-
-            MMALControlPortImpl.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
-
-            IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(MMALControlPortImpl.NativeCallback);
-
-            Console.WriteLine("Enabling port.");
-
-            if (callback == null)
+            if(!this.Enabled)
             {
-                Console.WriteLine("Callback null");
-                MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
-            }
-            else
-                MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
+                this.Callback = callback;
 
+                MMALControlPortImpl.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
+
+                IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(MMALControlPortImpl.NativeCallback);
+
+                Console.WriteLine("Enabling port.");
+
+                if (callback == null)
+                {
+                    Console.WriteLine("Callback null");
+                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
+                }
+                else
+                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
+            }
+            
         }
         
         public void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
@@ -62,22 +65,24 @@ namespace MMALSharp
 
         public void EnablePort(Func<MMALBufferImpl, byte[]> callback)
         {
-            this.Callback = callback;
-
-            MMALPortImpl.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
-
-            IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(MMALPortImpl.NativeCallback);
-
-            Console.WriteLine("Enabling port.");
-
-            if (callback == null)
+            if(!this.Enabled)
             {
-                Console.WriteLine("Callback null");
-                MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
-            }
-            else
-                MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
+                this.Callback = callback;
 
+                MMALPortImpl.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
+
+                IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(MMALPortImpl.NativeCallback);
+
+                Console.WriteLine("Enabling port.");
+
+                if (callback == null)
+                {
+                    Console.WriteLine("Callback null");
+                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
+                }
+                else
+                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
+            }            
         }
 
         public void SignalDisable(object sender, ElapsedEventArgs e)
