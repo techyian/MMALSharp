@@ -17,7 +17,9 @@ Windows:
 
 Unix:
 
-`./build.sh`
+`dos2unix ./build.sh`
+
+`sudo ./build.sh`
 
 Once the library has built, you can reference it as a project within your application.
 
