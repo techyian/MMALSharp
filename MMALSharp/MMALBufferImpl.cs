@@ -84,7 +84,7 @@ namespace MMALSharp
 
         #endregion
 
-        List<MMALBufferProperties> Properties { get; set; }
+        public List<MMALBufferProperties> Properties { get; set; }
 
         public MMALBufferImpl(MMAL_BUFFER_HEADER_T* ptr)
         {

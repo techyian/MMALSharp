@@ -22,7 +22,7 @@ namespace MMALSharp.Components
             Console.WriteLine("Buffer alloc size " + buffer.AllocSize);
             Console.WriteLine("Buffer length " + buffer.Length);
             Console.WriteLine("Buffer offset " + buffer.Offset);
-            buffer.Properties();
+            buffer.PrintProperties();
         }
 
         public override void Initialize()

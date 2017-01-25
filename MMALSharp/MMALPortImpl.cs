@@ -115,7 +115,7 @@ namespace MMALSharp
                 }
 
                 //If this buffer signals the end of data stream, allow waiting thread to continue.
-                if (bufferImpl.Properties().Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END ||
+                if (bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END ||
                                                     c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED))
                 {
                     Console.WriteLine("Setting triggered flag");
