@@ -17,8 +17,18 @@ namespace MMALSharp
         public MMAL_PORT_T* Ptr { get; set; }
         public MMAL_COMPONENT_T* Comp { get; set; }
         public MMALComponentBase ComponentReference { get; set; }
-        public string Name { get; set; }
+        public MMALConnectionImpl Connection { get; set; }
+        public MMALPoolImpl BufferPool { get; set; }        
         public string ObjName { get; set; }
+
+        #region Port struct wrapper properties
+
+        public string Name {
+            get
+            {
+                return Marshal.PtrToStringAnsi((IntPtr)(this.Ptr->name));
+            }
+        }
         public bool Enabled
         {
             get
@@ -91,19 +101,18 @@ namespace MMALSharp
             }
         }
 
+        #endregion
+
         public CountdownEvent Trigger = new CountdownEvent(1);
-        public CountdownEvent DisableTrigger = new CountdownEvent(1);
-
+        
         protected static Object mLock = new object();
-        protected bool Finished;
-
-        public static MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
+        
+        public MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
 
         protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp)
         {
             this.Ptr = ptr;
-            this.Comp = ptr->component;
-            this.Name = Marshal.PtrToStringAnsi((IntPtr)(this.Ptr->name));
+            this.Comp = ptr->component;            
             this.ComponentReference = comp;
         }
                 

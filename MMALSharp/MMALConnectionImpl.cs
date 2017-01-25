@@ -12,7 +12,17 @@ namespace MMALSharp
     internal unsafe class MMALConnectionImpl : MMALObject
     {
         public MMAL_CONNECTION_T* Ptr { get; set; }
+        public MMALPortBase InputPort { get; set; }
+        public MMALPortBase OutputPort { get; set; }
 
+        #region Connection struct wrapper properties
+
+        public string Name {
+            get
+            {
+                return Marshal.PtrToStringAnsi((IntPtr)(*this.Ptr).name);
+            }
+        }
         public bool Enabled {
             get
             {
@@ -26,9 +36,7 @@ namespace MMALSharp
             {
                 return (*this.Ptr).flags;
             }
-        }
-
-        public string Name { get; set; }
+        }                
         public long TimeSetup
         {
             get
@@ -51,19 +59,22 @@ namespace MMALSharp
             }
         }
 
-        protected MMALConnectionImpl(MMAL_CONNECTION_T* ptr)
+        #endregion
+
+        protected MMALConnectionImpl(MMAL_CONNECTION_T* ptr, MMALPortBase output, MMALPortBase input)
         {            
-            this.Ptr = ptr;
-            this.Name = Marshal.PtrToStringAnsi((IntPtr)(*this.Ptr).name);
+            this.Ptr = ptr;            
+            this.OutputPort = output;
+            this.InputPort = input;
             this.Enable();
         }
 
-        public static MMALConnectionImpl CreateConnection(MMALPortImpl output, MMALPortImpl input)
+        public static MMALConnectionImpl CreateConnection(MMALPortBase output, MMALPortBase input)
         {
             IntPtr ptr = IntPtr.Zero;
             MMALCheck(MMALConnection.mmal_connection_create(&ptr, output.Ptr, input.Ptr, MMALConnection.MMAL_CONNECTION_FLAG_TUNNELLING | MMALConnection.MMAL_CONNECTION_FLAG_ALLOCATION_ON_INPUT), "Unable to create connection");
             
-            return new MMALConnectionImpl((MMAL_CONNECTION_T*)ptr);
+            return new MMALConnectionImpl((MMAL_CONNECTION_T*)ptr, output, input);
         }
 
         public void Enable()

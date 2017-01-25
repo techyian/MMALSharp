@@ -10,29 +10,36 @@ using static MMALSharp.MMALCallerHelper;
 namespace MMALSharp
 {
     internal abstract unsafe class MMALComponentBase : MMALObject
-    {
-        public MMAL_COMPONENT_T* Ptr { get; set; }
-        public string Name { get; set; }
-        public bool Enabled {
-            get {
-                return this.Ptr->isEnabled == 1;
-            }
-        }
+    {        
         public MMALControlPortImpl Control { get; set; }
         public List<MMALPortImpl> Inputs { get; set; }
         public List<MMALPortImpl> Outputs { get; set; }
         public List<MMALPortImpl> Clocks { get; set; }
         public List<MMALPortImpl> Ports { get; set; }
-        public MMALPoolImpl BufferPool { get; set; }
+
+        public MMAL_COMPONENT_T* Ptr { get; set; }
+        public string Name
+        {
+            get
+            {
+                return Marshal.PtrToStringAnsi((IntPtr)this.Ptr->name);
+            }
+        }
+        public bool Enabled
+        {
+            get
+            {
+                return this.Ptr->isEnabled == 1;
+            }
+        }
+
 
         protected MMALComponentBase(string name)
         {
             var ptr = CreateComponent(name);
 
             this.Ptr = ptr;
-
-            this.Name = Marshal.PtrToStringAnsi((IntPtr)ptr->name);
-
+                        
             Inputs = new List<MMALPortImpl>();
             Outputs = new List<MMALPortImpl>();
             Clocks = new List<MMALPortImpl>();
@@ -115,7 +122,19 @@ namespace MMALSharp
         public override void Dispose()
         {
             Console.WriteLine("Disposing component.");
-                            
+
+            this.Control.DisablePort();
+
+            foreach (var port in this.Outputs)
+            {
+                port.DisablePort();
+            }
+
+            foreach (var port in this.Inputs)
+            {                
+                port.DisablePort();
+            }
+                        
             this.DisableComponent();
             this.DestroyComponent();
 

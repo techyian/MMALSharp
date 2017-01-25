@@ -22,12 +22,12 @@ namespace MMALSharp
             {
                 this.Callback = callback;
 
-                MMALControlPortImpl.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
+                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
 
-                IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(MMALControlPortImpl.NativeCallback);
+                IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
                 Console.WriteLine("Enabling port.");
-
+                
                 if (callback == null)
                 {
                     Console.WriteLine("Callback null");
@@ -54,9 +54,7 @@ namespace MMALSharp
     internal unsafe class MMALPortImpl : MMALPortBase
     {
         public byte[] Storage { get; set; }
-
-        public CancellationTokenSource TokenSource { get; set; }
-        
+                
         public Func<MMALBufferImpl, byte[]> Callback { get; set; }
 
         public System.Timers.Timer CountdownTimer { get; set; }
@@ -69,12 +67,22 @@ namespace MMALSharp
             {
                 this.Callback = callback;
 
-                MMALPortImpl.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
+                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
 
-                IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(MMALPortImpl.NativeCallback);
+                IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
                 Console.WriteLine("Enabling port.");
 
+                this.BufferPool = new MMALPoolImpl(this);
+
+                var length = this.BufferPool.Queue.QueueLength();
+
+                for (int i = 0; i < length; i++)
+                {
+                    var buffer = this.BufferPool.Queue.GetBuffer();
+                    this.SendBuffer(buffer);
+                }
+                
                 if (callback == null)
                 {
                     Console.WriteLine("Callback null");
@@ -85,20 +93,17 @@ namespace MMALSharp
             }            
         }
 
-        public void SignalDisable(object sender, ElapsedEventArgs e)
-        {
-            Console.WriteLine("in signal disable");
-            this.DisableTrigger.Signal();
-        }
-
         public void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             lock (MMALPortImpl.mLock)
             {
+                Console.WriteLine("Background thread: " + Thread.CurrentThread.IsBackground);
+
                 var bufferImpl = new MMALBufferImpl(buffer);
                 
                 bufferImpl.PrintProperties();
 
+                //Process buffer frame into a byte array
                 if (bufferImpl.Length > 0)
                 {
                     var data = this.Callback(bufferImpl);
@@ -109,13 +114,13 @@ namespace MMALSharp
                         this.Storage = data;
                 }
 
-                if (bufferImpl.Properties().Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS ||
+                //If this buffer signals the end of data stream, allow waiting thread to continue.
+                if (bufferImpl.Properties().Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END ||
                                                     c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED))
                 {
                     Console.WriteLine("Setting triggered flag");
 
-                    this.Trigger.Signal();
-                    this.Finished = true;
+                    this.Trigger.Signal();                    
                 }
 
                 Console.WriteLine("Releasing buffer");
@@ -123,9 +128,9 @@ namespace MMALSharp
 
                 try
                 {
-                    if (this.Enabled && this.ComponentReference.BufferPool != null)
+                    if (this.Enabled && this.BufferPool != null)
                     {
-                        var newBuffer = MMALQueueImpl.GetBuffer(this.ComponentReference.BufferPool.Queue.Ptr);
+                        var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
 
                         if (newBuffer != null)
                         {

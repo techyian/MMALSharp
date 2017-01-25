@@ -39,13 +39,7 @@ namespace MMALSharp.Components
             output.Commit();
 
             SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, 90, output.Ptr);
-
-            Console.WriteLine("Create pool");
-
-            if (this.BufferPool != null)
-                this.BufferPool.Destroy();
-
-            this.BufferPool = new MMALPoolImpl(output);
+                        
         }
     }
 }

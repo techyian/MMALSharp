@@ -18,6 +18,7 @@ namespace MMALSharp
         internal MMALCameraComponent Camera { get; set; }
         internal MMALEncoderComponent Encoder { get; set; }
         internal MMALNullSinkComponent NullSink { get; set; }
+        internal List<MMALConnectionImpl> Connections { get; set; }
         
         #region Configuration Properties
                 
@@ -215,94 +216,43 @@ namespace MMALSharp
             this.NullSink = new MMALNullSinkComponent();            
         }
 
-        public void TakePicture<T>(ICaptureHandler<T> handler)
+        public T TakePicture<T>(ICaptureHandler<T> handler)
         {
             Console.WriteLine("Preparing to take picture");
             var previewPort = this.Camera.PreviewPort;
             var videoPort = this.Camera.VideoPort;
             var stillPort = this.Camera.StillPort;
 
-            var encInput = this.Encoder.Inputs.ElementAt(0);
-                        
+            var encInput = this.Encoder.Inputs.ElementAt(0);                        
             var encOutput = this.Encoder.Outputs.ElementAt(0);
+
             encOutput.Storage = null;
-
+                        
             var nullSinkInputPort = this.NullSink.Inputs.ElementAt(0);
-            var nullSinkConnection = MMALConnectionImpl.CreateConnection(previewPort, nullSinkInputPort);
 
+            //Create connections
+            var nullSinkConnection = MMALConnectionImpl.CreateConnection(previewPort, nullSinkInputPort);
             var encConection = MMALConnectionImpl.CreateConnection(stillPort, encInput);
 
+            if (this.Connections == null)
+                this.Connections = new List<MMALConnectionImpl>();
+
+            this.Connections.Add(encConection);
+            this.Connections.Add(nullSinkConnection);
+                                    
             encOutput.EnablePort(this.Camera.CameraBufferCallback);
-
-            var length = this.Encoder.BufferPool.Queue.QueueLength();
-
-            for (int i = 0; i < length; i++)
-            {
-                var buffer = this.Encoder.BufferPool.Queue.GetBuffer();
-                encOutput.SendBuffer(buffer);
-            }
-
+            
             Console.WriteLine("Attempt capture");
                         
             stillPort.SetImageCapture(true);
 
             encOutput.Trigger.Wait();
-           
-            handler.Process(encOutput.Storage);
-                                                
-            encOutput.Storage = null;
-
+                                   
             this.Camera.StopCapture();            
+
+            return handler.Process(encOutput.Storage);
         }
-                
-        /*public async Task TakePictureAsync(string filename)
-        {
-            await Task.Run(async () => {
-
-                var previewPort = this.Camera.PreviewPort;
-                var videoPort = this.Camera.VideoPort;
-                var stillPort = this.Camera.StillPort;
-                
-                var encInput = this.Encoder.Inputs.ElementAt(0);
-                var encOutput = this.Encoder.Outputs.ElementAt(0);
-                encOutput.Storage = null;
-
-                var nullSinkInputPort = this.NullSink.Inputs.ElementAt(0);
-                var nullSinkConnection = MMALConnectionImpl.CreateConnection(previewPort, nullSinkInputPort);
-
-                var encConection = MMALConnectionImpl.CreateConnection(stillPort, encInput);
-
-                encOutput.EnablePort(this.Camera.CameraBufferCallback);
-                                
-                var length = this.Encoder.BufferPool.Queue.QueueLength();
-                
-                for (int i = 0; i < length; i++)
-                {
-                    var buffer = this.Encoder.BufferPool.Queue.GetBuffer();
-                    encOutput.SendBuffer(buffer);
-                }
-
-                Console.WriteLine("Attempt capture");
-                stillPort.SetImageCapture(true);
-
-                encOutput.TokenSource = new CancellationTokenSource();
-
-                await Task.Delay(30000, encOutput.TokenSource.Token).ContinueWith(c =>
-                {                    
-                    encOutput.DisablePort();
-                                        
-                    File.WriteAllBytes(filename, encOutput.Storage);
-
-                    encOutput.Storage = null;
-
-                    nullSinkConnection.Destroy();
-                    encConection.Destroy();
-                });
-                
-                
-            });                                              
-        }*/
-
+        
         public void DisableCamera()
         {
             this.Encoder.DisableComponent();
@@ -347,7 +297,17 @@ namespace MMALSharp
         }
         
         public void Dispose()
-        {            
+        {
+            //Close any connections we have open.
+            Console.WriteLine("Closing connections.");
+            foreach (var conn in this.Connections)
+            {
+                if (conn.Enabled)
+                    conn.Disable();
+                conn.Destroy();
+            }
+            
+            Console.WriteLine("Disabling ports and destroying components");
             this.Camera.Dispose();
             this.Encoder.Dispose();
             this.NullSink.Dispose();

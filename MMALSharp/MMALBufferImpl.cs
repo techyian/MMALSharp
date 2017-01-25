@@ -14,6 +14,8 @@ namespace MMALSharp
     {
         public MMAL_BUFFER_HEADER_T* Ptr { get; set; }
 
+        #region Buffer struct wrapper properties
+
         public byte* Data
         {
             get
@@ -79,23 +81,28 @@ namespace MMALSharp
                 return t;
             }
         }
-            
+
+        #endregion
+
+        List<MMALBufferProperties> Properties { get; set; }
+
         public MMALBufferImpl(MMAL_BUFFER_HEADER_T* ptr)
         {
             this.Ptr = ptr;
+            this.InitialiseProperties();
         }
               
         public void PrintProperties()
         {
             Console.WriteLine("---Begin buffer properties---");
-            foreach(MMALBufferProperties prop in Properties())
+            foreach(MMALBufferProperties prop in this.Properties)
             {
                 Console.WriteLine(prop.ToString());
             }
             Console.WriteLine("---End buffer properties---");
         }
           
-        public List<MMALBufferProperties> Properties()
+        public void InitialiseProperties()
         {
             List<MMALBufferProperties> properties = new List<MMALBufferProperties>();
 
@@ -148,7 +155,7 @@ namespace MMALSharp
                 properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
             }
 
-            return properties;            
+            this.Properties = properties;             
         }
 
         public byte[] DataStream()
