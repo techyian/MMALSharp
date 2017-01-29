@@ -66,6 +66,14 @@ namespace MMALSharp
                 Console.WriteLine("Enabling port.");
 
                 this.BufferPool = new MMALPoolImpl(this);
+                                                
+                if (callback == null)
+                {
+                    Console.WriteLine("Callback null");
+                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
+                }
+                else
+                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
 
                 var length = this.BufferPool.Queue.QueueLength();
 
@@ -74,14 +82,6 @@ namespace MMALSharp
                     var buffer = this.BufferPool.Queue.GetBuffer();
                     this.SendBuffer(buffer);
                 }
-                
-                if (callback == null)
-                {
-                    Console.WriteLine("Callback null");
-                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
-                }
-                else
-                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
             }            
         }
 
