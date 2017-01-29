@@ -9,13 +9,14 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
-    internal abstract unsafe class MMALComponentBase : MMALObject
+    public abstract unsafe class MMALComponentBase : MMALObject
     {        
         public MMALControlPortImpl Control { get; set; }
         public List<MMALPortImpl> Inputs { get; set; }
         public List<MMALPortImpl> Outputs { get; set; }
         public List<MMALPortImpl> Clocks { get; set; }
         public List<MMALPortImpl> Ports { get; set; }
+        
 
         public MMAL_COMPONENT_T* Ptr { get; set; }
         public string Name
@@ -118,7 +119,7 @@ namespace MMALSharp
         }
 
         public abstract void Initialize();
-
+        
         public override void Dispose()
         {
             Console.WriteLine("Disposing component.");

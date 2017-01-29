@@ -7,7 +7,14 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.Components
 {
-    internal class MMALNullSinkComponent : MMALComponentBase
+    public abstract class MMALRendererBase : MMALDownstreamComponent
+    {
+        public MMALRendererBase(string name) : base(name)
+        {
+        }
+    }
+
+    public class MMALNullSinkComponent : MMALRendererBase
     {
         public MMALNullSinkComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_NULL_SINK)
         {
@@ -16,6 +23,18 @@ namespace MMALSharp.Components
 
         public override void Initialize()
         {            
+        }
+    }
+
+    public class MMALVideoRenderer : MMALRendererBase
+    {
+        public MMALVideoRenderer() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_RENDERER)
+        {
+        }
+
+        public override void Initialize()
+        {
+            throw new NotImplementedException();
         }
     }
 }

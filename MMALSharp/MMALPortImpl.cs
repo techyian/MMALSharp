@@ -11,16 +11,15 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
-    internal unsafe class MMALControlPortImpl : MMALPortBase
+    public unsafe class MMALControlPortImpl : MMALPortBase
     {
         public MMALControlPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
 
-        public Action<MMALBufferImpl> Callback { get; set; }
-        public void EnablePort(Action<MMALBufferImpl> callback)
+        public override void EnablePort(Action<MMALBufferImpl> callback)
         {
             if(!this.Enabled)
             {
-                this.Callback = callback;
+                this.ManagedCallback = callback;
 
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
 
@@ -35,15 +34,14 @@ namespace MMALSharp
                 }
                 else
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
-            }
-            
+            }            
         }
         
         public void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             var bufferImpl = new MMALBufferImpl(buffer);
            
-            this.Callback(bufferImpl);
+            this.ManagedCallback(bufferImpl);
             
             Console.WriteLine("Releasing buffer");
             bufferImpl.Release();                        
@@ -51,21 +49,15 @@ namespace MMALSharp
 
     }
 
-    internal unsafe class MMALPortImpl : MMALPortBase
-    {
-        public byte[] Storage { get; set; }
-                
-        public Func<MMALBufferImpl, byte[]> Callback { get; set; }
-
-        public System.Timers.Timer CountdownTimer { get; set; }
-        
+    public unsafe class MMALPortImpl : MMALPortBase
+    {  
         public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
-
-        public void EnablePort(Func<MMALBufferImpl, byte[]> callback)
+                
+        public override void EnablePort(Action<MMALBufferImpl> callback)
         {
             if(!this.Enabled)
             {
-                this.Callback = callback;
+                this.ManagedCallback = callback;
 
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
 
@@ -106,12 +98,7 @@ namespace MMALSharp
                 //Process buffer frame into a byte array
                 if (bufferImpl.Length > 0)
                 {
-                    var data = this.Callback(bufferImpl);
-
-                    if (data != null && this.Storage != null)
-                        this.Storage = this.Storage.Concat(data).ToArray();
-                    else if (data != null && this.Storage == null)
-                        this.Storage = data;
+                    this.ManagedCallback(bufferImpl);                    
                 }
 
                 //If this buffer signals the end of data stream, allow waiting thread to continue.
@@ -122,8 +109,7 @@ namespace MMALSharp
 
                     this.Trigger.Signal();                    
                 }
-
-                Console.WriteLine("Releasing buffer");
+                
                 bufferImpl.Release();
 
                 try

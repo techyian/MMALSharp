@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\MMALDownstreamComponent.cs" />
     <Compile Include="Components\MMALEncoderComponent.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Handlers\ByteArrayCaptureHandler.cs" />
@@ -87,7 +88,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

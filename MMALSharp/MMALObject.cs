@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MMALSharp
 {
-    internal class MMALObject : IDisposable
+    public abstract class MMALObject : IDisposable
     {
         public static List<WeakReference<MMALObject>> Objects = new List<WeakReference<MMALObject>>();
         private WeakReference<MMALObject> reference;
@@ -17,23 +17,7 @@ namespace MMALSharp
             reference = new WeakReference<MMALObject>(this);
             Objects.Add(reference);
         }
-
-        public static unsafe void UpdatePort(MMALPortImpl port)
-        {            
-            for(int i = 0; i < Objects.Count; i++)
-            {
-                MMALObject target;
-
-                if (Objects[i].TryGetTarget(out target))
-                {
-                    if (target is MMALPortImpl && ((MMALPortImpl)target).Ptr == port.Ptr)
-                    {
-                        Objects[i] = new WeakReference<MMALObject>(port);
-                    }
-                }
-            } 
-        }
-                
+                        
         public virtual void Dispose()
         {            
             Objects.Remove(reference);

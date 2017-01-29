@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MMALSharp
 {
-    internal unsafe class MMALQueueImpl : MMALObject
+    public unsafe class MMALQueueImpl : MMALObject
     {
         public MMAL_QUEUE_T* Ptr { get; set; }
 

@@ -12,7 +12,7 @@ using static MMALSharp.MMALCallerHelper;
 namespace MMALSharp
 {
 
-    internal unsafe class MMALPortBase : MMALObject
+    public abstract unsafe class MMALPortBase : MMALObject
     {
         public MMAL_PORT_T* Ptr { get; set; }
         public MMAL_COMPONENT_T* Comp { get; set; }
@@ -108,6 +108,7 @@ namespace MMALSharp
         protected static Object mLock = new object();
         
         public MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
+        public Action<MMALBufferImpl> ManagedCallback { get; set; }
 
         protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp)
         {
@@ -115,7 +116,9 @@ namespace MMALSharp
             this.Comp = ptr->component;            
             this.ComponentReference = comp;
         }
-                
+
+        public abstract void EnablePort(Action<MMALBufferImpl> callback);
+
         public void DisablePort()
         {
             if (Enabled)

@@ -10,7 +10,7 @@ using System.IO;
 
 namespace MMALSharp.Components
 {
-    internal unsafe class MMALCameraComponent : MMALComponentBase
+    public unsafe class MMALCameraComponent : MMALComponentBase
     {        
         private const int MMAL_CAMERA_PREVIEW_PORT = 0;
         private const int MMAL_CAMERA_VIDEO_PORT = 1;
@@ -69,9 +69,9 @@ namespace MMALSharp.Components
             this.SetCameraConfig(camConfig);
 
 
-            this.PreviewPort.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_OPAQUE;
-            this.PreviewPort.Ptr->format->es->video.width = MMALUtil.VCOS_ALIGN_UP(640u, 16);
-            this.PreviewPort.Ptr->format->es->video.height = MMALUtil.VCOS_ALIGN_UP(480u, 16);
+            this.PreviewPort.Ptr->format->encoding = MMALCameraConfigImpl.Config.PreviewEncoding;
+            this.PreviewPort.Ptr->format->es->video.width = MMALCameraConfigImpl.Config.PreviewWidth;
+            this.PreviewPort.Ptr->format->es->video.height = MMALCameraConfigImpl.Config.PreviewHeight;
 
             Console.WriteLine("Commit preview");
 
@@ -85,11 +85,11 @@ namespace MMALSharp.Components
             if (this.VideoPort.Ptr->bufferNum < 3)
                 this.VideoPort.Ptr->bufferNum = 3;
 
-            this.StillPort.Ptr->format->encoding = MMALEncodings.MMAL_ENCODING_I420;
-            this.StillPort.Ptr->format->encodingVariant = MMALEncodings.MMAL_ENCODING_I420;
+            this.StillPort.Ptr->format->encoding = MMALCameraConfigImpl.Config.StillEncoding;
+            this.StillPort.Ptr->format->encodingVariant = MMALCameraConfigImpl.Config.StillEncodingSubFormat;
 
-            this.StillPort.Ptr->format->es->video.width = MMALUtil.VCOS_ALIGN_UP(640u, 16);
-            this.StillPort.Ptr->format->es->video.height = MMALUtil.VCOS_ALIGN_UP(480u, 16);
+            this.StillPort.Ptr->format->es->video.width = MMALCameraConfigImpl.Config.StillWidth;
+            this.StillPort.Ptr->format->es->video.height = MMALCameraConfigImpl.Config.StillHeight;
             this.StillPort.Ptr->format->es->video.crop.x = 0;
             this.StillPort.Ptr->format->es->video.crop.y = 0;
             this.StillPort.Ptr->format->es->video.crop.width = (int)MMALUtil.VCOS_ALIGN_UP(640u, 16);
@@ -128,13 +128,7 @@ namespace MMALSharp.Components
                 Console.WriteLine("Received unexpected camera control callback event");
             }            
         }
-        
-        public void StopCapture()
-        {
-            if(StillPort.Enabled)
-                StillPort.SetImageCapture(false);
-        }
-
+                
         public byte[] CameraBufferCallback(MMALBufferImpl buffer)
         {
             Console.WriteLine("Inside camera buffer callback");
@@ -143,7 +137,7 @@ namespace MMALSharp.Components
             Console.WriteLine("Buffer length " + buffer.Length);
             Console.WriteLine("Buffer offset " + buffer.Offset);
             
-            return buffer.DataStream();                        
+            return buffer.GetBufferData();                        
         }
         
     }

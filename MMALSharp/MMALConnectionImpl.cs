@@ -9,7 +9,7 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
-    internal unsafe class MMALConnectionImpl : MMALObject
+    public unsafe class MMALConnectionImpl : MMALObject
     {
         public MMAL_CONNECTION_T* Ptr { get; set; }
         public MMALPortBase InputPort { get; set; }
@@ -69,7 +69,7 @@ namespace MMALSharp
             this.Enable();
         }
 
-        public static MMALConnectionImpl CreateConnection(MMALPortBase output, MMALPortBase input)
+        internal static MMALConnectionImpl CreateConnection(MMALPortBase output, MMALPortBase input)
         {
             IntPtr ptr = IntPtr.Zero;
             MMALCheck(MMALConnection.mmal_connection_create(&ptr, output.Ptr, input.Ptr, MMALConnection.MMAL_CONNECTION_FLAG_TUNNELLING | MMALConnection.MMAL_CONNECTION_FLAG_ALLOCATION_ON_INPUT), "Unable to create connection");

@@ -15,11 +15,10 @@ namespace MMALSharp
 {
     public sealed class MMALCamera : IDisposable
     {
-        internal MMALCameraComponent Camera { get; set; }
-        internal MMALEncoderComponent Encoder { get; set; }
-        internal MMALNullSinkComponent NullSink { get; set; }
-        internal List<MMALConnectionImpl> Connections { get; set; }
-        
+        public MMALCameraComponent Camera { get; set; }
+        public List<MMALEncoderBase> Encoders { get; set; }            
+        public MMALRendererBase Preview { get; set; }
+                
         #region Configuration Properties
                 
         public double Sharpness
@@ -211,59 +210,78 @@ namespace MMALSharp
             MMALCameraConfigImpl.Config = config;
 
             BcmHost.bcm_host_init();            
-            this.Camera = new MMALCameraComponent();
-            this.Encoder = new MMALEncoderComponent();
-            this.NullSink = new MMALNullSinkComponent();            
+            this.Camera = new MMALCameraComponent();                   
+            this.Preview = new MMALNullSinkComponent();            
         }
 
-        public T TakePicture<T>(ICaptureHandler<T> handler)
+        public void StartCapture(MMALPortImpl port)
+        {
+            if(port == this.Camera.StillPort || this.Encoders.Any(c => c.Enabled))
+                port.SetImageCapture(true);
+        }
+
+        public void StopCapture(MMALPortImpl port)
+        {
+            if (port == this.Camera.StillPort || this.Encoders.Any(c => c.Enabled))
+                port.SetImageCapture(false);
+        }
+
+        /// <summary>
+        /// Captures a single image from the camera still port and processes it using the Image Encoder component.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="handler"></param>
+        /// <param name="encodingType"></param>
+        /// <param name="quality"></param>
+        /// <returns></returns>
+        public T TakePicture<T>(ICaptureHandler<T> handler, uint encodingType, uint quality)
         {
             Console.WriteLine("Preparing to take picture");
-            var previewPort = this.Camera.PreviewPort;
-            var videoPort = this.Camera.VideoPort;
-            var stillPort = this.Camera.StillPort;
+            var camPreviewPort = this.Camera.PreviewPort;
+            var camVideoPort = this.Camera.VideoPort;
+            var camStillPort = this.Camera.StillPort;
 
-            var encInput = this.Encoder.Inputs.ElementAt(0);                        
-            var encOutput = this.Encoder.Outputs.ElementAt(0);
-
-            encOutput.Storage = null;
-                        
-            var nullSinkInputPort = this.NullSink.Inputs.ElementAt(0);
-
+            var encoder = CreateImageEncoder(encodingType, quality);
+                      
             //Create connections
-            var nullSinkConnection = MMALConnectionImpl.CreateConnection(previewPort, nullSinkInputPort);
-            var encConection = MMALConnectionImpl.CreateConnection(stillPort, encInput);
+            this.Preview.CreateConnection(camPreviewPort);
+            encoder.CreateConnection(camStillPort);
 
-            if (this.Connections == null)
-                this.Connections = new List<MMALConnectionImpl>();
-
-            this.Connections.Add(encConection);
-            this.Connections.Add(nullSinkConnection);
-                                    
-            encOutput.EnablePort(this.Camera.CameraBufferCallback);
+            //Enable the image encoder output port.
+            encoder.Start();
             
             Console.WriteLine("Attempt capture");
-                        
-            stillPort.SetImageCapture(true);
 
-            encOutput.Trigger.Wait();
-                                   
-            this.Camera.StopCapture();            
+            this.StartCapture(camStillPort);
 
-            return handler.Process(encOutput.Storage);
+            encoder.Outputs.ElementAt(0).Trigger.Wait();
+
+            this.StopCapture(camStillPort);
+            
+            return handler.Process(encoder.Storage);
+        }
+
+        public void TakePictureIterative(FileCaptureHandler handler, uint encodingType, uint quality, int iterations, DateTime timeout)
+        {
+
+        }
+
+        public MMALImageEncoder CreateImageEncoder(uint encodingType, uint quality)
+        {            
+            return new MMALImageEncoder(encodingType, quality);
         }
         
         public void DisableCamera()
         {
-            this.Encoder.DisableComponent();
-            this.NullSink.DisableComponent();
+            this.Encoders.ForEach(c => c.DisableComponent());
+            this.Preview.DisableComponent();
             this.Camera.DisableComponent();
         }
 
         public void EnableCamera()
         {
-            this.Encoder.EnableComponent();
-            this.NullSink.EnableComponent();
+            this.Encoders.ForEach(c => c.EnableComponent());
+            this.Preview.EnableComponent();
             this.Camera.EnableComponent();
         }
 
@@ -288,8 +306,8 @@ namespace MMALSharp
             this.SetShutterSpeed(MMALCameraConfigImpl.Config.ShutterSpeed);
 
             this.Camera.Initialize();
-            this.Encoder.Initialize();
-            this.NullSink.Initialize();
+            this.Encoders.ForEach(c => c.Initialize());
+            this.Preview.Initialize();
 
             this.EnableCamera();
 
@@ -297,20 +315,11 @@ namespace MMALSharp
         }
         
         public void Dispose()
-        {
-            //Close any connections we have open.
-            Console.WriteLine("Closing connections.");
-            foreach (var conn in this.Connections)
-            {
-                if (conn.Enabled)
-                    conn.Disable();
-                conn.Destroy();
-            }
-            
+        {            
             Console.WriteLine("Disabling ports and destroying components");
             this.Camera.Dispose();
-            this.Encoder.Dispose();
-            this.NullSink.Dispose();
+            this.Encoders.ForEach(c => c.Dispose());
+            this.Preview.Dispose();
             BcmHost.bcm_host_deinit();
         }
     }

@@ -28,7 +28,7 @@ namespace MMALSharp
         public MMAL_PARAM_IMAGEFX_T ImageEffect { get; set; } = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NONE;
         public ColourEffects Effects { get; set; } = new ColourEffects();
         public int Rotation { get; set; } = 0;
-        public MMAL_PARAM_MIRROR_T Flips { get; set; } = MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE;        
+        public MMAL_PARAM_MIRROR_T Flips { get; set; } = MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE;
         public ROI ROI { get; set; } = new ROI();
         public int ShutterSpeed { get; set; } = 0;
         public int AwbGainsR { get; set; } = 0;
@@ -41,7 +41,20 @@ namespace MMALSharp
         public int AnnotateBgColour { get; set; } = -1;
         public StereoMode StereoMode { get; set; } = new StereoMode();
         public bool SetChangeEventRequest { get; set; }
-        public uint Encoding { get; set; } = MMALEncodings.MMAL_ENCODING_JPEG;
+
+        //Camera preview port specific properties
+        public uint PreviewEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
+        public uint PreviewWidth { get; set; } = MMALUtil.VCOS_ALIGN_UP(640u, 16);
+        public uint PreviewHeight { get; set; } = MMALUtil.VCOS_ALIGN_UP(480u, 16);
+
+        //Camera video port specific properties
+
+
+        //Camera still port specific properties
+        public uint StillEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
+        public uint StillEncodingSubFormat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;
+        public uint StillWidth { get; set; } = MMALUtil.VCOS_ALIGN_UP(640u, 16);
+        public uint StillHeight { get; set; } = MMALUtil.VCOS_ALIGN_UP(480u, 16);
 
     }
     

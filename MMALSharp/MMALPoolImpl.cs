@@ -8,7 +8,7 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
-    internal unsafe class MMALPoolImpl : MMALObject
+    public unsafe class MMALPoolImpl : MMALObject
     {
         public MMAL_POOL_T* Ptr { get; set; }
         public MMALPortImpl Port { get; set; }

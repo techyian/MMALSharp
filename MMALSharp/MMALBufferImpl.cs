@@ -10,7 +10,7 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
-    internal unsafe class MMALBufferImpl : MMALObject
+    public unsafe class MMALBufferImpl : MMALObject
     {
         public MMAL_BUFFER_HEADER_T* Ptr { get; set; }
 
@@ -158,7 +158,7 @@ namespace MMALSharp
             this.Properties = properties;             
         }
 
-        public byte[] DataStream()
+        public byte[] GetBufferData()
         {
             MMALCheck(MMALBuffer.mmal_buffer_header_mem_lock(this.Ptr), "Unable to lock buffer header.");
                         
