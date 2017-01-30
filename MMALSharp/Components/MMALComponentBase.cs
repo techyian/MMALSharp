@@ -122,20 +122,8 @@ namespace MMALSharp
         
         public override void Dispose()
         {
-            Console.WriteLine("Disposing component.");
-
-            this.Control.DisablePort();
-
-            foreach (var port in this.Outputs)
-            {
-                port.DisablePort();
-            }
-
-            foreach (var port in this.Inputs)
-            {                
-                port.DisablePort();
-            }
-                        
+            Console.WriteLine(string.Format("Disposing component {0}.", this.Name));
+                                                            
             this.DisableComponent();
             this.DestroyComponent();
 

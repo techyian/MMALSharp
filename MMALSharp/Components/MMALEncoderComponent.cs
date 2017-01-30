@@ -41,6 +41,14 @@ namespace MMALSharp.Components
                 this.Storage = data;
         }
 
+        public override void Initialize()
+        {
+            var input = this.Inputs.ElementAt(0);
+            var output = this.Outputs.ElementAt(0);
+
+            input.ShallowCopy(output);
+        }
+
     }
         
     public unsafe class MMALVideoEncoder : MMALEncoderBase
@@ -92,20 +100,16 @@ namespace MMALSharp.Components
         
         public override void Initialize()
         {
+            base.Initialize();
             var input = this.Inputs.ElementAt(0);
             var output = this.Outputs.ElementAt(0);
-
-            input.ShallowCopy(output);
-
+                        
             output.Ptr->format->encoding = this.EncodingType;
             output.Ptr->bufferNum = Math.Max(output.Ptr->bufferNumRecommended, output.Ptr->bufferNumMin);
             output.Ptr->bufferSize = Math.Max(output.Ptr->bufferSizeRecommended, output.Ptr->bufferSizeMin);
 
             output.Commit();
-
-            if(this.EncodingType == MMALEncodings.MMAL_ENCODING_JPEG)
-
-
+            
             SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, 90, output.Ptr);
 
         }

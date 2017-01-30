@@ -19,9 +19,14 @@ namespace MMALSharp.Components
 
         public void CreateConnection(MMALPortBase output)
         {
-            MMALConnectionImpl.CreateConnection(output, this.Inputs.ElementAt(0));
+            this.Connection = MMALConnectionImpl.CreateConnection(output, this.Inputs.ElementAt(0));
         }
 
-
+        public void CloseConnection()
+        {
+            if(this.Connection != null)
+                this.Connection.Disable();
+        }
+        
     }
 }

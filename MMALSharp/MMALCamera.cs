@@ -241,24 +241,25 @@ namespace MMALSharp
             var camVideoPort = this.Camera.VideoPort;
             var camStillPort = this.Camera.StillPort;
 
-            var encoder = CreateImageEncoder(encodingType, quality);
-                      
-            //Create connections
-            this.Preview.CreateConnection(camPreviewPort);
-            encoder.CreateConnection(camStillPort);
+            using (var encoder = CreateImageEncoder(encodingType, quality))
+            {
+                //Create connections
+                this.Preview.CreateConnection(camPreviewPort);
+                encoder.CreateConnection(camStillPort);
 
-            //Enable the image encoder output port.
-            encoder.Start();
-            
-            Console.WriteLine("Attempt capture");
+                //Enable the image encoder output port.
+                encoder.Start();
 
-            this.StartCapture(camStillPort);
+                Console.WriteLine("Attempt capture");
 
-            encoder.Outputs.ElementAt(0).Trigger.Wait();
+                this.StartCapture(camStillPort);
 
-            this.StopCapture(camStillPort);
-            
-            return handler.Process(encoder.Storage);
+                encoder.Outputs.ElementAt(0).Trigger.Wait();
+
+                this.StopCapture(camStillPort);
+
+                return handler.Process(encoder.Storage);
+            }            
         }
 
         public void TakePictureIterative(FileCaptureHandler handler, uint encodingType, uint quality, int iterations, DateTime timeout)
@@ -316,7 +317,7 @@ namespace MMALSharp
         
         public void Dispose()
         {            
-            Console.WriteLine("Disabling ports and destroying components");
+            Console.WriteLine("Destroying final components");
             this.Camera.Dispose();
             this.Encoders.ForEach(c => c.Dispose());
             this.Preview.Dispose();
