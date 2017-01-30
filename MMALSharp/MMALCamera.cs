@@ -210,7 +210,8 @@ namespace MMALSharp
             MMALCameraConfigImpl.Config = config;
 
             BcmHost.bcm_host_init();            
-            this.Camera = new MMALCameraComponent();                   
+            this.Camera = new MMALCameraComponent();
+            this.Encoders = new List<MMALEncoderBase>();
             this.Preview = new MMALNullSinkComponent();            
         }
 
@@ -288,6 +289,7 @@ namespace MMALSharp
 
         public MMALCamera ConfigureCamera()
         {
+            Console.WriteLine("Configuring camera parameters.");
             this.DisableCamera();
 
             this.SetSaturation(MMALCameraConfigImpl.Config.Saturation);
@@ -318,9 +320,12 @@ namespace MMALSharp
         public void Dispose()
         {            
             Console.WriteLine("Destroying final components");
-            this.Camera.Dispose();
+            if(this.Camera != null)
+                this.Camera.Dispose();
             this.Encoders.ForEach(c => c.Dispose());
-            this.Preview.Dispose();
+
+            if(this.Preview != null)
+                this.Preview.Dispose();
             BcmHost.bcm_host_deinit();
         }
     }

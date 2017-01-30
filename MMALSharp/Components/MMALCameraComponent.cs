@@ -99,7 +99,7 @@ namespace MMALSharp.Components
 
             Console.WriteLine("Commit still");
             this.StillPort.Commit();
-       
+            Console.WriteLine("Camera component configured.");
         }
         
         public void CameraControlCallback(MMALBufferImpl buffer)

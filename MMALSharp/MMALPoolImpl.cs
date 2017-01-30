@@ -16,6 +16,7 @@ namespace MMALSharp
 
         public MMALPoolImpl(MMALPortImpl port)
         {
+            Console.WriteLine(string.Format("Creating buffer pool with {0} buffers of size {1}", port.BufferNum, port.BufferSize));
             this.Ptr = MMALUtil.mmal_port_pool_create(port.Ptr, port.BufferNum, port.BufferSize);
             this.Queue = new MMALQueueImpl((*this.Ptr).queue);            
         }

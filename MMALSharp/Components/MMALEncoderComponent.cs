@@ -109,8 +109,8 @@ namespace MMALSharp.Components
             output.Ptr->bufferSize = Math.Max(output.Ptr->bufferSizeRecommended, output.Ptr->bufferSizeMin);
 
             output.Commit();
-            
-            SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, 90, output.Ptr);
+                        
+            SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, this.Quality, output.Ptr);
 
         }
         
