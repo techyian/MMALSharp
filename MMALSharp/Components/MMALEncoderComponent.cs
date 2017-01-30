@@ -3,9 +3,11 @@ using MMALSharp.Native;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using static MMALSharp.MMALParameterHelpers;
+using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp.Components
 {
@@ -81,6 +83,8 @@ namespace MMALSharp.Components
 
     public unsafe class MMALImageEncoder : MMALEncoderBase
     {
+        public const int MaxExifPayloadLength = 128;
+
         public uint EncodingType { get; set; }
         public uint Quality { get; set; }
 
@@ -113,7 +117,23 @@ namespace MMALSharp.Components
             SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, this.Quality, output.Ptr);
 
         }
-        
+
+        public unsafe void AddExifTag(ExifTag exifTag)
+        {
+            var formattedExif = exifTag.Key + "=" + exifTag.Value;
+
+            if (formattedExif.Length > MaxExifPayloadLength)
+                throw new PiCameraError("EXIF payload greater than allowed max.");
+
+            var data = Marshal.StringToHGlobalAnsi(formattedExif);
+            MMAL_PARAMETER_EXIF_T exifParam = new MMAL_PARAMETER_EXIF_T(new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCamera.MMAL_PARAMETER_EXIF, (uint)Marshal.SizeOf<MMAL_PARAMETER_EXIF_T>()),
+                                                                        exifTag.Key.Length, 1, exifTag.Value.Length, data);
+
+            MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs.ElementAt(0).Ptr, &exifParam.hdr), string.Format("Unable to set EXIF {0}", formattedExif));
+
+            Marshal.FreeHGlobal(data);
+        }
+
     }
 
     public unsafe class MMALImageDecoder : MMALEncoderBase

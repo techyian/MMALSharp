@@ -616,10 +616,10 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_EXIF_T
     {
         public MMAL_PARAMETER_HEADER_T hdr;
-        public uint keylen, valueOffset, valueLen;
-        public MMAL_PARAMETER_HEADER_T data;
+        public int keylen, valueOffset, valueLen;
+        public IntPtr data;
 
-        public MMAL_PARAMETER_EXIF_T(MMAL_PARAMETER_HEADER_T hdr, uint keylen, uint valueOffset, uint valueLen, MMAL_PARAMETER_HEADER_T data)
+        public MMAL_PARAMETER_EXIF_T(MMAL_PARAMETER_HEADER_T hdr, int keylen, int valueOffset, int valueLen, IntPtr data)
         {
             this.hdr = hdr;
             this.keylen = keylen;

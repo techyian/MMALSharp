@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -202,9 +203,9 @@ namespace MMALSharp
                 this.ConfigureCamera();                
             }
         }
-        
-        #endregion
 
+        #endregion
+                                
         public MMALCamera(MMALCameraConfig config)
         {
             MMALCameraConfigImpl.Config = config;
@@ -235,7 +236,7 @@ namespace MMALSharp
         /// <param name="encodingType"></param>
         /// <param name="quality"></param>
         /// <returns></returns>
-        public T TakePicture<T>(ICaptureHandler<T> handler, uint encodingType, uint quality)
+        public T TakePicture<T>(ICaptureHandler<T> handler, uint encodingType, uint quality, bool useExif = true, params ExifTag[] exifTags)
         {
             Console.WriteLine("Preparing to take picture");
             var camPreviewPort = this.Camera.PreviewPort;
@@ -244,6 +245,9 @@ namespace MMALSharp
 
             using (var encoder = CreateImageEncoder(encodingType, quality))
             {
+                if (useExif)
+                    AddExifTags(encoder, exifTags);
+
                 //Create connections
                 this.Preview.CreateConnection(camPreviewPort);
                 encoder.CreateConnection(camStillPort);
@@ -316,6 +320,30 @@ namespace MMALSharp
 
             return this;
         }
+                
+        public void AddExifTags(MMALImageEncoder encoder, params ExifTag[] exifTags)
+        {
+            //Add the same defaults as per Raspistill.c
+            List<ExifTag> defaultTags = new List<ExifTag>
+            {
+                new ExifTag { Key = "IFD0.Model", Value = "RP_" + this.Camera.Name },
+                new ExifTag { Key = "IFD0.Make", Value = "RaspberryPi" },
+                new ExifTag { Key = "EXIF.DateTimeDigitized", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") },
+                new ExifTag { Key = "EXIF.DateTimeOriginal", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") },
+                new ExifTag { Key = "IFD0.DateTime", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") }
+            };
+
+            defaultTags.ForEach(c => encoder.AddExifTag(c));
+
+            if ((defaultTags.Count + exifTags.Length) > 32)
+                throw new PiCameraError("Maximum number of EXIF tags exceeded.");
+
+            //Add user defined tags.                 
+            foreach(ExifTag tag in exifTags)
+            {
+                encoder.AddExifTag(tag);
+            }
+        }
         
         public void Dispose()
         {            
@@ -329,4 +357,6 @@ namespace MMALSharp
             BcmHost.bcm_host_deinit();
         }
     }
+
+
 }

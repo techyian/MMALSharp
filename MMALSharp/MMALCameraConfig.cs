@@ -79,4 +79,10 @@ namespace MMALSharp
         public int SwapEyes { get; set; } = 0;
     }
 
+    public class ExifTag
+    {
+        public string Key { get; set; }
+        public string Value { get; set; }
+    }
+
 }
