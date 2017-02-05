@@ -269,8 +269,7 @@ namespace MMALSharp
 
         public static void SetRotation(this MMALCamera camera, int rotation)
         {            
-            int rot = ((rotation % 360) / 90) * 90;
-            Console.WriteLine("Setting rotation " + rot);
+            int rot = ((rotation % 360) / 90) * 90;                        
             SetParameter(MMAL_PARAMETER_ROTATION, rot, camera.Camera.StillPort.Ptr);
         }
 

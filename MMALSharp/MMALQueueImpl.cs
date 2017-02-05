@@ -9,7 +9,7 @@ namespace MMALSharp
 {
     public unsafe class MMALQueueImpl : MMALObject
     {
-        public MMAL_QUEUE_T* Ptr { get; set; }
+        internal MMAL_QUEUE_T* Ptr { get; set; }
 
         public MMALQueueImpl(MMAL_QUEUE_T* ptr)
         {
@@ -45,7 +45,8 @@ namespace MMALSharp
 
         public override void Dispose()
         {
-            Console.WriteLine("Disposing queue.");            
+            if (MMALCameraConfigImpl.Config.Debug)
+                Console.WriteLine("Disposing queue.");            
             this.Destroy();
             base.Dispose();
         }

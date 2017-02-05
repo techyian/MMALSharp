@@ -12,11 +12,8 @@ using static MMALSharp.MMALCallerHelper;
 namespace MMALSharp.Components
 {
     public abstract unsafe class MMALEncoderBase : MMALDownstreamComponent
-    {
-                
-        protected MMALEncoderBase(string encoderName) : base(encoderName)
-        {            
-        }
+    {                
+        protected MMALEncoderBase(string encoderName) : base(encoderName) { }
 
         public void Start()
         {
@@ -114,24 +111,23 @@ namespace MMALSharp.Components
 
             output.Commit();
                         
-            SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, this.Quality, output.Ptr);
-
+            if(this.EncodingType == MMALEncodings.MMAL_ENCODING_JPEG)
+                SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, this.Quality, output.Ptr);
         }
 
         public unsafe void AddExifTag(ExifTag exifTag)
         {
-            var formattedExif = exifTag.Key + "=" + exifTag.Value;
+            var formattedExif = exifTag.Key + "=" + exifTag.Value + char.MinValue;
 
             if (formattedExif.Length > MaxExifPayloadLength)
                 throw new PiCameraError("EXIF payload greater than allowed max.");
-
-            var data = Marshal.StringToHGlobalAnsi(formattedExif);
-            MMAL_PARAMETER_EXIF_T exifParam = new MMAL_PARAMETER_EXIF_T(new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCamera.MMAL_PARAMETER_EXIF, (uint)Marshal.SizeOf<MMAL_PARAMETER_EXIF_T>()),
-                                                                        exifTag.Key.Length, 1, exifTag.Value.Length, data);
-
+            
+            MMAL_PARAMETER_EXIF_T exifParam = new MMAL_PARAMETER_EXIF_T(new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCamera.MMAL_PARAMETER_EXIF, (uint)(Marshal.SizeOf<MMAL_PARAMETER_EXIF_T>() + formattedExif.Length)),
+                                                                        exifTag.Key.Length, exifTag.Key.Length, exifTag.Value.Length, Encoding.ASCII.GetBytes(exifTag.Key + exifTag.Value));
+                        
+            Console.WriteLine("Preparing to set EXIF");          
             MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs.ElementAt(0).Ptr, &exifParam.hdr), string.Format("Unable to set EXIF {0}", formattedExif));
-
-            Marshal.FreeHGlobal(data);
+            
         }
 
     }

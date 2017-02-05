@@ -14,8 +14,8 @@ namespace MMALSharp
 
     public abstract unsafe class MMALPortBase : MMALObject
     {
-        public MMAL_PORT_T* Ptr { get; set; }
-        public MMAL_COMPONENT_T* Comp { get; set; }
+        internal MMAL_PORT_T* Ptr { get; set; }
+        internal MMAL_COMPONENT_T* Comp { get; set; }
         public MMALComponentBase ComponentReference { get; set; }
         public MMALConnectionImpl Connection { get; set; }
         public MMALPoolImpl BufferPool { get; set; }        
@@ -150,6 +150,10 @@ namespace MMALSharp
             MMALCheck(MMALPort.mmal_port_send_buffer(this.Ptr, buffer.Ptr), "Unable to send buffer header.");
         }
 
+        public void DestroyPortPool()
+        {
+            MMALUtil.mmal_port_pool_destroy(this.Ptr, this.BufferPool.Ptr);
+        }
         
 
     }

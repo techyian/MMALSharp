@@ -12,7 +12,7 @@ namespace MMALSharp
 {
     public unsafe class MMALBufferImpl : MMALObject
     {
-        public MMAL_BUFFER_HEADER_T* Ptr { get; set; }
+        internal MMAL_BUFFER_HEADER_T* Ptr { get; set; }
 
         #region Buffer struct wrapper properties
 
@@ -186,7 +186,8 @@ namespace MMALSharp
             {
                 //If something goes wrong, unlock the header.
                 MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
-                Console.WriteLine("Unable to handle data. Returning null.");
+                if (MMALCameraConfigImpl.Config.Debug)
+                    Console.WriteLine("Unable to handle data. Returning null.");
                 return null;
             }            
         }

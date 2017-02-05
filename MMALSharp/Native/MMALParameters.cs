@@ -613,13 +613,14 @@ namespace MMALSharp.Native
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct MMAL_PARAMETER_EXIF_T
+    public unsafe struct MMAL_PARAMETER_EXIF_T
     {
         public MMAL_PARAMETER_HEADER_T hdr;
         public int keylen, valueOffset, valueLen;
-        public IntPtr data;
+                
+        public byte[] data;
 
-        public MMAL_PARAMETER_EXIF_T(MMAL_PARAMETER_HEADER_T hdr, int keylen, int valueOffset, int valueLen, IntPtr data)
+        public MMAL_PARAMETER_EXIF_T(MMAL_PARAMETER_HEADER_T hdr, int keylen, int valueOffset, int valueLen, byte[] data)
         {
             this.hdr = hdr;
             this.keylen = keylen;

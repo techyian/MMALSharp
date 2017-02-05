@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MMALSharp.Utility;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace MMALSharp.Handlers
             {
                 File.WriteAllBytes(this._path, data);
                 result.Success = true;
+                Console.WriteLine(string.Format("Successfully captured image {0}. Total capture size {1}.", this._path, Helpers.ConvertBytesToMegabytes(data.LongLength)));
             }
             catch(Exception e)
             {

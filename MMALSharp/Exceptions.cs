@@ -25,7 +25,7 @@ namespace MMALSharp
         }
 
         public override string ToString()
-        {
+        {                        
             switch(this.Status)
             {
                 case MMALUtil.MMAL_STATUS_T.MMAL_ENOMEM:
@@ -33,7 +33,7 @@ namespace MMALSharp
                 case MMALUtil.MMAL_STATUS_T.MMAL_ENOSPC:
                     return Prefix + " : Out of resources";
                 case MMALUtil.MMAL_STATUS_T.MMAL_EINVAL:
-                    return Prefix + " : Argument is invalid";
+                    return Prefix + " : BISCUITS Argument is invalid";
                 case MMALUtil.MMAL_STATUS_T.MMAL_ENOSYS:
                     return Prefix + " : Function not implemented";
                 case MMALUtil.MMAL_STATUS_T.MMAL_ENOENT:

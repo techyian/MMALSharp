@@ -1,6 +1,7 @@
 ﻿using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -235,6 +236,8 @@ namespace MMALSharp
         /// <param name="handler"></param>
         /// <param name="encodingType"></param>
         /// <param name="quality"></param>
+        /// <param name="useExif"></param>
+        /// <param name="exifTags"></param>
         /// <returns></returns>
         public T TakePicture<T>(ICaptureHandler<T> handler, uint encodingType, uint quality, bool useExif = true, params ExifTag[] exifTags)
         {
@@ -254,22 +257,30 @@ namespace MMALSharp
 
                 //Enable the image encoder output port.
                 encoder.Start();
-
-                Console.WriteLine("Attempt capture");
-
+                
                 this.StartCapture(camStillPort);
 
+                //This blocks the current thread until we receive all data from MMAL.
                 encoder.Outputs.ElementAt(0).Trigger.Wait();
 
                 this.StopCapture(camStillPort);
 
+                //Close open connections.
+                encoder.CloseConnection();
+                this.Preview.CloseConnection();
+
+                //Disable the image encoder output port.
+                encoder.Outputs.ElementAt(0).DisablePort();
+                                                
+                //Return the data to the client in whatever format requested.
                 return handler.Process(encoder.Storage);
             }            
         }
 
         public void TakePictureIterative(FileCaptureHandler handler, uint encodingType, uint quality, int iterations, DateTime timeout)
         {
-
+            //TODO
+            throw new NotSupportedException();
         }
 
         public MMALImageEncoder CreateImageEncoder(uint encodingType, uint quality)
@@ -293,7 +304,9 @@ namespace MMALSharp
 
         public MMALCamera ConfigureCamera()
         {
-            Console.WriteLine("Configuring camera parameters.");
+            if(MMALCameraConfigImpl.Config.Debug)
+                Console.WriteLine("Configuring camera parameters.");
+
             this.DisableCamera();
 
             this.SetSaturation(MMALCameraConfigImpl.Config.Saturation);
@@ -326,11 +339,11 @@ namespace MMALSharp
             //Add the same defaults as per Raspistill.c
             List<ExifTag> defaultTags = new List<ExifTag>
             {
-                new ExifTag { Key = "IFD0.Model", Value = "RP_" + this.Camera.Name },
+                //new ExifTag { Key = "IFD0.Model", Value = "RP_" + this.Camera.Name },
                 new ExifTag { Key = "IFD0.Make", Value = "RaspberryPi" },
-                new ExifTag { Key = "EXIF.DateTimeDigitized", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") },
-                new ExifTag { Key = "EXIF.DateTimeOriginal", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") },
-                new ExifTag { Key = "IFD0.DateTime", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") }
+                //new ExifTag { Key = "EXIF.DateTimeDigitized", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") },
+                //new ExifTag { Key = "EXIF.DateTimeOriginal", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") },
+                //new ExifTag { Key = "IFD0.DateTime", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") }
             };
 
             defaultTags.ForEach(c => encoder.AddExifTag(c));
@@ -346,8 +359,9 @@ namespace MMALSharp
         }
         
         public void Dispose()
-        {            
-            Console.WriteLine("Destroying final components");
+        {
+            if (MMALCameraConfigImpl.Config.Debug)
+                Console.WriteLine("Destroying final components");
             if(this.Camera != null)
                 this.Camera.Dispose();
             this.Encoders.ForEach(c => c.Dispose());

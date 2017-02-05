@@ -17,8 +17,7 @@ namespace MMALSharp
         public List<MMALPortImpl> Clocks { get; set; }
         public List<MMALPortImpl> Ports { get; set; }
         
-
-        public MMAL_COMPONENT_T* Ptr { get; set; }
+        internal MMAL_COMPONENT_T* Ptr { get; set; }
         public string Name
         {
             get
@@ -122,8 +121,32 @@ namespace MMALSharp
         
         public override void Dispose()
         {
-            Console.WriteLine(string.Format("Disposing component {0}.", this.Name));
-                                                            
+            if (MMALCameraConfigImpl.Config.Debug)
+                Console.WriteLine(string.Format("Disposing component {0}.", this.Name));
+            
+            //See if any pools need disposing before destroying component.
+            foreach(var port in this.Inputs)
+            {
+                if (port.BufferPool != null)
+                {
+                    if (MMALCameraConfigImpl.Config.Debug)
+                        Console.WriteLine("Desroying port pool");
+
+                    port.DestroyPortPool();
+                }
+                    
+            }                       
+            foreach(var port in this.Outputs)
+            {
+                if (port.BufferPool != null)
+                {
+                    if (MMALCameraConfigImpl.Config.Debug)
+                        Console.WriteLine("Desroying port pool");
+
+                    port.DestroyPortPool();
+                }                    
+            }
+                                                
             this.DisableComponent();
             this.DestroyComponent();
 

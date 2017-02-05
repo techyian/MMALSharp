@@ -15,6 +15,7 @@ namespace MMALSharp
 
     public class MMALCameraConfig
     {
+        public bool Debug { get; set; }
         public double Sharpness { get; set; } = 0;
         public double Contrast { get; set; } = 0;
         public double Brightness { get; set; } = 50;

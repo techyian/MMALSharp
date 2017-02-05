@@ -26,7 +26,7 @@ Once the library has built, you can reference it as a project within your applic
 ##Basic Usage
 
 Using the library is relatively simple. Initially, you are required to create an instance of the `MMALCameraConfig` class, changing any 
-properties within it as you see it (default values are set automatically on your behalf). Next, you should create an instance of the
+properties you require (default values are set automatically on your behalf). Next, you should create an instance of the
 `MMALCamera` class - this class is the main object to work with in the library which grants access to the `TakePhoto` method.
 
 ```
@@ -42,10 +42,10 @@ public static void Main(string[] args)
 
         using (MMALCamera cam = new MMALCamera(config))
         {
-            cam.ConfigureCamera().TakePicture(new FileCaptureHandler("/home/pi/test2.jpg"));
-            Console.WriteLine("Brightness " + cam.Brightness);
-            Console.WriteLine("Contrast " + cam.Contrast);
-            Console.WriteLine("Sharpness " + cam.Sharpness);            
+            cam.ConfigureCamera().TakePicture(new FileCaptureHandler("/home/pi/test2.jpg"), MMALEncodings.MMAL_ENCODING_JPEG, 90);
+            Console.WriteLine(string.Format("Brightness: {0}", cam.Brightness));
+            Console.WriteLine(string.Format("Contrast: {0}", cam.Contrast));
+            Console.WriteLine(string.Format("Sharpness: {0}", cam.Sharpness));            
         }                          
 }
 
@@ -58,10 +58,14 @@ public static void Main(string[] args)
 This is currently an experimental build and therefore a lot of functionality is not fully tested, however
 a number of common features are working correctly.
 
-This library has only been tested on a Raspberry Pi 1 Model B so far with the NoIR v1 camera module, it may or may not work with
-later Pi models and/or camera modules. 
+The library has currently been tested on the following Raspberry Pi devices:
 
-Currently only tested using JPEG encoding. The encoding can be configured in the `MMALCameraConfig` class, i.e. 
+* Raspberry Pi 1 Model B (512mb)
+* Raspberry Pi Zero
+
+Both the SUNNY and Sony camera modules are currently working as expected.
+
+The encoding can be configured in the `MMALCameraConfig` class, i.e. 
 
 ```
 MMALCameraConfig config = new MMALCameraConfig
@@ -76,13 +80,6 @@ using (MMALCamera cam = new MMALCamera(config))
 
 ```
 
-
-##Known Issues
-
-Following taking a picture, there is an issue currently with the JPEG encoder whereby it does not send the final buffer frame. Callbacks
-from unmanaged-managed code usually happens on a worker background thread, however, when disposing of the MMAL component classes, the final
-buffer frame is dumped onto the main foreground thread which prevents the application from closing cleanly. I need to do some more
-investigation as to why this happens.
 
 ##License
 

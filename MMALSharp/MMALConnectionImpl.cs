@@ -11,7 +11,7 @@ namespace MMALSharp
 {
     public unsafe class MMALConnectionImpl : MMALObject
     {
-        public MMAL_CONNECTION_T* Ptr { get; set; }
+        internal MMAL_CONNECTION_T* Ptr { get; set; }
         public MMALPortBase InputPort { get; set; }
         public MMALPortBase OutputPort { get; set; }
 
@@ -96,7 +96,8 @@ namespace MMALSharp
 
         public override void Dispose()
         {
-            Console.WriteLine("Disposing connection.");
+            if (MMALCameraConfigImpl.Config.Debug)
+                Console.WriteLine("Disposing connection.");
             this.Destroy();
             base.Dispose();
         }

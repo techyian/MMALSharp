@@ -123,7 +123,9 @@ namespace MMALSharp
 
         public static void SetParameter(int key, dynamic value, MMAL_PORT_T* ptr)
         {
-            Console.WriteLine("Setting parameter");
+            if (MMALCameraConfigImpl.Config.Debug)
+                Console.WriteLine("Setting parameter");
+
             try
             {
                 var t = ParameterHelper.Where(c => c.Key == key).FirstOrDefault();
@@ -158,7 +160,7 @@ namespace MMALSharp
             }
             catch
             {
-                Console.WriteLine("Something went wrong whilst setting parameter " + key);
+                throw new PiCameraError("Something went wrong whilst setting parameter " + key);                
             }
         }
 

@@ -24,12 +24,13 @@ namespace MMALSharp
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
-
-                Console.WriteLine("Enabling port.");
+                if (MMALCameraConfigImpl.Config.Debug)
+                    Console.WriteLine("Enabling port.");
                 
                 if (callback == null)
                 {
-                    Console.WriteLine("Callback null");
+                    if (MMALCameraConfigImpl.Config.Debug)
+                        Console.WriteLine("Callback null");
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
                 }
                 else
@@ -42,8 +43,9 @@ namespace MMALSharp
             var bufferImpl = new MMALBufferImpl(buffer);
            
             this.ManagedCallback(bufferImpl);
-            
-            Console.WriteLine("Releasing buffer");
+
+            if (MMALCameraConfigImpl.Config.Debug)
+                Console.WriteLine("Releasing buffer");
             bufferImpl.Release();                        
         }
 
@@ -63,13 +65,15 @@ namespace MMALSharp
 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
-                Console.WriteLine("Enabling port.");
+                if (MMALCameraConfigImpl.Config.Debug)
+                    Console.WriteLine("Enabling port.");
 
                 this.BufferPool = new MMALPoolImpl(this);
                                                 
                 if (callback == null)
                 {
-                    Console.WriteLine("Callback null");
+                    if (MMALCameraConfigImpl.Config.Debug)
+                        Console.WriteLine("Callback null");
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
                 }
                 else
@@ -88,12 +92,11 @@ namespace MMALSharp
         public void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             lock (MMALPortImpl.mLock)
-            {
-                Console.WriteLine("Background thread: " + Thread.CurrentThread.IsBackground);
-
+            {                
                 var bufferImpl = new MMALBufferImpl(buffer);
-                
-                bufferImpl.PrintProperties();
+
+                if (MMALCameraConfigImpl.Config.Debug)
+                    bufferImpl.PrintProperties();
 
                 //Process buffer frame into a byte array
                 if (bufferImpl.Length > 0)
@@ -105,8 +108,8 @@ namespace MMALSharp
                 if (bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END ||
                                                     c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED))
                 {
-                    Console.WriteLine("Setting triggered flag");
-
+                    if (MMALCameraConfigImpl.Config.Debug)
+                        Console.WriteLine("End of stream. Signaling completion...");
                     this.Trigger.Signal();                    
                 }
                 
@@ -120,22 +123,29 @@ namespace MMALSharp
 
                         if (newBuffer != null)
                         {
-                            Console.WriteLine("Got buffer. Sending to port.");
+                            if (MMALCameraConfigImpl.Config.Debug)
+                                Console.WriteLine("Got buffer. Sending to port.");
 
                             this.SendBuffer(newBuffer);
                         }
                         else
-                            Console.WriteLine("Buffer null. Continuing.");
+                        {
+                            if (MMALCameraConfigImpl.Config.Debug)
+                                Console.WriteLine("Buffer null. Continuing.");
+                        }
+                            
 
                     }
                     else
                     {
-                        Console.WriteLine("Not enabled or component buffer pool null.");
+                        if (MMALCameraConfigImpl.Config.Debug)
+                            Console.WriteLine("Not enabled or component buffer pool null.");
                     }
                 }
                 catch
                 {
-                    Console.WriteLine("Unable to send buffer header");
+                    if (MMALCameraConfigImpl.Config.Debug)
+                        Console.WriteLine("Unable to send buffer header");
                 }
 
                 Thread.Sleep(100);

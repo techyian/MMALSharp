@@ -63,8 +63,8 @@ namespace MMALSharp.Components
                                                                 0u,
                                                                 MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T.MMAL_PARAM_TIMESTAMP_MODE_RESET_STC
                                                                 );
-
-            Console.WriteLine("Camera config set");
+            if (MMALCameraConfigImpl.Config.Debug)
+                Console.WriteLine("Camera config set");
 
             this.SetCameraConfig(camConfig);
 
@@ -73,12 +73,14 @@ namespace MMALSharp.Components
             this.PreviewPort.Ptr->format->es->video.width = MMALCameraConfigImpl.Config.PreviewWidth;
             this.PreviewPort.Ptr->format->es->video.height = MMALCameraConfigImpl.Config.PreviewHeight;
 
-            Console.WriteLine("Commit preview");
+            if (MMALCameraConfigImpl.Config.Debug)
+                Console.WriteLine("Commit preview");
 
             this.PreviewPort.Commit();
             this.PreviewPort.FullCopy(this.VideoPort);
 
-            Console.WriteLine("Commit video");
+            if (MMALCameraConfigImpl.Config.Debug)
+                Console.WriteLine("Commit video");
 
             this.VideoPort.Commit();
 
@@ -97,9 +99,13 @@ namespace MMALSharp.Components
             this.StillPort.Ptr->format->es->video.frameRate.num = 0;
             this.StillPort.Ptr->format->es->video.frameRate.den = 1;
 
-            Console.WriteLine("Commit still");
+            if (MMALCameraConfigImpl.Config.Debug)
+                Console.WriteLine("Commit still");
+
             this.StillPort.Commit();
-            Console.WriteLine("Camera component configured.");
+
+            if (MMALCameraConfigImpl.Config.Debug)
+                Console.WriteLine("Camera component configured.");
         }
         
         public void CameraControlCallback(MMALBufferImpl buffer)
@@ -128,17 +134,6 @@ namespace MMALSharp.Components
                 Console.WriteLine("Received unexpected camera control callback event");
             }            
         }
-                
-        public byte[] CameraBufferCallback(MMALBufferImpl buffer)
-        {
-            Console.WriteLine("Inside camera buffer callback");
-
-            Console.WriteLine("Buffer alloc size " + buffer.AllocSize);
-            Console.WriteLine("Buffer length " + buffer.Length);
-            Console.WriteLine("Buffer offset " + buffer.Offset);
-            
-            return buffer.GetBufferData();                        
-        }
-        
+                 
     }
 }
