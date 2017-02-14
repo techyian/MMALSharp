@@ -19,7 +19,8 @@ namespace MMALSharp.Components
         public MMALPortImpl PreviewPort { get; set; }
         public MMALPortImpl VideoPort { get; set; }
         public MMALPortImpl StillPort { get; set; }
-        
+        public MMALCameraInfoComponent CameraInfo { get; set; }
+
         public MMALCameraComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA)
         {
             this.Initialize();
@@ -27,6 +28,8 @@ namespace MMALSharp.Components
 
         public override void Initialize()
         {
+            if(this.CameraInfo == null)
+                this.SetSensorDefaults();
             if (this.Outputs.Count == 0)
                 throw new PiCameraError("Camera doesn't have any output ports.");
 
@@ -50,17 +53,17 @@ namespace MMALSharp.Components
                 this.Control.SetChangeEventRequest(eventRequest);
 
             this.Control.EnablePort(CameraControlCallback);
-
+            
             var camConfig = new MMAL_PARAMETER_CAMERA_CONFIG_T(new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCamera.MMAL_PARAMETER_CAMERA_CONFIG, (uint)Marshal.SizeOf<MMAL_PARAMETER_CAMERA_CONFIG_T>()),
-                                                                2592u,
-                                                                1944u,
-                                                                0u,
-                                                                1u,
-                                                                2592u,
-                                                                1944u,
-                                                                3u,
-                                                                0u,
-                                                                0u,
+                                                                this.CameraInfo.MaxWidth,
+                                                                this.CameraInfo.MaxHeight,
+                                                                0,
+                                                                1,
+                                                                this.CameraInfo.MaxWidth,
+                                                                this.CameraInfo.MaxHeight,
+                                                                3,
+                                                                0,
+                                                                0,
                                                                 MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T.MMAL_PARAM_TIMESTAMP_MODE_RESET_STC
                                                                 );
             if (MMALCameraConfigImpl.Config.Debug)
@@ -90,12 +93,23 @@ namespace MMALSharp.Components
             this.StillPort.Ptr->format->encoding = MMALCameraConfigImpl.Config.StillEncoding;
             this.StillPort.Ptr->format->encodingVariant = MMALCameraConfigImpl.Config.StillEncodingSubFormat;
 
+            //If user hasn't specified Width/Height, use highest resolution supported by sensor.
+            if (MMALCameraConfigImpl.Config.StillWidth == 0)
+                MMALCameraConfigImpl.Config.StillWidth = this.CameraInfo.MaxWidth;
+            if (MMALCameraConfigImpl.Config.StillHeight == 0)
+                MMALCameraConfigImpl.Config.StillHeight = this.CameraInfo.MaxHeight;
+            
+            if (MMALCameraConfigImpl.Config.StillWidth > this.CameraInfo.MaxWidth)
+                MMALCameraConfigImpl.Config.StillWidth = MMALUtil.VCOS_ALIGN_UP(this.CameraInfo.MaxWidth, 16);
+            if (MMALCameraConfigImpl.Config.StillHeight > this.CameraInfo.MaxHeight)
+                MMALCameraConfigImpl.Config.StillHeight = MMALUtil.VCOS_ALIGN_UP(this.CameraInfo.MaxHeight, 16);
+
             this.StillPort.Ptr->format->es->video.width = MMALCameraConfigImpl.Config.StillWidth;
             this.StillPort.Ptr->format->es->video.height = MMALCameraConfigImpl.Config.StillHeight;
             this.StillPort.Ptr->format->es->video.crop.x = 0;
             this.StillPort.Ptr->format->es->video.crop.y = 0;
-            this.StillPort.Ptr->format->es->video.crop.width = (int)MMALUtil.VCOS_ALIGN_UP(640u, 16);
-            this.StillPort.Ptr->format->es->video.crop.height = (int)MMALUtil.VCOS_ALIGN_UP(480u, 16);
+            this.StillPort.Ptr->format->es->video.crop.width = (int)MMALCameraConfigImpl.Config.StillWidth;
+            this.StillPort.Ptr->format->es->video.crop.height = (int)MMALCameraConfigImpl.Config.StillHeight;
             this.StillPort.Ptr->format->es->video.frameRate.num = 0;
             this.StillPort.Ptr->format->es->video.frameRate.den = 1;
 
@@ -105,7 +119,12 @@ namespace MMALSharp.Components
             this.StillPort.Commit();
 
             if (MMALCameraConfigImpl.Config.Debug)
-                Console.WriteLine("Camera component configured.");
+                Console.WriteLine("Camera component configured.");            
+        }
+        
+        public void SetSensorDefaults()
+        {
+            this.CameraInfo = new MMALCameraInfoComponent();                        
         }
         
         public void CameraControlCallback(MMALBufferImpl buffer)
@@ -134,6 +153,13 @@ namespace MMALSharp.Components
                 Console.WriteLine("Received unexpected camera control callback event");
             }            
         }
-                 
+
+        public override void Dispose()
+        {
+            if (this.CameraInfo != null)
+                this.CameraInfo.DestroyComponent();
+            base.Dispose();
+        }
+
     }
 }

@@ -212,7 +212,7 @@ namespace MMALSharp
             MMALCameraConfigImpl.Config = config;
 
             BcmHost.bcm_host_init();            
-            this.Camera = new MMALCameraComponent();
+            this.Camera = new MMALCameraComponent();            
             this.Encoders = new List<MMALEncoderBase>();
             this.Preview = new MMALNullSinkComponent();            
         }
@@ -338,12 +338,12 @@ namespace MMALSharp
         {
             //Add the same defaults as per Raspistill.c
             List<ExifTag> defaultTags = new List<ExifTag>
-            {
-                //new ExifTag { Key = "IFD0.Model", Value = "RP_" + this.Camera.Name },
+            {                
+                new ExifTag { Key = "IFD0.Model", Value = "RP_" + this.Camera.CameraInfo.SensorName },
                 new ExifTag { Key = "IFD0.Make", Value = "RaspberryPi" },
-                //new ExifTag { Key = "EXIF.DateTimeDigitized", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") },
-                //new ExifTag { Key = "EXIF.DateTimeOriginal", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") },
-                //new ExifTag { Key = "IFD0.DateTime", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") }
+                new ExifTag { Key = "EXIF.DateTimeDigitized", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") },
+                new ExifTag { Key = "EXIF.DateTimeOriginal", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") },
+                new ExifTag { Key = "IFD0.DateTime", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") }
             };
 
             defaultTags.ForEach(c => encoder.AddExifTag(c));

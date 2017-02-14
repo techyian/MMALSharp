@@ -117,17 +117,25 @@ namespace MMALSharp.Components
 
         public unsafe void AddExifTag(ExifTag exifTag)
         {
+            this.SetDisableExif(false);            
             var formattedExif = exifTag.Key + "=" + exifTag.Value + char.MinValue;
-
+          
             if (formattedExif.Length > MaxExifPayloadLength)
                 throw new PiCameraError("EXIF payload greater than allowed max.");
             
-            MMAL_PARAMETER_EXIF_T exifParam = new MMAL_PARAMETER_EXIF_T(new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCamera.MMAL_PARAMETER_EXIF, (uint)(Marshal.SizeOf<MMAL_PARAMETER_EXIF_T>() + formattedExif.Length)),
-                                                                        exifTag.Key.Length, exifTag.Key.Length, exifTag.Value.Length, Encoding.ASCII.GetBytes(exifTag.Key + exifTag.Value));
-                        
-            Console.WriteLine("Preparing to set EXIF");          
-            MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs.ElementAt(0).Ptr, &exifParam.hdr), string.Format("Unable to set EXIF {0}", formattedExif));
+            var bytes = Encoding.ASCII.GetBytes(formattedExif);
             
+            IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_EXIF_T>() + (bytes.Length - 1));
+
+            var str = new MMAL_PARAMETER_EXIF_T(new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCamera.MMAL_PARAMETER_EXIF,
+                                                (uint)(Marshal.SizeOf<MMAL_PARAMETER_EXIF_T_DUMMY>() + (bytes.Length - 1))
+                                                                            ), 0, 0, 0, bytes);
+
+            Marshal.StructureToPtr(str, ptr, false);
+
+            MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs.ElementAt(0).Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), string.Format("Unable to set EXIF {0}", formattedExif));
+
+            Marshal.FreeHGlobal(ptr);
         }
 
     }

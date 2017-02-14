@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5B03E4B4-13AA-4EC8-8FD3-9DAA176EAA70}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{665C0F20-844A-44A8-9EF4-F359A607CAE6}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MMALSharp</RootNamespace>
-    <AssemblyName>MMALSharp</AssemblyName>
+    <RootNamespace>MMALSharpExample</RootNamespace>
+    <AssemblyName>MMALSharpExample</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -22,7 +22,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,10 +31,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -48,48 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\MMALCameraInfoComponent.cs" />
-    <Compile Include="Components\MMALDownstreamComponent.cs" />
-    <Compile Include="Components\MMALEncoderComponent.cs" />
-    <Compile Include="Exceptions.cs" />
-    <Compile Include="Handlers\ByteArrayCaptureHandler.cs" />
-    <Compile Include="Handlers\FileCaptureHandler.cs" />
-    <Compile Include="Handlers\ICaptureHandler.cs" />
-    <Compile Include="Handlers\ProcessResult.cs" />
-    <Compile Include="Handlers\StreamCaptureResult.cs" />
-    <Compile Include="MMALBufferImpl.cs" />
-    <Compile Include="Components\MMALCameraComponent.cs" />
-    <Compile Include="MMALCamera.cs" />
-    <Compile Include="MMALCameraConfig.cs" />
-    <Compile Include="Components\MMALComponentBase.cs" />
-    <Compile Include="MMALConnectionImpl.cs" />
-    <Compile Include="Components\MMALNullSinkComponent.cs" />
-    <Compile Include="MMALObject.cs" />
-    <Compile Include="MMALParameterHelpers.cs" />
-    <Compile Include="MMALPoolImpl.cs" />
-    <Compile Include="MMALPortBase.cs" />
-    <Compile Include="MMALCameraExtensions.cs" />
-    <Compile Include="MMALPortImpl.cs" />
-    <Compile Include="MMALQueueImpl.cs" />
-    <Compile Include="Native\BcmHost.cs" />
-    <Compile Include="Native\MMALBuffer.cs" />
-    <Compile Include="Native\MMALClock.cs" />
-    <Compile Include="Native\MMALCommon.cs" />
-    <Compile Include="Native\MMALComponent.cs" />
-    <Compile Include="Native\MMALConnection.cs" />
-    <Compile Include="Native\MMALEncodings.cs" />
-    <Compile Include="Native\MMALEvents.cs" />
-    <Compile Include="Native\MMALFormat.cs" />
-    <Compile Include="Native\MMALParameters.cs" />
-    <Compile Include="Native\MMALPool.cs" />
-    <Compile Include="Native\MMALPort.cs" />
-    <Compile Include="Native\MMALQueue.cs" />
-    <Compile Include="Native\MMALUtil.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility\Helpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MMALSharp\MMALSharp.csproj">
+      <Project>{5b03e4b4-13aa-4ec8-8fd3-9daa176eaa70}</Project>
+      <Name>MMALSharp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

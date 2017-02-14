@@ -612,15 +612,37 @@ namespace MMALSharp.Native
         }
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public unsafe struct MMAL_PARAMETER_EXIF_T
-    {
-        public MMAL_PARAMETER_HEADER_T hdr;
-        public int keylen, valueOffset, valueLen;
-                
+    {        
+        public MMAL_PARAMETER_HEADER_T hdr;    
+        public int keylen;      
+        public int valueOffset;     
+        public int valueLen;
+        //public byte data;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
         public byte[] data;
 
         public MMAL_PARAMETER_EXIF_T(MMAL_PARAMETER_HEADER_T hdr, int keylen, int valueOffset, int valueLen, byte[] data)
+        {
+            this.hdr = hdr;
+            this.keylen = keylen;
+            this.valueOffset = valueOffset;
+            this.valueLen = valueLen;
+            this.data = data;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public unsafe struct MMAL_PARAMETER_EXIF_T_DUMMY
+    {
+        public MMAL_PARAMETER_HEADER_T hdr;
+        public int keylen;
+        public int valueOffset;
+        public int valueLen;
+        public byte data;
+        
+        public MMAL_PARAMETER_EXIF_T_DUMMY(MMAL_PARAMETER_HEADER_T hdr, int keylen, int valueOffset, int valueLen, byte data)
         {
             this.hdr = hdr;
             this.keylen = keylen;
@@ -891,27 +913,25 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAMERA_INFO_CAMERA_T
     {
-        public uint portId, maxWidth, maxHeight;
-        public int lensPresent;
-
-        public MMAL_PARAMETER_CAMERA_INFO_CAMERA_T(uint portId, uint maxWidth, uint maxHeight, int lensPresent)
+        public int portId, maxWidth, maxHeight, lensPresent;        
+        
+        public MMAL_PARAMETER_CAMERA_INFO_CAMERA_T(int portId, int maxWidth, int maxHeight, int lensPresent)
         {
             this.portId = portId;
             this.maxWidth = maxWidth;
             this.maxHeight = maxHeight;
-            this.lensPresent = lensPresent;
+            this.lensPresent = lensPresent;            
         }
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct MMAL_PARAMETER_CAMERA_INFO_CAMERA_V2_T
     {
-        public uint portId, maxWidth, maxHeight;
-        public int lensPresent;
+        public uint portId, maxWidth, maxHeight, lensPresent;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
         public string cameraName;
 
-        public MMAL_PARAMETER_CAMERA_INFO_CAMERA_V2_T(uint portId, uint maxWidth, uint maxHeight, int lensPresent, 
-                                                      string cameraName)
+        public MMAL_PARAMETER_CAMERA_INFO_CAMERA_V2_T(uint portId, uint maxWidth, uint maxHeight, uint lensPresent, string cameraName)
         {
             this.portId = portId;
             this.maxWidth = maxWidth;
@@ -937,7 +957,9 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T hdr;
         public uint numCameras, numFlashes;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
         public MMAL_PARAMETER_CAMERA_INFO_CAMERA_T[] cameras;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
         public MMAL_PARAMETER_CAMERA_INFO_FLASH_T[] flashes;
 
         public MMAL_PARAMETER_CAMERA_INFO_T(MMAL_PARAMETER_HEADER_T hdr, uint numCameras, uint numFlashes, MMAL_PARAMETER_CAMERA_INFO_CAMERA_T[] cameras,
@@ -956,7 +978,9 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T hdr;
         public uint numCameras, numFlashes;
+        [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 4)]
         public MMAL_PARAMETER_CAMERA_INFO_CAMERA_V2_T[] cameras;
+        [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 2)]
         public MMAL_PARAMETER_CAMERA_INFO_FLASH_T[] flashes;
 
         public MMAL_PARAMETER_CAMERA_INFO_V2_T(MMAL_PARAMETER_HEADER_T hdr, uint numCameras, uint numFlashes, MMAL_PARAMETER_CAMERA_INFO_CAMERA_V2_T[] cameras,
@@ -969,7 +993,7 @@ namespace MMALSharp.Native
             this.flashes = flashes;
         }
     }
-
+        
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAPTUREMODE_T
     {

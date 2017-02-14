@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharp", "MMALSharp\MMALSharp.csproj", "{5B03E4B4-13AA-4EC8-8FD3-9DAA176EAA70}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharpExample", "MMALSharpExample\MMALSharpExample.csproj", "{665C0F20-844A-44A8-9EF4-F359A607CAE6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{5B03E4B4-13AA-4EC8-8FD3-9DAA176EAA70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B03E4B4-13AA-4EC8-8FD3-9DAA176EAA70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B03E4B4-13AA-4EC8-8FD3-9DAA176EAA70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{665C0F20-844A-44A8-9EF4-F359A607CAE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{665C0F20-844A-44A8-9EF4-F359A607CAE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{665C0F20-844A-44A8-9EF4-F359A607CAE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{665C0F20-844A-44A8-9EF4-F359A607CAE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
