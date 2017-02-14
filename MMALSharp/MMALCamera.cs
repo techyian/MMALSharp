@@ -239,7 +239,7 @@ namespace MMALSharp
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
         /// <returns></returns>
-        public T TakePicture<T>(ICaptureHandler<T> handler, uint encodingType, uint quality, bool useExif = true, params ExifTag[] exifTags)
+        public T TakePicture<T>(ICaptureHandler<T> handler, uint encodingType, uint quality, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {
             Console.WriteLine("Preparing to take picture");
             var camPreviewPort = this.Camera.PreviewPort;
@@ -252,8 +252,14 @@ namespace MMALSharp
                     AddExifTags(encoder, exifTags);
 
                 //Create connections
-                this.Preview.CreateConnection(camPreviewPort);
+                if(this.Preview.Connection != null)
+                    this.Preview.CreateConnection(camPreviewPort);
                 encoder.CreateConnection(camStillPort);
+
+                if(raw)
+                {
+                    camStillPort.SetRawCapture(true);
+                }
 
                 //Enable the image encoder output port.
                 encoder.Start();
@@ -277,10 +283,42 @@ namespace MMALSharp
             }            
         }
 
-        public void TakePictureIterative(FileCaptureHandler handler, uint encodingType, uint quality, int iterations, DateTime timeout)
+        /// <summary>
+        /// Takes a number of images as specified by the iterations parameter.
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <param name="extension"></param>
+        /// <param name="encodingType"></param>
+        /// <param name="quality"></param>
+        /// <param name="iterations"></param>
+        /// <param name="useExif"></param>
+        /// <param name="exifTags"></param>
+        public void TakePictureIterative(string directory, string extension, uint encodingType, uint quality, int iterations, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        {            
+            for(int i = 0; i < iterations; i++)
+            {
+                var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);                
+                TakePicture(new FileCaptureHandler(filename), encodingType, quality, useExif, raw, exifTags);
+            }                        
+        }
+
+        /// <summary>
+        /// Takes images until the moment specified in the timeout parameter has been met.
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <param name="extension"></param>
+        /// <param name="encodingType"></param>
+        /// <param name="quality"></param>
+        /// <param name="timeout"></param>
+        /// <param name="useExif"></param>
+        /// <param name="exifTags"></param>
+        public void TakePictureTimeout(string directory, string extension, uint encodingType, uint quality, DateTime timeout, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {
-            //TODO
-            throw new NotSupportedException();
+            while(DateTime.Now.CompareTo(timeout) < 0)
+            {
+                var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
+                TakePicture(new FileCaptureHandler(filename), encodingType, quality, useExif, raw, exifTags);
+            }
         }
 
         public MMALImageEncoder CreateImageEncoder(uint encodingType, uint quality)

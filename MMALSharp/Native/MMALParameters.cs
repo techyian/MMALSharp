@@ -2019,7 +2019,7 @@ namespace MMALSharp.Native
         public const string MMAL_COMPONENT_DEFAULT_CLOCK = "vc.clock";
         public const string MMAL_COMPONENT_DEFAULT_CAMERA_INFO = "vc.camera_info";
 
-        // The following two components aren't in the MMAL headers, but do exist
+        //@waveform80 The following two components aren't in the MMAL headers, but do exist
 
         public const string MMAL_COMPONENT_DEFAULT_NULL_SINK = "vc.null_sink";
         public const string MMAL_COMPONENT_DEFAULT_RESIZER = "vc.ril.resize";

@@ -360,5 +360,10 @@ namespace MMALSharp
             SetParameter(MMAL_PARAMETER_CAPTURE, enable, port.Ptr);
         }
 
+        public static void SetRawCapture(this MMALPortImpl port, bool raw)
+        {
+            SetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE, raw, port.Ptr);
+        }
+
     }
 }

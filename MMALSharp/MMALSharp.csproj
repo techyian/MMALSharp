@@ -63,7 +63,7 @@
     <Compile Include="MMALCameraConfig.cs" />
     <Compile Include="Components\MMALComponentBase.cs" />
     <Compile Include="MMALConnectionImpl.cs" />
-    <Compile Include="Components\MMALNullSinkComponent.cs" />
+    <Compile Include="Components\MMALRendererComponent.cs" />
     <Compile Include="MMALObject.cs" />
     <Compile Include="MMALParameterHelpers.cs" />
     <Compile Include="MMALPoolImpl.cs" />
