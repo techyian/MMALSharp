@@ -2,3 +2,4 @@ source https://www.nuget.org/api/v2
 
 // NuGet packages
 nuget FAKE ~> 4.50.0
+nuget Nito.AsyncEx ~> 3.0.1

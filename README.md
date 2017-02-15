@@ -27,7 +27,9 @@ Once the library has built, you can reference it as a project within your applic
 
 Using the library is relatively simple. Initially, you are required to create an instance of the `MMALCameraConfig` class, changing any 
 properties you require (default values are set automatically on your behalf). Next, you should create an instance of the
-`MMALCamera` class - this class is the main object to work with in the library which grants access to the `TakePhoto` method.
+`MMALCamera` class - this class is the main object to work with in the library which grants access to the variety of `TakePicture` methods available.
+
+MMALSharp is asynchronous in nature, preventing any blocking of the main thread in your application. Below is a basic example of its usage.
 
 ```
 
@@ -41,17 +43,16 @@ public static void Main(string[] args)
         };
 
         using (MMALCamera cam = new MMALCamera(config))
-        {
-            cam.ConfigureCamera().TakePicture(new FileCaptureHandler("/home/pi/test2.jpg"), MMALEncodings.MMAL_ENCODING_JPEG, 90);
-            Console.WriteLine(string.Format("Brightness: {0}", cam.Brightness));
-            Console.WriteLine(string.Format("Contrast: {0}", cam.Contrast));
-            Console.WriteLine(string.Format("Sharpness: {0}", cam.Sharpness));            
-        }                          
+		{
+			//Task.Run is required here so we can execute the async request within the Main method. 
+			Task.Run(async () =>
+			{
+				await cam.ConfigureCamera().TakePicture(new FileCaptureHandler("/home/pi/test3.jpg"), MMALEncodings.MMAL_ENCODING_JPEG, 90);
+			}).GetAwaiter().GetResult();
+		}                      
 }
 
 ```
-
-
 
 ##Status
 
@@ -63,22 +64,7 @@ The library has currently been tested on the following Raspberry Pi devices:
 * Raspberry Pi 1 Model B (512mb)
 * Raspberry Pi Zero
 
-Both the SUNNY and Sony camera modules are currently working as expected.
-
-The encoding can be configured in the `MMALCameraConfig` class, i.e. 
-
-```
-MMALCameraConfig config = new MMALCameraConfig
-{
-    Encoding = MMALEncodings.MMAL_ENCODING_BMP            
-};
-
-using (MMALCamera cam = new MMALCamera(config))
-{
-    cam.ConfigureCamera().TakePicture(new FileCaptureHandler("/home/pi/test2.bmp"));              
-}  
-
-```
+Both the SUNNY and Sony IMX219 camera modules are currently working as expected.
 
 
 ##License

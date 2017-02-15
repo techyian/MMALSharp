@@ -239,8 +239,8 @@ namespace MMALSharp
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
         /// <returns></returns>
-        public T TakePicture<T>(ICaptureHandler<T> handler, uint encodingType, uint quality, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
-        {
+        public async Task<T> TakePicture<T>(ICaptureHandler<T> handler, uint encodingType, uint quality, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        {            
             Console.WriteLine("Preparing to take picture");
             var camPreviewPort = this.Camera.PreviewPort;
             var camVideoPort = this.Camera.VideoPort;
@@ -252,22 +252,22 @@ namespace MMALSharp
                     AddExifTags(encoder, exifTags);
 
                 //Create connections
-                if(this.Preview.Connection != null)
+                if (this.Preview.Connection != null)
                     this.Preview.CreateConnection(camPreviewPort);
                 encoder.CreateConnection(camStillPort);
 
-                if(raw)
+                if (raw)
                 {
                     camStillPort.SetRawCapture(true);
                 }
 
                 //Enable the image encoder output port.
                 encoder.Start();
-                
+
                 this.StartCapture(camStillPort);
 
-                //This blocks the current thread until we receive all data from MMAL.
-                encoder.Outputs.ElementAt(0).Trigger.Wait();
+                //Wait until the process is complete.
+                await encoder.Outputs.ElementAt(0).Trigger.WaitAsync();
 
                 this.StopCapture(camStillPort);
 
@@ -277,10 +277,10 @@ namespace MMALSharp
 
                 //Disable the image encoder output port.
                 encoder.Outputs.ElementAt(0).DisablePort();
-                                                
+
                 //Return the data to the client in whatever format requested.
                 return handler.Process(encoder.Storage);
-            }            
+            }           
         }
 
         /// <summary>
@@ -293,12 +293,12 @@ namespace MMALSharp
         /// <param name="iterations"></param>
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
-        public void TakePictureIterative(string directory, string extension, uint encodingType, uint quality, int iterations, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePictureIterative(string directory, string extension, uint encodingType, uint quality, int iterations, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {            
             for(int i = 0; i < iterations; i++)
             {
                 var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);                
-                TakePicture(new FileCaptureHandler(filename), encodingType, quality, useExif, raw, exifTags);
+                await TakePicture(new FileCaptureHandler(filename), encodingType, quality, useExif, raw, exifTags);
             }                        
         }
 
@@ -312,12 +312,51 @@ namespace MMALSharp
         /// <param name="timeout"></param>
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
-        public void TakePictureTimeout(string directory, string extension, uint encodingType, uint quality, DateTime timeout, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePictureTimeout(string directory, string extension, uint encodingType, uint quality, DateTime timeout, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {
             while(DateTime.Now.CompareTo(timeout) < 0)
             {
                 var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
-                TakePicture(new FileCaptureHandler(filename), encodingType, quality, useExif, raw, exifTags);
+                await TakePicture(new FileCaptureHandler(filename), encodingType, quality, useExif, raw, exifTags);
+            }
+        }
+
+        /// <summary>
+        /// Takes a timelapse image. You can specify the interval between each image taken and also when the operation should finish.
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <param name="extension"></param>
+        /// <param name="encodingType"></param>
+        /// <param name="quality"></param>
+        /// <param name="tl"></param>
+        /// <param name="timeout"></param>
+        /// <param name="useExif"></param>
+        /// <param name="raw"></param>
+        /// <param name="exifTags"></param>
+        /// <returns></returns>
+        public async Task TakePictureTimelapse(string directory, string extension, uint encodingType, uint quality, Timelapse tl, DateTime timeout, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        {
+            int interval = 0;
+
+            while(DateTime.Now.CompareTo(timeout) < 0)
+            {
+                switch (tl.Mode)
+                {
+                    case TimelapseMode.Millisecond:
+                        interval = tl.Value;                        
+                        break;
+                    case TimelapseMode.Second:
+                        interval = tl.Value * 1000;                        
+                        break;
+                    case TimelapseMode.Minute:
+                        interval = (tl.Value * 60) * 1000;
+                        break;
+                }
+
+                await Task.Delay(interval);
+
+                var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
+                await TakePicture(new FileCaptureHandler(filename), encodingType, quality, useExif, raw, exifTags);
             }
         }
 
@@ -409,6 +448,8 @@ namespace MMALSharp
             BcmHost.bcm_host_deinit();
         }
     }
+
+
 
 
 }

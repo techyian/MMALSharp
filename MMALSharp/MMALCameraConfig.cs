@@ -86,4 +86,17 @@ namespace MMALSharp
         public string Value { get; set; }
     }
 
+    public class Timelapse
+    {
+        public TimelapseMode Mode { get; set; }
+        public int Value { get; set; }
+    }
+
+    public enum TimelapseMode
+    {
+        Millisecond,
+        Second,
+        Minute
+    }
+
 }

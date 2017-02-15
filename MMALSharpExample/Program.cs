@@ -20,7 +20,10 @@ namespace MMALSharpExample
 
             using (MMALCamera cam = new MMALCamera(config))
             {
-                cam.ConfigureCamera().TakePicture(new FileCaptureHandler("/home/pi/test3.jpg"), MMALEncodings.MMAL_ENCODING_JPEG, 90);
+                Task.Run(async () =>
+                {
+                    await cam.ConfigureCamera().TakePicture(new FileCaptureHandler("/home/pi/test3.jpg"), MMALEncodings.MMAL_ENCODING_JPEG, 90);
+                }).GetAwaiter().GetResult();                
             }
         }
     }

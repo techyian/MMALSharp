@@ -1,4 +1,5 @@
 ﻿using MMALSharp.Native;
+using Nito.AsyncEx;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -103,7 +104,7 @@ namespace MMALSharp
 
         #endregion
 
-        public CountdownEvent Trigger = new CountdownEvent(1);
+        public AsyncCountdownEvent Trigger = new AsyncCountdownEvent(1);
         
         protected static Object mLock = new object();
         
