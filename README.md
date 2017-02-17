@@ -7,7 +7,8 @@ take pictures with your Raspberry Pi.
 
 The project is currently targeting .NET framework 4.5.2, and therefore requires Mono 4.x.
 
-MMALSharp uses FAKE for building, and Paket for dependency management. 
+MMALSharp uses FAKE for building, and Paket for dependency management. Currently there is only a dependency on the Nito.AsyncEx library by 
+[@StephenCleary](https://github.com/StephenCleary).
 
 To build, simply run one of the below depending on your development environment.
 
@@ -29,7 +30,10 @@ Using the library is relatively simple. Initially, you are required to create an
 properties you require (default values are set automatically on your behalf). Next, you should create an instance of the
 `MMALCamera` class - this class is the main object to work with in the library which grants access to the variety of `TakePicture` methods available.
 
-MMALSharp is asynchronous in nature, preventing any blocking of the main thread in your application. Below is a basic example of its usage.
+MMALSharp is asynchronous in nature, preventing any blocking of the main thread in your application. From testing, I found it is important that we provide a context
+for the asynchronous code to run in, this is because when we await processing to complete, we need to return to the same thread we began processing on.
+
+Below is a basic example of its usage.
 
 ```
 
@@ -37,19 +41,20 @@ public static void Main(string[] args)
 {
         MMALCameraConfig config = new MMALCameraConfig
         {
-            Sharpness = 100,            
+            Sharpness = 100,
             Contrast = 10,
-            ImageEffect = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NEGATIVE			
+            ImageEffect = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NEGATIVE,
+			EnableAnnotate = true,
+			Annotate = new AnnotateImage { ShowDateText = true, ShowTimeText = true }
         };
 
         using (MMALCamera cam = new MMALCamera(config))
 		{
-			//Task.Run is required here so we can execute the async request within the Main method. 
-			Task.Run(async () =>
+			AsyncContext.Run(async () =>
 			{
 				await cam.ConfigureCamera().TakePicture(new FileCaptureHandler("/home/pi/test3.jpg"), MMALEncodings.MMAL_ENCODING_JPEG, 90);
-			}).GetAwaiter().GetResult();
-		}                      
+			});
+		}
 }
 
 ```

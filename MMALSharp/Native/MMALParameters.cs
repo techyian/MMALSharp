@@ -1272,14 +1272,16 @@ namespace MMALSharp.Native
         public byte customBackgroundY, customBackgroundU, customBackgroundV, dummy1;
         public int customTextColor;
         public byte customTextY, customTextU, customTextV, textSize;
-        public string text;
 
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        public byte[] text;
+        
 
         public MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(MMAL_PARAMETER_HEADER_T hdr, int enable, int showShutter, int showAnalogGain, int showLens, 
                                                    int showCaf, int showMotion, int showFrameNum, int enableTextBackground, int customBackgroundColor,
                                                    byte customBackgroundY, byte customBackgroundU, byte customBackgroundV, byte dummy1,
                                                    int customTextColor, byte customTextY, byte customTextU, byte customTextV, byte textSize,
-                                                   string text)
+                                                   byte[] text)
         {
             this.hdr = hdr;
             this.enable = enable;

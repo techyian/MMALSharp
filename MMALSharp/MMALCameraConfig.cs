@@ -14,7 +14,7 @@ namespace MMALSharp
     }
 
     public class MMALCameraConfig
-    {
+    {        
         public bool Debug { get; set; }
         public double Sharpness { get; set; }
         public double Contrast { get; set; }
@@ -36,10 +36,8 @@ namespace MMALSharp
         public int AwbGainsB { get; set; }
         public MMAL_PARAMETER_DRC_STRENGTH_T DrcLevel { get; set; } = MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_OFF;
         public int StatsPass { get; set; }
-        public int EnableAnnotate { get; set; }
-        public int AnnotateTextSize { get; set; }
-        public int AnnotateTextColour { get; set; } = -1;
-        public int AnnotateBgColour { get; set; } = -1;
+        public bool EnableAnnotate { get; set; }    
+        public AnnotateImage Annotate { get; set; }
         public StereoMode StereoMode { get; set; } = new StereoMode();
         public bool SetChangeEventRequest { get; set; }
 
@@ -90,6 +88,23 @@ namespace MMALSharp
     {
         public TimelapseMode Mode { get; set; }
         public int Value { get; set; }
+    }
+
+    public class AnnotateImage
+    {
+        public string CustomText { get; set; }
+        public int TextSize { get; set; }
+        public int TextColour { get; set; } = -1;
+        public int BgColour { get; set; } = -1;
+        public bool ShowShutterSettings { get; set; }
+        public bool ShowGainSettings { get; set; }
+        public bool ShowLensSettings { get; set; }
+        public bool ShowCafSettings { get; set; }
+        public bool ShowMotionSettings { get; set; }
+        public bool ShowFrameNumber { get; set; }
+        public bool ShowBlackBackground { get; set; }
+        public bool ShowDateText { get; set; }
+        public bool ShowTimeText { get; set; }
     }
 
     public enum TimelapseMode

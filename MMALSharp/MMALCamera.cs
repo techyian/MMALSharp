@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using static MMALSharp.Native.MMALParameters;
+using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
@@ -256,10 +257,11 @@ namespace MMALSharp
                     this.Preview.CreateConnection(camPreviewPort);
                 encoder.CreateConnection(camStillPort);
 
-                if (raw)
-                {
+                if (raw)                
                     camStillPort.SetRawCapture(true);
-                }
+
+                if (MMALCameraConfigImpl.Config.EnableAnnotate)
+                    AnnotateImage();
 
                 //Enable the image encoder output port.
                 encoder.Start();
@@ -435,6 +437,95 @@ namespace MMALSharp
             }
         }
         
+        public unsafe void AnnotateImage()
+        {
+            if(MMALCameraConfigImpl.Config.Annotate != null)
+            {
+                Console.WriteLine("Setting annotate");
+                MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T str = new MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T();
+                str.hdr = new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCamera.MMAL_PARAMETER_ANNOTATE, (uint)Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>());
+                str.enable = 1;
+
+                StringBuilder sb = new StringBuilder();
+
+                if (!string.IsNullOrEmpty(MMALCameraConfigImpl.Config.Annotate.CustomText))
+                {
+                    sb.Append(MMALCameraConfigImpl.Config.Annotate.CustomText + " ");
+                }
+
+                if(MMALCameraConfigImpl.Config.Annotate.ShowTimeText)
+                {
+                    sb.Append(DateTime.Now.ToString("HH:mm") + " ");
+                }
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowDateText)
+                {
+                    sb.Append(DateTime.Now.ToString("dd/MM/yyyy") + " ");
+                }
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowShutterSettings)
+                    str.showShutter = 1;
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowGainSettings)
+                    str.showAnalogGain = 1;
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowLensSettings)
+                    str.showLens = 1;
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowCafSettings)
+                    str.showCaf = 1;
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowMotionSettings)
+                    str.showMotion = 1;
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowFrameNumber)
+                    str.showFrameNum = 1;
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowBlackBackground)
+                    str.enableTextBackground = 1;
+
+                str.textSize = Convert.ToByte(MMALCameraConfigImpl.Config.Annotate.TextSize);
+                
+                if(MMALCameraConfigImpl.Config.Annotate.TextColour != -1)
+                {
+                    str.customTextColor = 1;
+                    str.customTextY = Convert.ToByte((MMALCameraConfigImpl.Config.Annotate.TextColour & 0xff));
+                    str.customTextU = Convert.ToByte(((MMALCameraConfigImpl.Config.Annotate.TextColour >> 8) & 0xff));
+                    str.customTextV = Convert.ToByte(((MMALCameraConfigImpl.Config.Annotate.TextColour >> 16 ) & 0xff));
+                }
+                else
+                {
+                    str.customTextColor = 0;
+                }
+
+                if (MMALCameraConfigImpl.Config.Annotate.BgColour != -1)
+                {
+                    str.customBackgroundColor = 1;
+                    str.customBackgroundY = Convert.ToByte((MMALCameraConfigImpl.Config.Annotate.BgColour & 0xff));
+                    str.customBackgroundU = Convert.ToByte(((MMALCameraConfigImpl.Config.Annotate.BgColour >> 8) & 0xff));
+                    str.customBackgroundV = Convert.ToByte(((MMALCameraConfigImpl.Config.Annotate.BgColour >> 16) & 0xff));
+                }
+                else
+                {
+                    str.customBackgroundColor = 0;
+                }
+
+                string t = sb.ToString() + char.MinValue;
+
+                var text = Encoding.ASCII.GetBytes(t);
+
+                str.text = text;
+                str.hdr = new MMAL_PARAMETER_HEADER_T((uint) MMALParametersCamera.MMAL_PARAMETER_ANNOTATE, (uint) (Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>() + (t.Length)));
+
+                var ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>());
+                Marshal.StructureToPtr(str, ptr, false);
+
+                MMALCheck(MMALPort.mmal_port_parameter_set(this.Camera.Control.Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), "Unable to set annotate");
+
+                Marshal.FreeHGlobal(ptr);
+            }
+        }
+
         public void Dispose()
         {
             if (MMALCameraConfigImpl.Config.Debug)
