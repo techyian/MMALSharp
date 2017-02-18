@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using static MMALSharp.MMALParameterHelpers;
 using System.IO;
 
 namespace MMALSharp.Components
@@ -15,9 +14,9 @@ namespace MMALSharp.Components
     /// </summary>
     public unsafe class MMALCameraComponent : MMALComponentBase
     {        
-        private const int MMAL_CAMERA_PREVIEW_PORT = 0;
-        private const int MMAL_CAMERA_VIDEO_PORT = 1;
-        private const int MMAL_CAMERA_CAPTURE_PORT = 2;
+        private const int MMALCameraPreviewPort = 0;
+        private const int MMALCameraVideoPort = 1;
+        private const int MMALCameraStillPort = 2;
         
         /// <summary>
         /// Object reference to the Preview port of the camera
@@ -51,17 +50,17 @@ namespace MMALSharp.Components
             if (this.Outputs.Count == 0)
                 throw new PiCameraError("Camera doesn't have any output ports.");
 
-            SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_NUM, 0, this.Control.Ptr);
+            MMALParameterHelpers.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_NUM, 0, this.Control.Ptr);
 
             this.Control.ObjName = "Control port";
 
-            this.PreviewPort = this.Outputs.ElementAt(MMAL_CAMERA_PREVIEW_PORT);
+            this.PreviewPort = this.Outputs.ElementAt(MMALCameraPreviewPort);
             this.PreviewPort.ObjName = "Preview port";
 
-            this.VideoPort = this.Outputs.ElementAt(MMAL_CAMERA_VIDEO_PORT);
+            this.VideoPort = this.Outputs.ElementAt(MMALCameraVideoPort);
             this.VideoPort.ObjName = "Video port";
 
-            this.StillPort = this.Outputs.ElementAt(MMAL_CAMERA_CAPTURE_PORT);
+            this.StillPort = this.Outputs.ElementAt(MMALCameraStillPort);
             this.StillPort.ObjName = "Still port";
 
             var eventRequest = new MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T(new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCommon.MMAL_PARAMETER_CHANGE_EVENT_REQUEST, (uint)Marshal.SizeOf<MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T>()),

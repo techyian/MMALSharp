@@ -78,6 +78,12 @@ namespace MMALSharp
             { MMALParametersCamera.MMAL_PARAMETER_JPEG_RESTART_INTERVAL,          typeof(MMAL_PARAMETER_UINT32_T)},
         };
 
+        /// <summary>
+        /// Provides a facility to get data from the port using the native helper functions
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="ptr"></param>
+        /// <returns></returns>
         public static dynamic GetParameter(int key, MMAL_PORT_T* ptr)
         {
             try
@@ -121,6 +127,12 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Provides a facility to set data on the port using the native helper functions
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="ptr"></param>
         public static void SetParameter(int key, dynamic value, MMAL_PORT_T* ptr)
         {
             if (MMALCameraConfigImpl.Config.Debug)

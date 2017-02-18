@@ -16,14 +16,31 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
+    /// <summary>
+    /// This object provides an interface to the Raspberry Pi camera module. 
+    /// </summary>
     public sealed class MMALCamera : IDisposable
     {
+        /// <summary>
+        /// Reference to the camera component
+        /// </summary>
         public MMALCameraComponent Camera { get; set; }
-        public List<MMALEncoderBase> Encoders { get; set; }            
+
+        /// <summary>
+        /// List of all encoders currently in the pipeline
+        /// </summary>
+        public List<MMALEncoderBase> Encoders { get; set; }
+
+        /// <summary>
+        /// Reference to the Preview component to be used by the camera component
+        /// </summary>
         public MMALRendererBase Preview { get; set; }
                 
         #region Configuration Properties
                 
+        /// <summary>
+        /// Configure the sharpness of the image
+        /// </summary>
         public double Sharpness
         {
             get
@@ -36,7 +53,10 @@ namespace MMALSharp
                 this.ConfigureCamera();                                
             }
         }
-                
+
+        /// <summary>
+        /// Configure the contrast of the image
+        /// </summary>        
         public double Contrast
         {
             get
@@ -49,7 +69,10 @@ namespace MMALSharp
                 this.ConfigureCamera();
             }
         }
-                
+
+        /// <summary>
+        /// Configure the brightness of the image
+        /// </summary>
         public double Brightness
         {
             get
@@ -62,7 +85,10 @@ namespace MMALSharp
                 this.ConfigureCamera();
             }
         }
-                
+
+        /// <summary>
+        /// Configure the saturation of the image
+        /// </summary>       
         public double Saturation
         {
             get
@@ -75,7 +101,10 @@ namespace MMALSharp
                 this.ConfigureCamera();
             }
         }
-                
+
+        /// <summary>
+        /// Configure the light sensitivity of the sensor
+        /// </summary>      
         public int ISO
         {
             get
@@ -88,7 +117,10 @@ namespace MMALSharp
                 this.ConfigureCamera();
             }
         }
-                
+
+        /// <summary>
+        /// Enable video stabilisation
+        /// </summary>   
         public bool VideoStabilisation
         {
             get
@@ -101,7 +133,10 @@ namespace MMALSharp
                 this.ConfigureCamera();
             }
         }
-                
+
+        /// <summary>
+        /// Configure the exposure compensation of the camera. Doing so will produce a lighter/darker image beyond the recommended exposure.
+        /// </summary>
         public int ExposureCompensation
         {
             get
@@ -114,7 +149,10 @@ namespace MMALSharp
                 this.ConfigureCamera();
             }
         }
-                
+
+        /// <summary>
+        /// Configure the exposure mode used by the camera
+        /// </summary>        
         public MMAL_PARAM_EXPOSUREMODE_T ExposureMode
         {
             get
@@ -127,7 +165,30 @@ namespace MMALSharp
                 this.ConfigureCamera();
             }
         }
-                
+
+        /// <summary>
+        /// Configure the exposure metering mode to be used by the camera. The metering mode determines how the camera measures exposure.
+        /// 
+        /// Spot metering (MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_SPOT):
+        /// 
+        /// With spot metering, the camera will only measure a very small area of the scene and ignores everything else.
+        /// On the Raspberry Pi camera, this will be the very centre of the image. 
+        /// 
+        /// Average metering (MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE):
+        /// 
+        /// Using this metering mode, the camera will use the light information coming from the entire scene. It does not focus on any particular
+        /// area of the scene.
+        /// 
+        /// Matrix metering (MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_MATRIX):
+        /// 
+        /// Matrix metering works by dividing the entire frame into multiple "zones" which are then analysed on an individual basis for light and dark tones.
+        /// 
+        /// 
+        /// Sources:
+        /// https://photographylife.com/understanding-metering-modes
+        /// https://en.wikipedia.org/wiki/Metering_mode#Spot_metering
+        /// 
+        /// </summary>        
         public MMAL_PARAM_EXPOSUREMETERINGMODE_T ExposureMeterMode
         {
             get
@@ -141,6 +202,9 @@ namespace MMALSharp
             }
         }
                 
+        /// <summary>
+        /// Configure the Auto White Balance to be used by the camera
+        /// </summary>
         public MMAL_PARAM_AWBMODE_T AwbMode
         {
             get
@@ -154,6 +218,9 @@ namespace MMALSharp
             }
         }
                 
+        /// <summary>
+        /// Configure any image effects to be used by the camera
+        /// </summary>
         public MMAL_PARAM_IMAGEFX_T ImageEffect
         {
             get
@@ -166,7 +233,10 @@ namespace MMALSharp
                 this.ConfigureCamera();
             }
         }
-                
+            
+        /// <summary>
+        /// Specify the rotation of the image, this value should be multiples of 90
+        /// </summary>                    
         public int Rotation
         {
             get
@@ -179,7 +249,10 @@ namespace MMALSharp
                 this.ConfigureCamera();                
             }
         }
-                
+         
+        /// <summary>
+        /// Specify whether the image should be flipped
+        /// </summary>                       
         public MMAL_PARAM_MIRROR_T Flips
         {
             get
@@ -192,7 +265,11 @@ namespace MMALSharp
                 this.ConfigureCamera();                
             }
         }
-                
+        
+        /// <summary>
+        /// Configure the shutter speed of the camera. This value is the length of time
+        /// that the sensor is exposed to light. 
+        /// </summary>                        
         public int ShutterSpeed
         {
             get
@@ -218,12 +295,20 @@ namespace MMALSharp
             this.Preview = new MMALNullSinkComponent();            
         }
 
+        /// <summary>
+        /// Begin capture on the camera's still port
+        /// </summary>
+        /// <param name="port"></param>
         public void StartCapture(MMALPortImpl port)
         {
             if (port == this.Camera.StillPort || this.Encoders.Any(c => c.Enabled))
                 port.SetImageCapture(true);
         }
 
+        /// <summary>
+        /// Stop capture on the camera's still port
+        /// </summary>
+        /// <param name="port"></param>
         public void StopCapture(MMALPortImpl port)
         {
             if (port == this.Camera.StillPort || this.Encoders.Any(c => c.Enabled))
@@ -362,11 +447,20 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Provides a facility to create a new image encoder component
+        /// </summary>
+        /// <param name="encodingType"></param>
+        /// <param name="quality"></param>
+        /// <returns></returns>
         public MMALImageEncoder CreateImageEncoder(uint encodingType, uint quality)
         {            
             return new MMALImageEncoder(encodingType, quality);
         }
         
+        /// <summary>
+        /// Disables processing on the camera component
+        /// </summary>
         public void DisableCamera()
         {
             this.Encoders.ForEach(c => c.DisableComponent());
@@ -374,6 +468,9 @@ namespace MMALSharp
             this.Camera.DisableComponent();
         }
 
+        /// <summary>
+        /// Enables processing on the camera component
+        /// </summary>
         public void EnableCamera()
         {
             this.Encoders.ForEach(c => c.EnableComponent());
@@ -381,6 +478,11 @@ namespace MMALSharp
             this.Camera.EnableComponent();
         }
 
+        /// <summary>
+        /// Configures the camera component. This method applies configuration settings and initialises the components required
+        /// for capturing images.
+        /// </summary>
+        /// <returns></returns>
         public MMALCamera ConfigureCamera()
         {
             if (MMALCameraConfigImpl.Config.Debug)
@@ -412,7 +514,12 @@ namespace MMALSharp
 
             return this;
         }
-                
+           
+        /// <summary>
+        /// Adds EXIF tags to the resulting image
+        /// </summary>
+        /// <param name="encoder"></param>
+        /// <param name="exifTags"></param>                     
         public void AddExifTags(MMALImageEncoder encoder, params ExifTag[] exifTags)
         {
             //Add the same defaults as per Raspistill.c
@@ -436,7 +543,10 @@ namespace MMALSharp
                 encoder.AddExifTag(tag);
             }
         }
-        
+
+        /// <summary>
+        /// Annotates the image with various text as specified in the MMALCameraConfig class.
+        /// </summary>
         public unsafe void AnnotateImage()
         { 
             if (MMALCameraConfigImpl.Config.Annotate != null)
