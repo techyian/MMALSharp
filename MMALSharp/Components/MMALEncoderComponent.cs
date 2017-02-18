@@ -11,15 +11,24 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp.Components
 {
+    /// <summary>
+    /// Represents a base class for all encoder components
+    /// </summary>
     public abstract unsafe class MMALEncoderBase : MMALDownstreamComponent
     {                
         protected MMALEncoderBase(string encoderName) : base(encoderName) { }
 
+        /// <summary>
+        /// Enables processing on the encoder's output port
+        /// </summary>
         public void Start()
         {
             this.Outputs.ElementAt(0).EnablePort(this.EncoderOutputCallback);
         }
 
+        /// <summary>
+        /// Stops processing on the encoder's output port
+        /// </summary>
         public void Stop()
         {
             this.Outputs.ElementAt(0).DisablePort();
@@ -30,6 +39,10 @@ namespace MMALSharp.Components
             buffer.Release();
         }
 
+        /// <summary>
+        /// Delegate to process the buffer header containing image data
+        /// </summary>
+        /// <param name="buffer"></param>
         public virtual void EncoderOutputCallback(MMALBufferImpl buffer)
         {
             var data = buffer.GetBufferData();
@@ -40,6 +53,9 @@ namespace MMALSharp.Components
                 this.Storage = data;
         }
 
+        /// <summary>
+        /// Initializes the encoder component to allow processing to commence. Creates the same format between input/output port.
+        /// </summary>
         public override void Initialize()
         {
             var input = this.Inputs.ElementAt(0);
@@ -50,6 +66,9 @@ namespace MMALSharp.Components
 
     }
         
+    /// <summary>
+    /// Represents a video encoder component
+    /// </summary>
     public unsafe class MMALVideoEncoder : MMALEncoderBase
     {
         public MMALVideoEncoder() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
@@ -64,6 +83,9 @@ namespace MMALSharp.Components
         
     }
 
+    /// <summary>
+    /// Represents a video decoder component
+    /// </summary>
     public unsafe class MMALVideoDecoder : MMALEncoderBase
     {
         public MMALVideoDecoder() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_DECODER)
@@ -78,11 +100,21 @@ namespace MMALSharp.Components
         
     }
 
+    /// <summary>
+    /// Represents an image encoder component
+    /// </summary>
     public unsafe class MMALImageEncoder : MMALEncoderBase
     {
         public const int MaxExifPayloadLength = 128;
 
+        /// <summary>
+        /// The encoding type that the image encoder should use
+        /// </summary>
         public uint EncodingType { get; set; }
+
+        /// <summary>
+        /// The quality of the JPEG image
+        /// </summary>
         public uint Quality { get; set; }
 
         public MMALImageEncoder(uint encodingType, uint quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
@@ -111,10 +143,14 @@ namespace MMALSharp.Components
 
             output.Commit();
                         
-            if(this.EncodingType == MMALEncodings.MMAL_ENCODING_JPEG)
+            if (this.EncodingType == MMALEncodings.MMAL_ENCODING_JPEG)
                 SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, this.Quality, output.Ptr);
         }
 
+        /// <summary>
+        /// Provides a facility to add an EXIF tag to the image. 
+        /// </summary>
+        /// <param name="exifTag"></param>
         public unsafe void AddExifTag(ExifTag exifTag)
         {
             this.SetDisableExif(false);            
@@ -140,6 +176,9 @@ namespace MMALSharp.Components
 
     }
 
+    /// <summary>
+    /// Represents an image decoder component
+    /// </summary>
     public unsafe class MMALImageDecoder : MMALEncoderBase
     {
         public MMALImageDecoder() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_DECODER)

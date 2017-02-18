@@ -220,7 +220,7 @@ namespace MMALSharp
 
         public void StartCapture(MMALPortImpl port)
         {
-            if(port == this.Camera.StillPort || this.Encoders.Any(c => c.Enabled))
+            if (port == this.Camera.StillPort || this.Encoders.Any(c => c.Enabled))
                 port.SetImageCapture(true);
         }
 
@@ -297,7 +297,7 @@ namespace MMALSharp
         /// <param name="exifTags"></param>
         public async Task TakePictureIterative(string directory, string extension, uint encodingType, uint quality, int iterations, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {            
-            for(int i = 0; i < iterations; i++)
+            for (int i = 0; i < iterations; i++)
             {
                 var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);                
                 await TakePicture(new FileCaptureHandler(filename), encodingType, quality, useExif, raw, exifTags);
@@ -316,7 +316,7 @@ namespace MMALSharp
         /// <param name="exifTags"></param>
         public async Task TakePictureTimeout(string directory, string extension, uint encodingType, uint quality, DateTime timeout, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {
-            while(DateTime.Now.CompareTo(timeout) < 0)
+            while (DateTime.Now.CompareTo(timeout) < 0)
             {
                 var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
                 await TakePicture(new FileCaptureHandler(filename), encodingType, quality, useExif, raw, exifTags);
@@ -340,7 +340,7 @@ namespace MMALSharp
         {
             int interval = 0;
 
-            while(DateTime.Now.CompareTo(timeout) < 0)
+            while (DateTime.Now.CompareTo(timeout) < 0)
             {
                 switch (tl.Mode)
                 {
@@ -383,7 +383,7 @@ namespace MMALSharp
 
         public MMALCamera ConfigureCamera()
         {
-            if(MMALCameraConfigImpl.Config.Debug)
+            if (MMALCameraConfigImpl.Config.Debug)
                 Console.WriteLine("Configuring camera parameters.");
 
             this.DisableCamera();
@@ -431,15 +431,15 @@ namespace MMALSharp
                 throw new PiCameraError("Maximum number of EXIF tags exceeded.");
 
             //Add user defined tags.                 
-            foreach(ExifTag tag in exifTags)
+            foreach (ExifTag tag in exifTags)
             {
                 encoder.AddExifTag(tag);
             }
         }
         
         public unsafe void AnnotateImage()
-        {
-            if(MMALCameraConfigImpl.Config.Annotate != null)
+        { 
+            if (MMALCameraConfigImpl.Config.Annotate != null)
             {
                 Console.WriteLine("Setting annotate");
                 MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T str = new MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T();
@@ -453,7 +453,7 @@ namespace MMALSharp
                     sb.Append(MMALCameraConfigImpl.Config.Annotate.CustomText + " ");
                 }
 
-                if(MMALCameraConfigImpl.Config.Annotate.ShowTimeText)
+                if (MMALCameraConfigImpl.Config.Annotate.ShowTimeText)
                 {
                     sb.Append(DateTime.Now.ToString("HH:mm") + " ");
                 }
@@ -486,7 +486,7 @@ namespace MMALSharp
 
                 str.textSize = Convert.ToByte(MMALCameraConfigImpl.Config.Annotate.TextSize);
                 
-                if(MMALCameraConfigImpl.Config.Annotate.TextColour != -1)
+                if (MMALCameraConfigImpl.Config.Annotate.TextColour != -1)
                 {
                     str.customTextColor = 1;
                     str.customTextY = Convert.ToByte((MMALCameraConfigImpl.Config.Annotate.TextColour & 0xff));
@@ -530,11 +530,11 @@ namespace MMALSharp
         {
             if (MMALCameraConfigImpl.Config.Debug)
                 Console.WriteLine("Destroying final components");
-            if(this.Camera != null)
+            if (this.Camera != null)
                 this.Camera.Dispose();
             this.Encoders.ForEach(c => c.Dispose());
 
-            if(this.Preview != null)
+            if (this.Preview != null)
                 this.Preview.Dispose();
             BcmHost.bcm_host_deinit();
         }

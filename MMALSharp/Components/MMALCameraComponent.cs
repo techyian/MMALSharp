@@ -10,15 +10,33 @@ using System.IO;
 
 namespace MMALSharp.Components
 {
+    /// <summary>
+    /// Represents a camera component
+    /// </summary>
     public unsafe class MMALCameraComponent : MMALComponentBase
     {        
         private const int MMAL_CAMERA_PREVIEW_PORT = 0;
         private const int MMAL_CAMERA_VIDEO_PORT = 1;
         private const int MMAL_CAMERA_CAPTURE_PORT = 2;
         
+        /// <summary>
+        /// Object reference to the Preview port of the camera
+        /// </summary>
         public MMALPortImpl PreviewPort { get; set; }
+
+        /// <summary>
+        /// Object reference to the Video port of the camera
+        /// </summary>
         public MMALPortImpl VideoPort { get; set; }
+
+        /// <summary>
+        /// Object reference to the Still port of the camera
+        /// </summary>
         public MMALPortImpl StillPort { get; set; }
+
+        /// <summary>
+        /// Camera Info component. This is used to provide detailed info about the camera itself
+        /// </summary>
         public MMALCameraInfoComponent CameraInfo { get; set; }
 
         public MMALCameraComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA)
@@ -28,7 +46,7 @@ namespace MMALSharp.Components
 
         public override void Initialize()
         {
-            if(this.CameraInfo == null)
+            if (this.CameraInfo == null)
                 this.SetSensorDefaults();
             if (this.Outputs.Count == 0)
                 throw new PiCameraError("Camera doesn't have any output ports.");
@@ -133,7 +151,7 @@ namespace MMALSharp.Components
             {                
                 var data = (MMAL_EVENT_PARAMETER_CHANGED_T*)buffer.Data;
                 
-                if(data->hdr.id == MMALParametersCamera.MMAL_PARAMETER_CAMERA_SETTINGS)
+                if (data->hdr.id == MMALParametersCamera.MMAL_PARAMETER_CAMERA_SETTINGS)
                 {
                     var settings = (MMAL_PARAMETER_CAMERA_SETTINGS_T*)data;
 
@@ -144,7 +162,7 @@ namespace MMALSharp.Components
                 }
 
             }
-            else if(buffer.Cmd == MMALEvents.MMAL_EVENT_ERROR)
+            else if (buffer.Cmd == MMALEvents.MMAL_EVENT_ERROR)
             {
                 Console.WriteLine("No data received from sensor. Check all connections, including the Sunny one on the camera board");
             }

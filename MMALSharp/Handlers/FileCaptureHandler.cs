@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.Handlers
 {
+    /// <summary>
+    /// A Capture Handler that processes the captured image to a file in the specified path
+    /// </summary>
     public class FileCaptureHandler : ICaptureHandler<ProcessResult>
     {
         private string _path;
@@ -27,7 +30,7 @@ namespace MMALSharp.Handlers
                 result.Success = true;
                 Console.WriteLine(string.Format("Successfully captured image {0}. Total capture size {1}.", this._path, Helpers.ConvertBytesToMegabytes(data.LongLength)));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 result.Message = e.Message;
             }

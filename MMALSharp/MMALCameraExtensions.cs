@@ -212,7 +212,7 @@ namespace MMALSharp
         public static void SetAwbGains(this MMALCamera camera, double r_gain, double b_gain)
         {
             MMAL_PARAMETER_AWB_GAINS_T awb_gains = new MMAL_PARAMETER_AWB_GAINS_T(new MMAL_PARAMETER_HEADER_T((uint)MMAL_PARAMETER_CUSTOM_AWB_GAINS, (uint)Marshal.SizeOf<MMAL_PARAMETER_AWB_GAINS_T>()),
-                                                                                                        new MMAL_RATIONAL_T(0,0), new MMAL_RATIONAL_T(0, 0));
+                                                                                                        new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0));
 
             awb_gains.rGain.num = (int)(r_gain * 65536);
             awb_gains.bGain.num = (int)(b_gain * 65536);

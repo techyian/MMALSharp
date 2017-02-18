@@ -11,6 +11,9 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
+    /// <summary>
+    /// Represents a control port
+    /// </summary>
     public unsafe class MMALControlPortImpl : MMALPortBase
     {
         public MMALControlPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
@@ -51,6 +54,9 @@ namespace MMALSharp
 
     }
 
+    /// <summary>
+    /// Represents a port
+    /// </summary>
     public unsafe class MMALPortImpl : MMALPortBase
     {  
         public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }

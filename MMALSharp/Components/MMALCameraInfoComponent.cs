@@ -9,10 +9,24 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp.Components
 {
+    /// <summary>
+    /// Represents a Camera Info component
+    /// </summary>
     public class MMALCameraInfoComponent : MMALComponentBase
     {
+        /// <summary>
+        /// The sensor name of the camera
+        /// </summary>
         public string SensorName { get; set; }
+
+        /// <summary>
+        /// Maximum width supported by the sensor
+        /// </summary>
         public uint MaxWidth { get; set; }
+
+        /// <summary>
+        /// Maximum height supported by the sensor
+        /// </summary>
         public uint MaxHeight { get; set; }
 
         public MMALCameraInfoComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA_INFO)
@@ -52,14 +66,14 @@ namespace MMALSharp.Components
                     
                     var s = Marshal.PtrToStructure<MMAL_PARAMETER_CAMERA_INFO_V2_T>(p);
                 
-                    if(s.cameras != null && s.cameras.Length > 0)
+                    if (s.cameras != null && s.cameras.Length > 0)
                     {                                
                         this.SensorName = s.cameras[0].cameraName;
                         this.MaxHeight = s.cameras[0].maxHeight;
                         this.MaxWidth = s.cameras[0].maxWidth;                        
                     }                        
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {                    
                     //Something went wrong, continue with OV5647 defaults.                    
                     Console.WriteLine("Died" + e.Message);

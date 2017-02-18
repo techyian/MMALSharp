@@ -26,7 +26,7 @@ namespace MMALSharp
 
         public override string ToString()
         {            
-            switch(this.Status)
+            switch (this.Status)
             {
                 case MMALUtil.MMAL_STATUS_T.MMAL_ENOMEM:
                     return Prefix + " : Out of memory";
