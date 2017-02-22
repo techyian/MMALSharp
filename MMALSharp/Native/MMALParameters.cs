@@ -49,9 +49,9 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_HEADER_T
     {
-        public uint id, size;
+        public int id, size;
 
-        public MMAL_PARAMETER_HEADER_T(uint id, uint size)
+        public MMAL_PARAMETER_HEADER_T(int id, int size)
         {
             this.id = id;
             this.size = size;
@@ -75,10 +75,10 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T
     {
         public MMAL_PARAMETER_HEADER_T hdr;
-        public uint changeId;
+        public int changeId;
         public int enable;
 
-        public MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T(MMAL_PARAMETER_HEADER_T hdr, uint changeId, int enable)
+        public MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T(MMAL_PARAMETER_HEADER_T hdr, int changeId, int enable)
         {
             this.hdr = hdr;
             this.changeId = changeId;
@@ -90,10 +90,10 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_BUFFER_REQUIREMENTS_T
     {
         public MMAL_PARAMETER_HEADER_T hdr;
-        public uint bufferNumMin, bufferSizeMin, bufferAlignmentMin, bufferNumRecommended, bufferSizeRecommended;
+        public int bufferNumMin, bufferSizeMin, bufferAlignmentMin, bufferNumRecommended, bufferSizeRecommended;
 
-        public MMAL_PARAMETER_BUFFER_REQUIREMENTS_T(MMAL_PARAMETER_HEADER_T hdr, uint bufferNumMin, uint bufferSizeMin,
-                                                    uint bufferAlignmentMin, uint bufferNumRecommended, uint bufferSizeRecommended)
+        public MMAL_PARAMETER_BUFFER_REQUIREMENTS_T(MMAL_PARAMETER_HEADER_T hdr, int bufferNumMin, int bufferSizeMin,
+                                                    int bufferAlignmentMin, int bufferNumRecommended, int bufferSizeRecommended)
         {
             this.hdr = hdr;
             this.bufferNumMin = bufferNumMin;
@@ -887,13 +887,13 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_CONFIG_T
     {
         public MMAL_PARAMETER_HEADER_T hdr;
-        public uint maxStillsW, maxStillsH, stillsYUV422, oneShotStills, maxPreviewVideoW, maxPreviewVideoH, numPreviewVideoFrames,
+        public int maxStillsW, maxStillsH, stillsYUV422, oneShotStills, maxPreviewVideoW, maxPreviewVideoH, numPreviewVideoFrames,
                     stillsCaptureCircularBufferHeight, fastPreviewResume;
         public MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T useSTCTimestamp;
 
-        public MMAL_PARAMETER_CAMERA_CONFIG_T(MMAL_PARAMETER_HEADER_T hdr, uint maxStillsW, uint maxStillsH, uint stillsYUV422, 
-                                              uint oneShotStills, uint maxPreviewVideoW, uint maxPreviewVideoH, uint numPreviewVideoFrames,
-                                              uint stillsCaptureCircularBufferHeight, uint fastPreviewResume,
+        public MMAL_PARAMETER_CAMERA_CONFIG_T(MMAL_PARAMETER_HEADER_T hdr, int maxStillsW, int maxStillsH, int stillsYUV422, 
+                                              int oneShotStills, int maxPreviewVideoW, int maxPreviewVideoH, int numPreviewVideoFrames,
+                                              int stillsCaptureCircularBufferHeight, int fastPreviewResume,
                                               MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T useSTCTimestamp)
         {
             this.hdr = hdr;
@@ -927,11 +927,11 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct MMAL_PARAMETER_CAMERA_INFO_CAMERA_V2_T
     {
-        public uint portId, maxWidth, maxHeight, lensPresent;
+        public int portId, maxWidth, maxHeight, lensPresent;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
         public string cameraName;
 
-        public MMAL_PARAMETER_CAMERA_INFO_CAMERA_V2_T(uint portId, uint maxWidth, uint maxHeight, uint lensPresent, string cameraName)
+        public MMAL_PARAMETER_CAMERA_INFO_CAMERA_V2_T(int portId, int maxWidth, int maxHeight, int lensPresent, string cameraName)
         {
             this.portId = portId;
             this.maxWidth = maxWidth;

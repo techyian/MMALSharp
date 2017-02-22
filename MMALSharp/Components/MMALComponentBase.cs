@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static MMALSharp.MMALCallerHelper;
 
@@ -62,8 +63,7 @@ namespace MMALSharp
                 return this.Ptr->isEnabled == 1;
             }
         }
-
-
+        
         protected MMALComponentBase(string name)
         {
             var ptr = CreateComponent(name);
@@ -130,7 +130,7 @@ namespace MMALSharp
         /// acquired reference is released (by a call to mmal_component_destroy). References are internally counted so all acquired references 
         /// need a matching call to release them.
         /// </summary>
-        public void AcquireComponent()
+        internal void AcquireComponent()
         {
             MMALComponent.mmal_component_acquire(this.Ptr);
         }
@@ -139,7 +139,7 @@ namespace MMALSharp
         /// Release a reference on a component Release an acquired reference on a component. Triggers the destruction of the component 
         /// when the last reference is being released.
         /// </summary>
-        public void ReleaseComponent()
+        internal void ReleaseComponent()
         {
             MMALCheck(MMALComponent.mmal_component_release(this.Ptr), "Unable to release component");
         }
@@ -148,7 +148,7 @@ namespace MMALSharp
         /// Destroy a previously created component Release an acquired reference on a component. 
         /// Only actually destroys the component when the last reference is being released.
         /// </summary>
-        public void DestroyComponent()
+        internal void DestroyComponent()
         {
             MMALCheck(MMALComponent.mmal_component_destroy(this.Ptr), "Unable to destroy component");
         }
@@ -156,7 +156,7 @@ namespace MMALSharp
         /// <summary>
         /// Enable processing on a component
         /// </summary>
-        public void EnableComponent()
+        internal void EnableComponent()
         {
             if (!this.Enabled)
                 MMALCheck(MMALComponent.mmal_component_enable(this.Ptr), "Unable to enable component");                        
@@ -174,7 +174,7 @@ namespace MMALSharp
         /// <summary>
         /// Helper method to initialize this component
         /// </summary>
-        public abstract void Initialize();
+        public virtual void Initialize() { }
         
         public override void Dispose()
         {

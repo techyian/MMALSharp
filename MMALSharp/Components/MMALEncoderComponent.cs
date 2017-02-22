@@ -15,44 +15,9 @@ namespace MMALSharp.Components
     /// Represents a base class for all encoder components
     /// </summary>
     public abstract unsafe class MMALEncoderBase : MMALDownstreamComponent
-    {                
+    {        
         protected MMALEncoderBase(string encoderName) : base(encoderName) { }
-
-        /// <summary>
-        /// Enables processing on the encoder's output port
-        /// </summary>
-        public void Start()
-        {
-            this.Outputs.ElementAt(0).EnablePort(this.EncoderOutputCallback);
-        }
-
-        /// <summary>
-        /// Stops processing on the encoder's output port
-        /// </summary>
-        public void Stop()
-        {
-            this.Outputs.ElementAt(0).DisablePort();
-        }
-
-        public virtual void EncoderInputCallback(MMALBufferImpl buffer)
-        {
-            buffer.Release();
-        }
-
-        /// <summary>
-        /// Delegate to process the buffer header containing image data
-        /// </summary>
-        /// <param name="buffer"></param>
-        public virtual void EncoderOutputCallback(MMALBufferImpl buffer)
-        {
-            var data = buffer.GetBufferData();
-
-            if (data != null && this.Storage != null)
-                this.Storage = this.Storage.Concat(data).ToArray();
-            else if (data != null && this.Storage == null)
-                this.Storage = data;
-        }
-
+        
         /// <summary>
         /// Initializes the encoder component to allow processing to commence. Creates the same format between input/output port.
         /// </summary>
@@ -71,16 +36,32 @@ namespace MMALSharp.Components
     /// </summary>
     public unsafe class MMALVideoEncoder : MMALEncoderBase
     {
-        public MMALVideoEncoder() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
+        /// <summary>
+        /// The encoding type that the video encoder should use
+        /// </summary>
+        public int EncodingType { get; set; } = MMALEncodings.MMAL_ENCODING_H264;
+
+        public int Bitrate { get; set; } = 17000000;
+
+        public int Framerate { get; set; } = 30;
+
+        public MMALVideoEncoder(int encodingType, int bitrate, int framerate) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
         {
-            this.Initialize();
+            this.EncodingType = encodingType;
+            this.Bitrate = bitrate;
         }
 
-        public override void Initialize()
-        {
-            throw new NotImplementedException();
+        public MMALVideoEncoder() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
+        {            
         }
-        
+
+        public override void ManagedCallback(MMALBufferImpl buffer, MMALPortBase port)
+        {
+
+
+            base.ManagedCallback(buffer, port);
+        }
+
     }
 
     /// <summary>
@@ -110,24 +91,24 @@ namespace MMALSharp.Components
         /// <summary>
         /// The encoding type that the image encoder should use
         /// </summary>
-        public uint EncodingType { get; set; }
+        public int EncodingType { get; set; } = MMALEncodings.MMAL_ENCODING_JPEG;
 
         /// <summary>
         /// The quality of the JPEG image
         /// </summary>
-        public uint Quality { get; set; }
+        public int Quality { get; set; } = 90;
 
-        public MMALImageEncoder(uint encodingType, uint quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
+        public MMALImageEncoder(int encodingType, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
         {
-            this.EncodingType = encodingType;
-            this.Quality = quality;
+            if(encodingType > 0)
+                this.EncodingType = encodingType;
+            if(quality > 0)
+                this.Quality = quality;
             this.Initialize();
         }
 
         public MMALImageEncoder() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
-        {
-            this.EncodingType = MMALEncodings.MMAL_ENCODING_JPEG;
-            this.Quality = 90;
+        {           
             this.Initialize();
         }
         
@@ -151,7 +132,7 @@ namespace MMALSharp.Components
         /// Provides a facility to add an EXIF tag to the image. 
         /// </summary>
         /// <param name="exifTag"></param>
-        public unsafe void AddExifTag(ExifTag exifTag)
+        internal unsafe void AddExifTag(ExifTag exifTag)
         {
             this.SetDisableExif(false);            
             var formattedExif = exifTag.Key + "=" + exifTag.Value + char.MinValue;
@@ -163,8 +144,8 @@ namespace MMALSharp.Components
             
             IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_EXIF_T>() + (bytes.Length - 1));
 
-            var str = new MMAL_PARAMETER_EXIF_T(new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCamera.MMAL_PARAMETER_EXIF,
-                                                (uint)(Marshal.SizeOf<MMAL_PARAMETER_EXIF_T_DUMMY>() + (bytes.Length - 1))
+            var str = new MMAL_PARAMETER_EXIF_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_EXIF,
+                                                (Marshal.SizeOf<MMAL_PARAMETER_EXIF_T_DUMMY>() + (bytes.Length - 1))
                                                                             ), 0, 0, 0, bytes);
 
             Marshal.StructureToPtr(str, ptr, false);

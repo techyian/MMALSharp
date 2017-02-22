@@ -42,18 +42,18 @@ namespace MMALSharp
         public bool SetChangeEventRequest { get; set; }
 
         // Camera preview port specific properties
-        public uint PreviewEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
-        public uint PreviewWidth { get; set; }
-        public uint PreviewHeight { get; set; }
+        public int PreviewEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
+        public int PreviewWidth { get; set; }
+        public int PreviewHeight { get; set; }
 
         // Camera video port specific properties
 
 
         // Camera still port specific properties
-        public uint StillEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
-        public uint StillEncodingSubFormat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;        
-        public uint StillWidth { get; set; }
-        public uint StillHeight { get; set; }
+        public int StillEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
+        public int StillEncodingSubFormat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;        
+        public int StillWidth { get; set; }
+        public int StillHeight { get; set; }
 
     }
     

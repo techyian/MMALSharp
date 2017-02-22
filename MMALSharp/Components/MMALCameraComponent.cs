@@ -19,17 +19,17 @@ namespace MMALSharp.Components
         private const int MMALCameraStillPort = 2;
         
         /// <summary>
-        /// Object reference to the Preview port of the camera
+        /// Managed reference to the Preview port of the camera
         /// </summary>
         public MMALPortImpl PreviewPort { get; set; }
 
         /// <summary>
-        /// Object reference to the Video port of the camera
+        /// Managed reference to the Video port of the camera
         /// </summary>
         public MMALPortImpl VideoPort { get; set; }
 
         /// <summary>
-        /// Object reference to the Still port of the camera
+        /// Managed reference to the Still port of the camera
         /// </summary>
         public MMALPortImpl StillPort { get; set; }
 
@@ -40,7 +40,7 @@ namespace MMALSharp.Components
 
         public MMALCameraComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA)
         {
-            this.Initialize();
+            //this.Initialize();
         }
 
         public override void Initialize()
@@ -63,15 +63,15 @@ namespace MMALSharp.Components
             this.StillPort = this.Outputs.ElementAt(MMALCameraStillPort);
             this.StillPort.ObjName = "Still port";
 
-            var eventRequest = new MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T(new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCommon.MMAL_PARAMETER_CHANGE_EVENT_REQUEST, (uint)Marshal.SizeOf<MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T>()),
-                                                                         (uint)MMALParametersCamera.MMAL_PARAMETER_CAMERA_SETTINGS, 1);
+            var eventRequest = new MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCommon.MMAL_PARAMETER_CHANGE_EVENT_REQUEST, Marshal.SizeOf<MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T>()),
+                                                                         MMALParametersCamera.MMAL_PARAMETER_CAMERA_SETTINGS, 1);
 
             if (MMALCameraConfigImpl.Config.SetChangeEventRequest)
                 this.Control.SetChangeEventRequest(eventRequest);
 
-            this.Control.EnablePort(CameraControlCallback);
+            this.Control.EnablePort(CameraControlCallback, null);
             
-            var camConfig = new MMAL_PARAMETER_CAMERA_CONFIG_T(new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCamera.MMAL_PARAMETER_CAMERA_CONFIG, (uint)Marshal.SizeOf<MMAL_PARAMETER_CAMERA_CONFIG_T>()),
+            var camConfig = new MMAL_PARAMETER_CAMERA_CONFIG_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_CAMERA_CONFIG, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_CONFIG_T>()),
                                                                 this.CameraInfo.MaxWidth,
                                                                 this.CameraInfo.MaxHeight,
                                                                 0,
@@ -125,8 +125,8 @@ namespace MMALSharp.Components
             this.StillPort.Ptr->format->es->video.height = MMALCameraConfigImpl.Config.StillHeight;
             this.StillPort.Ptr->format->es->video.crop.x = 0;
             this.StillPort.Ptr->format->es->video.crop.y = 0;
-            this.StillPort.Ptr->format->es->video.crop.width = (int)MMALCameraConfigImpl.Config.StillWidth;
-            this.StillPort.Ptr->format->es->video.crop.height = (int)MMALCameraConfigImpl.Config.StillHeight;
+            this.StillPort.Ptr->format->es->video.crop.width = MMALCameraConfigImpl.Config.StillWidth;
+            this.StillPort.Ptr->format->es->video.crop.height = MMALCameraConfigImpl.Config.StillHeight;
             this.StillPort.Ptr->format->es->video.frameRate.num = 0;
             this.StillPort.Ptr->format->es->video.frameRate.den = 1;
 
@@ -144,7 +144,7 @@ namespace MMALSharp.Components
             this.CameraInfo = new MMALCameraInfoComponent();                        
         }
         
-        public void CameraControlCallback(MMALBufferImpl buffer)
+        public void CameraControlCallback(MMALBufferImpl buffer, MMALPortBase port)
         {            
             if (buffer.Cmd == MMALEvents.MMAL_EVENT_PARAMETER_CHANGED)
             {                

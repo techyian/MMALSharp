@@ -1,9 +1,11 @@
 ﻿using MMALSharp;
+using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using Nito.AsyncEx;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,11 +24,26 @@ namespace MMALSharpExample
                 StillHeight = 768
             };
 
-            using (MMALCamera cam = new MMALCamera(config))
+            //Assign our config to the global config object
+            MMALCameraConfigImpl.Config = config;
+
+            using (MMALCamera cam = MMALCamera.Instance)
             {
+                //Create our component pipeline. 
+                cam.CreatePreviewComponent(new MMALNullSinkComponent())
+                   .ConfigureCamera();
+                
                 AsyncContext.Run(async () =>
                 {
-                    await cam.ConfigureCamera().TakePicture(new FileCaptureHandler("/home/pi/test3.jpg"), MMALEncodings.MMAL_ENCODING_JPEG, 90);
+                    /*using (var fs = File.Create("/home/pi/test3.jpg"))
+                    {
+                        await cam.TakePicture(cam.Camera.StillPort, fs);
+                    }*/
+
+                    using (var fs = File.Create("/home/pi/test4.jpg"))
+                    {
+                        await cam.TakeSinglePicture(new StreamCaptureResult(fs));
+                    }
                 });                
             }
         }

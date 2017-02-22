@@ -26,7 +26,7 @@ namespace MMALSharp
         /// Get a MMAL_BUFFER_HEADER_T from a queue
         /// </summary>
         /// <returns></returns>
-        public MMALBufferImpl GetBuffer()
+        internal MMALBufferImpl GetBuffer()
         {
             var ptr = MMALQueue.mmal_queue_get(this.Ptr);
             return new MMALBufferImpl(ptr);
@@ -37,7 +37,7 @@ namespace MMALSharp
         /// </summary>
         /// <param name="ptr"></param>
         /// <returns></returns>
-        public static MMALBufferImpl GetBuffer(MMAL_QUEUE_T* ptr)
+        internal static MMALBufferImpl GetBuffer(MMAL_QUEUE_T* ptr)
         {
             var bufPtr = MMALQueue.mmal_queue_get(ptr);
 
@@ -51,7 +51,7 @@ namespace MMALSharp
         /// Get the number of MMAL_BUFFER_HEADER_T currently in a queue.
         /// </summary>
         /// <returns></returns>
-        public uint QueueLength()
+        internal uint QueueLength()
         {
             var length = MMALQueue.mmal_queue_length(this.Ptr);
             return length;
@@ -60,7 +60,7 @@ namespace MMALSharp
         /// <summary>
         /// Destroy a queue of MMAL_BUFFER_HEADER_T.
         /// </summary>
-        public void Destroy()
+        internal void Destroy()
         {
             MMALQueue.mmal_queue_destroy(this.Ptr);
         }

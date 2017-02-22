@@ -26,10 +26,7 @@ namespace MMALSharp.Components
         {
             this.EnableComponent();
         }
-
-        public override void Initialize()
-        {            
-        }
+        
     }
 
     /// <summary>
@@ -40,10 +37,6 @@ namespace MMALSharp.Components
         public MMALVideoRenderer() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_RENDERER)
         {
         }
-
-        public override void Initialize()
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

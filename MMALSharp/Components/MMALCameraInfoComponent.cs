@@ -12,7 +12,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// Represents a Camera Info component
     /// </summary>
-    public class MMALCameraInfoComponent : MMALComponentBase
+    public unsafe class MMALCameraInfoComponent : MMALComponentBase
     {
         /// <summary>
         /// The sensor name of the camera
@@ -22,63 +22,65 @@ namespace MMALSharp.Components
         /// <summary>
         /// Maximum width supported by the sensor
         /// </summary>
-        public uint MaxWidth { get; set; }
+        public int MaxWidth { get; set; }
 
         /// <summary>
         /// Maximum height supported by the sensor
         /// </summary>
-        public uint MaxHeight { get; set; }
+        public int MaxHeight { get; set; }
 
         public MMALCameraInfoComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA_INFO)
-        {
-            this.Initialize();
-        }
-
-        public unsafe override void Initialize()
         {
             this.SensorName = "OV5647";
             this.MaxWidth = 2592;
             this.MaxHeight = 1944;
-          
-            MMAL_PARAMETER_CAMERA_INFO_T param = new MMAL_PARAMETER_CAMERA_INFO_T();
-            param.hdr = new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCamera.MMAL_PARAMETER_CAMERA_INFO, (uint)Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_T>());
+
+            var ptr1 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_T>());
+            var str1 = (MMAL_PARAMETER_HEADER_T*)ptr1;
+
+            str1->id = MMALParametersCamera.MMAL_PARAMETER_CAMERA_INFO;      
+            //Deliberately undersize to check if running on older firmware.      
+            str1->size = Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_V2_T>() - 4;
             
             try
             {
-                //Keep OV5647 defaults.
-                MMALCheck(MMALPort.mmal_port_parameter_get(this.Control.Ptr, &param.hdr), "");              
+                //If succeeds, keep OV5647 defaults.
+                MMALCheck(MMALPort.mmal_port_parameter_get(this.Control.Ptr, str1), "");
             }
             catch
             {
-                //Running on newer firmware - default to first camera found.                
-                var ptr = Marshal.AllocHGlobal(152);
-                var str = (MMAL_PARAMETER_HEADER_T*)ptr;
+                Marshal.FreeHGlobal(ptr1);
 
-                str->id = (uint)MMALParametersCamera.MMAL_PARAMETER_CAMERA_INFO;
-                //Calculated Marshalled size of MMAL_PARAMETER_CAMERA_INFO_V2_T hence the static value here.
-                str->size = 152;
-                                
+                //Running on newer firmware - default to first camera found.                
+                //152
+                var ptr2 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_V2_T>());
+                var str2 = (MMAL_PARAMETER_HEADER_T*)ptr2;
+
+                str2->id = MMALParametersCamera.MMAL_PARAMETER_CAMERA_INFO;
+                str2->size = Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_V2_T>();
+
                 try
                 {
-                    MMALCheck(MMALPort.mmal_port_parameter_get(this.Control.Ptr, str), "Unable to get camera info for newer firmware.");
-                    
-                    var p = (IntPtr)(str);
-                    
+                    MMALCheck(MMALPort.mmal_port_parameter_get(this.Control.Ptr, str2), "Unable to get camera info for newer firmware.");
+
+                    var p = (IntPtr)(str2);
+
                     var s = Marshal.PtrToStructure<MMAL_PARAMETER_CAMERA_INFO_V2_T>(p);
-                
+
                     if (s.cameras != null && s.cameras.Length > 0)
-                    {                                
+                    {
                         this.SensorName = s.cameras[0].cameraName;
                         this.MaxHeight = s.cameras[0].maxHeight;
-                        this.MaxWidth = s.cameras[0].maxWidth;                        
-                    }                        
+                        this.MaxWidth = s.cameras[0].maxWidth;
+                    }
                 }
                 catch (Exception e)
-                {                    
+                {
                     //Something went wrong, continue with OV5647 defaults.                    
                     Console.WriteLine("Died" + e.Message);
                 }
-            }                        
+            }
         }
+        
     }
 }

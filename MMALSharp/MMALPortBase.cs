@@ -1,4 +1,5 @@
-﻿using MMALSharp.Native;
+﻿using MMALSharp.Handlers;
+using MMALSharp.Native;
 using Nito.AsyncEx;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace MMALSharp
     /// <summary>
     /// Base class for port objects
     /// </summary>
-    public abstract unsafe class MMALPortBase : MMALObject
+    public abstract unsafe class MMALPortBase : MMALObject 
     {
         /// <summary>
         /// Native pointer that represents this port
@@ -181,7 +182,12 @@ namespace MMALSharp
         /// <summary>
         /// Delegate we use to do further processing on buffer headers when they're received by the native callback delegate
         /// </summary>
-        public Action<MMALBufferImpl> ManagedCallback { get; set; }
+        public Action<MMALBufferImpl, MMALPortBase> ManagedCallback { get; set; }
+
+        /// <summary>
+        /// Delegate we use to process the buffer data itself
+        /// </summary>
+        public Action<byte[]> ProcessCallback { get; set; }
 
         protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp)
         {
@@ -194,14 +200,14 @@ namespace MMALSharp
         /// Provides functionality to enable processing on a port.
         /// </summary>
         /// <param name="callback"></param>
-        public abstract void EnablePort(Action<MMALBufferImpl> callback);
+        public abstract void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback);
 
         /// <summary>
         /// Disable processing on a port. Disabling a port will stop all processing on this port and return all (non-processed) 
         /// buffer headers to the client. If this is a connected output port, the input port to which it is connected shall also be disabled.
         /// Any buffer pool shall be released.
         /// </summary>
-        public void DisablePort()
+        internal void DisablePort()
         {
             if (Enabled)
                 MMALCheck(MMALPort.mmal_port_disable(this.Ptr), "Unable to disable port.");
@@ -210,7 +216,7 @@ namespace MMALSharp
         /// <summary>
         /// Commit format changes on a port.        
         /// </summary>
-        public void Commit()
+        internal void Commit()
         {
             MMALCheck(MMALPort.mmal_port_format_commit(this.Ptr), "Unable to commit port changes.");
         }
@@ -219,7 +225,7 @@ namespace MMALSharp
         /// Shallow copy a format structure. It is worth noting that the extradata buffer will not be copied in the new format.
         /// </summary>
         /// <param name="destination"></param>
-        public void ShallowCopy(MMALPortBase destination)
+        internal void ShallowCopy(MMALPortBase destination)
         {
             MMALFormat.mmal_format_copy(destination.Ptr->format, this.Ptr->format);
         }
@@ -228,7 +234,7 @@ namespace MMALSharp
         /// Fully copy a format structure, including the extradata buffer.
         /// </summary>
         /// <param name="destination"></param>
-        public void FullCopy(MMALPortBase destination)
+        internal void FullCopy(MMALPortBase destination)
         {
             MMALFormat.mmal_format_full_copy(destination.Ptr->format, this.Ptr->format);
         }
@@ -237,7 +243,7 @@ namespace MMALSharp
         /// Ask a port to release all the buffer headers it currently has. This is an asynchronous operation and the 
         /// flush call will return before all the buffer headers are returned to the client.
         /// </summary>
-        public void Flush()
+        internal void Flush()
         {
             MMALCheck(MMALPort.mmal_port_flush(this.Ptr), "Unable to flush port.");
         }
@@ -246,7 +252,7 @@ namespace MMALSharp
         /// Send a buffer header to a port.
         /// </summary>
         /// <param name="buffer"></param>
-        public void SendBuffer(MMALBufferImpl buffer)
+        internal void SendBuffer(MMALBufferImpl buffer)
         {
             MMALCheck(MMALPort.mmal_port_send_buffer(this.Ptr, buffer.Ptr), "Unable to send buffer header.");
         }
@@ -255,7 +261,7 @@ namespace MMALSharp
         /// Destroy a pool of MMAL_BUFFER_HEADER_T associated with a specific port. This will also deallocate all of the memory 
         /// which was allocated when creating or resizing the pool.
         /// </summary>
-        public void DestroyPortPool()
+        internal void DestroyPortPool()
         {
             MMALUtil.mmal_port_pool_destroy(this.Ptr, this.BufferPool.Ptr);
         }

@@ -123,7 +123,7 @@ namespace MMALSharp
         /// Enable a connection. The format of the two ports must have been committed before calling this function, although note that on creation, 
         /// the connection automatically copies and commits the output port's format to the input port.
         /// </summary>
-        public void Enable()
+        internal void Enable()
         {
             if (!Enabled)
                 MMALCheck(MMALConnection.mmal_connection_enable(this.Ptr), "Unable to enable connection");
@@ -132,7 +132,7 @@ namespace MMALSharp
         /// <summary>
         /// Disable a connection.
         /// </summary>
-        public void Disable()
+        internal void Disable()
         {
             if (Enabled)
                 MMALCheck(MMALConnection.mmal_connection_disable(this.Ptr), "Unable to disable connection");
@@ -143,7 +143,7 @@ namespace MMALSharp
         /// being released. The actual destruction of the connection will start by disabling it, if necessary. Any pool, queue, and so on owned by 
         /// the connection shall then be destroyed.
         /// </summary>
-        public void Destroy()
+        internal void Destroy()
         {
             MMALCheck(MMALConnection.mmal_connection_destroy(this.Ptr), "Unable to destroy connection");
         }

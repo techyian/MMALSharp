@@ -51,9 +51,8 @@
     <Compile Include="Components\MMALCameraInfoComponent.cs" />
     <Compile Include="Components\MMALDownstreamComponent.cs" />
     <Compile Include="Components\MMALEncoderComponent.cs" />
+    <Compile Include="Components\MMALSplitterComponent.cs" />
     <Compile Include="Exceptions.cs" />
-    <Compile Include="Handlers\ByteArrayCaptureHandler.cs" />
-    <Compile Include="Handlers\FileCaptureHandler.cs" />
     <Compile Include="Handlers\ICaptureHandler.cs" />
     <Compile Include="Handlers\ProcessResult.cs" />
     <Compile Include="Handlers\StreamCaptureResult.cs" />
@@ -87,6 +86,7 @@
     <Compile Include="Native\MMALUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Helpers.cs" />
+    <Compile Include="Utility\ReceivedDataEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

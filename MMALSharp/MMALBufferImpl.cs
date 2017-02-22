@@ -150,7 +150,7 @@ namespace MMALSharp
         /// <summary>
         /// Adds all properties associated with this buffer header to 'this.Properties'
         /// </summary>
-        public void InitialiseProperties()
+        private void InitialiseProperties()
         {
             List<MMALBufferProperties> properties = new List<MMALBufferProperties>();
 
@@ -210,7 +210,7 @@ namespace MMALSharp
         /// Gathers all data in this payload and returns as a byte array
         /// </summary>
         /// <returns></returns>
-        public byte[] GetBufferData()
+        internal byte[] GetBufferData()
         {
             MMALCheck(MMALBuffer.mmal_buffer_header_mem_lock(this.Ptr), "Unable to lock buffer header.");
                         
@@ -248,7 +248,7 @@ namespace MMALSharp
         /// Acquire a buffer header. Acquiring a buffer header increases a reference counter on it and makes 
         /// sure that the buffer header won't be recycled until all the references to it are gone.
         /// </summary>
-        public void Acquire()
+        internal void Acquire()
         {
             MMALBuffer.mmal_buffer_header_acquire(this.Ptr);
         }
@@ -257,7 +257,7 @@ namespace MMALSharp
         /// Release a buffer header. Releasing a buffer header will decrease its reference counter and when no more references are left, 
         /// the buffer header will be recycled by calling its 'release' callback function.
         /// </summary>
-        public void Release()
+        internal void Release()
         {
             MMALBuffer.mmal_buffer_header_release(this.Ptr);
         }
@@ -265,7 +265,7 @@ namespace MMALSharp
         /// <summary>
         /// Reset a buffer header. Resets all header variables to default values.
         /// </summary>
-        public void Reset()
+        internal void Reset()
         {
             MMALBuffer.mmal_buffer_header_reset(this.Ptr);
         }

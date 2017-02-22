@@ -34,7 +34,7 @@ namespace MMALSharp
         /// <summary>
         /// Destroy a pool of MMAL_BUFFER_HEADER_T. This will also deallocate all of the memory which was allocated when creating or resizing the pool.
         /// </summary>
-        public void Destroy()
+        internal void Destroy()
         {
             MMALPool.mmal_pool_destroy(this.Ptr);
         }
@@ -44,7 +44,7 @@ namespace MMALSharp
         /// </summary>
         /// <param name="numHeaders"></param>
         /// <param name="size"></param>
-        public void Resize(uint numHeaders, uint size)
+        internal void Resize(uint numHeaders, uint size)
         {
             MMALCheck(MMALPool.mmal_pool_resize(this.Ptr, numHeaders, size), "Unable to resize pool");
         }

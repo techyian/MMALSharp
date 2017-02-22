@@ -1,5 +1,9 @@
-﻿using System;
+﻿using MMALSharp.Handlers;
+using MMALSharp.Native;
+using Nito.AsyncEx;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,10 +15,7 @@ namespace MMALSharp.Components
     /// heirarchy.
     /// </summary>
     public abstract unsafe class MMALDownstreamComponent : MMALComponentBase
-    {
-        //Storage for downstream components. Stored here until we've finished processing. 
-        public byte[] Storage { get; set; }
-
+    {               
         /// <summary>
         /// Represents the connection between the upstream/downstream component
         /// </summary>
@@ -33,14 +34,42 @@ namespace MMALSharp.Components
             this.Connection = MMALConnectionImpl.CreateConnection(output, this.Inputs.ElementAt(0));
         }
 
-        /// <summary>
-        /// Closes a connection between an upstream/downstream component
-        /// </summary>
         public void CloseConnection()
         {
-            if (this.Connection != null)
-                this.Connection.Disable();
+            this.Connection.Disable();
         }
+
+        /// <summary>
+        /// Delegate to process the buffer header containing image data
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="port"></param>
+        public virtual void ManagedCallback(MMALBufferImpl buffer, MMALPortBase port)
+        {
+            var data = buffer.GetBufferData();
+            port.ProcessCallback(data);            
+        }
+
+        public void Start(int outputPortNumber, Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback)
+        {            
+            this.Outputs.ElementAt(outputPortNumber).EnablePort(managedCallback, processCallback);
+        }
+
+        public void Start(MMALPortBase port, Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback)
+        {            
+            port.EnablePort(managedCallback, processCallback);
+        }
+
+        public void Stop(int outputPortNumber)
+        {
+            this.Outputs.ElementAt(outputPortNumber).DisablePort();
+        }
+
+        public void Stop(MMALPortBase port)
+        {
+            port.DisablePort();
+        }
+
         
     }
 }

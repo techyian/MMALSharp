@@ -18,19 +18,19 @@ namespace MMALSharp
     {
         public MMALControlPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
 
-        public override void EnablePort(Action<MMALBufferImpl> callback)
+        public override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback)
         {
             if(!this.Enabled)
             {
-                this.ManagedCallback = callback;
-
+                this.ManagedCallback = managedCallback;
+                this.ProcessCallback = processCallback;
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
                 if (MMALCameraConfigImpl.Config.Debug)
                     Console.WriteLine("Enabling port.");
                 
-                if (callback == null)
+                if (managedCallback == null)
                 {
                     if (MMALCameraConfigImpl.Config.Debug)
                         Console.WriteLine("Callback null");
@@ -44,8 +44,8 @@ namespace MMALSharp
         public void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             var bufferImpl = new MMALBufferImpl(buffer);
-           
-            this.ManagedCallback(bufferImpl);
+            
+            this.ManagedCallback(bufferImpl, this);
 
             if (MMALCameraConfigImpl.Config.Debug)
                 Console.WriteLine("Releasing buffer");
@@ -61,12 +61,12 @@ namespace MMALSharp
     {  
         public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
                 
-        public override void EnablePort(Action<MMALBufferImpl> callback)
+        public override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback)
         {
             if(!this.Enabled)
             {
-                this.ManagedCallback = callback;
-
+                this.ManagedCallback = managedCallback;
+                this.ProcessCallback = processCallback;
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
@@ -76,7 +76,7 @@ namespace MMALSharp
 
                 this.BufferPool = new MMALPoolImpl(this);
                                                 
-                if (callback == null)
+                if (managedCallback == null)
                 {
                     if (MMALCameraConfigImpl.Config.Debug)
                         Console.WriteLine("Callback null");
@@ -103,11 +103,10 @@ namespace MMALSharp
 
                 if (MMALCameraConfigImpl.Config.Debug)
                     bufferImpl.PrintProperties();
-
-                //Process buffer frame into a byte array
+                                
                 if (bufferImpl.Length > 0)
                 {
-                    this.ManagedCallback(bufferImpl);                    
+                    this.ManagedCallback(bufferImpl, this);
                 }
 
                 //If this buffer signals the end of data stream, allow waiting thread to continue.
@@ -139,8 +138,6 @@ namespace MMALSharp
                             if (MMALCameraConfigImpl.Config.Debug)
                                 Console.WriteLine("Buffer null. Continuing.");
                         }
-                            
-
                     }
                     else
                     {
@@ -154,7 +151,7 @@ namespace MMALSharp
                         Console.WriteLine("Unable to send buffer header");
                 }
 
-                Thread.Sleep(100);
+                Thread.Sleep(50);
             }
         }
 

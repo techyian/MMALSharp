@@ -12,5 +12,10 @@ namespace MMALSharp.Utility
         {
             return ((bytes / 1024f) / 1024f).ToString("0.00mb");
         }
+
+        public static void PrintWarning(string msg)
+        {
+            Console.WriteLine("Warning: " + msg);
+        }
     }
 }

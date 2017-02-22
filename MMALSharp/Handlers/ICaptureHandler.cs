@@ -8,6 +8,6 @@ namespace MMALSharp.Handlers
 {
     public interface ICaptureHandler<T>
     {
-        T Process(byte[] data);
+        void Process(byte[] data);
     }
 }

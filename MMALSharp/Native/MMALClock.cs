@@ -9,18 +9,18 @@ namespace MMALSharp.Native
 {
     public static class MMALClock
     {
-        public static uint MMAL_CLOCK_EVENT_MAGIC = MMALUtil.MMAL_FOURCC("CKLM");
-        public static uint MMAL_CLOCK_EVENT_REFERENCE = MMALUtil.MMAL_FOURCC("CREF");
-        public static uint MMAL_CLOCK_EVENT_ACTIVE = MMALUtil.MMAL_FOURCC("CACT");
-        public static uint MMAL_CLOCK_EVENT_SCALE = MMALUtil.MMAL_FOURCC("CSCA");
-        public static uint MMAL_CLOCK_EVENT_TIME = MMALUtil.MMAL_FOURCC("CTIM");
-        public static uint MMAL_CLOCK_EVENT_UPDATE_THRESHOLD = MMALUtil.MMAL_FOURCC("CUTH");
-        public static uint MMAL_CLOCK_EVENT_DISCONT_THRESHOLD = MMALUtil.MMAL_FOURCC("CDTH");
-        public static uint MMAL_CLOCK_EVENT_REQUEST_THRESHOLD = MMALUtil.MMAL_FOURCC("CRTH");
-        public static uint MMAL_CLOCK_EVENT_INPUT_BUFFER_INFO = MMALUtil.MMAL_FOURCC("CIBI");
-        public static uint MMAL_CLOCK_EVENT_OUTPUT_BUFFER_INFO = MMALUtil.MMAL_FOURCC("COBI");
-        public static uint MMAL_CLOCK_EVENT_LATENCY = MMALUtil.MMAL_FOURCC("CLAT");
-        public static uint MMAL_CLOCK_EVENT_INVALID = 0u;
+        public static int MMAL_CLOCK_EVENT_MAGIC = MMALUtil.MMAL_FOURCC("CKLM");
+        public static int MMAL_CLOCK_EVENT_REFERENCE = MMALUtil.MMAL_FOURCC("CREF");
+        public static int MMAL_CLOCK_EVENT_ACTIVE = MMALUtil.MMAL_FOURCC("CACT");
+        public static int MMAL_CLOCK_EVENT_SCALE = MMALUtil.MMAL_FOURCC("CSCA");
+        public static int MMAL_CLOCK_EVENT_TIME = MMALUtil.MMAL_FOURCC("CTIM");
+        public static int MMAL_CLOCK_EVENT_UPDATE_THRESHOLD = MMALUtil.MMAL_FOURCC("CUTH");
+        public static int MMAL_CLOCK_EVENT_DISCONT_THRESHOLD = MMALUtil.MMAL_FOURCC("CDTH");
+        public static int MMAL_CLOCK_EVENT_REQUEST_THRESHOLD = MMALUtil.MMAL_FOURCC("CRTH");
+        public static int MMAL_CLOCK_EVENT_INPUT_BUFFER_INFO = MMALUtil.MMAL_FOURCC("CIBI");
+        public static int MMAL_CLOCK_EVENT_OUTPUT_BUFFER_INFO = MMALUtil.MMAL_FOURCC("COBI");
+        public static int MMAL_CLOCK_EVENT_LATENCY = MMALUtil.MMAL_FOURCC("CLAT");
+        public static int MMAL_CLOCK_EVENT_INVALID = 0;
                 
     }
 

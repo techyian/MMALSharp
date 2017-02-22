@@ -17,7 +17,7 @@ using static MMALSharp.MMALCallerHelper;
 namespace MMALSharp
 {
     /// <summary>
-    /// This object provides an interface to the Raspberry Pi camera module. 
+    /// This class provides an interface to the Raspberry Pi camera module. 
     /// </summary>
     public sealed class MMALCamera : IDisposable
     {
@@ -35,6 +35,11 @@ namespace MMALSharp
         /// Reference to the Preview component to be used by the camera component
         /// </summary>
         public MMALRendererBase Preview { get; set; }
+
+        /// <summary>
+        /// Reference to the Video splitter component which attaches to the Camera's video output port
+        /// </summary>
+        public MMALSplitterComponent Splitter { get; set; }
                 
         #region Configuration Properties
                 
@@ -284,19 +289,37 @@ namespace MMALSharp
         }
 
         #endregion
-                                
-        public MMALCamera(MMALCameraConfig config)
-        {
-            MMALCameraConfigImpl.Config = config;
 
-            BcmHost.bcm_host_init();            
-            this.Camera = new MMALCameraComponent();            
-            this.Encoders = new List<MMALEncoderBase>();
-            this.Preview = new MMALNullSinkComponent();            
+        private static readonly MMALCamera instance = new MMALCamera();
+
+        // Explicit static constructor to tell C# compiler
+        // not to mark type as beforefieldinit
+        static MMALCamera()
+        {
         }
 
+        private MMALCamera()
+        {
+            BcmHost.bcm_host_init();
+            this.Camera = new MMALCameraComponent();
+            this.Encoders = new List<MMALEncoderBase>();
+
+            if (MMALCameraConfigImpl.Config == null)
+                MMALCameraConfigImpl.Config = new MMALCameraConfig();
+        }
+
+        public static MMALCamera Instance
+        {
+            get
+            {
+                return instance;
+            }
+        }
+
+        public event EventHandler<ReceivedDataEventArgs> ReceivedData;
+
         /// <summary>
-        /// Begin capture on the camera's still port
+        /// Begin capture on one of the camera's output ports.
         /// </summary>
         /// <param name="port"></param>
         public void StartCapture(MMALPortImpl port)
@@ -306,7 +329,7 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Stop capture on the camera's still port
+        /// Stop capture on one of the camera's output ports
         /// </summary>
         /// <param name="port"></param>
         public void StopCapture(MMALPortImpl port)
@@ -315,59 +338,137 @@ namespace MMALSharp
                 port.SetImageCapture(false);
         }
 
+        
         /// <summary>
-        /// Captures a single image from the camera still port and processes it using the Image Encoder component.
+        /// Captures a single image from the camera's still port. Initializes a standalone MMALImageEncoder using the provided encodingType and quality.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T"></typeparam>        
         /// <param name="handler"></param>
         /// <param name="encodingType"></param>
         /// <param name="quality"></param>
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
         /// <returns></returns>
-        public async Task<T> TakePicture<T>(ICaptureHandler<T> handler, uint encodingType, uint quality, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
-        {            
+        public async Task TakeSinglePicture<T>(ICaptureHandler<T> handler, int encodingType = 0, int quality = 0, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        {
             Console.WriteLine("Preparing to take picture");
             var camPreviewPort = this.Camera.PreviewPort;
             var camVideoPort = this.Camera.VideoPort;
             var camStillPort = this.Camera.StillPort;
-
-            using (var encoder = CreateImageEncoder(encodingType, quality))
+            
+            using (var encoder = new MMALImageEncoder(encodingType, quality))
             {
                 if (useExif)
-                    AddExifTags(encoder, exifTags);
+                    AddExifTags((MMALImageEncoder)encoder, exifTags);
 
                 //Create connections
-                if (this.Preview.Connection != null)
-                    this.Preview.CreateConnection(camPreviewPort);
+                if (this.Preview == null)
+                    Helpers.PrintWarning("Preview port does not have a Render component configured. Resulting image will be affected.");
+                else
+                {
+                    if (this.Preview.Connection != null)
+                        this.Preview.CreateConnection(camPreviewPort);
+                }
+
+                if(this.Encoders.Any(c => c?.Connection.OutputPort == this.Camera.StillPort))
+                {
+                    var enc = this.Encoders.Where(c => c.Connection.OutputPort == this.Camera.StillPort).FirstOrDefault();
+                    this.Encoders.Remove(enc);
+                    if(enc.Connection != null)
+                        enc.Connection.Destroy();
+                }
+
                 encoder.CreateConnection(camStillPort);
 
-                if (raw)                
+                if (raw)
                     camStillPort.SetRawCapture(true);
 
                 if (MMALCameraConfigImpl.Config.EnableAnnotate)
                     AnnotateImage();
 
+                int outputPort = 0;
+
                 //Enable the image encoder output port.
-                encoder.Start();
+                encoder.Start(outputPort, encoder.ManagedCallback, handler.Process);
 
                 this.StartCapture(camStillPort);
-
+                
                 //Wait until the process is complete.
-                await encoder.Outputs.ElementAt(0).Trigger.WaitAsync();
+                await encoder.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
 
                 this.StopCapture(camStillPort);
 
                 //Close open connections.
                 encoder.CloseConnection();
-                this.Preview.CloseConnection();
+                //this.Preview.CloseConnection();
 
                 //Disable the image encoder output port.
-                encoder.Outputs.ElementAt(0).DisablePort();
+                encoder.Stop(outputPort);
 
-                //Return the data to the client in whatever format requested.
-                return handler.Process(encoder.Storage);
-            }           
+                Console.WriteLine("Successfully captured image");
+            }            
+        }
+
+
+        /// <summary>
+        /// Captures a single image from the output port specified. Expects an MMALImageEncoder to be attached.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="outputPort"></param>
+        /// <param name="handler"></param>
+        /// <param name="encodingType"></param>
+        /// <param name="quality"></param>
+        /// <param name="useExif"></param>
+        /// <param name="exifTags"></param>
+        /// <returns></returns>
+        public async Task TakePicture<T>(MMALPortImpl outputPort, ICaptureHandler<T> handler, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        {          
+            
+            Console.WriteLine("Preparing to take picture");
+            var camPreviewPort = this.Camera.PreviewPort;
+            var camVideoPort = this.Camera.VideoPort;
+            var camStillPort = this.Camera.StillPort;
+
+            //Find the encoder/decoder which is connected to the output port specified.
+            var encoder = this.Encoders.Where(c => c?.Connection.OutputPort == outputPort).FirstOrDefault();
+            
+            if (encoder == null || encoder.GetType() != typeof(MMALImageEncoder))
+                throw new PiCameraError("No image encoder currently attached to output port specified");
+                        
+            if (useExif)
+                AddExifTags((MMALImageEncoder)encoder, exifTags);
+
+            //Create connections
+            if (this.Preview == null)
+                Helpers.PrintWarning("Preview port does not have a Render component configured. Resulting image will be affected.");
+            else
+            {
+                if (this.Preview.Connection != null)
+                    this.Preview.CreateConnection(camPreviewPort);
+            }
+                        
+            if (raw)                
+                camStillPort.SetRawCapture(true);
+
+            if (MMALCameraConfigImpl.Config.EnableAnnotate)
+                AnnotateImage();
+
+            //Enable the image encoder output port.
+            encoder.Start(outputPort, encoder.ManagedCallback, handler.Process);
+
+            this.StartCapture(camStillPort);
+
+            //Wait until the process is complete.
+            await encoder.Outputs.ElementAt(0).Trigger.WaitAsync();
+
+            this.StopCapture(camStillPort);
+
+            //Close open connections.
+            //encoder.CloseConnection();
+            //this.Preview.CloseConnection();
+
+            //Disable the image encoder output port.
+            encoder.Stop(outputPort);           
         }
 
         /// <summary>
@@ -380,12 +481,16 @@ namespace MMALSharp
         /// <param name="iterations"></param>
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
-        public async Task TakePictureIterative(string directory, string extension, uint encodingType, uint quality, int iterations, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePictureIterative(MMALPortImpl outputPort, string directory, string extension, int iterations, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {            
             for (int i = 0; i < iterations; i++)
             {
-                var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);                
-                await TakePicture(new FileCaptureHandler(filename), encodingType, quality, useExif, raw, exifTags);
+                var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
+
+                using (var fs = File.Create(filename))
+                {
+                    await TakePicture(outputPort, new StreamCaptureResult(fs), useExif, raw, exifTags);
+                }                    
             }                        
         }
 
@@ -399,12 +504,16 @@ namespace MMALSharp
         /// <param name="timeout"></param>
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
-        public async Task TakePictureTimeout(string directory, string extension, uint encodingType, uint quality, DateTime timeout, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePictureTimeout(MMALPortImpl outputPort, string directory, string extension, DateTime timeout, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {
             while (DateTime.Now.CompareTo(timeout) < 0)
             {
                 var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
-                await TakePicture(new FileCaptureHandler(filename), encodingType, quality, useExif, raw, exifTags);
+
+                using (var fs = File.Create(filename))
+                {
+                    await TakePicture(outputPort, new StreamCaptureResult(fs), useExif, raw, exifTags);
+                }                    
             }
         }
 
@@ -421,7 +530,7 @@ namespace MMALSharp
         /// <param name="raw"></param>
         /// <param name="exifTags"></param>
         /// <returns></returns>
-        public async Task TakePictureTimelapse(string directory, string extension, uint encodingType, uint quality, Timelapse tl, DateTime timeout, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePictureTimelapse(MMALPortImpl outputPort, string directory, string extension, Timelapse tl, DateTime timeout, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {
             int interval = 0;
 
@@ -443,19 +552,54 @@ namespace MMALSharp
                 await Task.Delay(interval);
 
                 var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
-                await TakePicture(new FileCaptureHandler(filename), encodingType, quality, useExif, raw, exifTags);
+
+                using (var fs = File.Create(filename))
+                {
+                    await TakePicture(outputPort, new StreamCaptureResult(fs), useExif, raw, exifTags);
+                }                    
             }
         }
 
-        /// <summary>
-        /// Provides a facility to create a new image encoder component
-        /// </summary>
-        /// <param name="encodingType"></param>
-        /// <param name="quality"></param>
-        /// <returns></returns>
-        public MMALImageEncoder CreateImageEncoder(uint encodingType, uint quality)
+        public MMALCamera CreatePreviewComponent(MMALRendererBase renderer)
         {            
-            return new MMALImageEncoder(encodingType, quality);
+            if(this.Preview != null)
+            {
+                this.Preview?.Connection.Disable();
+                this.Preview?.Connection.Destroy();
+            }
+
+            this.Preview = renderer;
+            this.Preview.CreateConnection(this.Camera.PreviewPort);
+            return this;
+        }
+
+        public MMALCamera CreateSplitterComponent()
+        {
+            this.Splitter = new MMALSplitterComponent();
+            return this;
+        }
+        
+        /// <summary>
+        /// Provides a facility to attach an encoder/decoder component to an upstream component's output port
+        /// </summary>
+        /// <param name="encoder"></param>
+        /// <param name="outputPort"></param>
+        /// <returns></returns>
+        public MMALCamera AddEncoder(MMALEncoderBase encoder, MMALPortImpl outputPort)
+        {
+            var enc = this.Encoders.Where(c => c?.Connection.OutputPort == outputPort).FirstOrDefault();
+
+            if(enc != null)
+            {
+                //Dispose of encoder that's connected to this output port and remove from list of encoders.
+                enc.DisableComponent();
+                enc.Dispose();
+                this.Encoders.Remove(enc);
+            }
+
+            encoder.CreateConnection(outputPort);
+            this.Encoders.Add(encoder);
+            return this;
         }
         
         /// <summary>
@@ -508,7 +652,8 @@ namespace MMALSharp
 
             this.Camera.Initialize();
             this.Encoders.ForEach(c => c.Initialize());
-            this.Preview.Initialize();
+            this.Preview?.Initialize();
+            this.Splitter?.Initialize();
 
             this.EnableCamera();
 
@@ -520,7 +665,7 @@ namespace MMALSharp
         /// </summary>
         /// <param name="encoder"></param>
         /// <param name="exifTags"></param>                     
-        public void AddExifTags(MMALImageEncoder encoder, params ExifTag[] exifTags)
+        private void AddExifTags(MMALImageEncoder encoder, params ExifTag[] exifTags)
         {
             //Add the same defaults as per Raspistill.c
             List<ExifTag> defaultTags = new List<ExifTag>
@@ -547,32 +692,26 @@ namespace MMALSharp
         /// <summary>
         /// Annotates the image with various text as specified in the MMALCameraConfig class.
         /// </summary>
-        public unsafe void AnnotateImage()
+        private unsafe void AnnotateImage()
         { 
             if (MMALCameraConfigImpl.Config.Annotate != null)
             {
                 Console.WriteLine("Setting annotate");
                 MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T str = new MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T();
-                str.hdr = new MMAL_PARAMETER_HEADER_T((uint)MMALParametersCamera.MMAL_PARAMETER_ANNOTATE, (uint)Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>());
+                str.hdr = new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_ANNOTATE, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>());
                 str.enable = 1;
 
                 StringBuilder sb = new StringBuilder();
 
-                if (!string.IsNullOrEmpty(MMALCameraConfigImpl.Config.Annotate.CustomText))
-                {
+                if (!string.IsNullOrEmpty(MMALCameraConfigImpl.Config.Annotate.CustomText))                
                     sb.Append(MMALCameraConfigImpl.Config.Annotate.CustomText + " ");
-                }
-
-                if (MMALCameraConfigImpl.Config.Annotate.ShowTimeText)
-                {
+                
+                if (MMALCameraConfigImpl.Config.Annotate.ShowTimeText)                
                     sb.Append(DateTime.Now.ToString("HH:mm") + " ");
-                }
-
-                if (MMALCameraConfigImpl.Config.Annotate.ShowDateText)
-                {
+                
+                if (MMALCameraConfigImpl.Config.Annotate.ShowDateText)                
                     sb.Append(DateTime.Now.ToString("dd/MM/yyyy") + " ");
-                }
-
+                
                 if (MMALCameraConfigImpl.Config.Annotate.ShowShutterSettings)
                     str.showShutter = 1;
 
@@ -625,7 +764,7 @@ namespace MMALSharp
                 var text = Encoding.ASCII.GetBytes(t);
 
                 str.text = text;
-                str.hdr = new MMAL_PARAMETER_HEADER_T((uint) MMALParametersCamera.MMAL_PARAMETER_ANNOTATE, (uint) (Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>() + (t.Length)));
+                str.hdr = new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_ANNOTATE, (Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>() + (t.Length)));
 
                 var ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>());
                 Marshal.StructureToPtr(str, ptr, false);

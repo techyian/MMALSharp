@@ -9,10 +9,10 @@ namespace MMALSharp.Native
 {
     public static class MMALEvents
     {
-        public static uint MMAL_EVENT_ERROR = MMALUtil.MMAL_FOURCC("ERRO");
-        public static uint MMAL_EVENT_EOS = MMALUtil.MMAL_FOURCC("EEOS");
-        public static uint MMAL_EVENT_FORMAT_CHANGED = MMALUtil.MMAL_FOURCC("EFCH");
-        public static uint MMAL_EVENT_PARAMETER_CHANGED = MMALUtil.MMAL_FOURCC("EPCH");
+        public static int MMAL_EVENT_ERROR = MMALUtil.MMAL_FOURCC("ERRO");
+        public static int MMAL_EVENT_EOS = MMALUtil.MMAL_FOURCC("EEOS");
+        public static int MMAL_EVENT_FORMAT_CHANGED = MMALUtil.MMAL_FOURCC("EFCH");
+        public static int MMAL_EVENT_PARAMETER_CHANGED = MMALUtil.MMAL_FOURCC("EPCH");
                 
         [DllImport("libmmal.so", EntryPoint = "mmal_event_format_changed_get", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern MMAL_EVENT_FORMAT_CHANGED_T* mmal_event_format_changed_get(MMAL_BUFFER_HEADER_T* buffer);
