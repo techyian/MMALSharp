@@ -1,4 +1,5 @@
 ﻿using MMALSharp.Native;
+using MMALSharp.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -138,10 +139,15 @@ namespace MMALSharp
             if (MMALCameraConfigImpl.Config.Debug)
                 Console.WriteLine("Setting parameter");
 
+            var t = ParameterHelper.Where(c => c.Key == key).FirstOrDefault();
+
+            if(t.Equals(new Dictionary<int, Type>()))
+            {
+
+            }
+
             try
             {
-                var t = ParameterHelper.Where(c => c.Key == key).FirstOrDefault();
-
                 switch (t.Value.Name)
                 {
                     case "MMAL_PARAMETER_BOOLEAN_T":
@@ -172,7 +178,7 @@ namespace MMALSharp
             }
             catch
             {
-                throw new PiCameraError("Something went wrong whilst setting parameter " + key);                
+                throw new PiCameraError(string.Format("Something went wrong whilst setting parameter {0}. Name: {1}", key, Helpers.GetMemberName(() => t.Key)));                
             }
         }
 

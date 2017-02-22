@@ -61,15 +61,28 @@ public static void Main(string[] args)
 
 ##Status
 
-This is currently an experimental build and therefore a lot of functionality is not fully tested, however
-a number of common features are working correctly.
-
 The library has currently been tested on the following Raspberry Pi devices:
 
 * Raspberry Pi 1 Model B (512mb)
 * Raspberry Pi Zero
 
 Both the SUNNY and Sony IMX219 camera modules are currently working as expected.
+
+Currently working image 'still' features
+
+- [x] Image width/height
+- [x] image encoding
+- [x] Brightness
+- [x] Contrast
+- [x] Saturation
+- [x] Sharpness
+- [x] Video stabilisation
+- [x] Shutter speed
+- [x] ISO
+- [x] Exposure mode
+- [x] Exposure metering mode
+
+
 
 
 ##License

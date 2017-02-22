@@ -21,7 +21,7 @@ namespace MMALSharpExample
                 EnableAnnotate = true,
                 Annotate = new AnnotateImage { ShowDateText = true, ShowTimeText = true },
                 StillWidth = 1024,
-                StillHeight = 768
+                StillHeight = 768                     
             };
 
             //Assign our config to the global config object
@@ -30,20 +30,17 @@ namespace MMALSharpExample
             using (MMALCamera cam = MMALCamera.Instance)
             {
                 //Create our component pipeline. 
-                cam.CreatePreviewComponent(new MMALNullSinkComponent())
+                cam.AddEncoder(new MMALImageEncoder(), cam.Camera.StillPort)
+                   .CreatePreviewComponent(new MMALNullSinkComponent())
                    .ConfigureCamera();
                 
                 AsyncContext.Run(async () =>
                 {
-                    /*using (var fs = File.Create("/home/pi/test3.jpg"))
+                    //Take a picture on output port '0' of the encoder connected to the Camera's still port, sending the output to a filestream.
+                    using (var fs = File.Create("/home/pi/test3.jpg"))
                     {
-                        await cam.TakePicture(cam.Camera.StillPort, fs);
-                    }*/
-
-                    using (var fs = File.Create("/home/pi/test4.jpg"))
-                    {
-                        await cam.TakeSinglePicture(new StreamCaptureResult(fs));
-                    }
+                        await cam.TakePicture(cam.Camera.StillPort, 0, new StreamCaptureResult(fs));
+                    }                                        
                 });                
             }
         }

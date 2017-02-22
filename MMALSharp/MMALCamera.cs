@@ -299,7 +299,7 @@ namespace MMALSharp
         }
 
         private MMALCamera()
-        {
+        {            
             BcmHost.bcm_host_init();
             this.Camera = new MMALCameraComponent();
             this.Encoders = new List<MMALEncoderBase>();
@@ -315,9 +315,7 @@ namespace MMALSharp
                 return instance;
             }
         }
-
-        public event EventHandler<ReceivedDataEventArgs> ReceivedData;
-
+                
         /// <summary>
         /// Begin capture on one of the camera's output ports.
         /// </summary>
@@ -366,7 +364,7 @@ namespace MMALSharp
                     Helpers.PrintWarning("Preview port does not have a Render component configured. Resulting image will be affected.");
                 else
                 {
-                    if (this.Preview.Connection != null)
+                    if (this.Preview.Connection == null)
                         this.Preview.CreateConnection(camPreviewPort);
                 }
 
@@ -400,12 +398,11 @@ namespace MMALSharp
 
                 //Close open connections.
                 encoder.CloseConnection();
-                //this.Preview.CloseConnection();
-
+                
                 //Disable the image encoder output port.
                 encoder.Stop(outputPort);
 
-                Console.WriteLine("Successfully captured image");
+                handler.PostProcess();
             }            
         }
 
@@ -421,7 +418,7 @@ namespace MMALSharp
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
         /// <returns></returns>
-        public async Task TakePicture<T>(MMALPortImpl outputPort, ICaptureHandler<T> handler, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePicture<T>(MMALPortImpl connPort, int outputPort, ICaptureHandler<T> handler, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {          
             
             Console.WriteLine("Preparing to take picture");
@@ -430,7 +427,7 @@ namespace MMALSharp
             var camStillPort = this.Camera.StillPort;
 
             //Find the encoder/decoder which is connected to the output port specified.
-            var encoder = this.Encoders.Where(c => c?.Connection.OutputPort == outputPort).FirstOrDefault();
+            var encoder = this.Encoders.Where(c => c?.Connection.OutputPort == connPort).FirstOrDefault();
             
             if (encoder == null || encoder.GetType() != typeof(MMALImageEncoder))
                 throw new PiCameraError("No image encoder currently attached to output port specified");
@@ -443,7 +440,7 @@ namespace MMALSharp
                 Helpers.PrintWarning("Preview port does not have a Render component configured. Resulting image will be affected.");
             else
             {
-                if (this.Preview.Connection != null)
+                if (this.Preview.Connection == null)
                     this.Preview.CreateConnection(camPreviewPort);
             }
                         
@@ -452,7 +449,7 @@ namespace MMALSharp
 
             if (MMALCameraConfigImpl.Config.EnableAnnotate)
                 AnnotateImage();
-
+            
             //Enable the image encoder output port.
             encoder.Start(outputPort, encoder.ManagedCallback, handler.Process);
 
@@ -481,7 +478,7 @@ namespace MMALSharp
         /// <param name="iterations"></param>
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
-        public async Task TakePictureIterative(MMALPortImpl outputPort, string directory, string extension, int iterations, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePictureIterative(MMALPortImpl connPort, int outputPort, string directory, string extension, int iterations, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {            
             for (int i = 0; i < iterations; i++)
             {
@@ -489,7 +486,7 @@ namespace MMALSharp
 
                 using (var fs = File.Create(filename))
                 {
-                    await TakePicture(outputPort, new StreamCaptureResult(fs), useExif, raw, exifTags);
+                    await TakePicture(connPort, outputPort, new StreamCaptureResult(fs), useExif, raw, exifTags);
                 }                    
             }                        
         }
@@ -504,7 +501,7 @@ namespace MMALSharp
         /// <param name="timeout"></param>
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
-        public async Task TakePictureTimeout(MMALPortImpl outputPort, string directory, string extension, DateTime timeout, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePictureTimeout(MMALPortImpl connPort, int outputPort, string directory, string extension, DateTime timeout, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {
             while (DateTime.Now.CompareTo(timeout) < 0)
             {
@@ -512,7 +509,7 @@ namespace MMALSharp
 
                 using (var fs = File.Create(filename))
                 {
-                    await TakePicture(outputPort, new StreamCaptureResult(fs), useExif, raw, exifTags);
+                    await TakePicture(connPort, outputPort, new StreamCaptureResult(fs), useExif, raw, exifTags);
                 }                    
             }
         }
@@ -530,7 +527,7 @@ namespace MMALSharp
         /// <param name="raw"></param>
         /// <param name="exifTags"></param>
         /// <returns></returns>
-        public async Task TakePictureTimelapse(MMALPortImpl outputPort, string directory, string extension, Timelapse tl, DateTime timeout, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePictureTimelapse(MMALPortImpl connPort, int outputPort, string directory, string extension, Timelapse tl, DateTime timeout, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {
             int interval = 0;
 
@@ -555,7 +552,7 @@ namespace MMALSharp
 
                 using (var fs = File.Create(filename))
                 {
-                    await TakePicture(outputPort, new StreamCaptureResult(fs), useExif, raw, exifTags);
+                    await TakePicture(connPort, outputPort, new StreamCaptureResult(fs), useExif, raw, exifTags);
                 }                    
             }
         }
@@ -633,7 +630,7 @@ namespace MMALSharp
                 Console.WriteLine("Configuring camera parameters.");
 
             this.DisableCamera();
-
+            
             this.SetSaturation(MMALCameraConfigImpl.Config.Saturation);
             this.SetSharpness(MMALCameraConfigImpl.Config.Sharpness);
             this.SetContrast(MMALCameraConfigImpl.Config.Contrast);
@@ -649,11 +646,6 @@ namespace MMALSharp
             this.SetColourFx(MMALCameraConfigImpl.Config.Effects);
             this.SetRotation(MMALCameraConfigImpl.Config.Rotation);
             this.SetShutterSpeed(MMALCameraConfigImpl.Config.ShutterSpeed);
-
-            this.Camera.Initialize();
-            this.Encoders.ForEach(c => c.Initialize());
-            this.Preview?.Initialize();
-            this.Splitter?.Initialize();
 
             this.EnableCamera();
 
@@ -696,7 +688,9 @@ namespace MMALSharp
         { 
             if (MMALCameraConfigImpl.Config.Annotate != null)
             {
-                Console.WriteLine("Setting annotate");
+                if(MMALCameraConfigImpl.Config.Debug)
+                    Console.WriteLine("Setting annotate");
+
                 MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T str = new MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T();
                 str.hdr = new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_ANNOTATE, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>());
                 str.enable = 1;

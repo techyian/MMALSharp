@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MMALSharp.Utility;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace MMALSharp.Handlers
     public class StreamCaptureResult : ICaptureHandler<Stream>
     {
         private Stream _stream;
+        private int _processed;
 
         public StreamCaptureResult(Stream stream)
         {
@@ -20,11 +22,15 @@ namespace MMALSharp.Handlers
         }
                 
         public void Process(byte[] data)
-        {                
-            using (var writer = new BinaryWriter(this._stream))
-            {
-                writer.Write(data);
-            }                        
-        }        
+        {
+            this._processed += data.Length;
+            this._stream.Write(data, 0, data.Length);                               
+        }
+
+        public void PostProcess()
+        {
+            Console.WriteLine(string.Format("Successfully processed {0}", Helpers.ConvertBytesToMegabytes(this._processed)));
+        }
+
     }
 }

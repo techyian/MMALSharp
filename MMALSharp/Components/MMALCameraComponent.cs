@@ -40,7 +40,7 @@ namespace MMALSharp.Components
 
         public MMALCameraComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA)
         {
-            //this.Initialize();
+            this.Initialize();
         }
 
         public override void Initialize()
