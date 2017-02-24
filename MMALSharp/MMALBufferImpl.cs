@@ -29,7 +29,7 @@ namespace MMALSharp
         {
             get
             {
-                return this.Ptr->data;
+                return this.Ptr->Data;
             }
         }
 
@@ -40,7 +40,7 @@ namespace MMALSharp
         {
             get
             {
-                return this.Ptr->cmd;
+                return this.Ptr->Cmd;
             }
         }
 
@@ -50,7 +50,7 @@ namespace MMALSharp
         public uint AllocSize {
             get
             {
-                return this.Ptr->allocSize;
+                return this.Ptr->AllocSize;
             }
         }
 
@@ -61,7 +61,7 @@ namespace MMALSharp
         {
             get
             {
-                return this.Ptr->length;
+                return this.Ptr->Length;
             }
         }
 
@@ -72,7 +72,7 @@ namespace MMALSharp
         {
             get
             {
-                return this.Ptr->offset;
+                return this.Ptr->Offset;
             }
         }
 
@@ -83,7 +83,7 @@ namespace MMALSharp
         {
             get
             {
-                return this.Ptr->flags;
+                return this.Ptr->Flags;
             }
         }
 
@@ -94,7 +94,7 @@ namespace MMALSharp
         {
             get
             {
-                return this.Ptr->pts;
+                return this.Ptr->Pts;
             }
         }
 
@@ -105,7 +105,7 @@ namespace MMALSharp
         {
             get
             {
-                return this.Ptr->dts;
+                return this.Ptr->Dts;
             }
         }
 
@@ -116,7 +116,7 @@ namespace MMALSharp
         {
             get
             {
-                var t = Marshal.PtrToStructure<MMAL_BUFFER_HEADER_TYPE_SPECIFIC_T>(this.Ptr->type);                                
+                var t = Marshal.PtrToStructure<MMAL_BUFFER_HEADER_TYPE_SPECIFIC_T>(this.Ptr->Type);                                
                 return t;
             }
         }
@@ -216,14 +216,14 @@ namespace MMALSharp
                         
             try
             {                
-                var target = new byte[this.Ptr->length];
+                var target = new byte[this.Ptr->Length];
                                 
                 fixed (byte* pTarget = target)
                 {
                     var pt = pTarget;
-                    var ps = this.Ptr->data + this.Offset;
+                    var ps = this.Ptr->Data + this.Offset;
                     
-                    for (int i = 0; i < this.Ptr->length; i++)
+                    for (int i = 0; i < this.Ptr->Length; i++)
                     {
                         *pt = *ps;
                         pt++;

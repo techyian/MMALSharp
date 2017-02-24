@@ -37,7 +37,7 @@ namespace MMALSharp
         public string Name {
             get
             {
-                return Marshal.PtrToStringAnsi((IntPtr)(*this.Ptr).name);
+                return Marshal.PtrToStringAnsi((IntPtr)(*this.Ptr).Name);
             }
         }
 
@@ -47,7 +47,7 @@ namespace MMALSharp
         public bool Enabled {
             get
             {
-                return (*this.Ptr).isEnabled == 1;
+                return (*this.Ptr).IsEnabled == 1;
             }
         }
 
@@ -58,7 +58,7 @@ namespace MMALSharp
         {
             get
             {
-                return (*this.Ptr).flags;
+                return (*this.Ptr).Flags;
             }
         }
 
@@ -69,7 +69,7 @@ namespace MMALSharp
         {
             get
             {
-                return (*this.Ptr).timeSetup;
+                return (*this.Ptr).TimeSetup;
             }
         }
 
@@ -80,7 +80,7 @@ namespace MMALSharp
         {
             get
             {
-                return (*this.Ptr).timeEnable;
+                return (*this.Ptr).TimeEnable;
             }
         }
 
@@ -91,7 +91,7 @@ namespace MMALSharp
         {
             get
             {
-                return (*this.Ptr).timeDisable;
+                return (*this.Ptr).TimeDisable;
             }
         }
 

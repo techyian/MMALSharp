@@ -35,7 +35,7 @@ namespace MMALSharp
         public int AwbGainsR { get; set; }
         public int AwbGainsB { get; set; }
         public MMAL_PARAMETER_DRC_STRENGTH_T DrcLevel { get; set; } = MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_OFF;
-        public int StatsPass { get; set; }
+        public bool StatsPass { get; set; }
         public bool EnableAnnotate { get; set; }    
         public AnnotateImage Annotate { get; set; }
         public StereoMode StereoMode { get; set; } = new StereoMode();
@@ -69,15 +69,17 @@ namespace MMALSharp
     {
         public double X { get; set; } = 0.0;
         public double Y { get; set; } = 1.0;        
+        public double Width { get; set; }
+        public double Height { get; set; }
     }
 
     public class StereoMode
     {
-        public int Mode { get; set; } = (int)MMAL_STEREOSCOPIC_MODE_T.MMAL_STEREOSCOPIC_MODE_NONE;
+        public MMAL_STEREOSCOPIC_MODE_T Mode { get; set; } = MMAL_STEREOSCOPIC_MODE_T.MMAL_STEREOSCOPIC_MODE_NONE;
         public int Decimate { get; set; }
         public int SwapEyes { get; set; }
     }
-
+    
     public class ExifTag
     {
         public string Key { get; set; }

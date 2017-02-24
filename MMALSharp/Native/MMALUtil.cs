@@ -123,7 +123,7 @@ namespace MMALSharp.Native
         public static unsafe extern void mmal_buffer_header_copy_header(MMAL_BUFFER_HEADER_T* dest, MMAL_BUFFER_HEADER_T* src);
                 
         [DllImport("libmmal.so", EntryPoint = "mmal_port_pool_create", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMAL_POOL_T* mmal_port_pool_create(MMAL_PORT_T* port, uint headers, uint payload_size);
+        public static unsafe extern MMAL_POOL_T* mmal_port_pool_create(MMAL_PORT_T* port, int headers, int payload_size);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_port_pool_destroy", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern void mmal_port_pool_destroy(MMAL_PORT_T* port, MMAL_POOL_T* pool);
@@ -145,7 +145,12 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_RECT_T
     {
-        public int x, y, height, width;
+        private int x, y, height, width;
+
+        public int X => x;
+        public int Y => y;
+        public int Height => height;
+        public int Width => width;
 
         public MMAL_RECT_T(int x, int y, int height, int width)
         {
@@ -157,9 +162,33 @@ namespace MMALSharp.Native
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_FLOAT_RECT_T
+    {
+        private double x, y, height, width;
+
+        public double X => x;
+        public double Y => y;
+        public double Height => height;
+        public double Width => width;
+
+        public MMAL_FLOAT_RECT_T(double x, double y, double height, double width)
+        {
+            this.x = x;
+            this.y = y;
+            this.height = height;
+            this.width = width;
+        }
+    }
+
+
+
+    [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_RATIONAL_T
     {
-        public int num, den;
+        private int num, den;
+
+        public int Num => num;
+        public int Den => den;
 
         public MMAL_RATIONAL_T(int num, int den)
         {

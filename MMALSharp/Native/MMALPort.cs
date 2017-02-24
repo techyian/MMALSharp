@@ -86,21 +86,66 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_PORT_T
     {
-        public IntPtr priv;
-        public char* name;
-        public MMALPort.MMAL_PORT_TYPE_T type;
-        public ushort index, indexAll;
-        public uint isEnabled;
-        public MMAL_ES_FORMAT_T* format;
-        public uint bufferNumMin, bufferSizeMin, bufferAlignmentMin, bufferNumRecommended, 
+        private IntPtr priv;
+        private char* name;
+        private MMALPort.MMAL_PORT_TYPE_T type;
+        private ushort index, indexAll;
+        private int isEnabled;
+        private MMAL_ES_FORMAT_T* format;
+        private int bufferNumMin, bufferSizeMin, bufferAlignmentMin, bufferNumRecommended, 
                     bufferSizeRecommended, bufferNum, bufferSize;
-        public MMAL_COMPONENT_T* component;
-        public IntPtr userData;
-        public uint capabilities;
+        private MMAL_COMPONENT_T* component;
+        private IntPtr userData;
+        private uint capabilities;
 
+        public IntPtr Priv => priv;
+        public char* Name => name;
+        public MMALPort.MMAL_PORT_TYPE_T Type => type;
+        public ushort Index => index;
+        public ushort IndexAll => indexAll;
+        public int IsEnabled => isEnabled;
+        public MMAL_ES_FORMAT_T* Format
+        {
+            get
+            {
+                return format;
+            }
+        }
+        public int BufferNumMin => bufferNumMin;        
+        public int BufferSizeMin => bufferSizeMin;        
+        public int BufferAlignmentMin => bufferAlignmentMin;        
+        public int BufferNumRecommended => bufferNumRecommended;        
+        public int BufferSizeRecommended => bufferSizeRecommended;
+        
+        public int BufferNum
+        {
+            get
+            {
+                return this.bufferNum;
+            }
+            set
+            {
+                this.bufferNum = value;
+            }
+        }
+        public int BufferSize
+        {
+            get
+            {
+                return this.bufferSize;
+            }
+            set
+            {
+                this.bufferSize = value;
+            }
+        }
+        public MMAL_COMPONENT_T* Component => component;
+        public IntPtr UserData => userData;
+        public uint Capabilities => capabilities;
+        
         public MMAL_PORT_T(IntPtr priv, char* name, MMALPort.MMAL_PORT_TYPE_T type, ushort index, ushort indexAll,
-                           uint isEnabled, MMAL_ES_FORMAT_T* format, uint bufferNumMin, uint bufferSizeMin, uint bufferAlignmentMin, 
-                           uint bufferNumRecommended, uint bufferSizeRecommended, uint bufferNum, uint bufferSize, MMAL_COMPONENT_T* component, 
+                           int isEnabled, MMAL_ES_FORMAT_T* format, int bufferNumMin, int bufferSizeMin, int bufferAlignmentMin, 
+                           int bufferNumRecommended, int bufferSizeRecommended, int bufferNum, int bufferSize, MMAL_COMPONENT_T* component, 
                            IntPtr userData, uint capabilities)
         {
             this.priv = priv;

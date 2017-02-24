@@ -44,13 +44,26 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_CONNECTION_T
     {
-        public IntPtr userData, callback;
-        public uint isEnabled, flags;
-        public MMAL_PORT_T* input, output;
-        public MMAL_POOL_T* pool;
-        public MMAL_QUEUE_T* queue;
-        public char* name;
-        public long timeSetup, timeEnable, timeDisable;
+        private IntPtr userData, callback;
+        private uint isEnabled, flags;
+        private MMAL_PORT_T* input, output;
+        private MMAL_POOL_T* pool;
+        private MMAL_QUEUE_T* queue;
+        private char* name;
+        private long timeSetup, timeEnable, timeDisable;
+
+        public IntPtr UserData => userData;
+        public IntPtr Callback => callback;
+        public uint IsEnabled => isEnabled;
+        public uint Flags => flags;
+        public MMAL_PORT_T* Input => input;
+        public MMAL_PORT_T* Output => output;
+        public MMAL_POOL_T* Pool => pool;
+        public MMAL_QUEUE_T* Queue => queue;
+        public char* Name => name;
+        public long TimeSetup => timeSetup;
+        public long TimeEnable => timeEnable;
+        public long TimeDisable => timeDisable;
 
         public MMAL_CONNECTION_T(IntPtr userData, IntPtr callback, uint isEnabled, uint flags, MMAL_PORT_T* input, MMAL_PORT_T* output,
                                  MMAL_POOL_T* pool, MMAL_QUEUE_T* queue, char* name, long timeSetup, long timeEnable, long timeDisable)

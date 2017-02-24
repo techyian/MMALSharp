@@ -116,7 +116,7 @@ namespace MMALSharp
                     case "MMAL_PARAMETER_RATIONAL_T":
                         MMAL_RATIONAL_T ratVal = new MMAL_RATIONAL_T();
                         MMALCheck(MMALUtil.mmal_port_parameter_get_rational(ptr, (uint)key, ref ratVal), "Unable to get rational value");
-                        return (double)ratVal.num / ratVal.den;                        
+                        return (double)ratVal.Num / ratVal.Den;                        
                     default:
                         throw new NotSupportedException();
                 }

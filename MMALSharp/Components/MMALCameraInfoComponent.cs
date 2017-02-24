@@ -38,9 +38,9 @@ namespace MMALSharp.Components
             var ptr1 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_T>());
             var str1 = (MMAL_PARAMETER_HEADER_T*)ptr1;
 
-            str1->id = MMALParametersCamera.MMAL_PARAMETER_CAMERA_INFO;      
+            str1->Id = MMALParametersCamera.MMAL_PARAMETER_CAMERA_INFO;      
             //Deliberately undersize to check if running on older firmware.      
-            str1->size = Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_V2_T>() - 4;
+            str1->Size = Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_V2_T>() - 4;
             
             try
             {
@@ -56,8 +56,8 @@ namespace MMALSharp.Components
                 var ptr2 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_V2_T>());
                 var str2 = (MMAL_PARAMETER_HEADER_T*)ptr2;
 
-                str2->id = MMALParametersCamera.MMAL_PARAMETER_CAMERA_INFO;
-                str2->size = Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_V2_T>();
+                str2->Id = MMALParametersCamera.MMAL_PARAMETER_CAMERA_INFO;
+                str2->Size = Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_V2_T>();
 
                 try
                 {
@@ -67,11 +67,11 @@ namespace MMALSharp.Components
 
                     var s = Marshal.PtrToStructure<MMAL_PARAMETER_CAMERA_INFO_V2_T>(p);
 
-                    if (s.cameras != null && s.cameras.Length > 0)
+                    if (s.Cameras != null && s.Cameras.Length > 0)
                     {
-                        this.SensorName = s.cameras[0].cameraName;
-                        this.MaxHeight = s.cameras[0].maxHeight;
-                        this.MaxWidth = s.cameras[0].maxWidth;
+                        this.SensorName = s.Cameras[0].CameraName;
+                        this.MaxHeight = s.Cameras[0].MaxHeight;
+                        this.MaxWidth = s.Cameras[0].MaxWidth;
                     }
                 }
                 catch (Exception e)

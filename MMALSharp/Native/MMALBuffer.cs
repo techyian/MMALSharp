@@ -66,11 +66,16 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_BUFFER_HEADER_VIDEO_SPECIFIC_T
     {
-        public uint planes;
+        private uint planes;
 
         [MarshalAs( UnmanagedType.ByValArray, SizeConst = 4)]
-        public uint[] offset, pitch;
-        public uint flags;
+        private uint[] offset, pitch;
+        private uint flags;
+
+        public uint Planes => planes;
+        public uint[] Offset => offset;
+        public uint[] Pitch => pitch;
+        public uint Flags => flags;
 
         public MMAL_BUFFER_HEADER_VIDEO_SPECIFIC_T(uint planes, uint[] offset, uint[] pitch, uint flags)
         {
@@ -84,7 +89,9 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_BUFFER_HEADER_TYPE_SPECIFIC_T
     {
-        public MMAL_BUFFER_HEADER_VIDEO_SPECIFIC_T video;
+        private MMAL_BUFFER_HEADER_VIDEO_SPECIFIC_T video;
+
+        public MMAL_BUFFER_HEADER_VIDEO_SPECIFIC_T Video => video;
 
         public MMAL_BUFFER_HEADER_TYPE_SPECIFIC_T(MMAL_BUFFER_HEADER_VIDEO_SPECIFIC_T video)
         {
@@ -100,13 +107,27 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_BUFFER_HEADER_T
     {
-        public MMAL_BUFFER_HEADER_T* next;
-        public IntPtr priv;
-        public uint cmd;
-        public byte* data;
-        public uint allocSize, length, offset, flags;
-        public long pts, dts;
-        public IntPtr type, userData;
+        private MMAL_BUFFER_HEADER_T* next;
+        private IntPtr priv;
+        private uint cmd;
+        private byte* data;
+        private uint allocSize, length, offset, flags;
+        private long pts, dts;
+        private IntPtr type, userData;
+
+        public MMAL_BUFFER_HEADER_T* Next => next;
+        public IntPtr Priv => priv;
+        public uint Cmd => cmd;
+        public byte* Data => data;
+        public uint AllocSize => allocSize;
+        public uint Length => length;
+        public uint Offset => offset;
+        public uint Flags => flags;
+        public long Pts => pts;
+        public long Dts => dts;
+        public IntPtr Type => type;
+        public IntPtr UserData => userData;
+
 
         public MMAL_BUFFER_HEADER_T(MMAL_BUFFER_HEADER_T* next, IntPtr priv, uint cmd, byte* data, uint allocSize,
                                     uint length, uint offset, uint flags, long pts, long dts, IntPtr type, IntPtr userData)

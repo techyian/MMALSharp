@@ -29,6 +29,102 @@ namespace MMALSharp.Components
             input.ShallowCopy(output);
         }
 
+        /// <summary>
+        /// Annotates the image with various text as specified in the MMALCameraConfig class.
+        /// </summary>
+        internal unsafe void AnnotateImage()
+        {
+            if (MMALCameraConfigImpl.Config.Annotate != null)
+            {
+                if (MMALCameraConfigImpl.Config.Debug)
+                    Console.WriteLine("Setting annotate");
+                                                               
+                StringBuilder sb = new StringBuilder();
+
+                var showShutter = 0;
+                var showAnalogGain = 0;
+                var showLens = 0;
+                var showCaf = 0;
+                var showMotion = 0;
+                var showFrame = 0;
+                var enableTextBackground = 0;
+                var textSize = (byte)0;
+                var customTextColor = 0;
+                var customTextY = (byte)0;
+                var customTextU = (byte)0;
+                var customTextV = (byte)0;
+                var customBackgroundColor = 0;
+                var customBackgroundY = (byte)0;
+                var customBackgroundU = (byte)0;
+                var customBackgroundV = (byte)0;
+                
+                if (!string.IsNullOrEmpty(MMALCameraConfigImpl.Config.Annotate.CustomText))
+                    sb.Append(MMALCameraConfigImpl.Config.Annotate.CustomText + " ");
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowTimeText)
+                    sb.Append(DateTime.Now.ToString("HH:mm") + " ");
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowDateText)
+                    sb.Append(DateTime.Now.ToString("dd/MM/yyyy") + " ");
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowShutterSettings)
+                    showShutter = 1;
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowGainSettings)
+                    showAnalogGain = 1;
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowLensSettings)
+                    showLens = 1;
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowCafSettings)
+                    showCaf = 1;
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowMotionSettings)
+                    showMotion = 1;
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowFrameNumber)
+                    showFrame = 1;
+
+                if (MMALCameraConfigImpl.Config.Annotate.ShowBlackBackground)
+                    enableTextBackground = 1;
+
+                textSize = Convert.ToByte(MMALCameraConfigImpl.Config.Annotate.TextSize);
+
+                if (MMALCameraConfigImpl.Config.Annotate.TextColour != -1)
+                {
+                    customTextColor = 1;
+                    customTextY = Convert.ToByte((MMALCameraConfigImpl.Config.Annotate.TextColour & 0xff));
+                    customTextU = Convert.ToByte(((MMALCameraConfigImpl.Config.Annotate.TextColour >> 8) & 0xff));
+                    customTextV = Convert.ToByte(((MMALCameraConfigImpl.Config.Annotate.TextColour >> 16) & 0xff));
+                }
+                
+                if (MMALCameraConfigImpl.Config.Annotate.BgColour != -1)
+                {
+                    customBackgroundColor = 1;
+                    customBackgroundY = Convert.ToByte((MMALCameraConfigImpl.Config.Annotate.BgColour & 0xff));
+                    customBackgroundU = Convert.ToByte(((MMALCameraConfigImpl.Config.Annotate.BgColour >> 8) & 0xff));
+                    customBackgroundV = Convert.ToByte(((MMALCameraConfigImpl.Config.Annotate.BgColour >> 16) & 0xff));
+                }
+                
+                string t = sb.ToString() + char.MinValue;
+
+                var text = Encoding.ASCII.GetBytes(t);
+                                
+                MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T str = new MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_ANNOTATE, (Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>() + (t.Length))),
+                                                                                                    1, showShutter, showAnalogGain, showLens,
+                                                                                                    showCaf, showMotion, showFrame, enableTextBackground,
+                                                                                                    customBackgroundColor, customBackgroundY, customBackgroundU, customBackgroundV, (byte)0, customTextColor,
+                                                                                                    customTextY, customTextU, customTextV, textSize, text);
+                
+                var ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>());
+                Marshal.StructureToPtr(str, ptr, false);
+
+                MMALCheck(MMALPort.mmal_port_parameter_set(MMALCamera.Instance.Camera.Control.Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), "Unable to set annotate");
+
+                Marshal.FreeHGlobal(ptr);
+            }
+        }
+
     }
         
     /// <summary>
@@ -118,14 +214,43 @@ namespace MMALSharp.Components
             var input = this.Inputs.ElementAt(0);
             var output = this.Outputs.ElementAt(0);
                         
-            output.Ptr->format->encoding = this.EncodingType;
-            output.Ptr->bufferNum = Math.Max(output.Ptr->bufferNumRecommended, output.Ptr->bufferNumMin);
-            output.Ptr->bufferSize = Math.Max(output.Ptr->bufferSizeRecommended, output.Ptr->bufferSizeMin);
+            output.Ptr->Format->Encoding = this.EncodingType;
+            output.Ptr->BufferNum = Math.Max(output.Ptr->BufferNumRecommended, output.Ptr->BufferNumMin);
+            output.Ptr->BufferSize = Math.Max(output.Ptr->BufferSizeRecommended, output.Ptr->BufferSizeMin);
 
             output.Commit();
                         
             if (this.EncodingType == MMALEncodings.MMAL_ENCODING_JPEG)
                 SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, this.Quality, output.Ptr);
+        }
+        
+        /// <summary>
+        /// Adds EXIF tags to the resulting image
+        /// </summary>
+        /// <param name="encoder"></param>
+        /// <param name="exifTags"></param>                     
+        internal void AddExifTags(MMALImageEncoder encoder, params ExifTag[] exifTags)
+        {
+            //Add the same defaults as per Raspistill.c
+            List<ExifTag> defaultTags = new List<ExifTag>
+            {
+                new ExifTag { Key = "IFD0.Model", Value = "RP_" + MMALCamera.Instance.Camera.CameraInfo.SensorName },
+                new ExifTag { Key = "IFD0.Make", Value = "RaspberryPi" },
+                new ExifTag { Key = "EXIF.DateTimeDigitized", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") },
+                new ExifTag { Key = "EXIF.DateTimeOriginal", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") },
+                new ExifTag { Key = "IFD0.DateTime", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") }
+            };
+
+            defaultTags.ForEach(c => encoder.AddExifTag(c));
+
+            if ((defaultTags.Count + exifTags.Length) > 32)
+                throw new PiCameraError("Maximum number of EXIF tags exceeded.");
+
+            //Add user defined tags.                 
+            foreach (ExifTag tag in exifTags)
+            {
+                encoder.AddExifTag(tag);
+            }
         }
 
         /// <summary>

@@ -17,12 +17,12 @@ namespace MMALSharp
     {
         public static void SetCameraConfig(this MMALCameraComponent camera, MMAL_PARAMETER_CAMERA_CONFIG_T value)
         {
-            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, &value.hdr), "Unable to set camera config.");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, value.HdrPtr), "Unable to set camera config.");
         }
 
         public static void SetChangeEventRequest(this MMALControlPortImpl controlPort, MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T value)
         {
-            MMALCheck(MMALPort.mmal_port_parameter_set(controlPort.Ptr, &value.hdr), "Unable to set camera event request.");
+            MMALCheck(MMALPort.mmal_port_parameter_set(controlPort.Ptr, value.HdrPtr), "Unable to set camera event request.");
         }
 
         public static double GetSaturation(this MMALCamera camera)
@@ -165,9 +165,9 @@ namespace MMALSharp
             MMAL_PARAMETER_EXPOSUREMODE_T exp_mode = new MMAL_PARAMETER_EXPOSUREMODE_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_EXPOSURE_MODE, Marshal.SizeOf<MMAL_PARAMETER_EXPOSUREMODE_T>()),
                                                                                                         new MMAL_PARAM_EXPOSUREMODE_T());
 
-            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &exp_mode.hdr), "Unable to get exposure mode");
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, exp_mode.HdrPtr), "Unable to get exposure mode");
 
-            return exp_mode.value;                                    
+            return exp_mode.Value;                                    
         }
 
         public static void SetExposureMode(this MMALCamera camera, MMAL_PARAM_EXPOSUREMODE_T mode)
@@ -178,7 +178,7 @@ namespace MMALSharp
             MMAL_PARAMETER_EXPOSUREMODE_T exp_mode = new MMAL_PARAMETER_EXPOSUREMODE_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_EXPOSURE_MODE, Marshal.SizeOf<MMAL_PARAMETER_EXPOSUREMODE_T>()),
                                                                                                         mode);
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &exp_mode.hdr), "Unable to set exposure mode");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, exp_mode.HdrPtr), "Unable to set exposure mode");
         }
 
         public static MMAL_PARAM_EXPOSUREMETERINGMODE_T GetExposureMeteringMode(this MMALCamera camera)
@@ -186,9 +186,9 @@ namespace MMALSharp
             MMAL_PARAMETER_EXPOSUREMETERINGMODE_T exp_mode = new MMAL_PARAMETER_EXPOSUREMETERINGMODE_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_EXP_METERING_MODE, Marshal.SizeOf<MMAL_PARAMETER_EXPOSUREMETERINGMODE_T>()),
                                                                                                         new MMAL_PARAM_EXPOSUREMETERINGMODE_T());
 
-            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &exp_mode.hdr), "Unable to get exposure metering mode");
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, exp_mode.HdrPtr), "Unable to get exposure metering mode");
 
-            return exp_mode.value;
+            return exp_mode.Value;
         }
 
         public static void SetExposureMeteringMode(this MMALCamera camera, MMAL_PARAM_EXPOSUREMETERINGMODE_T mode)
@@ -199,7 +199,7 @@ namespace MMALSharp
             MMAL_PARAMETER_EXPOSUREMETERINGMODE_T exp_mode = new MMAL_PARAMETER_EXPOSUREMETERINGMODE_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_EXP_METERING_MODE, Marshal.SizeOf<MMAL_PARAMETER_EXPOSUREMETERINGMODE_T>()),
                                                                                                         mode);
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &exp_mode.hdr), "Unable to set exposure metering mode");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, exp_mode.HdrPtr), "Unable to set exposure metering mode");
         }
 
         public static MMAL_PARAM_AWBMODE_T GetAwbMode(this MMALCamera camera)
@@ -207,9 +207,9 @@ namespace MMALSharp
             MMAL_PARAMETER_AWBMODE_T awb_mode = new MMAL_PARAMETER_AWBMODE_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_AWB_MODE, Marshal.SizeOf<MMAL_PARAMETER_AWBMODE_T>()),
                                                                                                         new MMAL_PARAM_AWBMODE_T());
 
-            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &awb_mode.hdr), "Unable to get awb mode");
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, awb_mode.HdrPtr), "Unable to get awb mode");
 
-            return awb_mode.value;
+            return awb_mode.Value;
         }
 
         public static void SetAwbMode(this MMALCamera camera, MMAL_PARAM_AWBMODE_T mode)
@@ -220,7 +220,7 @@ namespace MMALSharp
             MMAL_PARAMETER_AWBMODE_T awb_mode = new MMAL_PARAMETER_AWBMODE_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_AWB_MODE, Marshal.SizeOf<MMAL_PARAMETER_AWBMODE_T>()),
                                                                                                         mode);
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &awb_mode.hdr), "Unable to set awb mode");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, awb_mode.HdrPtr), "Unable to set awb mode");
         }
 
         public static Tuple<double, double> GetAwbGains(this MMALCamera camera)
@@ -228,13 +228,13 @@ namespace MMALSharp
             MMAL_PARAMETER_AWB_GAINS_T awb_gains = new MMAL_PARAMETER_AWB_GAINS_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CUSTOM_AWB_GAINS, Marshal.SizeOf<MMAL_PARAMETER_AWB_GAINS_T>()),
                                                                                                         new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0));
 
-            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &awb_gains.hdr), "Unable to get awb gains");
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, awb_gains.HdrPtr), "Unable to get awb gains");
 
-            MMAL_RATIONAL_T rGain = awb_gains.rGain;
-            MMAL_RATIONAL_T bGain = awb_gains.bGain;
+            MMAL_RATIONAL_T rGain = awb_gains.RGain;
+            MMAL_RATIONAL_T bGain = awb_gains.BGain;
 
-            double r = rGain.num / rGain.den;
-            double b = bGain.num / bGain.den;
+            double r = rGain.Num / rGain.Den;
+            double b = bGain.Num / bGain.Den;
 
             return new Tuple<double, double>(r, b);
         }
@@ -245,14 +245,10 @@ namespace MMALSharp
                 Console.WriteLine(string.Format("Setting AWB gains: {0}, {1}", r_gain, b_gain));
 
             MMAL_PARAMETER_AWB_GAINS_T awb_gains = new MMAL_PARAMETER_AWB_GAINS_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CUSTOM_AWB_GAINS, Marshal.SizeOf<MMAL_PARAMETER_AWB_GAINS_T>()),
-                                                                                                        new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0));
-
-            awb_gains.rGain.num = (int)(r_gain * 65536);
-            awb_gains.bGain.num = (int)(b_gain * 65536);
-            awb_gains.rGain.den = 65536;
-            awb_gains.bGain.den = 65536;
-
-            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &awb_gains.hdr), "Unable to set awb gains");
+                                                                                                        new MMAL_RATIONAL_T((int)(r_gain * 65536), 65536), 
+                                                                                                        new MMAL_RATIONAL_T((int)(b_gain * 65536), 65536));
+                        
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, awb_gains.HdrPtr), "Unable to set awb gains");
         }
 
         public static MMAL_PARAM_IMAGEFX_T GetImageFx(this MMALCamera camera)
@@ -260,9 +256,9 @@ namespace MMALSharp
             MMAL_PARAMETER_IMAGEFX_T imgFX = new MMAL_PARAMETER_IMAGEFX_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_IMAGE_EFFECT, Marshal.SizeOf<MMAL_PARAMETER_IMAGEFX_T>()),
                                                                                                         new MMAL_PARAM_IMAGEFX_T());
 
-            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &imgFX.hdr), "Unable to get image fx");
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, imgFX.HdrPtr), "Unable to get image fx");
 
-            return imgFX.value;
+            return imgFX.Value;
         }
 
         public static void SetImageFx(this MMALCamera camera, MMAL_PARAM_IMAGEFX_T imageFx)
@@ -273,7 +269,7 @@ namespace MMALSharp
             MMAL_PARAMETER_IMAGEFX_T imgFX = new MMAL_PARAMETER_IMAGEFX_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_IMAGE_EFFECT, Marshal.SizeOf<MMAL_PARAMETER_IMAGEFX_T>()),
                                                                                                         imageFx);
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &imgFX.hdr), "Unable to set image fx");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, imgFX.HdrPtr), "Unable to set image fx");
         }
 
         public static ColourEffects GetColourFx(this MMALCamera camera)
@@ -281,12 +277,12 @@ namespace MMALSharp
             MMAL_PARAMETER_COLOURFX_T colFX = new MMAL_PARAMETER_COLOURFX_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_COLOUR_EFFECT, Marshal.SizeOf<MMAL_PARAMETER_COLOURFX_T>()),
                                                                                                         0, 0, 0);
 
-            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &colFX.hdr), "Unable to get colour fx");
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, colFX.HdrPtr), "Unable to get colour fx");
 
             ColourEffects fx = new ColourEffects();
-            fx.Enable = colFX.enable;
-            fx.U = colFX.u;
-            fx.V = colFX.v;
+            fx.Enable = colFX.Enable;
+            fx.U = colFX.U;
+            fx.V = colFX.V;
 
             return fx;
         }
@@ -297,13 +293,9 @@ namespace MMALSharp
                 Console.WriteLine(string.Format("Setting colour effects"));
 
             MMAL_PARAMETER_COLOURFX_T colFX = new MMAL_PARAMETER_COLOURFX_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_COLOUR_EFFECT, Marshal.SizeOf<MMAL_PARAMETER_COLOURFX_T>()),
-                                                                                                        0, 0, 0);
-
-            colFX.enable = colourFx.Enable;
-            colFX.u = colourFx.U;
-            colFX.v = colourFx.V;
-
-            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &colFX.hdr), "Unable to set colour fx");
+                                                                                                        colourFx.Enable, colourFx.U, colourFx.V);
+                    
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, colFX.HdrPtr), "Unable to set colour fx");
         }
 
         public static int GetRotation(this MMALCamera camera)
@@ -327,42 +319,36 @@ namespace MMALSharp
                                                                                                         MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE);
 
             
-            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.StillPort.Ptr, &mirror.hdr), "Unable to get flips");
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.StillPort.Ptr, mirror.HdrPtr), "Unable to get flips");
 
-            return mirror.value;
+            return mirror.Value;
         }
 
         public static void SetFlips(this MMALCamera camera, MMAL_PARAM_MIRROR_T flips)
         {
             MMAL_PARAMETER_MIRROR_T mirror = new MMAL_PARAMETER_MIRROR_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_MIRROR, Marshal.SizeOf<MMAL_PARAMETER_MIRROR_T>()),
-                                                                                                        MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE);
-
-            mirror.value = flips;
-
-            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.StillPort.Ptr, &mirror.hdr), "Unable to set flips");
-
-        }
-
-        public static MMAL_RECT_T GetROI(this MMALCamera camera)
-        {
-            MMAL_PARAMETER_INPUT_CROP_T crop = new MMAL_PARAMETER_INPUT_CROP_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_INPUT_CROP, Marshal.SizeOf<MMAL_PARAMETER_INPUT_CROP_T>()), new MMAL_RECT_T());
+                                                                                                        flips);
                         
-            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &crop.hdr), "Unable to get ROI");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.StillPort.Ptr, mirror.HdrPtr), "Unable to set flips");
 
-            return crop.rect;
         }
 
-        public static void SetROI(this MMALCamera camera, MMAL_RECT_T rect)
+        public static MMAL_FLOAT_RECT_T GetROI(this MMALCamera camera)
         {
-            MMAL_PARAMETER_INPUT_CROP_T crop = new MMAL_PARAMETER_INPUT_CROP_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_INPUT_CROP, Marshal.SizeOf<MMAL_PARAMETER_INPUT_CROP_T>()), rect);
+            MMAL_PARAMETER_INPUT_CROP_T crop = new MMAL_PARAMETER_INPUT_CROP_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_INPUT_CROP, Marshal.SizeOf<MMAL_PARAMETER_INPUT_CROP_T>()), new MMAL_FLOAT_RECT_T());
+                        
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, crop.HdrPtr), "Unable to get ROI");
 
-            crop.rect.x = (65536 * rect.x);
-            crop.rect.y = (65536 * rect.y);
-            crop.rect.width = (65536 * rect.width);
-            crop.rect.height = (65536 * rect.height);
-            
-            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &crop.hdr), "Unable to set ROI");
+            return crop.Rect;
+        }
 
+        public static void SetROI(this MMALCamera camera, ROI rect)
+        {
+            //TODO - Look at this further, unsure if correct.
+            MMAL_PARAMETER_INPUT_CROP_T crop = new MMAL_PARAMETER_INPUT_CROP_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_INPUT_CROP, Marshal.SizeOf<MMAL_PARAMETER_INPUT_CROP_T>()), 
+                                                                                new MMAL_FLOAT_RECT_T((65536 * rect.X), (65536 * rect.Y), (65536 * rect.Height), (65536 * rect.Width)));
+                                    
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, crop.HdrPtr), "Unable to set ROI");
         }
 
         public static int GetShutterSpeed(this MMALCamera camera)
@@ -383,9 +369,9 @@ namespace MMALSharp
             MMAL_PARAMETER_DRC_T drc = new MMAL_PARAMETER_DRC_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_DYNAMIC_RANGE_COMPRESSION, Marshal.SizeOf<MMAL_PARAMETER_DRC_T>()),
                                                                                                         new MMAL_PARAMETER_DRC_STRENGTH_T());
 
-            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &drc.hdr), "Unable to get DRC");
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, drc.HdrPtr), "Unable to get DRC");
 
-            return drc.strength;
+            return drc.Strength;
         }
 
         public static void SetDRC(this MMALCamera camera, MMAL_PARAMETER_DRC_STRENGTH_T strength)
@@ -393,10 +379,10 @@ namespace MMALSharp
             MMAL_PARAMETER_DRC_T drc = new MMAL_PARAMETER_DRC_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_DYNAMIC_RANGE_COMPRESSION, Marshal.SizeOf<MMAL_PARAMETER_DRC_T>()),
                                                                                                         strength);
                         
-            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &drc.hdr), "Unable to set DRC");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, drc.HdrPtr), "Unable to set DRC");
         }
 
-        public static void SetStatsPass(this MMALCamera camera, int statsPass)
+        public static void SetStatsPass(this MMALCamera camera, bool statsPass)
         {
             SetParameter(MMAL_PARAMETER_CAPTURE_STATS_PASS, statsPass, camera.Camera.Control.Ptr);
         }
@@ -409,6 +395,14 @@ namespace MMALSharp
         public static void SetRawCapture(this MMALPortImpl port, bool raw)
         {
             SetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE, raw, port.Ptr);
+        }
+
+        public static void SetStereoMode(this MMALPortImpl port, StereoMode mode)
+        {
+            MMAL_PARAMETER_STEREOSCOPIC_MODE_T stereo = new MMAL_PARAMETER_STEREOSCOPIC_MODE_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_STEREOSCOPIC_MODE, Marshal.SizeOf<MMAL_PARAMETER_STEREOSCOPIC_MODE_T>()),
+                                                                                            mode.Mode, mode.Decimate, mode.SwapEyes);
+
+            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, stereo.HdrPtr), "Unable to set Stereo mode");
         }
 
     }

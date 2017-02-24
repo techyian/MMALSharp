@@ -24,7 +24,11 @@ namespace MMALSharp.Handlers
         public void Process(byte[] data)
         {
             this._processed += data.Length;
-            this._stream.Write(data, 0, data.Length);                               
+
+            if (this._stream.CanWrite)
+                this._stream.Write(data, 0, data.Length);
+            else
+                throw new PiCameraError("Stream not writable.");
         }
 
         public void PostProcess()

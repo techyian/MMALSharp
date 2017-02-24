@@ -45,25 +45,13 @@ namespace MMALSharp
         /// <summary>
         /// Name of the component
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return Marshal.PtrToStringAnsi((IntPtr)this.Ptr->name);
-            }
-        }
+        public string Name => Marshal.PtrToStringAnsi((IntPtr)this.Ptr->Name);
 
         /// <summary>
         /// Indicates whether this component is enabled
         /// </summary>
-        public bool Enabled
-        {
-            get
-            {
-                return this.Ptr->isEnabled == 1;
-            }
-        }
-        
+        public bool Enabled => this.Ptr->IsEnabled == 1;
+                
         protected MMALComponentBase(string name)
         {
             var ptr = CreateComponent(name);
@@ -75,37 +63,37 @@ namespace MMALSharp
             Clocks = new List<MMALPortImpl>();
             Ports = new List<MMALPortImpl>();
 
-            this.Control = new MMALControlPortImpl(ptr->control, this);
+            this.Control = new MMALControlPortImpl(ptr->Control, this);
 
-            if (ptr->inputNum > 0)
+            if (ptr->InputNum > 0)
             {                
-                for (int i = 0; i < ptr->inputNum; i++)
+                for (int i = 0; i < ptr->InputNum; i++)
                 {                    
-                    Inputs.Add(new MMALPortImpl(&(*ptr->input[i]), this));
+                    Inputs.Add(new MMALPortImpl(&(*ptr->Input[i]), this));
                 }
             }
                 
-            if (ptr->outputNum > 0)
+            if (ptr->OutputNum > 0)
             {                
-                for (int i = 0; i < ptr->outputNum; i++)
+                for (int i = 0; i < ptr->OutputNum; i++)
                 {
-                    Outputs.Add(new MMALPortImpl(&(*ptr->output[i]), this));
+                    Outputs.Add(new MMALPortImpl(&(*ptr->Output[i]), this));
                 }
             }        
             
-            if (ptr->clockNum > 0)
+            if (ptr->ClockNum > 0)
             {                
-                for (int i = 0; i < ptr->clockNum; i++)
+                for (int i = 0; i < ptr->ClockNum; i++)
                 {
-                    Clocks.Add(new MMALPortImpl(&(*ptr->clock[i]), this));
+                    Clocks.Add(new MMALPortImpl(&(*ptr->Clock[i]), this));
                 }
             }
 
-            if ((*ptr).portNum > 0)
+            if ((*ptr).PortNum > 0)
             {                
-                for (int i = 0; i < ptr->portNum; i++)
+                for (int i = 0; i < ptr->PortNum; i++)
                 {                    
-                    Ports.Add(new MMALPortImpl(&(*ptr->port[i]), this));
+                    Ports.Add(new MMALPortImpl(&(*ptr->Port[i]), this));
                 }
             }
         }

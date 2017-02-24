@@ -48,120 +48,79 @@ namespace MMALSharp
         /// <summary>
         /// Native name of port
         /// </summary>
-        public string Name {
-            get
-            {
-                return Marshal.PtrToStringAnsi((IntPtr)(this.Ptr->name));
-            }
-        }
+        public string Name => Marshal.PtrToStringAnsi((IntPtr)(this.Ptr->Name));
 
         /// <summary>
         /// Indicates whether this port is enabled
         /// </summary>
-        public bool Enabled
-        {
-            get
-            {
-                return this.Ptr->isEnabled == 1;
-            }
-        }
-
+        public bool Enabled => this.Ptr->IsEnabled == 1;
+        
         /// <summary>
         /// Specifies minimum number of buffer headers required for this port 
         /// </summary>
-        public uint BufferNumMin
+        public int BufferNumMin
         {
             get
             {
-                return this.Ptr->bufferNumMin;
+                return this.Ptr->BufferNumMin;
             }
         }
 
         /// <summary>
         /// Specifies minimum size of buffer headers required for this port
         /// </summary>
-        public uint BufferSizeMin
-        {
-            get
-            {
-                return this.Ptr->bufferSizeMin;
-            }
-        }
+        public int BufferSizeMin => this.Ptr->BufferSizeMin;
 
         /// <summary>
         /// Specifies minimum alignment value for buffer headers required for this port
         /// </summary>
-        public uint BufferAlignmentMin
-        {
-            get
-            {
-                return this.Ptr->bufferAlignmentMin;
-            }
-        }
+        public int BufferAlignmentMin => this.Ptr->BufferAlignmentMin;
 
         /// <summary>
         /// Specifies recommended number of buffer headers for this port
         /// </summary>
-        public uint BufferNumRecommended
-        {
-            get
-            {
-                return this.Ptr->bufferNumRecommended;
-            }
-        }
+        public int BufferNumRecommended => this.Ptr->BufferNumRecommended;
 
         /// <summary>
         /// Specifies recommended size of buffer headers for this port
         /// </summary>
-        public uint BufferSizeRecommended
-        {
-            get
-            {
-                return this.Ptr->bufferSizeRecommended;
-            }
-        }
-
+        public int BufferSizeRecommended => this.Ptr->BufferSizeRecommended;
+        
         /// <summary>
         /// Indicates the currently set number of buffer headers for this port
         /// </summary>
-        public uint BufferNum
+        public int BufferNum
         {
             get
             {
-                return this.Ptr->bufferNum;
+                return this.Ptr->BufferNum;
             }
             set
             {
-                this.Ptr->bufferNum = value;
+                this.Ptr->BufferNum = value;
             }
         }
 
         /// <summary>
         /// Indicates the currently set size of buffer headers for this port
         /// </summary>
-        public uint BufferSize
+        public int BufferSize
         {
             get
             {
-                return this.Ptr->bufferSize;
+                return this.Ptr->BufferSize;
             }
             set
             {
-                this.Ptr->bufferSize = value;
+                this.Ptr->BufferSize = value;
             }
         }
 
         /// <summary>
         /// Accessor for the elementary stream
         /// </summary>
-        public MMAL_ES_FORMAT_T Format
-        {
-            get
-            {
-                return *this.Ptr->format;
-            }
-        }
-
+        public MMAL_ES_FORMAT_T Format => *this.Ptr->Format;
+        
         #endregion
 
         /// <summary>
@@ -192,14 +151,15 @@ namespace MMALSharp
         protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp)
         {
             this.Ptr = ptr;
-            this.Comp = ptr->component;            
+            this.Comp = ptr->Component;            
             this.ComponentReference = comp;
         }
 
         /// <summary>
         /// Provides functionality to enable processing on a port.
         /// </summary>
-        /// <param name="callback"></param>
+        /// <param name="managedCallback"></param>
+        /// <param name="processCallback"></param>
         public abstract void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback);
 
         /// <summary>
@@ -227,7 +187,7 @@ namespace MMALSharp
         /// <param name="destination"></param>
         internal void ShallowCopy(MMALPortBase destination)
         {
-            MMALFormat.mmal_format_copy(destination.Ptr->format, this.Ptr->format);
+            MMALFormat.mmal_format_copy(destination.Ptr->Format, this.Ptr->Format);
         }
 
         /// <summary>
@@ -236,7 +196,7 @@ namespace MMALSharp
         /// <param name="destination"></param>
         internal void FullCopy(MMALPortBase destination)
         {
-            MMALFormat.mmal_format_full_copy(destination.Ptr->format, this.Ptr->format);
+            MMALFormat.mmal_format_full_copy(destination.Ptr->Format, this.Ptr->Format);
         }
 
         /// <summary>

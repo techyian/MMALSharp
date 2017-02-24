@@ -22,8 +22,11 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_EVENT_END_OF_STREAM_T
     {
-        public MMALPort.MMAL_PORT_TYPE_T portType;
-        public uint portIndex;
+        private MMALPort.MMAL_PORT_TYPE_T portType;
+        private uint portIndex;
+
+        public MMALPort.MMAL_PORT_TYPE_T PortType => portType;
+        public uint PortIndex => portIndex;
 
         public MMAL_EVENT_END_OF_STREAM_T(MMALPort.MMAL_PORT_TYPE_T portType, uint portIndex)
         {
@@ -35,8 +38,14 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_EVENT_FORMAT_CHANGED_T
     {
-        public uint bufferSizeMin, bufferNumMin, bufferSizeRecommended, bufferNumRecommended;
-        public MMAL_ES_FORMAT_T* format;
+        private uint bufferSizeMin, bufferNumMin, bufferSizeRecommended, bufferNumRecommended;
+        private MMAL_ES_FORMAT_T* format;
+
+        public uint BufferSizeMin => bufferSizeMin;
+        public uint BufferNumMin => bufferNumMin;
+        public uint BufferSizeRecommended => bufferSizeRecommended;
+        public uint BufferNumRecommended => bufferNumRecommended;
+        public MMAL_ES_FORMAT_T* Format => format;
 
         public MMAL_EVENT_FORMAT_CHANGED_T(uint bufferSizeMin, uint bufferNumMin, uint bufferSizeRecommended, uint bufferNumRecommended,
                                            MMAL_ES_FORMAT_T* format)
@@ -52,7 +61,9 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_EVENT_PARAMETER_CHANGED_T
     {
-        public MMAL_PARAMETER_HEADER_T hdr;
+        private MMAL_PARAMETER_HEADER_T hdr;
+
+        public MMAL_PARAMETER_HEADER_T Hdr => hdr;
 
         public MMAL_EVENT_PARAMETER_CHANGED_T(MMAL_PARAMETER_HEADER_T hdr)
         {

@@ -37,19 +37,34 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_COMPONENT_T
     {
-        public IntPtr priv, userData;
-        public char* name;
-        public uint isEnabled;
-        public MMAL_PORT_T* control;
-        public uint inputNum;
-        public MMAL_PORT_T** input;
-        public uint outputNum;
-        public MMAL_PORT_T** output;
-        public uint clockNum;
-        public MMAL_PORT_T** clock;
-        public uint portNum;
-        public MMAL_PORT_T** port;
-        public uint id;
+        private IntPtr priv, userData;
+        private char* name;
+        private uint isEnabled;
+        private MMAL_PORT_T* control;
+        private uint inputNum;
+        private MMAL_PORT_T** input;
+        private uint outputNum;
+        private MMAL_PORT_T** output;
+        private uint clockNum;
+        private MMAL_PORT_T** clock;
+        private uint portNum;
+        private MMAL_PORT_T** port;
+        private uint id;
+
+        public IntPtr Priv => priv;
+        public IntPtr UserData => userData;
+        public char* Name => name;
+        public uint IsEnabled => isEnabled;
+        public MMAL_PORT_T* Control => control;
+        public uint InputNum => inputNum;
+        public MMAL_PORT_T** Input => input;
+        public uint OutputNum => outputNum;
+        public MMAL_PORT_T** Output => output;
+        public uint ClockNum => clockNum;
+        public MMAL_PORT_T** Clock => clock;
+        public uint PortNum => portNum;
+        public MMAL_PORT_T** Port => port;
+        public uint Id => id;
 
         public MMAL_COMPONENT_T(IntPtr priv, IntPtr userData, char* name, uint isEnabled, MMAL_PORT_T* control, uint inputNum,
                                 MMAL_PORT_T** input, uint outputNum, MMAL_PORT_T** output, uint clockNum, MMAL_PORT_T** clock,

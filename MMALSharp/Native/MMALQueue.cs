@@ -37,9 +37,13 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_QUEUE_T
     {
-        public uint length;
-        public MMAL_BUFFER_HEADER_T* first;
-        public MMAL_BUFFER_HEADER_T** last;
+        private uint length;
+        private MMAL_BUFFER_HEADER_T* first;
+        private MMAL_BUFFER_HEADER_T** last;
+
+        public uint Length => length;
+        public MMAL_BUFFER_HEADER_T* First => first;
+        public MMAL_BUFFER_HEADER_T** Last => last;
 
         public MMAL_QUEUE_T(uint length, MMAL_BUFFER_HEADER_T* first, MMAL_BUFFER_HEADER_T** last)
         {
