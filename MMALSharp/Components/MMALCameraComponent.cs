@@ -50,12 +50,6 @@ namespace MMALSharp.Components
             if (this.Outputs.Count == 0)
                 throw new PiCameraError("Camera doesn't have any output ports.");
 
-            this.PreviewPort.SetStereoMode(MMALCameraConfigImpl.Config.StereoMode);
-            this.VideoPort.SetStereoMode(MMALCameraConfigImpl.Config.StereoMode);
-            this.StillPort.SetStereoMode(MMALCameraConfigImpl.Config.StereoMode);
-
-            MMALParameterHelpers.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_NUM, 0, this.Control.Ptr);
-
             this.Control.ObjName = "Control port";
 
             this.PreviewPort = this.Outputs.ElementAt(MMALCameraPreviewPort);
@@ -67,6 +61,18 @@ namespace MMALSharp.Components
             this.StillPort = this.Outputs.ElementAt(MMALCameraStillPort);
             this.StillPort.ObjName = "Still port";
 
+            /*
+             * Stereoscopic mode is only supported with the compute module as it requires two camera modules to work.
+             * I have added the code in for consistency with Raspistill, however this project currently only supports one camera module
+             * and therefore will not work if enabled.
+             * See: https://www.raspberrypi.org/forums/viewtopic.php?p=600720
+            */
+            this.PreviewPort.SetStereoMode(MMALCameraConfigImpl.Config.StereoMode);
+            this.VideoPort.SetStereoMode(MMALCameraConfigImpl.Config.StereoMode);
+            this.StillPort.SetStereoMode(MMALCameraConfigImpl.Config.StereoMode);
+
+            MMALParameterHelpers.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_NUM, 0, this.Control.Ptr);
+                        
             var eventRequest = new MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCommon.MMAL_PARAMETER_CHANGE_EVENT_REQUEST, Marshal.SizeOf<MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T>()),
                                                                          MMALParametersCamera.MMAL_PARAMETER_CAMERA_SETTINGS, 1);
 
@@ -119,17 +125,12 @@ namespace MMALSharp.Components
             this.StillPort.Ptr->Format->Encoding = MMALCameraConfigImpl.Config.StillEncoding;
             this.StillPort.Ptr->Format->EncodingVariant = MMALCameraConfigImpl.Config.StillEncodingSubFormat;
 
-            //If user hasn't specified Width/Height, use highest resolution supported by sensor.
-            if (MMALCameraConfigImpl.Config.StillWidth == 0)
+            //If user hasn't specified Width/Height, or one which is too high, use highest resolution supported by sensor.
+            if (MMALCameraConfigImpl.Config.StillWidth == 0 || MMALCameraConfigImpl.Config.StillWidth > this.CameraInfo.MaxWidth)
                 MMALCameraConfigImpl.Config.StillWidth = this.CameraInfo.MaxWidth;
-            if (MMALCameraConfigImpl.Config.StillHeight == 0)
+            if (MMALCameraConfigImpl.Config.StillHeight == 0 || MMALCameraConfigImpl.Config.StillHeight > this.CameraInfo.MaxHeight)
                 MMALCameraConfigImpl.Config.StillHeight = this.CameraInfo.MaxHeight;
             
-            if (MMALCameraConfigImpl.Config.StillWidth > this.CameraInfo.MaxWidth)
-                MMALCameraConfigImpl.Config.StillWidth = MMALUtil.VCOS_ALIGN_UP(this.CameraInfo.MaxWidth, 16);
-            if (MMALCameraConfigImpl.Config.StillHeight > this.CameraInfo.MaxHeight)
-                MMALCameraConfigImpl.Config.StillHeight = MMALUtil.VCOS_ALIGN_UP(this.CameraInfo.MaxHeight, 16);
-
             vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfigImpl.Config.StillWidth,
                                                 MMALCameraConfigImpl.Config.StillHeight,
                                                 new MMAL_RECT_T(0, 0, MMALCameraConfigImpl.Config.StillHeight, MMALCameraConfigImpl.Config.StillWidth),

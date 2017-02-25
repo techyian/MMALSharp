@@ -164,19 +164,19 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_FLOAT_RECT_T
     {
-        private double x, y, height, width;
+        private double x, y, width, height;
 
         public double X => x;
-        public double Y => y;
-        public double Height => height;
+        public double Y => y;        
         public double Width => width;
+        public double Height => height;
 
-        public MMAL_FLOAT_RECT_T(double x, double y, double height, double width)
+        public MMAL_FLOAT_RECT_T(double x, double y, double width, double height)
         {
             this.x = x;
-            this.y = y;
-            this.height = height;
+            this.y = y;            
             this.width = width;
+            this.height = height;
         }
     }
 

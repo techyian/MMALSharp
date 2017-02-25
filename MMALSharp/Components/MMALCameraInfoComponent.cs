@@ -40,8 +40,8 @@ namespace MMALSharp.Components
 
             str1->Id = MMALParametersCamera.MMAL_PARAMETER_CAMERA_INFO;      
             //Deliberately undersize to check if running on older firmware.      
-            str1->Size = Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_V2_T>() - 4;
-            
+            str1->Size = Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_T>();
+                                    
             try
             {
                 //If succeeds, keep OV5647 defaults.
@@ -58,7 +58,7 @@ namespace MMALSharp.Components
 
                 str2->Id = MMALParametersCamera.MMAL_PARAMETER_CAMERA_INFO;
                 str2->Size = Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_V2_T>();
-
+                                
                 try
                 {
                     MMALCheck(MMALPort.mmal_port_parameter_get(this.Control.Ptr, str2), "Unable to get camera info for newer firmware.");
@@ -77,7 +77,8 @@ namespace MMALSharp.Components
                 catch (Exception e)
                 {
                     //Something went wrong, continue with OV5647 defaults.                    
-                    Console.WriteLine("Died" + e.Message);
+                    if(MMALCameraConfigImpl.Config.Debug)
+                        Console.WriteLine("Could not determine firmware version. Continuing with OV5647 defaults");
                 }
             }
         }

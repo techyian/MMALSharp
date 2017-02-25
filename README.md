@@ -1,7 +1,45 @@
 # MMALSharp
 
 MMALSharp is an unofficial C# API for the Raspberry Pi camera. It is currently an early experimental build which features the ability to 
-take pictures with your Raspberry Pi.
+take pictures with your Raspberry Pi. Under the hood, MMALSharp makes use of the native MMAL interface designed by Broadcom.
+
+##Goals
+
+My goal for the project is to provide a fully functional API to the Raspberry Pi camera, supporting Still image capture, Video capture and Preview rendering.
+I aim to allow users the ability to build up their own component pipeline with respective encoders/decoders in an easy to use manner, adhering to what is 
+possible via MMAL. 
+
+##Install Mono
+
+In order for the Raspberry Pi to run C# programs, you will need to install Mono. Installation differs between the original Model A/B/B+/Zero boards and
+the newer Pi Model B 2/3 boards running the ARMV7/8 chipsets.
+
+###Model A/B/B+/Zero
+
+The version of Mono currently available in the Raspbian repositories is 3.2.8 and isn't compatible with this library. Therefore, we need to do a few
+extra steps to get a compatible version installed. Luckily, member 'plugwash' from the Raspberry Pi forums has built a version of Mono and provided a
+repository from which we can install.
+
+In order to install the required version, please open a console window and follow the below steps:
+
+1. Run `sudo nano /etc/apt/sources.list`
+2. On a new line, enter `deb http://plugwash.raspbian.org/mono4 wheezy-mono4 main`
+3. Run `sudo apt-get update && sudo apt-get upgrade`
+4. Run `sudo apt-get install mono-complete`
+
+Once completed, if you run `mono --version` from your command window, you should see the mono version 4.0.2 returned.
+
+###Model B 2/3
+
+Using a later model of the Raspberry Pi allows you to install the latest Mono version straight out of the box. To do so, please follow the below steps:
+
+```
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
+sudo apt-get update && sudo apt-get upgrade
+sudo apt-get install mono-complete
+```
+
 
 ##Building
 
@@ -47,13 +85,28 @@ public static void Main(string[] args)
 			EnableAnnotate = true,
 			Annotate = new AnnotateImage { ShowDateText = true, ShowTimeText = true }
         };
+		
+		/* 
+		 * Assign our config to the global config object - this is not absolutely necessary, if global config is not 
+		 * assigned, a default is created on your behalf.
+		*/
+        MMALCameraConfigImpl.Config = config;
 
-        using (MMALCamera cam = new MMALCamera(config))
+        using (MMALCamera cam = MMALCamera.Instance)
 		{
+			//Create our component pipeline. 
+			cam.AddEncoder(new MMALImageEncoder(), cam.Camera.StillPort)
+			   .CreatePreviewComponent(new MMALNullSinkComponent())
+			   .ConfigureCamera();
+			
 			AsyncContext.Run(async () =>
 			{
-				await cam.ConfigureCamera().TakePicture(new FileCaptureHandler("/home/pi/test3.jpg"), MMALEncodings.MMAL_ENCODING_JPEG, 90);
-			});
+				//Take a picture on output port '0' of the encoder connected to the Camera's still port, sending the output to a filestream.
+				using (var fs = File.Create("/home/pi/test4.jpg"))
+				{
+					await cam.TakePicture(cam.Camera.StillPort, 0, new StreamCaptureResult(fs));
+				}                                        
+			});   
 		}
 }
 
@@ -65,23 +118,32 @@ The library has currently been tested on the following Raspberry Pi devices:
 
 * Raspberry Pi 1 Model B (512mb)
 * Raspberry Pi Zero
+* Raspberry Pi 2 Model B
 
 Both the SUNNY and Sony IMX219 camera modules are currently working as expected.
 
-Currently working image 'still' features
+Currently tested image 'still' features - code is in place for all features listed below, however not all have been tested.
 
 - [x] Image width/height
-- [x] image encoding
+- [x] Image encoding
 - [x] Brightness
 - [x] Contrast
 - [x] Saturation
 - [x] Sharpness
-- [x] Video stabilisation
-- [x] Shutter speed
-- [x] ISO
-- [x] Exposure mode
-- [x] Exposure metering mode
-
+- [ ] Shutter speed
+- [ ] ISO
+- [ ] Exposure compensation
+- [ ] Exposure mode
+- [ ] Exposure metering mode
+- [x] Raspistill supported image effects
+- [x] Rotation
+- [x] Flips
+- [x] Annotate
+- [ ] DRC
+- [ ] Stats Pass
+- [ ] Colour effects
+- [ ] ROI
+- [ ] AWB mode/gains
 
 
 

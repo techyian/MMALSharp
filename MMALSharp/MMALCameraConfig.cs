@@ -43,18 +43,64 @@ namespace MMALSharp
 
         // Camera preview port specific properties
         public int PreviewEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
-        public int PreviewWidth { get; set; }
-        public int PreviewHeight { get; set; }
+
+        private int previewWidth;
+        public int PreviewWidth {
+            get
+            {
+                return this.previewWidth;
+            }
+            set
+            {
+                this.previewWidth = MMALUtil.VCOS_ALIGN_UP(value, 32);
+            }                
+        }
+
+        private int previewHeight;
+        public int PreviewHeight
+        {
+            get
+            {
+                return this.previewHeight;
+            }
+            set
+            {
+                this.previewHeight = MMALUtil.VCOS_ALIGN_UP(value, 16);
+            }
+        }
 
         // Camera video port specific properties
 
 
         // Camera still port specific properties
         public int StillEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
-        public int StillEncodingSubFormat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;        
-        public int StillWidth { get; set; }
-        public int StillHeight { get; set; }
+        public int StillEncodingSubFormat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;
 
+        private int stillWidth;
+        public int StillWidth
+        {
+            get
+            {
+                return this.stillWidth;
+            }
+            set
+            {
+                this.stillWidth = MMALUtil.VCOS_ALIGN_UP(value, 32);
+            }
+        }
+
+        private int stillHeight;
+        public int StillHeight
+        {
+            get
+            {
+                return this.stillHeight;
+            }
+            set
+            {
+                this.stillHeight = MMALUtil.VCOS_ALIGN_UP(value, 16);
+            }
+        }
     }
     
     public class ColourEffects
@@ -68,9 +114,9 @@ namespace MMALSharp
     public class ROI
     {
         public double X { get; set; } = 0.0;
-        public double Y { get; set; } = 1.0;        
-        public double Width { get; set; }
-        public double Height { get; set; }
+        public double Y { get; set; } = 0.0;
+        public double Width { get; set; } = 1.0;
+        public double Height { get; set; } = 1.0;
     }
 
     public class StereoMode

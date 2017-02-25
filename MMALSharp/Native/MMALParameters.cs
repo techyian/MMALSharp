@@ -70,7 +70,7 @@ namespace MMALSharp.Native
             }
             set
             {
-
+                this.size = value;
             }
         }
 

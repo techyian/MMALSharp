@@ -107,7 +107,7 @@ namespace MMALSharp.Components
                 }
                 
                 string t = sb.ToString() + char.MinValue;
-
+                                
                 var text = Encoding.ASCII.GetBytes(t);
                                 
                 MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T str = new MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_ANNOTATE, (Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>() + (t.Length))),
