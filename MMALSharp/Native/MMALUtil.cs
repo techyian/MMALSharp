@@ -145,14 +145,14 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_RECT_T
     {
-        private int x, y, height, width;
+        private int x, y, width, height;
 
         public int X => x;
-        public int Y => y;
-        public int Height => height;
+        public int Y => y;        
         public int Width => width;
+        public int Height => height;
 
-        public MMAL_RECT_T(int x, int y, int height, int width)
+        public MMAL_RECT_T(int x, int y, int width, int height)
         {
             this.x = x;
             this.y = y;

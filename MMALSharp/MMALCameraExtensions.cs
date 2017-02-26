@@ -244,6 +244,9 @@ namespace MMALSharp
             if (MMALCameraConfigImpl.Config.Debug)
                 Console.WriteLine(string.Format("Setting AWB gains: {0}, {1}", r_gain, b_gain));
 
+            if (MMALCameraConfigImpl.Config.AwbMode != MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_OFF)
+                throw new PiCameraError("AWB Mode must be off when setting AWB gains");
+
             MMAL_PARAMETER_AWB_GAINS_T awb_gains = new MMAL_PARAMETER_AWB_GAINS_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CUSTOM_AWB_GAINS, Marshal.SizeOf<MMAL_PARAMETER_AWB_GAINS_T>()),
                                                                                                         new MMAL_RATIONAL_T((int)(r_gain * 65536), 65536), 
                                                                                                         new MMAL_RATIONAL_T((int)(b_gain * 65536), 65536));
@@ -333,22 +336,24 @@ namespace MMALSharp
 
         }
 
-        public static MMAL_FLOAT_RECT_T GetROI(this MMALCamera camera)
+        public static MMAL_RECT_T GetCrop(this MMALCamera camera)
         {
-            MMAL_PARAMETER_INPUT_CROP_T crop = new MMAL_PARAMETER_INPUT_CROP_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_INPUT_CROP, Marshal.SizeOf<MMAL_PARAMETER_INPUT_CROP_T>()), new MMAL_FLOAT_RECT_T());
+            MMAL_PARAMETER_INPUT_CROP_T crop = new MMAL_PARAMETER_INPUT_CROP_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_INPUT_CROP, Marshal.SizeOf<MMAL_PARAMETER_INPUT_CROP_T>()), new MMAL_RECT_T());
                         
-            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, crop.HdrPtr), "Unable to get ROI");
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, crop.HdrPtr), "Unable to get crop");
 
             return crop.Rect;
         }
 
-        public static void SetROI(this MMALCamera camera, ROI rect)
+        public static void SetCrop(this MMALCamera camera, Crop rect)
         {
-            //TODO - Look at this further, unsure if correct.
+            if (rect.X > 1.0 || rect.Y > 1.0 || rect.Height > 1.0 || rect.Width > 1.0)
+                throw new PiCameraError("Invalid crop settings. Value mustn't be greater than 1.0");
+            
             MMAL_PARAMETER_INPUT_CROP_T crop = new MMAL_PARAMETER_INPUT_CROP_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_INPUT_CROP, Marshal.SizeOf<MMAL_PARAMETER_INPUT_CROP_T>()), 
-                                                                                new MMAL_FLOAT_RECT_T((65536 * rect.X), (65536 * rect.Y), (65536 * rect.Height), (65536 * rect.Width)));
+                                                                                new MMAL_RECT_T(Convert.ToInt32(65536 * rect.X), Convert.ToInt32(65536 * rect.Y), Convert.ToInt32(65536 * rect.Width), Convert.ToInt32(65536 * rect.Height)));
                                     
-            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, crop.HdrPtr), "Unable to set ROI");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, crop.HdrPtr), "Unable to set crop");
         }
 
         public static int GetShutterSpeed(this MMALCamera camera)

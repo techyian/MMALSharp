@@ -649,7 +649,7 @@ namespace MMALSharp
             this.SetStatsPass(MMALCameraConfigImpl.Config.StatsPass);
             this.SetDRC(MMALCameraConfigImpl.Config.DrcLevel);
             this.SetFlips(MMALCameraConfigImpl.Config.Flips);
-            this.SetROI(MMALCameraConfigImpl.Config.ROI);
+            this.SetCrop(MMALCameraConfigImpl.Config.Crop);
             
             this.EnableCamera();
 

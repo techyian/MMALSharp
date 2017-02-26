@@ -1307,7 +1307,7 @@ namespace MMALSharp.Native
     public unsafe struct MMAL_PARAMETER_INPUT_CROP_T
     {
         private MMAL_PARAMETER_HEADER_T hdr;
-        private MMAL_FLOAT_RECT_T rect;
+        private MMAL_RECT_T rect;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
         public MMAL_PARAMETER_HEADER_T* HdrPtr
@@ -1320,9 +1320,9 @@ namespace MMALSharp.Native
                 }
             }
         }
-        public MMAL_FLOAT_RECT_T Rect => rect;
+        public MMAL_RECT_T Rect => rect;
 
-        public MMAL_PARAMETER_INPUT_CROP_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_FLOAT_RECT_T rect)
+        public MMAL_PARAMETER_INPUT_CROP_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_RECT_T rect)
         {
             this.hdr = hdr;
             this.rect = rect;

@@ -31,7 +31,7 @@ Once completed, if you run `mono --version` from your command window, you should
 
 ###Model B 2/3
 
-Using a later model of the Raspberry Pi allows you to install the latest Mono version straight out of the box. To do so, please follow the below steps:
+Using a later model of the Raspberry Pi allows you to install the latest Mono version from the Mono repositories without issue. To do so, please follow the below steps:
 
 ```
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
@@ -64,9 +64,9 @@ Once the library has built, you can reference it as a project within your applic
 
 ##Basic Usage
 
-Using the library is relatively simple. Initially, you are required to create an instance of the `MMALCameraConfig` class, changing any 
-properties you require (default values are set automatically on your behalf). Next, you should create an instance of the
-`MMALCamera` class - this class is the main object to work with in the library which grants access to the variety of `TakePicture` methods available.
+Using the library is relatively simple. If you want to change any of the default configuration settings, create an instance of `MMALCameraConfig`
+and assign it to the global config object, i.e. `MMALCameraConfigImpl.Config = config;`. The main class `MMALCamera` which interfaces to the rest
+of the functionality the library provides is a Singleton and is called as follows: `MMALCamera cam = MMALCamera.Instance`.
 
 MMALSharp is asynchronous in nature, preventing any blocking of the main thread in your application. From testing, I found it is important that we provide a context
 for the asynchronous code to run in, this is because when we await processing to complete, we need to return to the same thread we began processing on.
@@ -114,13 +114,13 @@ public static void Main(string[] args)
 
 ##Status
 
-The library has currently been tested on the following Raspberry Pi devices:
+So far, the library has been tested on the following Raspberry Pi devices:
 
 * Raspberry Pi 1 Model B (512mb)
 * Raspberry Pi Zero
 * Raspberry Pi 2 Model B
 
-Both the SUNNY and Sony IMX219 camera modules are currently working as expected.
+Both the SUNNY and Sony IMX219 camera modules are working as expected.
 
 Currently tested image 'still' features - code is in place for all features listed below, however not all have been tested.
 
@@ -141,9 +141,11 @@ Currently tested image 'still' features - code is in place for all features list
 - [x] Annotate
 - [ ] DRC
 - [ ] Stats Pass
-- [ ] Colour effects
-- [ ] ROI
-- [ ] AWB mode/gains
+- [x] Colour effects
+- [x] Crop
+- [x] Auto white balance mode/gains
+- [x] EXIF tags
+- [x] Raw capture
 
 
 

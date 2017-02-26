@@ -25,12 +25,12 @@ namespace MMALSharp
         public int ExposureCompensation { get; set; } = (int)MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
         public MMAL_PARAM_EXPOSUREMODE_T ExposureMode { get; set; } = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
         public MMAL_PARAM_EXPOSUREMETERINGMODE_T ExposureMeterMode { get; set; } = MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE;
-        public MMAL_PARAM_AWBMODE_T AwbMode { get; set; } = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_AUTO;
+        public MMAL_PARAM_AWBMODE_T AwbMode { get; set; } = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_OFF;
         public MMAL_PARAM_IMAGEFX_T ImageEffect { get; set; } = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NONE;
         public ColourEffects Effects { get; set; } = new ColourEffects();
         public int Rotation { get; set; }
         public MMAL_PARAM_MIRROR_T Flips { get; set; } = MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE;
-        public ROI ROI { get; set; } = new ROI();
+        public Crop Crop { get; set; } = new Crop();
         public int ShutterSpeed { get; set; }
         public int AwbGainsR { get; set; }
         public int AwbGainsB { get; set; }
@@ -100,7 +100,7 @@ namespace MMALSharp
             {
                 this.stillHeight = MMALUtil.VCOS_ALIGN_UP(value, 16);
             }
-        }
+        }        
     }
     
     public class ColourEffects
@@ -111,12 +111,12 @@ namespace MMALSharp
         
     }
 
-    public class ROI
+    public class Crop
     {
-        public double X { get; set; } = 0.0;
-        public double Y { get; set; } = 0.0;
-        public double Width { get; set; } = 1.0;
-        public double Height { get; set; } = 1.0;
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
     }
 
     public class StereoMode

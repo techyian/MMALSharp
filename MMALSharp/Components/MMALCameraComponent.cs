@@ -97,10 +97,10 @@ namespace MMALSharp.Components
                 Console.WriteLine("Camera config set");
 
             this.SetCameraConfig(camConfig);
-
+                        
             MMAL_VIDEO_FORMAT_T vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfigImpl.Config.StillWidth,
                                                                   MMALCameraConfigImpl.Config.StillHeight,
-                                                                  new MMAL_RECT_T(0, 0, MMALCameraConfigImpl.Config.StillHeight, MMALCameraConfigImpl.Config.StillWidth),
+                                                                  new MMAL_RECT_T(0, 0, MMALCameraConfigImpl.Config.StillWidth, MMALCameraConfigImpl.Config.StillHeight),
                                                                   new MMAL_RATIONAL_T(0, 1),
                                                                   this.PreviewPort.Ptr->Format->Es->Video.Par,
                                                                   this.PreviewPort.Ptr->Format->Es->Video.ColorSpace);
@@ -133,7 +133,7 @@ namespace MMALSharp.Components
             
             vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfigImpl.Config.StillWidth,
                                                 MMALCameraConfigImpl.Config.StillHeight,
-                                                new MMAL_RECT_T(0, 0, MMALCameraConfigImpl.Config.StillHeight, MMALCameraConfigImpl.Config.StillWidth),
+                                                new MMAL_RECT_T(0, 0, MMALCameraConfigImpl.Config.StillWidth, MMALCameraConfigImpl.Config.StillHeight),
                                                 new MMAL_RATIONAL_T(0, 1),
                                                 this.StillPort.Ptr->Format->Es->Video.Par,
                                                 this.StillPort.Ptr->Format->Es->Video.ColorSpace);
