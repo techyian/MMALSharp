@@ -64,9 +64,9 @@ Once the library has built, you can reference it as a project within your applic
 
 ##Basic Usage
 
-Using the library is relatively simple. If you want to change any of the default configuration settings, create an instance of `MMALCameraConfig`
-and assign it to the global config object, i.e. `MMALCameraConfigImpl.Config = config;`. The main class `MMALCamera` which interfaces to the rest
-of the functionality the library provides is a Singleton and is called as follows: `MMALCamera cam = MMALCamera.Instance`.
+Using the library is relatively simple. If you want to change any of the default configuration settings, this can be done by modifying the 
+properties within `MMALCameraConfig`. The main class `MMALCamera` which interfaces to the rest of the functionality the library provides is 
+a Singleton and is called as follows: `MMALCamera cam = MMALCamera.Instance`.
 
 MMALSharp is asynchronous in nature, preventing any blocking of the main thread in your application. From testing, I found it is important that we provide a context
 for the asynchronous code to run in, this is because when we await processing to complete, we need to return to the same thread we began processing on.
@@ -77,21 +77,10 @@ Below is a basic example of its usage.
 
 public static void Main(string[] args)
 {
-        MMALCameraConfig config = new MMALCameraConfig
-        {
-            Sharpness = 100,
-            Contrast = 10,
-            ImageEffect = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NEGATIVE,
-			EnableAnnotate = true,
-			Annotate = new AnnotateImage { ShowDateText = true, ShowTimeText = true }
-        };
+        //Alter any configuration properties required.         
+        MMALCameraConfig.EnableAnnotate = true;
+        MMALCameraConfig.Annotate = new AnnotateImage { ShowDateText = true, ShowTimeText = true };
 		
-		/* 
-		 * Assign our config to the global config object - this is not absolutely necessary, if global config is not 
-		 * assigned, a default is created on your behalf.
-		*/
-        MMALCameraConfigImpl.Config = config;
-
         using (MMALCamera cam = MMALCamera.Instance)
 		{
 			//Create our component pipeline. 
@@ -102,7 +91,7 @@ public static void Main(string[] args)
 			AsyncContext.Run(async () =>
 			{
 				//Take a picture on output port '0' of the encoder connected to the Camera's still port, sending the output to a filestream.
-				using (var fs = File.Create("/home/pi/test4.jpg"))
+				using (var fs = File.Create("/home/pi/test.jpg"))
 				{
 					await cam.TakePicture(cam.Camera.StillPort, 0, new StreamCaptureResult(fs));
 				}                                        
