@@ -67,16 +67,16 @@ namespace MMALSharp.Components
              * and therefore will not work if enabled.
              * See: https://www.raspberrypi.org/forums/viewtopic.php?p=600720
             */
-            this.PreviewPort.SetStereoMode(MMALCameraConfigImpl.Config.StereoMode);
-            this.VideoPort.SetStereoMode(MMALCameraConfigImpl.Config.StereoMode);
-            this.StillPort.SetStereoMode(MMALCameraConfigImpl.Config.StereoMode);
+            this.PreviewPort.SetStereoMode(MMALCameraConfig.StereoMode);
+            this.VideoPort.SetStereoMode(MMALCameraConfig.StereoMode);
+            this.StillPort.SetStereoMode(MMALCameraConfig.StereoMode);
 
             MMALParameterHelpers.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_NUM, 0, this.Control.Ptr);
                         
             var eventRequest = new MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCommon.MMAL_PARAMETER_CHANGE_EVENT_REQUEST, Marshal.SizeOf<MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T>()),
                                                                          MMALParametersCamera.MMAL_PARAMETER_CAMERA_SETTINGS, 1);
 
-            if (MMALCameraConfigImpl.Config.SetChangeEventRequest)
+            if (MMALCameraConfig.SetChangeEventRequest)
                 this.Control.SetChangeEventRequest(eventRequest);
 
             this.Control.EnablePort(CameraControlCallback, null);
@@ -93,28 +93,28 @@ namespace MMALSharp.Components
                                                                 0,
                                                                 MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T.MMAL_PARAM_TIMESTAMP_MODE_RESET_STC
                                                                 );
-            if (MMALCameraConfigImpl.Config.Debug)
+            if (MMALCameraConfig.Debug)
                 Console.WriteLine("Camera config set");
 
             this.SetCameraConfig(camConfig);
                         
-            MMAL_VIDEO_FORMAT_T vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfigImpl.Config.StillWidth,
-                                                                  MMALCameraConfigImpl.Config.StillHeight,
-                                                                  new MMAL_RECT_T(0, 0, MMALCameraConfigImpl.Config.StillWidth, MMALCameraConfigImpl.Config.StillHeight),
+            MMAL_VIDEO_FORMAT_T vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.StillWidth,
+                                                                  MMALCameraConfig.StillHeight,
+                                                                  new MMAL_RECT_T(0, 0, MMALCameraConfig.StillWidth, MMALCameraConfig.StillHeight),
                                                                   new MMAL_RATIONAL_T(0, 1),
                                                                   this.PreviewPort.Ptr->Format->Es->Video.Par,
                                                                   this.PreviewPort.Ptr->Format->Es->Video.ColorSpace);
 
-            this.PreviewPort.Ptr->Format->Encoding = MMALCameraConfigImpl.Config.PreviewEncoding;
+            this.PreviewPort.Ptr->Format->Encoding = MMALCameraConfig.PreviewEncoding;
             this.PreviewPort.Ptr->Format->Es->Video = vFormat;
             
-            if (MMALCameraConfigImpl.Config.Debug)
+            if (MMALCameraConfig.Debug)
                 Console.WriteLine("Commit preview");
 
             this.PreviewPort.Commit();
             this.PreviewPort.FullCopy(this.VideoPort);
 
-            if (MMALCameraConfigImpl.Config.Debug)
+            if (MMALCameraConfig.Debug)
                 Console.WriteLine("Commit video");
 
             this.VideoPort.Commit();
@@ -122,30 +122,30 @@ namespace MMALSharp.Components
             if (this.VideoPort.Ptr->BufferNum < 3)
                 this.VideoPort.Ptr->BufferNum = 3;
 
-            this.StillPort.Ptr->Format->Encoding = MMALCameraConfigImpl.Config.StillEncoding;
-            this.StillPort.Ptr->Format->EncodingVariant = MMALCameraConfigImpl.Config.StillEncodingSubFormat;
+            this.StillPort.Ptr->Format->Encoding = MMALCameraConfig.StillEncoding;
+            this.StillPort.Ptr->Format->EncodingVariant = MMALCameraConfig.StillEncodingSubFormat;
 
             //If user hasn't specified Width/Height, or one which is too high, use highest resolution supported by sensor.
-            if (MMALCameraConfigImpl.Config.StillWidth == 0 || MMALCameraConfigImpl.Config.StillWidth > this.CameraInfo.MaxWidth)
-                MMALCameraConfigImpl.Config.StillWidth = this.CameraInfo.MaxWidth;
-            if (MMALCameraConfigImpl.Config.StillHeight == 0 || MMALCameraConfigImpl.Config.StillHeight > this.CameraInfo.MaxHeight)
-                MMALCameraConfigImpl.Config.StillHeight = this.CameraInfo.MaxHeight;
+            if (MMALCameraConfig.StillWidth == 0 || MMALCameraConfig.StillWidth > this.CameraInfo.MaxWidth)
+                MMALCameraConfig.StillWidth = this.CameraInfo.MaxWidth;
+            if (MMALCameraConfig.StillHeight == 0 || MMALCameraConfig.StillHeight > this.CameraInfo.MaxHeight)
+                MMALCameraConfig.StillHeight = this.CameraInfo.MaxHeight;
             
-            vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfigImpl.Config.StillWidth,
-                                                MMALCameraConfigImpl.Config.StillHeight,
-                                                new MMAL_RECT_T(0, 0, MMALCameraConfigImpl.Config.StillWidth, MMALCameraConfigImpl.Config.StillHeight),
+            vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.StillWidth,
+                                                MMALCameraConfig.StillHeight,
+                                                new MMAL_RECT_T(0, 0, MMALCameraConfig.StillWidth, MMALCameraConfig.StillHeight),
                                                 new MMAL_RATIONAL_T(0, 1),
                                                 this.StillPort.Ptr->Format->Es->Video.Par,
                                                 this.StillPort.Ptr->Format->Es->Video.ColorSpace);
 
             this.StillPort.Ptr->Format->Es->Video = vFormat;
 
-            if (MMALCameraConfigImpl.Config.Debug)
+            if (MMALCameraConfig.Debug)
                 Console.WriteLine("Commit still");
 
             this.StillPort.Commit();
 
-            if (MMALCameraConfigImpl.Config.Debug)
+            if (MMALCameraConfig.Debug)
                 Console.WriteLine("Camera component configured.");            
         }
         

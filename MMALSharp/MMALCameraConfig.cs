@@ -8,54 +8,50 @@ using static MMALSharp.Native.MMALParameters;
 
 namespace MMALSharp
 {
-    public static class MMALCameraConfigImpl
-    {
-        public static MMALCameraConfig Config { get; set; }
-    }
-
-    public class MMALCameraConfig
+    
+    public static class MMALCameraConfig
     {        
-        public bool Debug { get; set; }
+        public static bool Debug { get; set; }
 
         /// <summary>
         /// Configure the sharpness of the image
         /// </summary>
-        public double Sharpness { get; set; }
+        public static double Sharpness { get; set; }
 
         /// <summary>
         /// Configure the contrast of the image
         /// </summary>  
-        public double Contrast { get; set; }
+        public static double Contrast { get; set; }
 
         /// <summary>
         /// Configure the brightness of the image
         /// </summary>
-        public double Brightness { get; set; } = 50;
+        public static double Brightness { get; set; } = 50;
 
         /// <summary>
         /// Configure the saturation of the image
         /// </summary>  
-        public double Saturation { get; set; }
+        public static double Saturation { get; set; }
 
         /// <summary>
         /// Configure the light sensitivity of the sensor
         /// </summary> 
-        public int ISO { get; set; }
+        public static int ISO { get; set; }
 
         /// <summary>
         /// Enable video stabilisation
         /// </summary> 
-        public bool VideoStabilisation { get; set; } = true;
+        public static bool VideoStabilisation { get; set; } = true;
 
         /// <summary>
         /// Configure the exposure compensation of the camera. Doing so will produce a lighter/darker image beyond the recommended exposure.
         /// </summary>
-        public MMAL_PARAM_EXPOSUREMODE_T ExposureCompensation { get; set; } = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
+        public static MMAL_PARAM_EXPOSUREMODE_T ExposureCompensation { get; set; } = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
 
         /// <summary>
         /// Configure the exposure mode used by the camera
         /// </summary>  
-        public MMAL_PARAM_EXPOSUREMODE_T ExposureMode { get; set; } = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
+        public static MMAL_PARAM_EXPOSUREMODE_T ExposureMode { get; set; } = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
 
         /// <summary>
         /// Configure the exposure metering mode to be used by the camera. The metering mode determines how the camera measures exposure.
@@ -80,108 +76,108 @@ namespace MMALSharp
         /// https://en.wikipedia.org/wiki/Metering_mode#Spot_metering
         /// 
         /// </summary> 
-        public MMAL_PARAM_EXPOSUREMETERINGMODE_T ExposureMeterMode { get; set; } = MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE;
+        public static MMAL_PARAM_EXPOSUREMETERINGMODE_T ExposureMeterMode { get; set; } = MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE;
 
         /// <summary>
         /// Configure the Auto White Balance to be used by the camera
         /// </summary>
-        public MMAL_PARAM_AWBMODE_T AwbMode { get; set; } = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_AUTO;
+        public static MMAL_PARAM_AWBMODE_T AwbMode { get; set; } = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_AUTO;
 
         /// <summary>
         /// Configure any image effects to be used by the camera
         /// </summary>
-        public MMAL_PARAM_IMAGEFX_T ImageEffect { get; set; } = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NONE;
+        public static MMAL_PARAM_IMAGEFX_T ImageEffect { get; set; } = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NONE;
 
         /// <summary>
         /// Allows a user to change the colour of an image, e.g. U = 128, V = 128 will result in a greyscale image.
         /// </summary>
-        public ColourEffects Effects { get; set; } = new ColourEffects();
+        public static ColourEffects Effects { get; set; } = new ColourEffects();
 
         /// <summary>
         /// Specify the rotation of the image, this value should be multiples of 90
         /// </summary>   
-        public int Rotation { get; set; }
+        public static int Rotation { get; set; }
 
         /// <summary>
         /// Specify whether the image should be flipped
         /// </summary>                       
-        public MMAL_PARAM_MIRROR_T Flips { get; set; } = MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE;
+        public static MMAL_PARAM_MIRROR_T Flips { get; set; } = MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE;
 
         /// <summary>
         /// Crop an image to focus on a region of interest.
         /// </summary>
-        public Crop Crop { get; set; } = new Crop();
+        public static Crop Crop { get; set; } = new Crop();
 
         /// <summary>
         /// Changing the shutter speed alters how long the sensor is exposed to light.
         /// </summary>
-        public int ShutterSpeed { get; set; }
+        public static int ShutterSpeed { get; set; }
 
         /// <summary>
         /// Adjust auto white balance 'red' gains
         /// </summary>
-        public int AwbGainsR { get; set; }
+        public static int AwbGainsR { get; set; }
 
         /// <summary>
         /// Adjust auto white balance 'blue' gains
         /// </summary>
-        public int AwbGainsB { get; set; }
+        public static int AwbGainsB { get; set; }
 
         /// <summary>
         /// Adjust dynamic range compression
         /// </summary>
-        public MMAL_PARAMETER_DRC_STRENGTH_T DrcLevel { get; set; } = MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_OFF;
+        public static MMAL_PARAMETER_DRC_STRENGTH_T DrcLevel { get; set; } = MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_OFF;
 
         /// <summary>
         /// Enable an extra statistics pass to be made when capturing images
         /// </summary>
-        public bool StatsPass { get; set; }
+        public static bool StatsPass { get; set; }
 
         /// <summary>
         /// Enable annotation of captured images
         /// </summary>
-        public bool EnableAnnotate { get; set; }    
+        public static bool EnableAnnotate { get; set; }    
 
         /// <summary>
         /// Allows fine tuning of annotation options
         /// </summary>
-        public AnnotateImage Annotate { get; set; }
+        public static AnnotateImage Annotate { get; set; }
 
         /// <summary>
         /// Adjust Stereoscopic mode - only supported with Raspberry Pi Compute module
         /// </summary>
-        public StereoMode StereoMode { get; set; } = new StereoMode();
+        public static StereoMode StereoMode { get; set; } = new StereoMode();
 
         /// <summary>
         /// Enable to receive event request callbacks
         /// </summary>
-        public bool SetChangeEventRequest { get; set; }
+        public static bool SetChangeEventRequest { get; set; }
 
         // Camera preview port specific properties
-        public int PreviewEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
+        public static int PreviewEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
 
-        private int previewWidth;
-        public int PreviewWidth {
+        private static int previewWidth;
+        public static int PreviewWidth {
             get
             {
-                return this.previewWidth;
+                return MMALCameraConfig.previewWidth;
             }
             set
             {
-                this.previewWidth = MMALUtil.VCOS_ALIGN_UP(value, 32);
+                MMALCameraConfig.previewWidth = MMALUtil.VCOS_ALIGN_UP(value, 32);
             }                
         }
 
-        private int previewHeight;
-        public int PreviewHeight
+        private static int previewHeight;
+        public static int PreviewHeight
         {
             get
             {
-                return this.previewHeight;
+                return MMALCameraConfig.previewHeight;
             }
             set
             {
-                this.previewHeight = MMALUtil.VCOS_ALIGN_UP(value, 16);
+                MMALCameraConfig.previewHeight = MMALUtil.VCOS_ALIGN_UP(value, 16);
             }
         }
 
@@ -189,39 +185,39 @@ namespace MMALSharp
 
 
         // Camera still port specific properties
-        public int StillEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
-        public int StillEncodingSubFormat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;
+        public static int StillEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
+        public static int StillEncodingSubFormat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;
 
-        private int stillWidth;
-        public int StillWidth
+        private static int stillWidth;
+        public static int StillWidth
         {
             get
             {
-                return this.stillWidth;
+                return MMALCameraConfig.stillWidth;
             }
             set
             {
-                this.stillWidth = MMALUtil.VCOS_ALIGN_UP(value, 32);
+                MMALCameraConfig.stillWidth = MMALUtil.VCOS_ALIGN_UP(value, 32);
             }
         }
 
-        private int stillHeight;
-        public int StillHeight
+        private static int stillHeight;
+        public static int StillHeight
         {
             get
             {
-                return this.stillHeight;
+                return MMALCameraConfig.stillHeight;
             }
             set
             {
-                this.stillHeight = MMALUtil.VCOS_ALIGN_UP(value, 16);
+                MMALCameraConfig.stillHeight = MMALUtil.VCOS_ALIGN_UP(value, 16);
             }
         }        
 
         /// <summary>
         /// Reloads Camera configuration settings
         /// </summary>
-        public void Reload()
+        public static void Reload()
         {
             MMALCamera.Instance.ConfigureCamera();
         }

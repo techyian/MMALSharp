@@ -150,7 +150,7 @@ namespace MMALSharp
 
         public override void Dispose()
         {
-            if (MMALCameraConfigImpl.Config.Debug)
+            if (MMALCameraConfig.Debug)
                 Console.WriteLine("Disposing connection.");
             this.Destroy();
             base.Dispose();

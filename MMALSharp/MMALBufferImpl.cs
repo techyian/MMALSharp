@@ -238,7 +238,7 @@ namespace MMALSharp
             {
                 //If something goes wrong, unlock the header.
                 MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
-                if (MMALCameraConfigImpl.Config.Debug)
+                if (MMALCameraConfig.Debug)
                     Console.WriteLine("Unable to handle data. Returning null.");
                 return null;
             }            

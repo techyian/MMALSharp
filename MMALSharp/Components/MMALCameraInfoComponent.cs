@@ -77,7 +77,7 @@ namespace MMALSharp.Components
                 catch (Exception e)
                 {
                     //Something went wrong, continue with OV5647 defaults.                    
-                    if(MMALCameraConfigImpl.Config.Debug)
+                    if(MMALCameraConfig.Debug)
                         Console.WriteLine("Could not determine firmware version. Continuing with OV5647 defaults");
                 }
             }

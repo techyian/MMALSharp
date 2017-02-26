@@ -136,7 +136,7 @@ namespace MMALSharp
         /// <param name="ptr"></param>
         public static void SetParameter(int key, dynamic value, MMAL_PORT_T* ptr)
         {
-            if (MMALCameraConfigImpl.Config.Debug)
+            if (MMALCameraConfig.Debug)
                 Console.WriteLine("Setting parameter");
 
             var t = ParameterHelper.Where(c => c.Key == key).FirstOrDefault();

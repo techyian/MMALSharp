@@ -166,7 +166,7 @@ namespace MMALSharp
         
         public override void Dispose()
         {
-            if (MMALCameraConfigImpl.Config.Debug)
+            if (MMALCameraConfig.Debug)
                 Console.WriteLine(string.Format("Disposing component {0}.", this.Name));
             
             //See if any pools need disposing before destroying component.
@@ -174,7 +174,7 @@ namespace MMALSharp
             {
                 if (port.BufferPool != null)
                 {
-                    if (MMALCameraConfigImpl.Config.Debug)
+                    if (MMALCameraConfig.Debug)
                         Console.WriteLine("Desroying port pool");
 
                     port.DestroyPortPool();
@@ -185,7 +185,7 @@ namespace MMALSharp
             {
                 if (port.BufferPool != null)
                 {
-                    if (MMALCameraConfigImpl.Config.Debug)
+                    if (MMALCameraConfig.Debug)
                         Console.WriteLine("Desroying port pool");
 
                     port.DestroyPortPool();

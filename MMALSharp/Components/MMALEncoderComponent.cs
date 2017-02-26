@@ -34,9 +34,9 @@ namespace MMALSharp.Components
         /// </summary>
         internal unsafe void AnnotateImage()
         {
-            if (MMALCameraConfigImpl.Config.Annotate != null)
+            if (MMALCameraConfig.Annotate != null)
             {
-                if (MMALCameraConfigImpl.Config.Debug)
+                if (MMALCameraConfig.Debug)
                     Console.WriteLine("Setting annotate");
                                                                
                 StringBuilder sb = new StringBuilder();
@@ -58,52 +58,52 @@ namespace MMALSharp.Components
                 var customBackgroundU = (byte)0;
                 var customBackgroundV = (byte)0;
                 
-                if (!string.IsNullOrEmpty(MMALCameraConfigImpl.Config.Annotate.CustomText))
-                    sb.Append(MMALCameraConfigImpl.Config.Annotate.CustomText + " ");
+                if (!string.IsNullOrEmpty(MMALCameraConfig.Annotate.CustomText))
+                    sb.Append(MMALCameraConfig.Annotate.CustomText + " ");
 
-                if (MMALCameraConfigImpl.Config.Annotate.ShowTimeText)
+                if (MMALCameraConfig.Annotate.ShowTimeText)
                     sb.Append(DateTime.Now.ToString("HH:mm") + " ");
 
-                if (MMALCameraConfigImpl.Config.Annotate.ShowDateText)
+                if (MMALCameraConfig.Annotate.ShowDateText)
                     sb.Append(DateTime.Now.ToString("dd/MM/yyyy") + " ");
 
-                if (MMALCameraConfigImpl.Config.Annotate.ShowShutterSettings)
+                if (MMALCameraConfig.Annotate.ShowShutterSettings)
                     showShutter = 1;
 
-                if (MMALCameraConfigImpl.Config.Annotate.ShowGainSettings)
+                if (MMALCameraConfig.Annotate.ShowGainSettings)
                     showAnalogGain = 1;
 
-                if (MMALCameraConfigImpl.Config.Annotate.ShowLensSettings)
+                if (MMALCameraConfig.Annotate.ShowLensSettings)
                     showLens = 1;
 
-                if (MMALCameraConfigImpl.Config.Annotate.ShowCafSettings)
+                if (MMALCameraConfig.Annotate.ShowCafSettings)
                     showCaf = 1;
 
-                if (MMALCameraConfigImpl.Config.Annotate.ShowMotionSettings)
+                if (MMALCameraConfig.Annotate.ShowMotionSettings)
                     showMotion = 1;
 
-                if (MMALCameraConfigImpl.Config.Annotate.ShowFrameNumber)
+                if (MMALCameraConfig.Annotate.ShowFrameNumber)
                     showFrame = 1;
 
-                if (MMALCameraConfigImpl.Config.Annotate.ShowBlackBackground)
+                if (MMALCameraConfig.Annotate.ShowBlackBackground)
                     enableTextBackground = 1;
 
-                textSize = Convert.ToByte(MMALCameraConfigImpl.Config.Annotate.TextSize);
+                textSize = Convert.ToByte(MMALCameraConfig.Annotate.TextSize);
 
-                if (MMALCameraConfigImpl.Config.Annotate.TextColour != -1)
+                if (MMALCameraConfig.Annotate.TextColour != -1)
                 {
                     customTextColor = 1;
-                    customTextY = Convert.ToByte((MMALCameraConfigImpl.Config.Annotate.TextColour & 0xff));
-                    customTextU = Convert.ToByte(((MMALCameraConfigImpl.Config.Annotate.TextColour >> 8) & 0xff));
-                    customTextV = Convert.ToByte(((MMALCameraConfigImpl.Config.Annotate.TextColour >> 16) & 0xff));
+                    customTextY = Convert.ToByte((MMALCameraConfig.Annotate.TextColour & 0xff));
+                    customTextU = Convert.ToByte(((MMALCameraConfig.Annotate.TextColour >> 8) & 0xff));
+                    customTextV = Convert.ToByte(((MMALCameraConfig.Annotate.TextColour >> 16) & 0xff));
                 }
                 
-                if (MMALCameraConfigImpl.Config.Annotate.BgColour != -1)
+                if (MMALCameraConfig.Annotate.BgColour != -1)
                 {
                     customBackgroundColor = 1;
-                    customBackgroundY = Convert.ToByte((MMALCameraConfigImpl.Config.Annotate.BgColour & 0xff));
-                    customBackgroundU = Convert.ToByte(((MMALCameraConfigImpl.Config.Annotate.BgColour >> 8) & 0xff));
-                    customBackgroundV = Convert.ToByte(((MMALCameraConfigImpl.Config.Annotate.BgColour >> 16) & 0xff));
+                    customBackgroundY = Convert.ToByte((MMALCameraConfig.Annotate.BgColour & 0xff));
+                    customBackgroundU = Convert.ToByte(((MMALCameraConfig.Annotate.BgColour >> 8) & 0xff));
+                    customBackgroundV = Convert.ToByte(((MMALCameraConfig.Annotate.BgColour >> 16) & 0xff));
                 }
                 
                 string t = sb.ToString() + char.MinValue;

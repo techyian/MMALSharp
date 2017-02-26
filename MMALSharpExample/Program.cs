@@ -15,16 +15,11 @@ namespace MMALSharpExample
     class Program
     {
         static void Main(string[] args)
-        {
-            MMALCameraConfig config = new MMALCameraConfig
-            {
-                EnableAnnotate = true,
-                Annotate = new AnnotateImage { ShowDateText = true, ShowTimeText = true }                
-            };
-
-            //Assign our config to the global config object
-            MMALCameraConfigImpl.Config = config;
-
+        {   
+            //Alter any configuration properties required.         
+            MMALCameraConfig.EnableAnnotate = true;
+            MMALCameraConfig.Annotate = new AnnotateImage { ShowDateText = true, ShowTimeText = true };
+            
             using (MMALCamera cam = MMALCamera.Instance)
             {
                 //Create our component pipeline. 
@@ -35,11 +30,14 @@ namespace MMALSharpExample
                 AsyncContext.Run(async () =>
                 {
                     //Take a picture on output port '0' of the encoder connected to the Camera's still port, sending the output to a filestream.
-                    using (var fs = File.Create("/home/pi/test5.jpg"))
+                    using (var fs = File.Create("/home/pi/test.jpg"))
                     {
                         await cam.TakePicture(cam.Camera.StillPort, 0, new StreamCaptureResult(fs));
                     }                                        
-                });                
+                });          
+                
+                
+                      
             }
         }
     }

@@ -48,10 +48,7 @@ namespace MMALSharp
         private MMALCamera()
         {            
             BcmHost.bcm_host_init();
-
-            if (MMALCameraConfigImpl.Config == null)
-                MMALCameraConfigImpl.Config = new MMALCameraConfig();
-
+            
             this.Camera = new MMALCameraComponent();
             this.Encoders = new List<MMALEncoderBase>();                        
         }
@@ -129,7 +126,7 @@ namespace MMALSharp
                 if (raw)
                     camStillPort.SetRawCapture(true);
 
-                if (MMALCameraConfigImpl.Config.EnableAnnotate)
+                if (MMALCameraConfig.EnableAnnotate)
                     encoder.AnnotateImage();
 
                 int outputPort = 0;
@@ -195,7 +192,7 @@ namespace MMALSharp
             if (raw)                
                 camStillPort.SetRawCapture(true);
 
-            if (MMALCameraConfigImpl.Config.EnableAnnotate)
+            if (MMALCameraConfig.EnableAnnotate)
                 encoder.AnnotateImage();
             
             //Enable the image encoder output port.
@@ -374,30 +371,30 @@ namespace MMALSharp
         /// <returns></returns>
         public MMALCamera ConfigureCamera()
         {
-            if (MMALCameraConfigImpl.Config.Debug)
+            if (MMALCameraConfig.Debug)
                 Console.WriteLine("Configuring camera parameters.");
 
             this.DisableCamera();
             
-            this.SetSaturation(MMALCameraConfigImpl.Config.Saturation);
-            this.SetSharpness(MMALCameraConfigImpl.Config.Sharpness);
-            this.SetContrast(MMALCameraConfigImpl.Config.Contrast);
-            this.SetBrightness(MMALCameraConfigImpl.Config.Brightness);
-            this.SetISO(MMALCameraConfigImpl.Config.ISO);
-            this.SetVideoStabilisation(MMALCameraConfigImpl.Config.VideoStabilisation);
-            this.SetExposureCompensation(MMALCameraConfigImpl.Config.ExposureCompensation);
-            this.SetExposureMode(MMALCameraConfigImpl.Config.ExposureMode);
-            this.SetExposureMeteringMode(MMALCameraConfigImpl.Config.ExposureMeterMode);
-            this.SetAwbMode(MMALCameraConfigImpl.Config.AwbMode);
-            this.SetAwbGains(MMALCameraConfigImpl.Config.AwbGainsR, MMALCameraConfigImpl.Config.AwbGainsB);
-            this.SetImageFx(MMALCameraConfigImpl.Config.ImageEffect);
-            this.SetColourFx(MMALCameraConfigImpl.Config.Effects);
-            this.SetRotation(MMALCameraConfigImpl.Config.Rotation);
-            this.SetShutterSpeed(MMALCameraConfigImpl.Config.ShutterSpeed);
-            this.SetStatsPass(MMALCameraConfigImpl.Config.StatsPass);
-            this.SetDRC(MMALCameraConfigImpl.Config.DrcLevel);
-            this.SetFlips(MMALCameraConfigImpl.Config.Flips);
-            this.SetCrop(MMALCameraConfigImpl.Config.Crop);
+            this.SetSaturation(MMALCameraConfig.Saturation);
+            this.SetSharpness(MMALCameraConfig.Sharpness);
+            this.SetContrast(MMALCameraConfig.Contrast);
+            this.SetBrightness(MMALCameraConfig.Brightness);
+            this.SetISO(MMALCameraConfig.ISO);
+            this.SetVideoStabilisation(MMALCameraConfig.VideoStabilisation);
+            this.SetExposureCompensation(MMALCameraConfig.ExposureCompensation);
+            this.SetExposureMode(MMALCameraConfig.ExposureMode);
+            this.SetExposureMeteringMode(MMALCameraConfig.ExposureMeterMode);
+            this.SetAwbMode(MMALCameraConfig.AwbMode);
+            this.SetAwbGains(MMALCameraConfig.AwbGainsR, MMALCameraConfig.AwbGainsB);
+            this.SetImageFx(MMALCameraConfig.ImageEffect);
+            this.SetColourFx(MMALCameraConfig.Effects);
+            this.SetRotation(MMALCameraConfig.Rotation);
+            this.SetShutterSpeed(MMALCameraConfig.ShutterSpeed);
+            this.SetStatsPass(MMALCameraConfig.StatsPass);
+            this.SetDRC(MMALCameraConfig.DrcLevel);
+            this.SetFlips(MMALCameraConfig.Flips);
+            this.SetCrop(MMALCameraConfig.Crop);
             
             this.EnableCamera();
 
@@ -406,7 +403,7 @@ namespace MMALSharp
                 
         public void Dispose()
         {
-            if (MMALCameraConfigImpl.Config.Debug)
+            if (MMALCameraConfig.Debug)
                 Console.WriteLine("Destroying final components");
             if (this.Camera != null)
                 this.Camera.Dispose();
