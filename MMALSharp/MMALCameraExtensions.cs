@@ -147,12 +147,12 @@ namespace MMALSharp
             SetParameter(MMAL_PARAMETER_VIDEO_STABILISATION, vstabilisation, camera.Camera.Control.Ptr);            
         }
 
-        public static int GetExposureCompensation(this MMALCamera camera)
+        public static MMAL_PARAM_EXPOSUREMODE_T GetExposureCompensation(this MMALCamera camera)
         {
             return GetParameter(MMAL_PARAMETER_EXPOSURE_COMP, camera.Camera.Control.Ptr);
         }
 
-        public static void SetExposureCompensation(this MMALCamera camera, int expCompensation)
+        public static void SetExposureCompensation(this MMALCamera camera, MMAL_PARAM_EXPOSUREMODE_T expCompensation)
         {
             if (MMALCameraConfigImpl.Config.Debug)
                 Console.WriteLine(string.Format("Setting exposure compensation: {0}", expCompensation));
@@ -244,7 +244,7 @@ namespace MMALSharp
             if (MMALCameraConfigImpl.Config.Debug)
                 Console.WriteLine(string.Format("Setting AWB gains: {0}, {1}", r_gain, b_gain));
 
-            if (MMALCameraConfigImpl.Config.AwbMode != MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_OFF)
+            if (MMALCameraConfigImpl.Config.AwbMode != MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_OFF && (r_gain > 0 || b_gain > 0))
                 throw new PiCameraError("AWB Mode must be off when setting AWB gains");
 
             MMAL_PARAMETER_AWB_GAINS_T awb_gains = new MMAL_PARAMETER_AWB_GAINS_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CUSTOM_AWB_GAINS, Marshal.SizeOf<MMAL_PARAMETER_AWB_GAINS_T>()),

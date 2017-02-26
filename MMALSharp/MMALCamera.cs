@@ -8,11 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
-using static MMALSharp.Native.MMALParameters;
-using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
@@ -40,256 +36,7 @@ namespace MMALSharp
         /// Reference to the Video splitter component which attaches to the Camera's video output port
         /// </summary>
         public MMALSplitterComponent Splitter { get; set; }
-                
-        #region Configuration Properties
-                
-        /// <summary>
-        /// Configure the sharpness of the image
-        /// </summary>
-        public double Sharpness
-        {
-            get
-            {
-                return this.GetSharpness();
-            }
-            set
-            {
-                MMALCameraConfigImpl.Config.Sharpness = value;
-                this.ConfigureCamera();                                
-            }
-        }
-
-        /// <summary>
-        /// Configure the contrast of the image
-        /// </summary>        
-        public double Contrast
-        {
-            get
-            {
-                return this.GetContrast();
-            }
-            set
-            {
-                MMALCameraConfigImpl.Config.Contrast = value;
-                this.ConfigureCamera();
-            }
-        }
-
-        /// <summary>
-        /// Configure the brightness of the image
-        /// </summary>
-        public double Brightness
-        {
-            get
-            {
-                return this.GetBrightness();
-            }
-            set
-            {              
-                MMALCameraConfigImpl.Config.Brightness = value;
-                this.ConfigureCamera();
-            }
-        }
-
-        /// <summary>
-        /// Configure the saturation of the image
-        /// </summary>       
-        public double Saturation
-        {
-            get
-            {
-                return this.GetSaturation();
-            }
-            set
-            {              
-                MMALCameraConfigImpl.Config.Saturation = value;
-                this.ConfigureCamera();
-            }
-        }
-
-        /// <summary>
-        /// Configure the light sensitivity of the sensor
-        /// </summary>      
-        public int ISO
-        {
-            get
-            {
-                return this.GetISO();
-            }
-            set
-            {               
-                MMALCameraConfigImpl.Config.ISO = value;
-                this.ConfigureCamera();
-            }
-        }
-
-        /// <summary>
-        /// Enable video stabilisation
-        /// </summary>   
-        public bool VideoStabilisation
-        {
-            get
-            {
-                return this.GetVideoStabilisation();
-            }
-            set
-            {             
-                MMALCameraConfigImpl.Config.VideoStabilisation = value;                
-                this.ConfigureCamera();
-            }
-        }
-
-        /// <summary>
-        /// Configure the exposure compensation of the camera. Doing so will produce a lighter/darker image beyond the recommended exposure.
-        /// </summary>
-        public int ExposureCompensation
-        {
-            get
-            {
-                return this.GetExposureCompensation();
-            }
-            set
-            {            
-                MMALCameraConfigImpl.Config.ExposureCompensation = value;                
-                this.ConfigureCamera();
-            }
-        }
-
-        /// <summary>
-        /// Configure the exposure mode used by the camera
-        /// </summary>        
-        public MMAL_PARAM_EXPOSUREMODE_T ExposureMode
-        {
-            get
-            {
-                return this.GetExposureMode();
-            }
-            set
-            {               
-                MMALCameraConfigImpl.Config.ExposureMode = value;                
-                this.ConfigureCamera();
-            }
-        }
-
-        /// <summary>
-        /// Configure the exposure metering mode to be used by the camera. The metering mode determines how the camera measures exposure.
-        /// 
-        /// Spot metering (MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_SPOT):
-        /// 
-        /// With spot metering, the camera will only measure a very small area of the scene and ignores everything else.
-        /// On the Raspberry Pi camera, this will be the very centre of the image. 
-        /// 
-        /// Average metering (MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE):
-        /// 
-        /// Using this metering mode, the camera will use the light information coming from the entire scene. It does not focus on any particular
-        /// area of the scene.
-        /// 
-        /// Matrix metering (MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_MATRIX):
-        /// 
-        /// Matrix metering works by dividing the entire frame into multiple "zones" which are then analysed on an individual basis for light and dark tones.
-        /// 
-        /// 
-        /// Sources:
-        /// https://photographylife.com/understanding-metering-modes
-        /// https://en.wikipedia.org/wiki/Metering_mode#Spot_metering
-        /// 
-        /// </summary>        
-        public MMAL_PARAM_EXPOSUREMETERINGMODE_T ExposureMeterMode
-        {
-            get
-            {
-                return this.GetExposureMeteringMode();
-            }
-            set
-            {              
-                MMALCameraConfigImpl.Config.ExposureMeterMode = value;                
-                this.ConfigureCamera();
-            }
-        }
-                
-        /// <summary>
-        /// Configure the Auto White Balance to be used by the camera
-        /// </summary>
-        public MMAL_PARAM_AWBMODE_T AwbMode
-        {
-            get
-            {
-                return this.GetAwbMode();
-            }
-            set
-            {               
-                MMALCameraConfigImpl.Config.AwbMode = value;                
-                this.ConfigureCamera();
-            }
-        }
-                
-        /// <summary>
-        /// Configure any image effects to be used by the camera
-        /// </summary>
-        public MMAL_PARAM_IMAGEFX_T ImageEffect
-        {
-            get
-            {
-                return this.GetImageFx();
-            }
-            set
-            {              
-                MMALCameraConfigImpl.Config.ImageEffect = value;
-                this.ConfigureCamera();
-            }
-        }
-            
-        /// <summary>
-        /// Specify the rotation of the image, this value should be multiples of 90
-        /// </summary>                    
-        public int Rotation
-        {
-            get
-            {
-                return this.GetRotation();
-            }
-            set
-            {              
-                MMALCameraConfigImpl.Config.Rotation = value;
-                this.ConfigureCamera();                
-            }
-        }
-         
-        /// <summary>
-        /// Specify whether the image should be flipped
-        /// </summary>                       
-        public MMAL_PARAM_MIRROR_T Flips
-        {
-            get
-            {
-                return this.GetFlips();
-            }
-            set
-            {                
-                MMALCameraConfigImpl.Config.Flips = value;
-                this.ConfigureCamera();                
-            }
-        }
         
-        /// <summary>
-        /// Configure the shutter speed of the camera. This value is the length of time
-        /// that the sensor is exposed to light. 
-        /// </summary>                        
-        public int ShutterSpeed
-        {
-            get
-            {
-                return this.GetShutterSpeed();
-            }
-            set
-            {               
-                MMALCameraConfigImpl.Config.ShutterSpeed = value;
-                this.ConfigureCamera();                
-            }
-        }
-
-        #endregion
-
         private static readonly MMALCamera instance = new MMALCamera();
 
         // Explicit static constructor to tell C# compiler
@@ -301,11 +48,12 @@ namespace MMALSharp
         private MMALCamera()
         {            
             BcmHost.bcm_host_init();
-            this.Camera = new MMALCameraComponent();
-            this.Encoders = new List<MMALEncoderBase>();
 
             if (MMALCameraConfigImpl.Config == null)
                 MMALCameraConfigImpl.Config = new MMALCameraConfig();
+
+            this.Camera = new MMALCameraComponent();
+            this.Encoders = new List<MMALEncoderBase>();                        
         }
 
         public static MMALCamera Instance

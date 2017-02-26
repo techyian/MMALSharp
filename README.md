@@ -122,7 +122,7 @@ So far, the library has been tested on the following Raspberry Pi devices:
 
 Both the SUNNY and Sony IMX219 camera modules are working as expected.
 
-Currently tested image 'still' features - code is in place for all features listed below, however not all have been tested.
+Tested image 'still' features:
 
 - [x] Image width/height
 - [x] Image encoding
@@ -130,17 +130,17 @@ Currently tested image 'still' features - code is in place for all features list
 - [x] Contrast
 - [x] Saturation
 - [x] Sharpness
-- [ ] Shutter speed
-- [ ] ISO
-- [ ] Exposure compensation
-- [ ] Exposure mode
-- [ ] Exposure metering mode
+- [x] Shutter speed
+- [x] ISO
+- [x] Exposure compensation
+- [x] Exposure mode
+- [x] Exposure metering mode
 - [x] Raspistill supported image effects
 - [x] Rotation
 - [x] Flips
 - [x] Annotate
-- [ ] DRC
-- [ ] Stats Pass
+- [x] Dynamic range compression
+- [x] Stats Pass
 - [x] Colour effects
 - [x] Crop
 - [x] Auto white balance mode/gains

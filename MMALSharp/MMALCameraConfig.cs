@@ -16,29 +16,145 @@ namespace MMALSharp
     public class MMALCameraConfig
     {        
         public bool Debug { get; set; }
+
+        /// <summary>
+        /// Configure the sharpness of the image
+        /// </summary>
         public double Sharpness { get; set; }
+
+        /// <summary>
+        /// Configure the contrast of the image
+        /// </summary>  
         public double Contrast { get; set; }
+
+        /// <summary>
+        /// Configure the brightness of the image
+        /// </summary>
         public double Brightness { get; set; } = 50;
+
+        /// <summary>
+        /// Configure the saturation of the image
+        /// </summary>  
         public double Saturation { get; set; }
+
+        /// <summary>
+        /// Configure the light sensitivity of the sensor
+        /// </summary> 
         public int ISO { get; set; }
+
+        /// <summary>
+        /// Enable video stabilisation
+        /// </summary> 
         public bool VideoStabilisation { get; set; } = true;
-        public int ExposureCompensation { get; set; } = (int)MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
+
+        /// <summary>
+        /// Configure the exposure compensation of the camera. Doing so will produce a lighter/darker image beyond the recommended exposure.
+        /// </summary>
+        public MMAL_PARAM_EXPOSUREMODE_T ExposureCompensation { get; set; } = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
+
+        /// <summary>
+        /// Configure the exposure mode used by the camera
+        /// </summary>  
         public MMAL_PARAM_EXPOSUREMODE_T ExposureMode { get; set; } = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
+
+        /// <summary>
+        /// Configure the exposure metering mode to be used by the camera. The metering mode determines how the camera measures exposure.
+        /// 
+        /// Spot metering (MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_SPOT):
+        /// 
+        /// With spot metering, the camera will only measure a very small area of the scene and ignores everything else.
+        /// On the Raspberry Pi camera, this will be the very centre of the image. 
+        /// 
+        /// Average metering (MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE):
+        /// 
+        /// Using this metering mode, the camera will use the light information coming from the entire scene. It does not focus on any particular
+        /// area of the scene.
+        /// 
+        /// Matrix metering (MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_MATRIX):
+        /// 
+        /// Matrix metering works by dividing the entire frame into multiple "zones" which are then analysed on an individual basis for light and dark tones.
+        /// 
+        /// 
+        /// Sources:
+        /// https://photographylife.com/understanding-metering-modes
+        /// https://en.wikipedia.org/wiki/Metering_mode#Spot_metering
+        /// 
+        /// </summary> 
         public MMAL_PARAM_EXPOSUREMETERINGMODE_T ExposureMeterMode { get; set; } = MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE;
-        public MMAL_PARAM_AWBMODE_T AwbMode { get; set; } = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_OFF;
+
+        /// <summary>
+        /// Configure the Auto White Balance to be used by the camera
+        /// </summary>
+        public MMAL_PARAM_AWBMODE_T AwbMode { get; set; } = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_AUTO;
+
+        /// <summary>
+        /// Configure any image effects to be used by the camera
+        /// </summary>
         public MMAL_PARAM_IMAGEFX_T ImageEffect { get; set; } = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NONE;
+
+        /// <summary>
+        /// Allows a user to change the colour of an image, e.g. U = 128, V = 128 will result in a greyscale image.
+        /// </summary>
         public ColourEffects Effects { get; set; } = new ColourEffects();
+
+        /// <summary>
+        /// Specify the rotation of the image, this value should be multiples of 90
+        /// </summary>   
         public int Rotation { get; set; }
+
+        /// <summary>
+        /// Specify whether the image should be flipped
+        /// </summary>                       
         public MMAL_PARAM_MIRROR_T Flips { get; set; } = MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE;
+
+        /// <summary>
+        /// Crop an image to focus on a region of interest.
+        /// </summary>
         public Crop Crop { get; set; } = new Crop();
+
+        /// <summary>
+        /// Changing the shutter speed alters how long the sensor is exposed to light.
+        /// </summary>
         public int ShutterSpeed { get; set; }
+
+        /// <summary>
+        /// Adjust auto white balance 'red' gains
+        /// </summary>
         public int AwbGainsR { get; set; }
+
+        /// <summary>
+        /// Adjust auto white balance 'blue' gains
+        /// </summary>
         public int AwbGainsB { get; set; }
+
+        /// <summary>
+        /// Adjust dynamic range compression
+        /// </summary>
         public MMAL_PARAMETER_DRC_STRENGTH_T DrcLevel { get; set; } = MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_OFF;
+
+        /// <summary>
+        /// Enable an extra statistics pass to be made when capturing images
+        /// </summary>
         public bool StatsPass { get; set; }
+
+        /// <summary>
+        /// Enable annotation of captured images
+        /// </summary>
         public bool EnableAnnotate { get; set; }    
+
+        /// <summary>
+        /// Allows fine tuning of annotation options
+        /// </summary>
         public AnnotateImage Annotate { get; set; }
+
+        /// <summary>
+        /// Adjust Stereoscopic mode - only supported with Raspberry Pi Compute module
+        /// </summary>
         public StereoMode StereoMode { get; set; } = new StereoMode();
+
+        /// <summary>
+        /// Enable to receive event request callbacks
+        /// </summary>
         public bool SetChangeEventRequest { get; set; }
 
         // Camera preview port specific properties
@@ -101,6 +217,15 @@ namespace MMALSharp
                 this.stillHeight = MMALUtil.VCOS_ALIGN_UP(value, 16);
             }
         }        
+
+        /// <summary>
+        /// Reloads Camera configuration settings
+        /// </summary>
+        public void Reload()
+        {
+            MMALCamera.Instance.ConfigureCamera();
+        }
+
     }
     
     public class ColourEffects
