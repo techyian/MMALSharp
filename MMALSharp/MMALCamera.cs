@@ -36,7 +36,7 @@ namespace MMALSharp
         /// Reference to the Video splitter component which attaches to the Camera's video output port
         /// </summary>
         public MMALSplitterComponent Splitter { get; set; }
-        
+
         private static readonly MMALCamera instance = new MMALCamera();
 
         // Explicit static constructor to tell C# compiler
@@ -46,11 +46,11 @@ namespace MMALSharp
         }
 
         private MMALCamera()
-        {            
+        {
             BcmHost.bcm_host_init();
-            
+
             this.Camera = new MMALCameraComponent();
-            this.Encoders = new List<MMALEncoderBase>();                        
+            this.Encoders = new List<MMALEncoderBase>();
         }
 
         public static MMALCamera Instance
@@ -60,7 +60,7 @@ namespace MMALSharp
                 return instance;
             }
         }
-                
+
         /// <summary>
         /// Begin capture on one of the camera's output ports.
         /// </summary>
@@ -81,9 +81,11 @@ namespace MMALSharp
                 port.SetImageCapture(false);
         }
 
-        
+
         /// <summary>
-        /// Captures a single image from the camera's still port. Initializes a standalone MMALImageEncoder using the provided encodingType and quality.
+        /// Captures a single image from the camera's still port. 
+        /// Initializes a standalone MMALImageEncoder using the provided encodingType and quality.
+        /// This will destroy any previously connected encoders attached to the still port.
         /// </summary>
         /// <typeparam name="T"></typeparam>        
         /// <param name="handler"></param>
@@ -98,7 +100,7 @@ namespace MMALSharp
             var camPreviewPort = this.Camera.PreviewPort;
             var camVideoPort = this.Camera.VideoPort;
             var camStillPort = this.Camera.StillPort;
-            
+
             using (var encoder = new MMALImageEncoder(encodingType, quality))
             {
                 if (useExif)
@@ -113,12 +115,13 @@ namespace MMALSharp
                         this.Preview.CreateConnection(camPreviewPort);
                 }
 
-                if(this.Encoders.Any(c => c?.Connection.OutputPort == this.Camera.StillPort))
+                if (this.Encoders.Any(c => c.Connection != null && c.Connection.OutputPort == this.Camera.StillPort))
                 {
+                    Helpers.PrintWarning("Found previously connected encoder, destroying...");
+
                     var enc = this.Encoders.Where(c => c.Connection.OutputPort == this.Camera.StillPort).FirstOrDefault();
                     this.Encoders.Remove(enc);
-                    if(enc.Connection != null)
-                        enc.Connection.Destroy();
+                    enc.Dispose();
                 }
 
                 encoder.CreateConnection(camStillPort);
@@ -141,15 +144,15 @@ namespace MMALSharp
                 await encoder.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
 
                 this.StopCapture(camStillPort);
-                
+
                 //Disable the image encoder output port.
                 encoder.Stop(outputPort);
 
-                //Close open connections.
-                encoder.CloseConnection();
+                //Close open connections.                
+                encoder.Connection.Destroy();
 
                 handler.PostProcess();
-            }            
+            }
         }
 
 
@@ -172,11 +175,14 @@ namespace MMALSharp
             var camStillPort = this.Camera.StillPort;
 
             //Find the encoder/decoder which is connected to the output port specified.
-            var encoder = this.Encoders.Where(c => c?.Connection.OutputPort == connPort).FirstOrDefault();
-            
+            var encoder = this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == connPort).FirstOrDefault();
+
             if (encoder == null || encoder.GetType() != typeof(MMALImageEncoder))
                 throw new PiCameraError("No image encoder currently attached to output port specified");
-                        
+
+            if (!encoder.Connection.Enabled)
+                encoder.Connection.Enable();
+
             if (useExif)
                 ((MMALImageEncoder)encoder).AddExifTags((MMALImageEncoder)encoder, exifTags);
 
@@ -188,13 +194,13 @@ namespace MMALSharp
                 if (this.Preview.Connection == null)
                     this.Preview.CreateConnection(camPreviewPort);
             }
-                        
-            if (raw)                
+
+            if (raw)
                 camStillPort.SetRawCapture(true);
 
             if (MMALCameraConfig.EnableAnnotate)
                 encoder.AnnotateImage();
-            
+
             //Enable the image encoder output port.
             encoder.Start(outputPort, encoder.ManagedCallback, handler.Process);
 
@@ -205,10 +211,14 @@ namespace MMALSharp
             await encoder.Outputs.ElementAt(0).Trigger.WaitAsync();
 
             this.StopCapture(camStillPort);
-            
+
             //Disable the image encoder output port.
             encoder.Stop(outputPort);
-            
+
+            //Close open connections.
+            encoder.Connection.Disable();
+            encoder.CleanEncoderPorts();
+
             handler.PostProcess();
         }
 
@@ -223,7 +233,7 @@ namespace MMALSharp
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
         public async Task TakePictureIterative(MMALPortImpl connPort, int outputPort, string directory, string extension, int iterations, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
-        {            
+        {
             for (int i = 0; i < iterations; i++)
             {
                 var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
@@ -231,8 +241,8 @@ namespace MMALSharp
                 using (var fs = File.Create(filename))
                 {
                     await TakePicture(connPort, outputPort, new StreamCaptureResult(fs), useExif, raw, exifTags);
-                }                    
-            }                        
+                }
+            }
         }
 
         /// <summary>
@@ -254,7 +264,7 @@ namespace MMALSharp
                 using (var fs = File.Create(filename))
                 {
                     await TakePicture(connPort, outputPort, new StreamCaptureResult(fs), useExif, raw, exifTags);
-                }                    
+                }
             }
         }
 
@@ -280,10 +290,10 @@ namespace MMALSharp
                 switch (tl.Mode)
                 {
                     case TimelapseMode.Millisecond:
-                        interval = tl.Value;                        
+                        interval = tl.Value;
                         break;
                     case TimelapseMode.Second:
-                        interval = tl.Value * 1000;                        
+                        interval = tl.Value * 1000;
                         break;
                     case TimelapseMode.Minute:
                         interval = (tl.Value * 60) * 1000;
@@ -297,13 +307,13 @@ namespace MMALSharp
                 using (var fs = File.Create(filename))
                 {
                     await TakePicture(connPort, outputPort, new StreamCaptureResult(fs), useExif, raw, exifTags);
-                }                    
+                }
             }
         }
 
         public MMALCamera CreatePreviewComponent(MMALRendererBase renderer)
-        {            
-            if(this.Preview != null)
+        {
+            if (this.Preview != null)
             {
                 this.Preview?.Connection.Disable();
                 this.Preview?.Connection.Destroy();
@@ -319,7 +329,7 @@ namespace MMALSharp
             this.Splitter = new MMALSplitterComponent();
             return this;
         }
-        
+
         /// <summary>
         /// Provides a facility to attach an encoder/decoder component to an upstream component's output port
         /// </summary>
@@ -328,18 +338,29 @@ namespace MMALSharp
         /// <returns></returns>
         public MMALCamera AddEncoder(MMALEncoderBase encoder, MMALPortImpl outputPort)
         {
-            var enc = this.Encoders.Where(c => c?.Connection.OutputPort == outputPort).FirstOrDefault();
+            if (MMALCameraConfig.Debug)
+                Console.WriteLine("Adding encoder");
 
-            if(enc != null)
-            {
-                //Dispose of encoder that's connected to this output port and remove from list of encoders.
-                enc.DisableComponent();
-                enc.Dispose();
-                this.Encoders.Remove(enc);
-            }
+            this.RemoveEncoder(outputPort);
 
             encoder.CreateConnection(outputPort);
             this.Encoders.Add(encoder);
+            return this;
+        }
+
+        public MMALCamera RemoveEncoder(MMALPortImpl outputPort)
+        {
+            if (MMALCameraConfig.Debug)
+                Console.WriteLine("Removing encoder");
+
+            var enc = this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == outputPort).FirstOrDefault();
+
+            if (enc != null)
+            {
+                enc.Connection.Destroy();
+                enc.Dispose();
+                this.Encoders.Remove(enc);
+            }                            
             return this;
         }
         
@@ -405,14 +426,14 @@ namespace MMALSharp
             if (MMALCameraConfig.Debug)
                 Console.WriteLine("Destroying final components");
 
+            this.Encoders.ForEach(c => c.Dispose());
+
             if (this.Preview != null)
                 this.Preview.Dispose();
 
             if (this.Camera != null)
                 this.Camera.Dispose();
-                        
-            this.Encoders.ForEach(c => c.Dispose());
-                        
+                         
             BcmHost.bcm_host_deinit();
         }
     }

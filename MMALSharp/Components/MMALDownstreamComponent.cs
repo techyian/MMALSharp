@@ -35,14 +35,7 @@ namespace MMALSharp.Components
                 Console.WriteLine("Creating downstream connection");
             this.Connection = MMALConnectionImpl.CreateConnection(output, this.Inputs.ElementAt(0));
         }
-
-        public void CloseConnection()
-        {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine("Closing downstream connection");
-            this.Connection.Disable();
-        }
-
+        
         /// <summary>
         /// Delegate to process the buffer header containing image data
         /// </summary>

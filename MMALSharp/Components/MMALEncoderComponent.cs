@@ -125,6 +125,34 @@ namespace MMALSharp.Components
             }
         }
 
+        internal void CleanEncoderPorts()
+        {
+            //See if any pools need disposing before destroying component.
+            foreach (var port in this.Inputs)
+            {
+                if (port.BufferPool != null)
+                {
+                    if (MMALCameraConfig.Debug)
+                        Console.WriteLine("Destroying port pool");
+
+                    port.DestroyPortPool();
+                    port.BufferPool = null;
+                }
+
+            }
+            foreach (var port in this.Outputs)
+            {
+                if (port.BufferPool != null)
+                {
+                    if (MMALCameraConfig.Debug)
+                        Console.WriteLine("Destroying port pool");
+
+                    port.DestroyPortPool();
+                    port.BufferPool = null;
+                }
+            }
+        }
+
     }
         
     /// <summary>
