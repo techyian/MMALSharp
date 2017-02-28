@@ -31,11 +31,15 @@ namespace MMALSharp.Components
         /// <param name="output"></param>
         public void CreateConnection(MMALPortBase output)
         {
+            if (MMALCameraConfig.Debug)
+                Console.WriteLine("Creating downstream connection");
             this.Connection = MMALConnectionImpl.CreateConnection(output, this.Inputs.ElementAt(0));
         }
 
         public void CloseConnection()
         {
+            if (MMALCameraConfig.Debug)
+                Console.WriteLine("Closing downstream connection");
             this.Connection.Disable();
         }
 

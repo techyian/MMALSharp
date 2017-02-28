@@ -126,7 +126,7 @@ namespace MMALSharp
         /// <summary>
         /// Asynchronous trigger which is set when processing has completed on this port.
         /// </summary>
-        public AsyncCountdownEvent Trigger = new AsyncCountdownEvent(1);
+        public AsyncCountdownEvent Trigger { get; set; }
         
         /// <summary>
         /// Monitor lock for port callback method
@@ -170,7 +170,12 @@ namespace MMALSharp
         internal void DisablePort()
         {
             if (Enabled)
+            {
+                if (MMALCameraConfig.Debug)
+                    Console.WriteLine("Disabling port");
                 MMALCheck(MMALPort.mmal_port_disable(this.Ptr), "Unable to disable port.");
+            }
+                
         }
 
         /// <summary>

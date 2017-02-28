@@ -135,17 +135,18 @@ namespace MMALSharp
                 encoder.Start(outputPort, encoder.ManagedCallback, handler.Process);
 
                 this.StartCapture(camStillPort);
-                
+
                 //Wait until the process is complete.
+                encoder.Outputs.ElementAt(outputPort).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
                 await encoder.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
 
                 this.StopCapture(camStillPort);
-
-                //Close open connections.
-                encoder.CloseConnection();
                 
                 //Disable the image encoder output port.
                 encoder.Stop(outputPort);
+
+                //Close open connections.
+                encoder.CloseConnection();
 
                 handler.PostProcess();
             }            
@@ -164,8 +165,7 @@ namespace MMALSharp
         /// <param name="exifTags"></param>
         /// <returns></returns>
         public async Task TakePicture<T>(MMALPortImpl connPort, int outputPort, ICaptureHandler<T> handler, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
-        {          
-            
+        {
             Console.WriteLine("Preparing to take picture");
             var camPreviewPort = this.Camera.PreviewPort;
             var camVideoPort = this.Camera.VideoPort;
@@ -201,16 +201,15 @@ namespace MMALSharp
             this.StartCapture(camStillPort);
 
             //Wait until the process is complete.
+            encoder.Outputs.ElementAt(0).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
             await encoder.Outputs.ElementAt(0).Trigger.WaitAsync();
 
             this.StopCapture(camStillPort);
-
-            //Close open connections.
-            //encoder.CloseConnection();
-            //this.Preview.CloseConnection();
-
+            
             //Disable the image encoder output port.
-            encoder.Stop(outputPort);           
+            encoder.Stop(outputPort);
+            
+            handler.PostProcess();
         }
 
         /// <summary>
@@ -405,12 +404,15 @@ namespace MMALSharp
         {
             if (MMALCameraConfig.Debug)
                 Console.WriteLine("Destroying final components");
-            if (this.Camera != null)
-                this.Camera.Dispose();
-            this.Encoders.ForEach(c => c.Dispose());
 
             if (this.Preview != null)
                 this.Preview.Dispose();
+
+            if (this.Camera != null)
+                this.Camera.Dispose();
+                        
+            this.Encoders.ForEach(c => c.Dispose());
+                        
             BcmHost.bcm_host_deinit();
         }
     }

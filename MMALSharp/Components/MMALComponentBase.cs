@@ -175,7 +175,7 @@ namespace MMALSharp
                 if (port.BufferPool != null)
                 {
                     if (MMALCameraConfig.Debug)
-                        Console.WriteLine("Desroying port pool");
+                        Console.WriteLine("Destroying port pool");
 
                     port.DestroyPortPool();
                 }
@@ -186,7 +186,7 @@ namespace MMALSharp
                 if (port.BufferPool != null)
                 {
                     if (MMALCameraConfig.Debug)
-                        Console.WriteLine("Desroying port pool");
+                        Console.WriteLine("Destroying port pool");
 
                     port.DestroyPortPool();
                 }                    
@@ -194,6 +194,9 @@ namespace MMALSharp
                                                 
             this.DisableComponent();
             this.DestroyComponent();
+
+            if (MMALCameraConfig.Debug)
+                Console.WriteLine("Completed disposal...");
 
             base.Dispose();
         }

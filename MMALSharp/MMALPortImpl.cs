@@ -92,7 +92,11 @@ namespace MMALSharp
                     var buffer = this.BufferPool.Queue.GetBuffer();
                     this.SendBuffer(buffer);
                 }
-            }            
+            }
+
+            if (!this.Enabled)
+                throw new PiCameraError("Unknown error occurred whilst enabling port");
+                    
         }
 
         public void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
@@ -122,6 +126,11 @@ namespace MMALSharp
 
                 try
                 {
+                    if (MMALCameraConfig.Debug && !this.Enabled)
+                        Console.WriteLine("Port not enabled.");
+                    if (MMALCameraConfig.Debug && this.BufferPool == null)
+                        Console.WriteLine("Buffer pool null.");
+
                     if (this.Enabled && this.BufferPool != null)
                     {
                         var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
@@ -138,12 +147,7 @@ namespace MMALSharp
                             if (MMALCameraConfig.Debug)
                                 Console.WriteLine("Buffer null. Continuing.");
                         }
-                    }
-                    else
-                    {
-                        if (MMALCameraConfig.Debug)
-                            Console.WriteLine("Not enabled or component buffer pool null.");
-                    }
+                    }                    
                 }
                 catch
                 {

@@ -145,6 +145,9 @@ namespace MMALSharp
         /// </summary>
         internal void Destroy()
         {
+            if (MMALCameraConfig.Debug)
+                Console.WriteLine("Destroying connection");
+
             MMALCheck(MMALConnection.mmal_connection_destroy(this.Ptr), "Unable to destroy connection");
         }
 
