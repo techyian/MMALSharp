@@ -74,7 +74,7 @@ namespace MMALSharp.Components
                         this.MaxWidth = s.Cameras[0].MaxWidth;
                     }
                 }
-                catch (Exception e)
+                catch
                 {
                     //Something went wrong, continue with OV5647 defaults.                    
                     if(MMALCameraConfig.Debug)

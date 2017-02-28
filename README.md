@@ -56,9 +56,13 @@ Windows:
 
 Unix:
 
-`dos2unix ./build.sh`
+```
+sudo apt-get install dos2unix
+sudo chmod +x ./build.sh
+dos2unix ./build.sh
+./build.sh
+```
 
-`sudo ./build.sh`
 
 Once the library has built, you can reference it as a project within your application.
 
