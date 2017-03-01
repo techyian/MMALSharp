@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using static MMALSharp.MMALParameterHelpers;
 using static MMALSharp.MMALCallerHelper;
+using static MMALSharp.Native.MMALParametersVideo;
+using MMALSharp.Utility;
 
 namespace MMALSharp.Components
 {
@@ -169,20 +171,108 @@ namespace MMALSharp.Components
 
         public int Framerate { get; set; } = 30;
 
+        public int Level { get; set; } = (int)MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4;
+
+        public const int MaxBitrateMJPEG = 25000000; // 25Mbits/s
+        public const int MaxBitrateLevel4 = 25000000; // 25Mbits/s
+        public const int MaxBitrateLevel42 = 62500000; // 62.5Mbits/s
+        
         public MMALVideoEncoder(int encodingType, int bitrate, int framerate) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
         {
-            this.EncodingType = encodingType;
-            this.Bitrate = bitrate;
+            if (encodingType > 0)
+                this.EncodingType = encodingType;
+
+            if (bitrate > 0)
+                this.Bitrate = bitrate;
+
+            if (framerate > 0)
+                this.Framerate = framerate;
+
+            this.Initialize();
         }
 
         public MMALVideoEncoder() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
-        {            
+        {
+            this.Initialize();
+        }
+
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            var input = this.Inputs.ElementAt(0);
+            var output = this.Outputs.ElementAt(0);
+
+            output.Ptr->Format->Encoding = this.EncodingType;
+
+            if (this.EncodingType == MMALEncodings.MMAL_ENCODING_H264)
+            {
+                if(this.Level == (int)MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4)
+                {
+                    if(this.Bitrate > MaxBitrateLevel4)
+                    {
+                        Helpers.PrintWarning("Bitrate too high: Reducing to 25MBit/s");
+                        this.Bitrate = MaxBitrateLevel4;
+                    }
+                }
+                else
+                {
+                    if(this.Bitrate > MaxBitrateLevel42)
+                    {
+                        Helpers.PrintWarning("Bitrate too high: Reducing to 62.5MBit/s");
+                        this.Bitrate = MaxBitrateLevel42;
+                    }
+                }                
+            }
+            else if(this.EncodingType == MMALEncodings.MMAL_ENCODING_MJPEG)
+            {
+                if(this.Bitrate > MaxBitrateMJPEG)
+                {
+                    Helpers.PrintWarning("Bitrate too high: Reducing to 25MBit/s");
+                    this.Bitrate = MaxBitrateMJPEG;
+                }
+            }
+
+            output.Ptr->Format->Bitrate = this.Bitrate;
+
+            output.Ptr->BufferSize = output.BufferSizeRecommended;
+            output.Ptr->BufferNum = output.BufferNumRecommended;
+
+            MMAL_VIDEO_FORMAT_T vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.VideoWidth,
+                                                                  MMALCameraConfig.VideoHeight,
+                                                                  new MMAL_RECT_T(0, 0, MMALCameraConfig.VideoWidth, MMALCameraConfig.VideoHeight),
+                                                                  new MMAL_RATIONAL_T(0, 1),
+                                                                  output.Ptr->Format->Es->Video.Par,
+                                                                  output.Ptr->Format->Es->Video.ColorSpace);
+            
+            output.Commit();
+
+            //TODO rate control
+
+            //TODO Intra period
+
+            //TODO Quantisation parameter
+
+            //TODO Video profile
+
+            //TODO Immutable input flag
+
+            //TODO Inline header flag
+
+            //TODO Inline vectors flag
+
+            //TODO Intra refresh
+
+
+
+
+
+
+
         }
 
         public override void ManagedCallback(MMALBufferImpl buffer, MMALPortBase port)
-        {
-
-
+        {            
             base.ManagedCallback(buffer, port);
         }
 

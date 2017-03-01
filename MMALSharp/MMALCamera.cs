@@ -81,6 +81,10 @@ namespace MMALSharp
                 port.SetImageCapture(false);
         }
 
+        public async Task TakeVideo<T>(ICaptureHandler<T> handler, int encodingType = 0, int bitrate = 0, int framerate = 0)
+        {
+
+        }
 
         /// <summary>
         /// Captures a single image from the camera's still port. 

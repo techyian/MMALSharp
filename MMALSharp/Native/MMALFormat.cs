@@ -213,8 +213,20 @@ namespace MMALSharp.Native
                 this.encodingVariant = value;
             }
         }
-        public MMAL_ES_SPECIFIC_FORMAT_T* Es => es;        
-        public int Bitrate => bitrate;
+        public MMAL_ES_SPECIFIC_FORMAT_T* Es => es;
+                
+        public int Bitrate
+        {
+            get
+            {
+                return this.bitrate;
+            }
+            set
+            {
+                this.bitrate = value;
+            }
+        }
+
         public int Flags => flags;
         public int ExtraDataSize => extraDataSize;
         public byte* ExtraData => extraData;

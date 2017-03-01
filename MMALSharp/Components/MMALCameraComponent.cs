@@ -112,7 +112,22 @@ namespace MMALSharp.Components
                 Console.WriteLine("Commit preview");
 
             this.PreviewPort.Commit();
-            this.PreviewPort.FullCopy(this.VideoPort);
+
+            this.VideoPort.Ptr->Format->Encoding = MMALCameraConfig.VideoEncoding;
+            this.VideoPort.Ptr->Format->EncodingVariant = MMALCameraConfig.VideoSubformat;
+
+            if (MMALCameraConfig.VideoWidth == 0 || MMALCameraConfig.VideoWidth > this.CameraInfo.MaxWidth)
+                MMALCameraConfig.VideoWidth = this.CameraInfo.MaxWidth;
+            if (MMALCameraConfig.VideoHeight == 0 || MMALCameraConfig.VideoHeight > this.CameraInfo.MaxHeight)
+                MMALCameraConfig.VideoHeight = this.CameraInfo.MaxHeight;
+
+            vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.VideoWidth,
+                                                                  MMALCameraConfig.VideoHeight,
+                                                                  new MMAL_RECT_T(0, 0, MMALCameraConfig.VideoWidth, MMALCameraConfig.VideoHeight),
+                                                                  new MMAL_RATIONAL_T(0, 1),
+                                                                  this.VideoPort.Ptr->Format->Es->Video.Par,
+                                                                  this.VideoPort.Ptr->Format->Es->Video.ColorSpace);
+
 
             if (MMALCameraConfig.Debug)
                 Console.WriteLine("Commit video");
@@ -144,6 +159,9 @@ namespace MMALSharp.Components
                 Console.WriteLine("Commit still");
 
             this.StillPort.Commit();
+
+            if (this.StillPort.Ptr->BufferNum < 3)
+                this.StillPort.Ptr->BufferNum = 3;
 
             if (MMALCameraConfig.Debug)
                 Console.WriteLine("Camera component configured.");            

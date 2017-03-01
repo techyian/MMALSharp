@@ -182,7 +182,33 @@ namespace MMALSharp
         }
 
         // Camera video port specific properties
+        public static int VideoEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
+        public static int VideoSubformat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;
+        private static int videoWidth;
+        public static int VideoWidth
+        {
+            get
+            {
+                return MMALCameraConfig.videoWidth;
+            }
+            set
+            {
+                MMALCameraConfig.videoWidth = MMALUtil.VCOS_ALIGN_UP(value, 32);
+            }
+        }
 
+        private static int videoHeight;
+        public static int VideoHeight
+        {
+            get
+            {
+                return MMALCameraConfig.videoHeight;
+            }
+            set
+            {
+                MMALCameraConfig.videoHeight = MMALUtil.VCOS_ALIGN_UP(value, 16);
+            }
+        }
 
         // Camera still port specific properties
         public static int StillEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
@@ -212,8 +238,8 @@ namespace MMALSharp
             {
                 MMALCameraConfig.stillHeight = MMALUtil.VCOS_ALIGN_UP(value, 16);
             }
-        }        
-
+        }
+                        
         /// <summary>
         /// Reloads Camera configuration settings
         /// </summary>

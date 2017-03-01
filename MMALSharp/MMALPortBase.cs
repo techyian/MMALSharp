@@ -186,6 +186,11 @@ namespace MMALSharp
             MMALCheck(MMALPort.mmal_port_format_commit(this.Ptr), "Unable to commit port changes.");
         }
 
+        internal static void Commit(MMAL_PORT_T* ptr)
+        {
+            MMALCheck(MMALPort.mmal_port_format_commit(ptr), "Unable to commit port changes.");
+        }
+
         /// <summary>
         /// Shallow copy a format structure. It is worth noting that the extradata buffer will not be copied in the new format.
         /// </summary>
