@@ -84,8 +84,7 @@ namespace MMALSharp
 
         /// <summary>
         /// Captures a single image from the camera's still port. 
-        /// Initializes a standalone MMALImageEncoder using the provided encodingType and quality.
-        /// This will destroy any previously connected encoders attached to the still port.
+        /// Initializes a standalone MMALImageEncoder using the provided encodingType and quality.        
         /// </summary>
         /// <typeparam name="T"></typeparam>        
         /// <param name="handler"></param>
@@ -95,67 +94,65 @@ namespace MMALSharp
         /// <param name="exifTags"></param>
         /// <returns></returns>
         public async Task TakeSinglePicture<T>(ICaptureHandler<T> handler, int encodingType = 0, int quality = 0, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
-        {
-            Console.WriteLine("Preparing to take picture");
+        {            
             var camPreviewPort = this.Camera.PreviewPort;
             var camVideoPort = this.Camera.VideoPort;
             var camStillPort = this.Camera.StillPort;
-
-            using (var encoder = new MMALImageEncoder(encodingType, quality))
+            
+            if (this.Encoders.Any(c => c.Connection != null && c.Connection.OutputPort == this.Camera.StillPort && c.GetType() == typeof(MMALImageEncoder)))
             {
-                if (useExif)
-                    ((MMALImageEncoder)encoder).AddExifTags((MMALImageEncoder)encoder, exifTags);
-
-                //Create connections
-                if (this.Preview == null)
-                    Helpers.PrintWarning("Preview port does not have a Render component configured. Resulting image will be affected.");
-                else
-                {
-                    if (this.Preview.Connection == null)
-                        this.Preview.CreateConnection(camPreviewPort);
-                }
-
-                if (this.Encoders.Any(c => c.Connection != null && c.Connection.OutputPort == this.Camera.StillPort))
-                {
-                    Helpers.PrintWarning("Found previously connected encoder, destroying...");
-
-                    var enc = this.Encoders.Where(c => c.Connection.OutputPort == this.Camera.StillPort).FirstOrDefault();
-                    this.Encoders.Remove(enc);
-                    enc.Dispose();
-                }
-
-                encoder.CreateConnection(camStillPort);
-
-                if (raw)
-                    camStillPort.SetRawCapture(true);
-
-                if (MMALCameraConfig.EnableAnnotate)
-                    encoder.AnnotateImage();
-
-                int outputPort = 0;
-
-                //Enable the image encoder output port.
-                encoder.Start(outputPort, encoder.ManagedCallback, handler.Process);
-
-                this.StartCapture(camStillPort);
-
-                //Wait until the process is complete.
-                encoder.Outputs.ElementAt(outputPort).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-                await encoder.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
-
-                this.StopCapture(camStillPort);
-
-                //Disable the image encoder output port.
-                encoder.Stop(outputPort);
-
-                //Close open connections.                
-                encoder.Connection.Destroy();
-
-                handler.PostProcess();
+                //Reuse if an Image encoder is already connected to the Still camera port
+                await TakePicture(this.Camera.StillPort, 0, handler);
             }
+            else
+            {
+                Console.WriteLine("Preparing to take picture");
+                using (var encoder = new MMALImageEncoder(encodingType, quality))
+                {
+                    if (useExif)
+                        ((MMALImageEncoder)encoder).AddExifTags((MMALImageEncoder)encoder, exifTags);
+
+                    //Create connections
+                    if (this.Preview == null)
+                        Helpers.PrintWarning("Preview port does not have a Render component configured. Resulting image will be affected.");
+                    else
+                    {
+                        if (this.Preview.Connection == null)
+                            this.Preview.CreateConnection(camPreviewPort);
+                    }
+
+                    encoder.CreateConnection(camStillPort);
+
+                    if (raw)
+                        camStillPort.SetRawCapture(true);
+
+                    if (MMALCameraConfig.EnableAnnotate)
+                        encoder.AnnotateImage();
+
+                    int outputPort = 0;
+
+                    //Enable the image encoder output port.
+                    encoder.Start(outputPort, encoder.ManagedCallback, handler.Process);
+
+                    this.StartCapture(camStillPort);
+
+                    //Wait until the process is complete.
+                    encoder.Outputs.ElementAt(outputPort).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+                    await encoder.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
+
+                    this.StopCapture(camStillPort);
+
+                    //Disable the image encoder output port.
+                    encoder.Stop(outputPort);
+
+                    //Close open connections.                
+                    encoder.Connection.Destroy();
+
+                    handler.PostProcess();
+                }
+            }                        
         }
-
-
+        
         /// <summary>
         /// Captures a single image from the output port specified. Expects an MMALImageEncoder to be attached.
         /// </summary>
@@ -349,14 +346,14 @@ namespace MMALSharp
         }
 
         public MMALCamera RemoveEncoder(MMALPortImpl outputPort)
-        {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine("Removing encoder");
-
+        {            
             var enc = this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == outputPort).FirstOrDefault();
 
             if (enc != null)
             {
+                if (MMALCameraConfig.Debug)
+                    Console.WriteLine("Removing encoder");
+
                 enc.Connection.Destroy();
                 enc.Dispose();
                 this.Encoders.Remove(enc);

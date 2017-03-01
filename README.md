@@ -140,7 +140,10 @@ Tested image 'still' features:
 - [x] EXIF tags
 - [x] Raw capture
 
+##Notes
 
+When using more resource intensive encoders such as MMAL_ENCODING_BMP and the Sony IMX219 module, I've found it necessary to increase the memory split
+to around 200mb or otherwise you'll receive an ENOSPC error due to insufficient resources.
 
 ##License
 
