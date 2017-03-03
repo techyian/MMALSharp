@@ -27,7 +27,7 @@ namespace MMALSharp
 
         public static double GetSaturation(this MMALCamera camera)
         {            
-            return GetParameter(MMAL_PARAMETER_SATURATION, camera.Camera.Control.Ptr);            
+            return camera.Camera.Control.GetParameter(MMAL_PARAMETER_SATURATION);            
         }
 
         public static void SetSaturation(this MMALCamera camera, double saturation)
@@ -39,18 +39,17 @@ namespace MMALSharp
 
             if (saturation >= -100 && saturation <= 100)
             {
-                SetParameter(MMAL_PARAMETER_SATURATION, value, camera.Camera.Control.Ptr);
+                camera.Camera.Control.SetParameter(MMAL_PARAMETER_SATURATION, value);
             }
             else
             {
                 throw new Exception("Invalid saturation value");
-            }
-                
+            }                
         }
 
         public static double GetSharpness(this MMALCamera camera)
         {
-            return GetParameter(MMAL_PARAMETER_SHARPNESS, camera.Camera.Control.Ptr);                        
+            return camera.Camera.Control.GetParameter(MMAL_PARAMETER_SHARPNESS);                        
         }
 
         public static void SetSharpness(this MMALCamera camera, double sharpness)
@@ -62,7 +61,7 @@ namespace MMALSharp
 
             if (sharpness >= -100 && sharpness <= 100)
             {
-                SetParameter(MMAL_PARAMETER_SHARPNESS, value, camera.Camera.Control.Ptr);
+                camera.Camera.Control.SetParameter(MMAL_PARAMETER_SHARPNESS, value);
             }
             else
             {
@@ -72,7 +71,7 @@ namespace MMALSharp
 
         public static double GetContrast(this MMALCamera camera)
         {
-            return GetParameter(MMAL_PARAMETER_CONTRAST, camera.Camera.Control.Ptr);                        
+            return camera.Camera.Control.GetParameter(MMAL_PARAMETER_CONTRAST);                        
         }
 
         public static void SetContrast(this MMALCamera camera, double contrast)
@@ -84,7 +83,7 @@ namespace MMALSharp
 
             if (contrast >= -100 && contrast <= 100)
             {
-                SetParameter(MMAL_PARAMETER_CONTRAST, value, camera.Camera.Control.Ptr);
+                camera.Camera.Control.SetParameter(MMAL_PARAMETER_CONTRAST, value);
             }
             else
             {
@@ -94,13 +93,13 @@ namespace MMALSharp
         }
 
         public static void SetDisableExif(this MMALImageEncoder encoder, bool disable)
-        {           
-           SetParameter(MMAL_PARAMETER_EXIF_DISABLE, disable, encoder.Outputs.ElementAt(0).Ptr);           
+        {
+            encoder.Outputs.ElementAt(0).SetParameter(MMAL_PARAMETER_EXIF_DISABLE, disable);           
         }
 
         public static double GetBrightness(this MMALCamera camera)
         {
-            return GetParameter(MMAL_PARAMETER_BRIGHTNESS, camera.Camera.Control.Ptr);                        
+            return camera.Camera.Control.GetParameter(MMAL_PARAMETER_BRIGHTNESS);                        
         }
 
         public static void SetBrightness(this MMALCamera camera, double brightness)
@@ -112,7 +111,7 @@ namespace MMALSharp
 
             if (brightness >= -100 && brightness <= 100)
             {
-                SetParameter(MMAL_PARAMETER_BRIGHTNESS, value, camera.Camera.Control.Ptr);
+                camera.Camera.Control.SetParameter(MMAL_PARAMETER_BRIGHTNESS, value);
             }
             else
             {
@@ -123,7 +122,7 @@ namespace MMALSharp
 
         public static int GetISO(this MMALCamera camera)
         {
-            return GetParameter(MMAL_PARAMETER_ISO, camera.Camera.Control.Ptr);
+            return camera.Camera.Control.GetParameter(MMAL_PARAMETER_ISO);
         }
 
         public static void SetISO(this MMALCamera camera, int iso)
@@ -131,12 +130,12 @@ namespace MMALSharp
             if (MMALCameraConfig.Debug)
                 Console.WriteLine(string.Format("Setting ISO: {0}", iso));
 
-            SetParameter(MMAL_PARAMETER_ISO, iso, camera.Camera.Control.Ptr);                        
+            camera.Camera.Control.SetParameter(MMAL_PARAMETER_ISO, iso);                        
         }
 
         public static bool GetVideoStabilisation(this MMALCamera camera)
         {
-            return GetParameter(MMAL_PARAMETER_VIDEO_STABILISATION, camera.Camera.Control.Ptr);
+            return camera.Camera.Control.GetParameter(MMAL_PARAMETER_VIDEO_STABILISATION);
         }
 
         public static void SetVideoStabilisation(this MMALCamera camera, bool vstabilisation)
@@ -144,12 +143,12 @@ namespace MMALSharp
             if (MMALCameraConfig.Debug)
                 Console.WriteLine(string.Format("Setting video stabilisation: {0}", vstabilisation));
 
-            SetParameter(MMAL_PARAMETER_VIDEO_STABILISATION, vstabilisation, camera.Camera.Control.Ptr);            
+            camera.Camera.Control.SetParameter(MMAL_PARAMETER_VIDEO_STABILISATION, vstabilisation);            
         }
 
         public static MMAL_PARAM_EXPOSUREMODE_T GetExposureCompensation(this MMALCamera camera)
         {
-            return GetParameter(MMAL_PARAMETER_EXPOSURE_COMP, camera.Camera.Control.Ptr);
+            return camera.Camera.Control.GetParameter(MMAL_PARAMETER_EXPOSURE_COMP);
         }
 
         public static void SetExposureCompensation(this MMALCamera camera, MMAL_PARAM_EXPOSUREMODE_T expCompensation)
@@ -157,7 +156,7 @@ namespace MMALSharp
             if (MMALCameraConfig.Debug)
                 Console.WriteLine(string.Format("Setting exposure compensation: {0}", expCompensation));
 
-            SetParameter(MMAL_PARAMETER_EXPOSURE_COMP, expCompensation, camera.Camera.Control.Ptr);
+            camera.Camera.Control.SetParameter(MMAL_PARAMETER_EXPOSURE_COMP, expCompensation);
         }
 
         public static MMAL_PARAM_EXPOSUREMODE_T GetExposureMode(this MMALCamera camera)
@@ -303,7 +302,7 @@ namespace MMALSharp
 
         public static int GetRotation(this MMALCamera camera)
         {            
-            return GetParameter(MMAL_PARAMETER_ROTATION, camera.Camera.StillPort.Ptr);
+            return camera.Camera.StillPort.GetParameter(MMAL_PARAMETER_ROTATION);
         }
 
         public static void SetRotation(this MMALCamera camera, int rotation)
@@ -313,7 +312,7 @@ namespace MMALSharp
             if (MMALCameraConfig.Debug)
                 Console.WriteLine(string.Format("Setting rotation: {0}", rot));
 
-            SetParameter(MMAL_PARAMETER_ROTATION, rot, camera.Camera.StillPort.Ptr);
+            camera.Camera.StillPort.SetParameter(MMAL_PARAMETER_ROTATION, rot);
         }
 
         public static MMAL_PARAM_MIRROR_T GetFlips(this MMALCamera camera)
@@ -358,7 +357,7 @@ namespace MMALSharp
 
         public static int GetShutterSpeed(this MMALCamera camera)
         {
-            return GetParameter(MMAL_PARAMETER_SHUTTER_SPEED, camera.Camera.Control.Ptr);
+            return camera.Camera.Control.GetParameter(MMAL_PARAMETER_SHUTTER_SPEED);
         }
 
         public static void SetShutterSpeed(this MMALCamera camera, int speed)
@@ -366,7 +365,7 @@ namespace MMALSharp
             if (MMALCameraConfig.Debug)
                 Console.WriteLine(string.Format("Setting shutter speed: {0}", speed));
 
-            SetParameter(MMAL_PARAMETER_SHUTTER_SPEED, speed, camera.Camera.Control.Ptr);
+            camera.Camera.Control.SetParameter(MMAL_PARAMETER_SHUTTER_SPEED, speed);
         }
 
         public static MMAL_PARAMETER_DRC_STRENGTH_T GetDRC(this MMALCamera camera)
@@ -389,17 +388,17 @@ namespace MMALSharp
 
         public static void SetStatsPass(this MMALCamera camera, bool statsPass)
         {
-            SetParameter(MMAL_PARAMETER_CAPTURE_STATS_PASS, statsPass, camera.Camera.Control.Ptr);
+            camera.Camera.Control.SetParameter(MMAL_PARAMETER_CAPTURE_STATS_PASS, statsPass);
         }
 
         public static void SetImageCapture(this MMALPortImpl port, bool enable)
         {
-            SetParameter(MMAL_PARAMETER_CAPTURE, enable, port.Ptr);
+            port.SetParameter(MMAL_PARAMETER_CAPTURE, enable);
         }
 
         public static void SetRawCapture(this MMALPortImpl port, bool raw)
         {
-            SetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE, raw, port.Ptr);
+            port.SetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE, raw);
         }
 
         public static void SetStereoMode(this MMALPortImpl port, StereoMode mode)

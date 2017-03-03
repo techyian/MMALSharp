@@ -65,10 +65,10 @@
     <Compile Include="MMALConnectionImpl.cs" />
     <Compile Include="Components\MMALRendererComponent.cs" />
     <Compile Include="MMALObject.cs" />
-    <Compile Include="MMALParameterHelpers.cs" />
     <Compile Include="MMALPoolImpl.cs" />
     <Compile Include="MMALPortBase.cs" />
     <Compile Include="MMALCameraExtensions.cs" />
+    <Compile Include="MMALPortExtensions.cs" />
     <Compile Include="MMALPortImpl.cs" />
     <Compile Include="MMALQueueImpl.cs" />
     <Compile Include="Native\BcmHost.cs" />

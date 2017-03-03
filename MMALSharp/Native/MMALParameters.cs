@@ -2010,6 +2010,7 @@ namespace MMALSharp.Native
 
         public enum MMAL_VIDEO_INTRA_REFRESH_T
         {
+            MMAL_VIDEO_INTRA_REFRESH_DISABLED = -1,
             MMAL_VIDEO_INTRA_REFRESH_CYCLIC,
             MMAL_VIDEO_INTRA_REFRESH_ADAPTIVE,
             MMAL_VIDEO_INTRA_REFRESH_BOTH
@@ -2175,6 +2176,16 @@ namespace MMALSharp.Native
         private MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T control;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
+        public unsafe MMAL_PARAMETER_HEADER_T* HdrPtr
+        {
+            get
+            {
+                fixed (MMAL_PARAMETER_HEADER_T* ptr = &hdr)
+                {
+                    return ptr;
+                }
+            }
+        }
         public MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T Control => control;
 
         public MMAL_PARAMETER_VIDEO_RATECONTROL_T(MMAL_PARAMETER_HEADER_T hdr, MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T control)
@@ -2241,17 +2252,27 @@ namespace MMALSharp.Native
     {
         private MMAL_PARAMETER_HEADER_T hdr;
         private MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T refreshMode;
-        private uint airMbs, airRef, cirMbs, pirMbs;
+        private int airMbs, airRef, cirMbs, pirMbs;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
+        public unsafe MMAL_PARAMETER_HEADER_T* HdrPtr
+        {
+            get
+            {
+                fixed (MMAL_PARAMETER_HEADER_T* ptr = &hdr)
+                {
+                    return ptr;
+                }
+            }
+        }
         public MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T RefreshMode => refreshMode;
-        public uint AirMbs => airMbs;
-        public uint AirRef => airRef;
-        public uint CirMbs => cirMbs;
-        public uint PirMbs => pirMbs;
+        public int AirMbs => airMbs;
+        public int AirRef => airRef;
+        public int CirMbs => cirMbs;
+        public int PirMbs => pirMbs;
 
         public MMAL_PARAMETER_VIDEO_INTRA_REFRESH_T(MMAL_PARAMETER_HEADER_T hdr, MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T refreshMode,
-                                                    uint airMbs, uint airRef, uint cirMbs, uint pirMbs)
+                                                    int airMbs, int airRef, int cirMbs, int pirMbs)
         {
             this.hdr = hdr;
             this.refreshMode = refreshMode;

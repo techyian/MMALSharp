@@ -71,7 +71,7 @@ namespace MMALSharp.Components
             this.VideoPort.SetStereoMode(MMALCameraConfig.StereoMode);
             this.StillPort.SetStereoMode(MMALCameraConfig.StereoMode);
 
-            MMALParameterHelpers.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_NUM, 0, this.Control.Ptr);
+            this.Control.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_NUM, 0);
                         
             var eventRequest = new MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCommon.MMAL_PARAMETER_CHANGE_EVENT_REQUEST, Marshal.SizeOf<MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T>()),
                                                                          MMALParametersCamera.MMAL_PARAMETER_CAMERA_SETTINGS, 1);

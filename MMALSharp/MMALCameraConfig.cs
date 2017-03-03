@@ -239,7 +239,24 @@ namespace MMALSharp
                 MMALCameraConfig.stillHeight = MMALUtil.VCOS_ALIGN_UP(value, 16);
             }
         }
-                        
+
+        public static MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T RateControl { get; set; } = MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T.MMAL_VIDEO_RATECONTROL_DEFAULT;
+
+        public static int IntraPeriod { get; set; } = -1;
+
+        public static Quantisation QuantisationParameter { get; set; } = new Quantisation();
+
+        public static MMALParametersVideo.MMAL_VIDEO_PROFILE_T VideoProfile { get; set; } = MMALParametersVideo.MMAL_VIDEO_PROFILE_T.MMAL_VIDEO_PROFILE_H264_HIGH;
+        public static MMALParametersVideo.MMAL_VIDEO_LEVEL_T VideoLevel { get; set; } = MMALParametersVideo.MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4;
+
+        public static bool ImmutableInput { get; set; } = true;
+
+        public static bool InlineHeaders { get; set; }
+
+        public static bool InlineMotionVectors { get; set; }
+
+        public static MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T IntraRefresh { get; set; } = MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T.MMAL_VIDEO_INTRA_REFRESH_DISABLED;
+
         /// <summary>
         /// Reloads Camera configuration settings
         /// </summary>
@@ -256,6 +273,13 @@ namespace MMALSharp
         public uint U { get; set; } = 128;
         public uint V { get; set; } = 128;
         
+    }
+
+    public class Quantisation
+    {
+        public int Initial { get; set; }
+        public int Min { get; set; }        
+        public int Max { get; set; }
     }
 
     public class Crop
