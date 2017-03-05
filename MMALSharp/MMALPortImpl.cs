@@ -14,11 +14,11 @@ namespace MMALSharp
     /// <summary>
     /// Represents a control port
     /// </summary>
-    public unsafe class MMALControlPortImpl : MMALPortBase
+    public unsafe class MMALControlPort : MMALPortBase
     {
-        public MMALControlPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
+        public MMALControlPort(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
 
-        public override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback)
+        internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback)
         {
             if(!this.Enabled)
             {
@@ -41,7 +41,7 @@ namespace MMALSharp
             }            
         }
         
-        public void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        internal override void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             var bufferImpl = new MMALBufferImpl(buffer);
             
@@ -55,15 +55,15 @@ namespace MMALSharp
     }
 
     /// <summary>
-    /// Represents a port
+    /// Represents a generic port
     /// </summary>
     public unsafe class MMALPortImpl : MMALPortBase
-    {  
+    {
         public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
-                
-        public override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback)
+
+        internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback)
         {
-            if(!this.Enabled)
+            if (!this.Enabled)
             {
                 this.ManagedCallback = managedCallback;
                 this.ProcessCallback = processCallback;
@@ -75,7 +75,7 @@ namespace MMALSharp
                     Console.WriteLine("Enabling port.");
 
                 this.BufferPool = new MMALPoolImpl(this);
-                                                
+
                 if (managedCallback == null)
                 {
                     if (MMALCameraConfig.Debug)
@@ -96,18 +96,18 @@ namespace MMALSharp
 
             if (!this.Enabled)
                 throw new PiCameraError("Unknown error occurred whilst enabling port");
-                    
+
         }
 
-        public void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        internal override void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
-            lock (MMALPortImpl.mLock)
-            {                
+            lock (MMALPortBase.mLock)
+            {
                 var bufferImpl = new MMALBufferImpl(buffer);
 
                 if (MMALCameraConfig.Debug)
                     bufferImpl.PrintProperties();
-                                
+
                 if (bufferImpl.Length > 0)
                 {
                     this.ManagedCallback(bufferImpl, this);
@@ -119,9 +119,10 @@ namespace MMALSharp
                 {
                     if (MMALCameraConfig.Debug)
                         Console.WriteLine("End of stream. Signaling completion...");
-                    this.Trigger.Signal();                    
+                    if (this.Trigger != null && this.Trigger.CurrentCount > 0)
+                        this.Trigger.Signal();
                 }
-                
+
                 bufferImpl.Release();
 
                 try
@@ -147,7 +148,7 @@ namespace MMALSharp
                             if (MMALCameraConfig.Debug)
                                 Console.WriteLine("Buffer null. Continuing.");
                         }
-                    }                    
+                    }
                 }
                 catch
                 {
@@ -160,4 +161,21 @@ namespace MMALSharp
         }
 
     }
+
+    /// <summary>
+    /// Represents a still image port
+    /// </summary>
+    public unsafe class MMALStillPort : MMALPortImpl
+    {  
+        public MMALStillPort(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }         
+    }
+
+    /// <summary>
+    /// Represents a video port
+    /// </summary>
+    public unsafe class MMALVideoPort : MMALPortImpl
+    {
+        public MMALVideoPort(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }        
+    }
+
 }

@@ -181,7 +181,7 @@ namespace MMALSharp.Components
         public const int MaxBitrateLevel42 = 62500000; // 62.5Mbits/s
         
         public MMALVideoEncoder(int encodingType, int bitrate, int framerate) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
-        {
+        {            
             if (encodingType > 0)
                 this.EncodingType = encodingType;
 
@@ -195,16 +195,33 @@ namespace MMALSharp.Components
         }
 
         public MMALVideoEncoder() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
-        {
-            this.InputPort = this.Inputs.ElementAt(0);
-            this.OutputPort = this.Outputs.ElementAt(0);
+        {            
             this.Initialize();
         }
 
         public override void Initialize()
         {
+            if (this.Ptr->InputNum > 0)
+            {
+                for (int i = 0; i < this.Ptr->InputNum; i++)
+                {
+                    Inputs.Add(new MMALVideoPort(&(*this.Ptr->Input[i]), this));
+                }
+            }
+
+            if (this.Ptr->OutputNum > 0)
+            {
+                for (int i = 0; i < this.Ptr->OutputNum; i++)
+                {
+                    Outputs.Add(new MMALVideoPort(&(*this.Ptr->Output[i]), this));
+                }
+            }
+
+            this.InputPort = this.Inputs.ElementAt(0);
+            this.OutputPort = this.Outputs.ElementAt(0);
+
             base.Initialize();
-            
+                        
             this.OutputPort.Ptr->Format->Encoding = this.EncodingType;
 
             if (this.EncodingType == MMALEncodings.MMAL_ENCODING_H264)
@@ -237,8 +254,8 @@ namespace MMALSharp.Components
 
             this.OutputPort.Ptr->Format->Bitrate = this.Bitrate;
 
-            this.OutputPort.Ptr->BufferSize = this.OutputPort.BufferSizeRecommended;
-            this.OutputPort.Ptr->BufferNum = this.OutputPort.BufferNumRecommended;
+            this.OutputPort.Ptr->BufferSize = this.OutputPort.BufferSizeMin;
+            this.OutputPort.Ptr->BufferNum = this.OutputPort.BufferNumMin;
 
             MMAL_VIDEO_FORMAT_T vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.VideoWidth,
                                                                   MMALCameraConfig.VideoHeight,
@@ -249,13 +266,13 @@ namespace MMALSharp.Components
 
             this.OutputPort.Commit();
                         
-            this.ConfigureRateControl();
+            //this.ConfigureRateControl();
                         
             this.ConfigureIntraPeriod();
                         
             this.ConfigureQuantisationParameter();
                         
-            this.ConfigureVideoProfile();
+            //this.ConfigureVideoProfile();
                         
             this.ConfigureImmutableInput();
                         
@@ -400,8 +417,8 @@ namespace MMALSharp.Components
         public int Quality { get; set; } = 90;
 
         public MMALImageEncoder(int encodingType, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
-        {
-            if(encodingType > 0)
+        {            
+            if (encodingType > 0)
                 this.EncodingType = encodingType;
             if(quality > 0)
                 this.Quality = quality;
@@ -409,12 +426,28 @@ namespace MMALSharp.Components
         }
 
         public MMALImageEncoder() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
-        {           
+        {            
             this.Initialize();
         }
         
         public override void Initialize()
         {
+            if (this.Ptr->InputNum > 0)
+            {
+                for (int i = 0; i < this.Ptr->InputNum; i++)
+                {
+                    Inputs.Add(new MMALStillPort(&(*this.Ptr->Input[i]), this));
+                }
+            }
+
+            if (this.Ptr->OutputNum > 0)
+            {
+                for (int i = 0; i < this.Ptr->OutputNum; i++)
+                {
+                    Outputs.Add(new MMALStillPort(&(*this.Ptr->Output[i]), this));
+                }
+            }
+
             base.Initialize();
             var input = this.Inputs.ElementAt(0);
             var output = this.Outputs.ElementAt(0);

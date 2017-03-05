@@ -16,7 +16,7 @@ namespace MMALSharp
     /// <summary>
     /// Base class for port objects
     /// </summary>
-    public abstract unsafe class MMALPortBase : MMALObject 
+    public abstract unsafe class MMALPortBase : MMALObject
     {
         /// <summary>
         /// Native pointer that represents this port
@@ -32,7 +32,7 @@ namespace MMALSharp
         /// Managed reference to the component this port is associated with
         /// </summary>
         public MMALComponentBase ComponentReference { get; set; }
-        
+
         /// <summary>
         /// Managed reference to the pool of buffer headers associated with this port
         /// </summary>                                
@@ -54,7 +54,7 @@ namespace MMALSharp
         /// Indicates whether this port is enabled
         /// </summary>
         public bool Enabled => this.Ptr->IsEnabled == 1;
-        
+
         /// <summary>
         /// Specifies minimum number of buffer headers required for this port 
         /// </summary>
@@ -85,7 +85,7 @@ namespace MMALSharp
         /// Specifies recommended size of buffer headers for this port
         /// </summary>
         public int BufferSizeRecommended => this.Ptr->BufferSizeRecommended;
-        
+
         /// <summary>
         /// Indicates the currently set number of buffer headers for this port
         /// </summary>
@@ -120,23 +120,23 @@ namespace MMALSharp
         /// Accessor for the elementary stream
         /// </summary>
         public MMAL_ES_FORMAT_T Format => *this.Ptr->Format;
-        
+
         #endregion
 
         /// <summary>
         /// Asynchronous trigger which is set when processing has completed on this port.
         /// </summary>
         public AsyncCountdownEvent Trigger { get; set; }
-        
+
         /// <summary>
         /// Monitor lock for port callback method
         /// </summary>
         protected static Object mLock = new object();
-        
+
         /// <summary>
         /// Delegate for native port callback
         /// </summary>
-        public MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
+        public MMALSharp.Native.MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
 
         /// <summary>
         /// Delegate we use to do further processing on buffer headers when they're received by the native callback delegate
@@ -151,7 +151,7 @@ namespace MMALSharp
         protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp)
         {
             this.Ptr = ptr;
-            this.Comp = ptr->Component;            
+            this.Comp = ptr->Component;
             this.ComponentReference = comp;
         }
 
@@ -160,7 +160,8 @@ namespace MMALSharp
         /// </summary>
         /// <param name="managedCallback"></param>
         /// <param name="processCallback"></param>
-        public abstract void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback);
+        internal virtual void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback) { }
+        internal virtual void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer) { }
 
         /// <summary>
         /// Disable processing on a port. Disabling a port will stop all processing on this port and return all (non-processed) 

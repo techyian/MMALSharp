@@ -66,7 +66,7 @@ namespace MMALSharp
         /// </summary>
         /// <param name="port"></param>
         public void StartCapture(MMALPortImpl port)
-        {
+        {            
             if (port == this.Camera.StillPort || this.Encoders.Any(c => c.Enabled))
                 port.SetImageCapture(true);
         }
@@ -81,9 +81,45 @@ namespace MMALSharp
                 port.SetImageCapture(false);
         }
 
-        public async Task TakeVideo<T>(ICaptureHandler<T> handler, int encodingType = 0, int bitrate = 0, int framerate = 0)
+        public async Task TakeVideo<T>(MMALPortImpl connPort, int outputPort, ICaptureHandler<T> handler, int encodingType = 0, int bitrate = 0, int framerate = 0)
         {
+            var encoder = this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == connPort).FirstOrDefault();
 
+            if (encoder == null || encoder.GetType() != typeof(MMALVideoEncoder))
+                throw new PiCameraError("No video encoder currently attached to output port specified");
+
+            if (!encoder.Connection.Enabled)
+                encoder.Connection.Enable();
+
+            //Create connections
+            if (this.Preview == null)
+                Helpers.PrintWarning("Preview port does not have a Render component configured. Resulting image will be affected.");
+            else
+            {
+                if (this.Preview.Connection == null)
+                    this.Preview.CreateConnection(this.Camera.PreviewPort);
+            }
+
+            //Enable the video encoder output port.
+            encoder.Start(outputPort, encoder.ManagedCallback, handler.Process);
+
+            this.StartCapture(connPort);
+
+            //Wait until the process is complete.            
+            encoder.Outputs.ElementAt(outputPort).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+
+            await encoder.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
+
+            this.StopCapture(connPort);
+
+            //Disable the image encoder output port.
+            encoder.Stop(outputPort);
+
+            //Close open connections.
+            encoder.Connection.Disable();
+            encoder.CleanEncoderPorts();
+
+            handler.PostProcess();
         }
 
         /// <summary>
@@ -171,10 +207,7 @@ namespace MMALSharp
         public async Task TakePicture<T>(MMALPortImpl connPort, int outputPort, ICaptureHandler<T> handler, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {
             Console.WriteLine("Preparing to take picture");
-            var camPreviewPort = this.Camera.PreviewPort;
-            var camVideoPort = this.Camera.VideoPort;
-            var camStillPort = this.Camera.StillPort;
-
+            
             //Find the encoder/decoder which is connected to the output port specified.
             var encoder = this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == connPort).FirstOrDefault();
 
@@ -193,11 +226,11 @@ namespace MMALSharp
             else
             {
                 if (this.Preview.Connection == null)
-                    this.Preview.CreateConnection(camPreviewPort);
+                    this.Preview.CreateConnection(this.Camera.PreviewPort);
             }
 
             if (raw)
-                camStillPort.SetRawCapture(true);
+                this.Camera.StillPort.SetRawCapture(true);
 
             if (MMALCameraConfig.EnableAnnotate)
                 encoder.AnnotateImage();
@@ -205,13 +238,13 @@ namespace MMALSharp
             //Enable the image encoder output port.
             encoder.Start(outputPort, encoder.ManagedCallback, handler.Process);
 
-            this.StartCapture(camStillPort);
+            this.StartCapture(connPort);
 
             //Wait until the process is complete.
-            encoder.Outputs.ElementAt(0).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            await encoder.Outputs.ElementAt(0).Trigger.WaitAsync();
+            encoder.Outputs.ElementAt(outputPort).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+            await encoder.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
 
-            this.StopCapture(camStillPort);
+            this.StopCapture(connPort);
 
             //Disable the image encoder output port.
             encoder.Stop(outputPort);

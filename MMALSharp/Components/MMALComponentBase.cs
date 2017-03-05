@@ -15,7 +15,7 @@ namespace MMALSharp
         /// <summary>
         /// Reference to the Control port of this component
         /// </summary>
-        public MMALControlPortImpl Control { get; set; }
+        public MMALControlPort Control { get; set; }
 
         /// <summary>
         /// Reference to all input ports associated with this component
@@ -63,24 +63,8 @@ namespace MMALSharp
             Clocks = new List<MMALPortImpl>();
             Ports = new List<MMALPortImpl>();
 
-            this.Control = new MMALControlPortImpl(ptr->Control, this);
-
-            if (ptr->InputNum > 0)
-            {                
-                for (int i = 0; i < ptr->InputNum; i++)
-                {                    
-                    Inputs.Add(new MMALPortImpl(&(*ptr->Input[i]), this));
-                }
-            }
-                
-            if (ptr->OutputNum > 0)
-            {                
-                for (int i = 0; i < ptr->OutputNum; i++)
-                {
-                    Outputs.Add(new MMALPortImpl(&(*ptr->Output[i]), this));
-                }
-            }        
-            
+            this.Control = new MMALControlPort(ptr->Control, this);
+                                    
             if (ptr->ClockNum > 0)
             {                
                 for (int i = 0; i < ptr->ClockNum; i++)

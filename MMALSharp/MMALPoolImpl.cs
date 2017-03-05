@@ -23,7 +23,7 @@ namespace MMALSharp
         /// </summary>                                
         public MMALQueueImpl Queue { get; set; }
 
-        public MMALPoolImpl(MMALPortImpl port)
+        public MMALPoolImpl(MMALPortBase port)
         {
             if (MMALCameraConfig.Debug)
                 Console.WriteLine(string.Format("Creating buffer pool with {0} buffers of size {1}", port.BufferNum, port.BufferSize));

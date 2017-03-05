@@ -10,10 +10,25 @@ namespace MMALSharp.Components
     /// <summary>
     /// Represents a base class for all renderer components
     /// </summary>
-    public abstract class MMALRendererBase : MMALDownstreamComponent
+    public unsafe abstract class MMALRendererBase : MMALDownstreamComponent
     {
         public MMALRendererBase(string name) : base(name)
         {
+            if (this.Ptr->InputNum > 0)
+            {
+                for (int i = 0; i < this.Ptr->InputNum; i++)
+                {
+                    Inputs.Add(new MMALPortImpl(&(*this.Ptr->Input[i]), this));
+                }
+            }
+
+            if (this.Ptr->OutputNum > 0)
+            {
+                for (int i = 0; i < this.Ptr->OutputNum; i++)
+                {
+                    Outputs.Add(new MMALPortImpl(&(*this.Ptr->Output[i]), this));
+                }
+            }
         }
     }
 

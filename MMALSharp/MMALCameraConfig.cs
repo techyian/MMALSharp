@@ -247,6 +247,7 @@ namespace MMALSharp
         public static Quantisation QuantisationParameter { get; set; } = new Quantisation();
 
         public static MMALParametersVideo.MMAL_VIDEO_PROFILE_T VideoProfile { get; set; } = MMALParametersVideo.MMAL_VIDEO_PROFILE_T.MMAL_VIDEO_PROFILE_H264_HIGH;
+
         public static MMALParametersVideo.MMAL_VIDEO_LEVEL_T VideoLevel { get; set; } = MMALParametersVideo.MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4;
 
         public static bool ImmutableInput { get; set; } = true;
