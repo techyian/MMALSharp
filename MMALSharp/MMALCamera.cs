@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MMALSharp
@@ -101,15 +102,13 @@ namespace MMALSharp
             }
 
             //Enable the video encoder output port.
-            encoder.Start(outputPort, encoder.ManagedCallback, handler.Process);
-
-            this.StartCapture(connPort);
-
-            //Wait until the process is complete.            
+            encoder.Start(outputPort, encoder.ManagedCallback, handler.Process);                        
             encoder.Outputs.ElementAt(outputPort).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-
+            this.StartCapture(connPort);
+                        
             await encoder.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
-
+                                      
+            //Wait until the process is complete.            
             this.StopCapture(connPort);
 
             //Disable the image encoder output port.

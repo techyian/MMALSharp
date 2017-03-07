@@ -84,7 +84,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_BYTES_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private byte[] data;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -100,21 +100,10 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int changeId;
         private int enable;
-
-        public MMAL_PARAMETER_HEADER_T Hdr => hdr;
-        public MMAL_PARAMETER_HEADER_T* HdrPtr
-        {
-            get
-            {
-                fixed (MMAL_PARAMETER_HEADER_T* ptr = &hdr)
-                {
-                    return ptr;
-                }
-            }
-        }
+  
         public int ChangeId => changeId;
         public int Enable => enable;
 
@@ -129,7 +118,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_BUFFER_REQUIREMENTS_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int bufferNumMin, bufferSizeMin, bufferAlignmentMin, bufferNumRecommended, bufferSizeRecommended;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -154,7 +143,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_SEEK_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private long offset;
         private uint flags;
 
@@ -173,7 +162,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_STATISTICS_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint bufferCount, frameCount, framesSkipped, framesDiscarded, eosSeen, maximumFrameBytes, totalBytes, corruptMacroblocks;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -206,7 +195,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CORE_STATISTICS_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_CORE_STATS_DIR dir;
         private int reset;
         private MMAL_CORE_STATISTICS_T stats;
@@ -229,7 +218,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_MEM_USAGE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int poolMemAllocSize;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -245,7 +234,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_LOGGING_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint set, clear;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -674,7 +663,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_THUMBNAIL_CONFIG_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int width, height, quality;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -694,7 +683,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public unsafe struct MMAL_PARAMETER_EXIF_T
     {        
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int keylen;
         private int valueOffset;
         private int valueLen;
@@ -721,7 +710,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public unsafe struct MMAL_PARAMETER_EXIF_T_DUMMY
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int keylen;
         private int valueOffset;
         private int valueLen;
@@ -746,20 +735,9 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_PARAMETER_EXPOSUREMODE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAM_EXPOSUREMODE_T value;
-
-        public MMAL_PARAMETER_HEADER_T Hdr => hdr;
-        public MMAL_PARAMETER_HEADER_T* HdrPtr
-        {
-            get
-            {
-                fixed (MMAL_PARAMETER_HEADER_T* ptr = &hdr)
-                {
-                    return ptr;
-                }
-            }
-        }
+               
         public MMAL_PARAM_EXPOSUREMODE_T Value => value;
 
         public MMAL_PARAMETER_EXPOSUREMODE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_EXPOSUREMODE_T value)
@@ -772,20 +750,9 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_PARAMETER_EXPOSUREMETERINGMODE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAM_EXPOSUREMETERINGMODE_T value;
-
-        public MMAL_PARAMETER_HEADER_T Hdr => hdr;
-        public MMAL_PARAMETER_HEADER_T* HdrPtr
-        {
-            get
-            {
-                fixed (MMAL_PARAMETER_HEADER_T* ptr = &hdr)
-                {
-                    return ptr;
-                }
-            }
-        }
+        
         public MMAL_PARAM_EXPOSUREMETERINGMODE_T Value => value;
 
         public MMAL_PARAMETER_EXPOSUREMETERINGMODE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_EXPOSUREMETERINGMODE_T value)
@@ -798,20 +765,9 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_PARAMETER_AWBMODE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAM_AWBMODE_T value;
-
-        public MMAL_PARAMETER_HEADER_T Hdr => hdr;
-        public MMAL_PARAMETER_HEADER_T* HdrPtr
-        {
-            get
-            {
-                fixed (MMAL_PARAMETER_HEADER_T* ptr = &hdr)
-                {
-                    return ptr;
-                }
-            }
-        }
+                
         public MMAL_PARAM_AWBMODE_T Value => value;
 
         public MMAL_PARAMETER_AWBMODE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_AWBMODE_T value)
@@ -824,20 +780,9 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_PARAMETER_IMAGEFX_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAM_IMAGEFX_T value;
-
-        public MMAL_PARAMETER_HEADER_T Hdr => hdr;
-        public MMAL_PARAMETER_HEADER_T* HdrPtr
-        {
-            get
-            {
-                fixed (MMAL_PARAMETER_HEADER_T* ptr = &hdr)
-                {
-                    return ptr;
-                }
-            }
-        }
+                
         public MMAL_PARAM_IMAGEFX_T Value => value;
 
         public MMAL_PARAMETER_IMAGEFX_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_IMAGEFX_T value)
@@ -850,7 +795,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_IMAGEFX_PARAMETERS_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAM_IMAGEFX_T effect;
         private uint numEffectParams;
         private uint[] effectParameter;
@@ -873,21 +818,10 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_PARAMETER_COLOURFX_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int enable;
         private uint u, v;
 
-        public MMAL_PARAMETER_HEADER_T Hdr => hdr;
-        public MMAL_PARAMETER_HEADER_T* HdrPtr
-        {
-            get
-            {
-                fixed (MMAL_PARAMETER_HEADER_T* ptr = &hdr)
-                {
-                    return ptr;
-                }
-            }
-        }
         public int Enable => enable;
         public uint U => u;
         public uint V => v;
@@ -904,7 +838,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAMERA_STC_MODE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_CAMERA_STC_MODE_T value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -920,7 +854,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_FLICKERAVOID_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAM_FLICKERAVOID_T value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -936,7 +870,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_FLASH_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAM_FLASH_T value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -952,7 +886,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_REDEYE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAM_REDEYE_T value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -968,7 +902,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_FOCUS_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAM_FOCUS_T value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -984,7 +918,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAPTURE_STATUS_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAM_CAPTURE_STATUS_T value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -1000,7 +934,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_FOCUS_STATUS_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAM_FOCUS_STATUS_T value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -1016,7 +950,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_FACE_TRACK_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAM_FACE_TRACK_MODE_T mode;
         private uint maxRegions, frames, quality;
 
@@ -1064,7 +998,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_FACE_TRACK_RESULTS_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint numFaces, frameWidth, frameHeight;
         private MMAL_PARAMETER_FACE_TRACK_FACE_T[] faces;
 
@@ -1088,22 +1022,11 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_PARAMETER_CAMERA_CONFIG_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int maxStillsW, maxStillsH, stillsYUV422, oneShotStills, maxPreviewVideoW, maxPreviewVideoH, numPreviewVideoFrames,
                     stillsCaptureCircularBufferHeight, fastPreviewResume;
         private MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T useSTCTimestamp;
 
-        public MMAL_PARAMETER_HEADER_T Hdr => hdr;
-        public MMAL_PARAMETER_HEADER_T* HdrPtr
-        {
-            get
-            {
-                fixed (MMAL_PARAMETER_HEADER_T* ptr = &hdr)
-                {
-                    return ptr;
-                }
-            }
-        }
         public int MaxStillsW => maxStillsW;
         public int MaxStillsH => maxStillsH;
         public int StillsYUV422 => stillsYUV422;
@@ -1193,7 +1116,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAMERA_INFO_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int numCameras, numFlashes;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
         private MMAL_PARAMETER_CAMERA_INFO_CAMERA_T[] cameras;
@@ -1220,7 +1143,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAMERA_INFO_V2_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int numCameras, numFlashes;
         [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 4)]
         private MMAL_PARAMETER_CAMERA_INFO_CAMERA_V2_T[] cameras;
@@ -1247,7 +1170,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAPTUREMODE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAMETER_CAPTUREMODE_MODE_T mode;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -1284,7 +1207,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_FOCUS_REGIONS_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint numRegions;
         private int lockToFaces;
         private MMAL_PARAMETER_FOCUS_REGION_T[] regions;
@@ -1306,20 +1229,9 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_PARAMETER_INPUT_CROP_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_RECT_T rect;
-
-        public MMAL_PARAMETER_HEADER_T Hdr => hdr;
-        public MMAL_PARAMETER_HEADER_T* HdrPtr
-        {
-            get
-            {
-                fixed (MMAL_PARAMETER_HEADER_T* ptr = &hdr)
-                {
-                    return ptr;
-                }
-            }
-        }
+               
         public MMAL_RECT_T Rect => rect;
 
         public MMAL_PARAMETER_INPUT_CROP_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_RECT_T rect)
@@ -1332,7 +1244,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_SENSOR_INFORMATION_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_RATIONAL_T fNumber, focalLength;
         private uint modelId, manufacturerId, revision;
 
@@ -1358,7 +1270,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_FLASH_SELECT_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAMETER_CAMERA_INFO_FLASH_TYPE_T flashType;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -1374,7 +1286,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_FIELD_OF_VIEW_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_RATIONAL_T fovH, fovV;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -1392,20 +1304,9 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_PARAMETER_DRC_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAMETER_DRC_STRENGTH_T strength;
 
-        public MMAL_PARAMETER_HEADER_T Hdr => hdr;
-        public MMAL_PARAMETER_HEADER_T* HdrPtr
-        {
-            get
-            {
-                fixed (MMAL_PARAMETER_HEADER_T* ptr = &hdr)
-                {
-                    return ptr;
-                }
-            }
-        }
         public MMAL_PARAMETER_DRC_STRENGTH_T Strength => strength;
 
         public MMAL_PARAMETER_DRC_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAMETER_DRC_STRENGTH_T strength)
@@ -1418,7 +1319,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_ALGORITHM_CONTROL_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAMETER_ALGORITHM_CONTROL_ALGORITHMS_T algorithm;
         private int enabled;
 
@@ -1438,7 +1339,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAMERA_USE_CASE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAM_CAMERA_USE_CASE_T useCase;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -1454,7 +1355,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_FPS_RANGE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_RATIONAL_T fpsLow, fpsHigh;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -1472,7 +1373,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_ZEROSHUTTERLAG_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int zeroShutterLagMode, concurrentCapture;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -1490,20 +1391,9 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_PARAMETER_AWB_GAINS_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_RATIONAL_T rGain, bGain;
-
-        public MMAL_PARAMETER_HEADER_T Hdr => hdr;   
-        public MMAL_PARAMETER_HEADER_T* HdrPtr
-        {
-            get
-            {
-                fixed(MMAL_PARAMETER_HEADER_T* ptr = &hdr)
-                {
-                    return ptr;
-                }
-            }
-        }
+               
         public MMAL_RATIONAL_T RGain => rGain;
         public MMAL_RATIONAL_T BGain => bGain;
 
@@ -1518,7 +1408,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAMERA_SETTINGS_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint exposure;
         private MMAL_RATIONAL_T analogGain, digitalGain, awbRedGain, awbBlueGain;
         private uint focusPosition;
@@ -1549,7 +1439,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_PRIVACY_INDICATOR_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_PARAM_PRIVACY_INDICATOR_T mode;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -1565,7 +1455,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAMERA_ANNOTATE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int enable;
         private string text;
         private int showShutter, showAnalogGain, showLens, showCaf, showMotion;
@@ -1596,7 +1486,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAMERA_ANNOTATE_V2_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int enable;
         private string text;
         private int showShutter, showAnalogGain, showLens, showCaf, showMotion;
@@ -1628,7 +1518,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int enable;
         private int showShutter, showAnalogGain, showLens, showCaf, showMotion, showFrameNum,
                     enableTextBackground, customBackgroundColor;
@@ -1693,21 +1583,10 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_PARAMETER_STEREOSCOPIC_MODE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_STEREOSCOPIC_MODE_T mode;
         private int decimate, swapEyes;
 
-        public MMAL_PARAMETER_HEADER_T Hdr => hdr;
-        public MMAL_PARAMETER_HEADER_T* HdrPtr
-        {
-            get
-            {
-                fixed (MMAL_PARAMETER_HEADER_T* ptr = &hdr)
-                {
-                    return ptr;
-                }
-            }
-        }
         public MMAL_STEREOSCOPIC_MODE_T Mode => mode;
         public int Decimate => decimate;
         public int SwapEyes => swapEyes;
@@ -1725,7 +1604,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAMERA_INTERFACE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_CAMERA_INTERFACE_T mode;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -1741,7 +1620,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAMERA_CLOCKING_MODE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_CAMERA_CLOCKING_MODE_T mode;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -1757,7 +1636,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAMERA_RX_CONFIG_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_CAMERA_RX_CONFIG_DECODE decode;
         private MMAL_CAMERA_RX_CONFIG_ENCODE encode;
         private MMAL_CAMERA_RX_CONFIG_UNPACK unpack;
@@ -1794,7 +1673,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAMERA_RX_TIMING_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint timing1, timing2, timing3, timing4, timing5, term1, term2, cpiTiming1, cpiTiming2;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2073,7 +1952,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_DISPLAYREGION_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint set, displayNum;
         private int fullscreen;
         private MMALParametersVideo.MMAL_DISPLAYTRANSFORM_T transform;
@@ -2140,7 +2019,8 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_VIDEO_PROFILE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
         private MMAL_PARAMETER_VIDEO_PROFILE_S[] profile;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2156,7 +2036,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_VIDEO_ENCODE_RC_MODEL_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint rcModel;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2172,7 +2052,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_VIDEO_RATECONTROL_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T control;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2198,7 +2078,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_VIDEO_ENCODER_H264_MB_INTRA_MODES_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMALParametersVideo.MMAL_VIDEO_ENCODE_H264_MB_INTRA_MODES_T mbMode;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2214,7 +2094,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_VIDEO_NALUNITFORMAT_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMALParametersVideo.MMAL_VIDEO_NALUNITFORMAT_T format;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2230,7 +2110,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_VIDEO_LEVEL_EXTENSION_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint customMaxMbps, customMaxFs, customMaxBrAndCpb;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2250,7 +2130,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_VIDEO_INTRA_REFRESH_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T refreshMode;
         private int airMbs, airRef, cirMbs, pirMbs;
 
@@ -2286,7 +2166,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_VIDEO_EEDE_ENABLE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int enable;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2302,7 +2182,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_VIDEO_EEDE_LOSSRATE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint lossRate;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2318,7 +2198,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_VIDEO_DRM_INIT_INFO_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint currentTime, ticksPerSec;
         private uint[] lhs;
 
@@ -2339,7 +2219,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_VIDEO_DRM_PROTECT_BUFFER_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint sizeWanted, protect, memHandle;
         private IntPtr physAddr;
 
@@ -2363,7 +2243,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_VIDEO_RENDER_STATS_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int valid;
         private uint match, period, phase, pixelClockNominal, hvsStatus;
         private uint[] dummy;
@@ -2395,7 +2275,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_VIDEO_INTERLACE_TYPE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMALParametersVideo.MMAL_INTERLACE_TYPE_T eMode;
         private int bRepeatFirstField;
 
@@ -2426,7 +2306,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_AUDIO_LATENCY_TARGET_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int enable;
         private uint filter, target, shift;
         private int speedFactor, interFactor, adjCap;
@@ -2474,7 +2354,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CLOCK_UPDATE_THRESHOLD_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_CLOCK_UPDATE_THRESHOLD_T value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2490,7 +2370,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CLOCK_DISCONT_THRESHOLD_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_CLOCK_DISCONT_THRESHOLD_T value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2506,7 +2386,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CLOCK_REQUEST_THRESHOLD_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_CLOCK_REQUEST_THRESHOLD_T value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2522,7 +2402,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CLOCK_LATENCY_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_CLOCK_LATENCY_T value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2575,7 +2455,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_UINT64_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private ulong value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2591,7 +2471,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_INT64_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private long value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2607,7 +2487,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_UINT32_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2623,7 +2503,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_INT32_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2639,7 +2519,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_RATIONAL_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_RATIONAL_T value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2656,7 +2536,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_BOOLEAN_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private int value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2672,7 +2552,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_STRING_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private string value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2688,7 +2568,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_SCALEFACTOR_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint scaleX, scaleY;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2706,20 +2586,8 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_PARAMETER_MIRROR_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMALParameters.MMAL_PARAM_MIRROR_T value;
-
-        public MMAL_PARAMETER_HEADER_T Hdr => hdr;
-        public MMAL_PARAMETER_HEADER_T* HdrPtr
-        {
-            get
-            {
-                fixed (MMAL_PARAMETER_HEADER_T* ptr = &hdr)
-                {
-                    return ptr;
-                }
-            }
-        }
 
         public MMALParameters.MMAL_PARAM_MIRROR_T Value => value;
 
@@ -2733,7 +2601,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_URI_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private string value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2749,7 +2617,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_ENCODING_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint[] value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2765,7 +2633,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_FRAME_RATE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private MMAL_RATIONAL_T value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2781,7 +2649,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CONFIGFILE_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
@@ -2797,7 +2665,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CONFIGFILE_CHUNK_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
         private uint size, offset;
         private string data;
 

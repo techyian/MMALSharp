@@ -61,7 +61,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_EVENT_PARAMETER_CHANGED_T
     {
-        private MMAL_PARAMETER_HEADER_T hdr;
+        public MMAL_PARAMETER_HEADER_T hdr;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
 

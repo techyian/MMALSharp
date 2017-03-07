@@ -169,9 +169,18 @@ namespace MMALSharp.Components
 
         public int Bitrate { get; set; } = 17000000;
 
-        public int Framerate { get; set; } = 30;
+        public int Framerate { get; set; } = 15;
 
         public int Level { get; set; } = (int)MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4;
+
+        /// <summary>
+        /// Quality of the encoder output. Valid property for both H264 and MJPEG encoders.
+        /// H264 encoding - High: 10 Low: 40 Average: 20-25
+        /// MJPEG encoding - Uses same quality scale as JPEG encoder (Lowest: 1  Highest: 100)
+        /// </summary>
+        public int Quality { get; set; }
+
+        public byte[] HeaderData { get; set; }
 
         public MMALPortImpl InputPort { get; set; }
         public MMALPortImpl OutputPort { get; set; }
@@ -180,7 +189,7 @@ namespace MMALSharp.Components
         public const int MaxBitrateLevel4 = 25000000; // 25Mbits/s
         public const int MaxBitrateLevel42 = 62500000; // 62.5Mbits/s
         
-        public MMALVideoEncoder(int encodingType, int bitrate, int framerate) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
+        public MMALVideoEncoder(int encodingType, int bitrate, int framerate, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
         {            
             if (encodingType > 0)
                 this.EncodingType = encodingType;
@@ -194,13 +203,18 @@ namespace MMALSharp.Components
             this.Initialize();
         }
 
-        public MMALVideoEncoder() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
+        public MMALVideoEncoder(int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
         {            
             this.Initialize();
         }
 
         public override void Initialize()
-        {
+        {        
+            if(this.EncodingType != MMALEncodings.MMAL_ENCODING_H264 && this.EncodingType != MMALEncodings.MMAL_ENCODING_MJPEG)
+            {
+                throw new PiCameraError("Unsupported format.");
+            }
+                
             if (this.Ptr->InputNum > 0)
             {
                 for (int i = 0; i < this.Ptr->InputNum; i++)
@@ -254,7 +268,7 @@ namespace MMALSharp.Components
 
             this.OutputPort.Ptr->Format->Bitrate = this.Bitrate;
 
-            this.OutputPort.Ptr->BufferSize = this.OutputPort.BufferSizeMin;
+            this.OutputPort.Ptr->BufferSize = 512 * 1024;
             this.OutputPort.Ptr->BufferNum = this.OutputPort.BufferNumMin;
 
             MMAL_VIDEO_FORMAT_T vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.VideoWidth,
@@ -264,23 +278,25 @@ namespace MMALSharp.Components
                                                                   this.OutputPort.Ptr->Format->Es->Video.Par,
                                                                   this.OutputPort.Ptr->Format->Es->Video.ColorSpace);
 
+            MMALCamera.Instance.Camera.VideoPort.Ptr->Format->Es->Video = vFormat;
+
             this.OutputPort.Commit();
-                        
-            //this.ConfigureRateControl();
-                        
-            this.ConfigureIntraPeriod();
-                        
+            
+            if(this.EncodingType == MMALEncodings.MMAL_ENCODING_H264)
+            {                
+                this.ConfigureIntraPeriod();
+                                
+                this.ConfigureVideoProfile();
+                                
+                this.ConfigureInlineHeaderFlag();
+
+                this.ConfigureInlineVectorsFlag();
+
+                this.ConfigureIntraRefresh();
+            }
+            
             this.ConfigureQuantisationParameter();
-                        
-            //this.ConfigureVideoProfile();
-                        
             this.ConfigureImmutableInput();
-                        
-            this.ConfigureInlineHeaderFlag();
-                        
-            this.ConfigureInlineVectorsFlag();
-                        
-            this.ConfigureIntraRefresh();                 
         }
 
         internal void ConfigureRateControl()
@@ -297,16 +313,16 @@ namespace MMALSharp.Components
 
         internal void ConfigureQuantisationParameter()
         {
-            if (this.EncodingType == MMALEncodings.MMAL_ENCODING_H264 && MMALCameraConfig.QuantisationParameter != null)
+            if (this.EncodingType == MMALEncodings.MMAL_ENCODING_H264)
             {
-                this.OutputPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INITIAL_QUANT, MMALCameraConfig.QuantisationParameter.Initial);
-                this.OutputPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_MIN_QUANT, MMALCameraConfig.QuantisationParameter.Min);
-                this.OutputPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_MAX_QUANT, MMALCameraConfig.QuantisationParameter.Max);
+                this.OutputPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INITIAL_QUANT, Quality);
+                this.OutputPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_MIN_QUANT, Quality);
+                this.OutputPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_MAX_QUANT, Quality);
             }
         }
 
         internal void ConfigureVideoProfile()
-        {
+        {            
             if ((MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.VideoWidth, 16) >> 4) * (MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.VideoHeight, 16) >> 4) * this.Framerate > 245760)
             {
                 if ((MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.VideoWidth, 16) >> 4) * (MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.VideoHeight, 16) >> 4) * this.Framerate <= 522240)

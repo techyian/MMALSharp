@@ -51,6 +51,7 @@ namespace MMALSharp.Components
     {
         public MMALVideoRenderer() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_RENDERER)
         {
+            this.EnableComponent();
         }
         
     }

@@ -153,7 +153,9 @@ namespace MMALSharp
         /// </summary>
         public static bool SetChangeEventRequest { get; set; }
 
-        // Camera preview port specific properties
+        /*
+         * Camera preview port specific properties
+        */
         public static int PreviewEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
 
         private static int previewWidth;
@@ -181,7 +183,10 @@ namespace MMALSharp
             }
         }
 
-        // Camera video port specific properties
+        /*
+         * Camera video port specific properties
+        */
+
         public static int VideoEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
         public static int VideoSubformat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;
         private static int videoWidth;
@@ -210,7 +215,26 @@ namespace MMALSharp
             }
         }
 
-        // Camera still port specific properties
+        public static MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T RateControl { get; set; } = MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T.MMAL_VIDEO_RATECONTROL_DEFAULT;
+
+        public static int IntraPeriod { get; set; } = -1;
+                
+        public static MMALParametersVideo.MMAL_VIDEO_PROFILE_T VideoProfile { get; set; } = MMALParametersVideo.MMAL_VIDEO_PROFILE_T.MMAL_VIDEO_PROFILE_H264_HIGH;
+
+        public static MMALParametersVideo.MMAL_VIDEO_LEVEL_T VideoLevel { get; set; } = MMALParametersVideo.MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4;
+
+        public static bool ImmutableInput { get; set; } = true;
+
+        public static bool InlineHeaders { get; set; }
+
+        public static bool InlineMotionVectors { get; set; }
+
+        public static MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T IntraRefresh { get; set; } = MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T.MMAL_VIDEO_INTRA_REFRESH_DISABLED;
+
+        /*
+         * Camera still port specific properties
+        */
+
         public static int StillEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
         public static int StillEncodingSubFormat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;
 
@@ -239,24 +263,7 @@ namespace MMALSharp
                 MMALCameraConfig.stillHeight = MMALUtil.VCOS_ALIGN_UP(value, 16);
             }
         }
-
-        public static MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T RateControl { get; set; } = MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T.MMAL_VIDEO_RATECONTROL_DEFAULT;
-
-        public static int IntraPeriod { get; set; } = -1;
-
-        public static Quantisation QuantisationParameter { get; set; } = new Quantisation();
-
-        public static MMALParametersVideo.MMAL_VIDEO_PROFILE_T VideoProfile { get; set; } = MMALParametersVideo.MMAL_VIDEO_PROFILE_T.MMAL_VIDEO_PROFILE_H264_HIGH;
-
-        public static MMALParametersVideo.MMAL_VIDEO_LEVEL_T VideoLevel { get; set; } = MMALParametersVideo.MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4;
-
-        public static bool ImmutableInput { get; set; } = true;
-
-        public static bool InlineHeaders { get; set; }
-
-        public static bool InlineMotionVectors { get; set; }
-
-        public static MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T IntraRefresh { get; set; } = MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T.MMAL_VIDEO_INTRA_REFRESH_DISABLED;
+               
 
         /// <summary>
         /// Reloads Camera configuration settings
@@ -275,14 +282,7 @@ namespace MMALSharp
         public uint V { get; set; } = 128;
         
     }
-
-    public class Quantisation
-    {
-        public int Initial { get; set; }
-        public int Min { get; set; }        
-        public int Max { get; set; }
-    }
-
+    
     public class Crop
     {
         public double X { get; set; }

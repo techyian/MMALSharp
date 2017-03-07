@@ -128,10 +128,7 @@ namespace MMALSharp.Components
                 Console.WriteLine("Commit preview");
 
             this.PreviewPort.Commit();
-
-            this.VideoPort.Ptr->Format->Encoding = MMALCameraConfig.VideoEncoding;
-            this.VideoPort.Ptr->Format->EncodingVariant = MMALCameraConfig.VideoSubformat;
-
+                        
             if (MMALCameraConfig.VideoWidth == 0 || MMALCameraConfig.VideoWidth > this.CameraInfo.MaxWidth)
                 MMALCameraConfig.VideoWidth = this.CameraInfo.MaxWidth;
             if (MMALCameraConfig.VideoHeight == 0 || MMALCameraConfig.VideoHeight > this.CameraInfo.MaxHeight)
@@ -144,6 +141,10 @@ namespace MMALSharp.Components
                                                                   this.VideoPort.Ptr->Format->Es->Video.Par,
                                                                   this.VideoPort.Ptr->Format->Es->Video.ColorSpace);
 
+            this.VideoPort.Ptr->Format->Encoding = MMALCameraConfig.VideoEncoding;
+            this.VideoPort.Ptr->Format->EncodingVariant = MMALCameraConfig.VideoSubformat;
+            this.VideoPort.Ptr->Format->Es->Video = vFormat;
+
 
             if (MMALCameraConfig.Debug)
                 Console.WriteLine("Commit video");
@@ -152,10 +153,7 @@ namespace MMALSharp.Components
 
             if (this.VideoPort.Ptr->BufferNum < 3)
                 this.VideoPort.Ptr->BufferNum = 3;
-
-            this.StillPort.Ptr->Format->Encoding = MMALCameraConfig.StillEncoding;
-            this.StillPort.Ptr->Format->EncodingVariant = MMALCameraConfig.StillEncodingSubFormat;
-
+                        
             //If user hasn't specified Width/Height, or one which is too high, use highest resolution supported by sensor.
             if (MMALCameraConfig.StillWidth == 0 || MMALCameraConfig.StillWidth > this.CameraInfo.MaxWidth)
                 MMALCameraConfig.StillWidth = this.CameraInfo.MaxWidth;
@@ -169,6 +167,8 @@ namespace MMALSharp.Components
                                                 this.StillPort.Ptr->Format->Es->Video.Par,
                                                 this.StillPort.Ptr->Format->Es->Video.ColorSpace);
 
+            this.StillPort.Ptr->Format->Encoding = MMALCameraConfig.StillEncoding;
+            this.StillPort.Ptr->Format->EncodingVariant = MMALCameraConfig.StillEncodingSubFormat;
             this.StillPort.Ptr->Format->Es->Video = vFormat;
 
             if (MMALCameraConfig.Debug)

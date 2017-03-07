@@ -139,12 +139,24 @@ namespace MMALSharp
         /// </summary>
         public void PrintProperties()
         {
-            Console.WriteLine("---Begin buffer properties---");
+            Console.WriteLine("");
+            Console.WriteLine("|------------|");
+            Console.WriteLine(" Buffer debug");
+            Console.WriteLine("|------------|");
+
+            Console.WriteLine("Buffer length: " + this.Length);
+            Console.WriteLine("Presentation timestamp: " + this.Pts);
+
+            Console.WriteLine("Buffer flags: ");
+
             foreach (MMALBufferProperties prop in this.Properties)
             {
                 Console.WriteLine(prop.ToString());
             }
-            Console.WriteLine("---End buffer properties---");
+            Console.WriteLine("|------------|");
+            Console.WriteLine(" End buffer debug");
+            Console.WriteLine("|------------|");
+            Console.WriteLine("");
         }
 
         /// <summary>

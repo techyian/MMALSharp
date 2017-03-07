@@ -175,7 +175,59 @@ namespace MMALSharp
     /// </summary>
     public unsafe class MMALVideoPort : MMALPortImpl
     {
-        public MMALVideoPort(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }        
+        public MMALVideoPort(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
+
+        internal override void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        {
+            lock (MMALPortBase.mLock)
+            {
+                var bufferImpl = new MMALBufferImpl(buffer);
+
+                if (MMALCameraConfig.Debug)
+                    bufferImpl.PrintProperties();
+
+                if (bufferImpl.Length > 0)
+                {
+                    this.ManagedCallback(bufferImpl, this);
+                }
+                                
+                bufferImpl.Release();
+
+                try
+                {
+                    if (MMALCameraConfig.Debug && !this.Enabled)
+                        Console.WriteLine("Port not enabled.");
+                    if (MMALCameraConfig.Debug && this.BufferPool == null)
+                        Console.WriteLine("Buffer pool null.");
+
+                    if (this.Enabled && this.BufferPool != null)
+                    {
+                        var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
+
+                        if (newBuffer != null)
+                        {
+                            if (MMALCameraConfig.Debug)
+                                Console.WriteLine("Got buffer. Sending to port.");
+
+                            this.SendBuffer(newBuffer);
+                        }
+                        else
+                        {
+                            if (MMALCameraConfig.Debug)
+                                Console.WriteLine("Buffer null. Continuing.");
+                        }
+                    }
+                }
+                catch
+                {
+                    if (MMALCameraConfig.Debug)
+                        Console.WriteLine("Unable to send buffer header");
+                }
+
+                Thread.Sleep(50);
+            }
+        }
+
     }
 
 }
