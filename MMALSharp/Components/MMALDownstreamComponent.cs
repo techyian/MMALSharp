@@ -44,17 +44,17 @@ namespace MMALSharp.Components
         public virtual void ManagedCallback(MMALBufferImpl buffer, MMALPortBase port)
         {
             var data = buffer.GetBufferData();
-            port.ProcessCallback(data);            
+            port.Handler.Process(data);            
         }
 
-        public void Start(int outputPortNumber, Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback)
+        public void Start(int outputPortNumber, Action<MMALBufferImpl, MMALPortBase> managedCallback, ICaptureHandler handler)
         {            
-            this.Outputs.ElementAt(outputPortNumber).EnablePort(managedCallback, processCallback);
+            this.Outputs.ElementAt(outputPortNumber).EnablePort(managedCallback, handler);
         }
 
-        public void Start(MMALPortBase port, Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback)
+        public void Start(MMALPortBase port, Action<MMALBufferImpl, MMALPortBase> managedCallback, ICaptureHandler handler)
         {            
-            port.EnablePort(managedCallback, processCallback);
+            port.EnablePort(managedCallback, handler);
         }
 
         public void Stop(int outputPortNumber)

@@ -1,4 +1,5 @@
-﻿using MMALSharp.Native;
+﻿using MMALSharp.Handlers;
+using MMALSharp.Native;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,12 +19,12 @@ namespace MMALSharp
     {
         public MMALControlPort(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
 
-        internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback)
+        internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, ICaptureHandler handler)
         {
             if(!this.Enabled)
             {
                 this.ManagedCallback = managedCallback;
-                this.ProcessCallback = processCallback;
+                this.Handler = handler;
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
@@ -61,12 +62,12 @@ namespace MMALSharp
     {
         public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
 
-        internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, Action<byte[]> processCallback)
+        internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, ICaptureHandler handler)
         {
             if (!this.Enabled)
             {
                 this.ManagedCallback = managedCallback;
-                this.ProcessCallback = processCallback;
+                this.Handler = handler;
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
@@ -174,7 +175,10 @@ namespace MMALSharp
     /// Represents a video port
     /// </summary>
     public unsafe class MMALVideoPort : MMALPortImpl
-    {
+    {        
+        public Split Split { get; set; }
+        public DateTime? Timeout { get; set; }
+
         public MMALVideoPort(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
 
         internal override void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
@@ -188,9 +192,25 @@ namespace MMALSharp
 
                 if (bufferImpl.Length > 0)
                 {
+                    //Ensure that if we need to split then this is done before processing the buffer data.
+                    if (this.Split != null)
+                    {
+                        if(!this.Split.LastSplit.HasValue)
+                            this.Split.LastSplit = DateTime.Now;
+
+                        if(this.Split.LastSplit.Value.AddMinutes(this.Split.SplitMinutes).CompareTo(DateTime.Now) > 0)
+                            this.Handler.Split(this.Split.Filename);
+                    }                       
+                                        
                     this.ManagedCallback(bufferImpl, this);
                 }
-                                
+
+                if (this.Timeout.HasValue && this.Timeout.Value.CompareTo(DateTime.Now) > 0)
+                {
+                    if (this.Trigger != null && this.Trigger.CurrentCount > 0)
+                        this.Trigger.Signal();
+                }
+
                 bufferImpl.Release();
 
                 try

@@ -82,7 +82,18 @@ namespace MMALSharp
                 port.SetImageCapture(false);
         }
 
-        public async Task TakeVideo<T>(MMALPortImpl connPort, int outputPort, ICaptureHandler<T> handler, int encodingType = 0, int bitrate = 0, int framerate = 0)
+        /// <summary>
+        /// Record video for a specified amount of time. To separate recording into multiple files, use the split parameter
+        /// passing in the number of minutes each split should occur after, and also a constant filename (this will be appended with a datetime during split).
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="connPort"></param>
+        /// <param name="outputPort"></param>
+        /// <param name="handler"></param>
+        /// <param name="timeout"></param>
+        /// <param name="split"></param>
+        /// <returns></returns>
+        public async Task TakeVideo(MMALPortImpl connPort, int outputPort, ICaptureHandler handler, DateTime? timeout = null, Split split = null)
         {
             var encoder = this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == connPort).FirstOrDefault();
 
@@ -102,8 +113,10 @@ namespace MMALSharp
             }
 
             //Enable the video encoder output port.
-            encoder.Start(outputPort, encoder.ManagedCallback, handler.Process);                        
+            encoder.Start(outputPort, encoder.ManagedCallback, handler);                        
             encoder.Outputs.ElementAt(outputPort).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+            ((MMALVideoPort)encoder.Outputs.ElementAt(outputPort)).Timeout = timeout;
+            ((MMALVideoPort)encoder.Outputs.ElementAt(outputPort)).Split = split;
             this.StartCapture(connPort);
                         
             await encoder.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
@@ -132,7 +145,7 @@ namespace MMALSharp
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
         /// <returns></returns>
-        public async Task TakeSinglePicture<T>(ICaptureHandler<T> handler, int encodingType = 0, int quality = 0, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakeSinglePicture(ICaptureHandler handler, int encodingType = 0, int quality = 0, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {            
             var camPreviewPort = this.Camera.PreviewPort;
             var camVideoPort = this.Camera.VideoPort;
@@ -171,7 +184,7 @@ namespace MMALSharp
                     int outputPort = 0;
 
                     //Enable the image encoder output port.
-                    encoder.Start(outputPort, encoder.ManagedCallback, handler.Process);
+                    encoder.Start(outputPort, encoder.ManagedCallback, handler);
 
                     this.StartCapture(camStillPort);
 
@@ -203,7 +216,7 @@ namespace MMALSharp
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
         /// <returns></returns>
-        public async Task TakePicture<T>(MMALPortImpl connPort, int outputPort, ICaptureHandler<T> handler, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePicture(MMALPortImpl connPort, int outputPort, ICaptureHandler handler, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {
             Console.WriteLine("Preparing to take picture");
             
@@ -235,7 +248,7 @@ namespace MMALSharp
                 encoder.AnnotateImage();
 
             //Enable the image encoder output port.
-            encoder.Start(outputPort, encoder.ManagedCallback, handler.Process);
+            encoder.Start(outputPort, encoder.ManagedCallback, handler);
 
             this.StartCapture(connPort);
 

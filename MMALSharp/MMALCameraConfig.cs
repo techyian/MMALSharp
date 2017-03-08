@@ -327,6 +327,13 @@ namespace MMALSharp
         public bool ShowTimeText { get; set; }
     }
 
+    public class Split
+    {
+        public int SplitMinutes { get; set; }
+        public string Filename { get; set; }
+        public DateTime? LastSplit { get; set; }
+    }
+
     public enum TimelapseMode
     {
         Millisecond,
