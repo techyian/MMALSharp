@@ -192,8 +192,16 @@ namespace MMALSharp.Components
         public const int MaxBitrateLevel4 = 25000000; // 25Mbits/s
         public const int MaxBitrateLevel42 = 62500000; // 62.5Mbits/s
 
+        /// <summary>
+        /// Object containing properties used to determine when we should perform a file split.
+        /// </summary>
         public Split Split { get; set; }
+
+        /// <summary>
+        /// States the time we last did a file split.
+        /// </summary>
         public DateTime? LastSplit { get; set; }
+
         /// <summary>
         /// Property to indicate whether on the next callback we should split. This is used so that we can request an I-Frame from the camera
         /// and this can be applied on the next run to the newly created file.

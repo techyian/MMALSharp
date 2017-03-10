@@ -173,7 +173,11 @@ namespace MMALSharp
     /// Represents a video port
     /// </summary>
     public unsafe class MMALVideoPort : MMALPortImpl
-    {        
+    {
+        /// <summary>
+        /// This is used when the user provides a timeout DateTime and
+        /// will signal an end to video recording.
+        /// </summary>
         public DateTime? Timeout { get; set; }
         
         public MMALVideoPort(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
@@ -234,23 +238,7 @@ namespace MMALSharp
                 Thread.Sleep(50);
             }
         }
-
-        /*private DateTime CalculateSplit()
-        {
-            DateTime tempDt = new DateTime(this.LastSplit.Value.Ticks);
-            switch (this.Split.Mode)
-            {
-                case TimelapseMode.Millisecond:
-                    return tempDt.AddMilliseconds(this.Split.Value);                                        
-                case TimelapseMode.Second:
-                    return tempDt.AddSeconds(this.Split.Value);                    
-                case TimelapseMode.Minute:
-                    return tempDt.AddMinutes(this.Split.Value);
-                default:
-                    return tempDt.AddMinutes(this.Split.Value);
-            }            
-        }*/
-
+               
     }
 
 }
