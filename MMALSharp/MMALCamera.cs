@@ -103,6 +103,12 @@ namespace MMALSharp
             if (!encoder.Connection.Enabled)
                 encoder.Connection.Enable();
 
+            if(split != null && !MMALCameraConfig.InlineHeaders)
+            {
+                Helpers.PrintWarning("Inline headers not enabled. Split mode not supported when this is disabled.");
+                split = null;
+            }
+
             //Create connections
             if (this.Preview == null)
                 Helpers.PrintWarning("Preview port does not have a Render component configured. Resulting image will be affected.");

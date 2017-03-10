@@ -329,7 +329,7 @@ namespace MMALSharp.Components
         {
             var data = buffer.GetBufferData();
 
-            if (this.PrepareSplit)
+            if (this.PrepareSplit && buffer.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))
             {
                 this.Handler.Split();
                 this.LastSplit = DateTime.Now;
@@ -343,7 +343,7 @@ namespace MMALSharp.Components
                     this.LastSplit = DateTime.Now;
 
                 if (DateTime.Now.CompareTo(this.CalculateSplit()) > 0)
-                {
+                {                    
                     this.PrepareSplit = true;
                     port.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_REQUEST_I_FRAME, true);                    
                 }
