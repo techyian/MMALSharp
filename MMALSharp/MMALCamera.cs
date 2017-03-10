@@ -85,24 +85,34 @@ namespace MMALSharp
         /// <summary>
         /// Record video for a specified amount of time. To separate recording into multiple files, use the split parameter
         /// passing in the number of minutes each split should occur after, and also a constant filename (this will be appended with a datetime during split).
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// </summary>        
         /// <param name="connPort"></param>
         /// <param name="outputPort"></param>
         /// <param name="handler"></param>
         /// <param name="timeout"></param>
         /// <param name="split"></param>
         /// <returns></returns>
-        public async Task TakeVideo(MMALPortImpl connPort, int outputPort, DateTime? timeout = null, Split split = null)
+        public async Task TakeVideo(MMALPortImpl connPort, ICaptureHandler handler, DateTime? timeout = null, Split split = null)
         {
+            if (handler == null)
+            {
+                throw new PiCameraError("Handler cannot be null");
+            }
+                
             var encoder = this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == connPort).FirstOrDefault();
 
             if (encoder == null || encoder.GetType() != typeof(MMALVideoEncoder))
+            {
                 throw new PiCameraError("No video encoder currently attached to output port specified");
+            }
+                
+            encoder.Handler = handler;
 
             if (!encoder.Connection.Enabled)
+            {
                 encoder.Connection.Enable();
-
+            }
+                                        
             if(split != null && !MMALCameraConfig.InlineHeaders)
             {
                 Helpers.PrintWarning("Inline headers not enabled. Split mode not supported when this is disabled.");
@@ -111,24 +121,30 @@ namespace MMALSharp
 
             //Create connections
             if (this.Preview == null)
+            {
                 Helpers.PrintWarning("Preview port does not have a Render component configured. Resulting image will be affected.");
+            }                
             else
             {
                 if (this.Preview.Connection == null)
                     this.Preview.CreateConnection(this.Camera.PreviewPort);
             }
 
+            var outputPort = 0;
+
             //Enable the video encoder output port.
-            encoder.Start(outputPort, encoder.ManagedCallback);                        
+            encoder.Start(outputPort, encoder.ManagedCallback);         
+                                       
             encoder.Outputs.ElementAt(outputPort).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
             ((MMALVideoPort)encoder.Outputs.ElementAt(outputPort)).Timeout = timeout;
             ((MMALVideoEncoder)encoder).Split = split;
-            this.StartCapture(connPort);
+
+            this.StartCapture(this.Camera.VideoPort);
                         
             await encoder.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
                                       
             //Wait until the process is complete.            
-            this.StopCapture(connPort);
+            this.StopCapture(this.Camera.VideoPort);
 
             //Disable the image encoder output port.
             encoder.Stop(outputPort);
@@ -143,24 +159,28 @@ namespace MMALSharp
         /// <summary>
         /// Captures a single image from the camera's still port. 
         /// Initializes a standalone MMALImageEncoder using the provided encodingType and quality.        
-        /// </summary>
-        /// <typeparam name="T"></typeparam>        
+        /// </summary>        
         /// <param name="handler"></param>
         /// <param name="encodingType"></param>
         /// <param name="quality"></param>
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
         /// <returns></returns>
-        public async Task TakeSinglePicture(int encodingType = 0, int quality = 0, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakeSinglePicture(ICaptureHandler handler, int encodingType = 0, int quality = 0, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {            
             var camPreviewPort = this.Camera.PreviewPort;
             var camVideoPort = this.Camera.VideoPort;
             var camStillPort = this.Camera.StillPort;
-            
+
+            if (handler == null)
+            {
+                throw new PiCameraError("Handler cannot be null");
+            }
+
             if (this.Encoders.Any(c => c.Connection != null && c.Connection.OutputPort == this.Camera.StillPort && c.GetType() == typeof(MMALImageEncoder)))
             {
                 //Reuse if an Image encoder is already connected to the Still camera port
-                await TakePicture(this.Camera.StillPort, 0);
+                await TakePicture(this.Camera.StillPort, this.Camera.StillPort, handler, useExif, raw, exifTags);
             }
             else
             {
@@ -168,25 +188,37 @@ namespace MMALSharp
                 using (var encoder = new MMALImageEncoder(encodingType, quality))
                 {
                     if (useExif)
+                    {
                         ((MMALImageEncoder)encoder).AddExifTags((MMALImageEncoder)encoder, exifTags);
-
+                    }
+                        
                     //Create connections
                     if (this.Preview == null)
+                    {
                         Helpers.PrintWarning("Preview port does not have a Render component configured. Resulting image will be affected.");
+                    }                        
                     else
                     {
                         if (this.Preview.Connection == null)
+                        {
                             this.Preview.CreateConnection(camPreviewPort);
+                        }                            
                     }
+                    
+                    encoder.Handler = handler;
 
                     encoder.CreateConnection(camStillPort);
 
                     if (raw)
+                    {
                         camStillPort.SetRawCapture(true);
-
+                    }
+                        
                     if (MMALCameraConfig.EnableAnnotate)
+                    {
                         encoder.AnnotateImage();
-
+                    }
+                        
                     int outputPort = 0;
 
                     //Enable the image encoder output port.
@@ -213,16 +245,14 @@ namespace MMALSharp
         
         /// <summary>
         /// Captures a single image from the output port specified. Expects an MMALImageEncoder to be attached.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// </summary>        
         /// <param name="outputPort"></param>
-        /// <param name="handler"></param>
-        /// <param name="encodingType"></param>
+        /// <param name="handler"></param>        
         /// <param name="quality"></param>
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
         /// <returns></returns>
-        public async Task TakePicture(MMALPortImpl connPort, int outputPort, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePicture(MMALPortImpl cameraPort, MMALPortImpl connPort, ICaptureHandler handler, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {
             Console.WriteLine("Preparing to take picture");
             
@@ -232,15 +262,28 @@ namespace MMALSharp
             if (encoder == null || encoder.GetType() != typeof(MMALImageEncoder))
                 throw new PiCameraError("No image encoder currently attached to output port specified");
 
+            if (handler == null)
+            {
+                throw new PiCameraError("Handler cannot be null");
+            }
+
+            encoder.Handler = handler;
+
             if (!encoder.Connection.Enabled)
+            {
                 encoder.Connection.Enable();
-
+            }
+                
             if (useExif)
+            {
                 ((MMALImageEncoder)encoder).AddExifTags((MMALImageEncoder)encoder, exifTags);
-
+            }
+                
             //Create connections
             if (this.Preview == null)
+            {
                 Helpers.PrintWarning("Preview port does not have a Render component configured. Resulting image will be affected.");
+            }                
             else
             {
                 if (this.Preview.Connection == null)
@@ -248,21 +291,27 @@ namespace MMALSharp
             }
 
             if (raw)
+            {
                 this.Camera.StillPort.SetRawCapture(true);
-
+            }
+                
             if (MMALCameraConfig.EnableAnnotate)
+            {
                 encoder.AnnotateImage();
+            }
+                
+            var outputPort = 0;
 
             //Enable the image encoder output port.
             encoder.Start(outputPort, encoder.ManagedCallback);
 
-            this.StartCapture(connPort);
+            this.StartCapture(cameraPort);
 
             //Wait until the process is complete.
             encoder.Outputs.ElementAt(outputPort).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
             await encoder.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
 
-            this.StopCapture(connPort);
+            this.StopCapture(cameraPort);
 
             //Disable the image encoder output port.
             encoder.Stop(outputPort);
@@ -284,16 +333,13 @@ namespace MMALSharp
         /// <param name="iterations"></param>
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
-        public async Task TakePictureIterative(MMALPortImpl connPort, int outputPort, string directory, string extension, int iterations, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePictureIterative(string directory, string extension, int iterations, int encodingType = 0, int quality = 0, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {
             for (int i = 0; i < iterations; i++)
             {
                 var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
-
-                using (var fs = File.Create(filename))
-                {
-                    await TakePicture(connPort, outputPort, useExif, raw, exifTags);
-                }
+                                
+                await TakeSinglePicture(new StreamCaptureResult(File.Create(filename)), encodingType, quality, useExif, raw, exifTags);                
             }
         }
 
@@ -307,16 +353,13 @@ namespace MMALSharp
         /// <param name="timeout"></param>
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
-        public async Task TakePictureTimeout(MMALPortImpl connPort, int outputPort, string directory, string extension, DateTime timeout, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePictureTimeout(string directory, string extension, DateTime timeout, int encodingType = 0, int quality = 0, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {
             while (DateTime.Now.CompareTo(timeout) < 0)
             {
                 var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
-
-                using (var fs = File.Create(filename))
-                {
-                    await TakePicture(connPort, outputPort, useExif, raw, exifTags);
-                }
+                                
+                await TakeSinglePicture(new StreamCaptureResult(File.Create(filename)), encodingType, quality, useExif, raw, exifTags);                
             }
         }
 
@@ -333,7 +376,7 @@ namespace MMALSharp
         /// <param name="raw"></param>
         /// <param name="exifTags"></param>
         /// <returns></returns>
-        public async Task TakePictureTimelapse(MMALPortImpl connPort, int outputPort, string directory, string extension, Timelapse tl, DateTime timeout, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePictureTimelapse(string directory, string extension, Timelapse tl, DateTime timeout, int encodingType = 0, int quality = 0, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {
             int interval = 0;
 
@@ -355,11 +398,8 @@ namespace MMALSharp
                 await Task.Delay(interval);
 
                 var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
-
-                using (var fs = File.Create(filename))
-                {
-                    await TakePicture(connPort, outputPort, useExif, raw, exifTags);
-                }
+                                
+                await TakeSinglePicture(new StreamCaptureResult(File.Create(filename)), encodingType, quality, useExif, raw, exifTags);                
             }
         }
 
@@ -388,7 +428,7 @@ namespace MMALSharp
         /// <param name="encoder"></param>
         /// <param name="outputPort"></param>
         /// <returns></returns>
-        public MMALCamera AddEncoder(MMALEncoderBase encoder, MMALPortImpl outputPort, ICaptureHandler handler)
+        public MMALCamera AddEncoder(MMALEncoderBase encoder, MMALPortImpl outputPort)
         {
             if (MMALCameraConfig.Debug)
                 Console.WriteLine("Adding encoder");
@@ -396,7 +436,7 @@ namespace MMALSharp
             this.RemoveEncoder(outputPort);
 
             encoder.CreateConnection(outputPort);
-            encoder.Handler = handler;
+            
             this.Encoders.Add(encoder);
             return this;
         }

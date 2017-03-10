@@ -84,21 +84,27 @@ public static void Main(string[] args)
         //Alter any configuration properties required.         
         MMALCameraConfig.EnableAnnotate = true;
         MMALCameraConfig.Annotate = new AnnotateImage { ShowDateText = true, ShowTimeText = true };
+		MMALCameraConfig.VideoHeight = 1024;
+        MMALCameraConfig.VideoWidth = 768;
+		
+		//Required for segmented recording
+		MMALCameraConfig.InlineHeaders = true;
 		
         using (MMALCamera cam = MMALCamera.Instance)
 		{
 			//Create our component pipeline. 
-			cam.AddEncoder(new MMALImageEncoder(), cam.Camera.StillPort)
-			   .CreatePreviewComponent(new MMALNullSinkComponent())
-			   .ConfigureCamera();
+			cam.AddEncoder(new MMALVideoEncoder(40), cam.Camera.VideoPort)
+               .AddEncoder(new MMALImageEncoder(), cam.Camera.StillPort)
+               .CreatePreviewComponent(new MMALVideoRenderer())
+               .ConfigureCamera();
 			
 			AsyncContext.Run(async () =>
 			{
-				//Take a picture on output port '0' of the encoder connected to the Camera's still port, sending the output to a filestream.
-				using (var fs = File.Create("/home/pi/test.jpg"))
-				{
-					await cam.TakePicture(cam.Camera.StillPort, 0, new StreamCaptureResult(fs));
-				}                                        
+				//Record video for 1 minute, using segmented video record to split into multiple files every 30 seconds.
+                await cam.TakeVideo(cam.Camera.VideoPort, new StreamCaptureResult(File.Create("/home/pi/testvideo.avi")), DateTime.Now.AddMinutes(1), new Split { Mode = TimelapseMode.Second, Value = 30 });                                     
+				
+				//Take a picture on the camera's still port using the encoder connected to the still port
+                await cam.TakePicture(cam.Camera.StillPort, cam.Camera.StillPort, new StreamCaptureResult(File.Create("/home/pi/testimage1.jpg")));
 			});   
 		}
 }
