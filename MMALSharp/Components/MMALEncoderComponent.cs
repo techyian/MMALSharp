@@ -30,7 +30,7 @@ namespace MMALSharp.Components
 
             input.ShallowCopy(output);
         }
-
+                
         /// <summary>
         /// Annotates the image with various text as specified in the MMALCameraConfig class.
         /// </summary>
@@ -155,6 +155,11 @@ namespace MMALSharp.Components
             }
         }
 
+        public override void Dispose()
+        {
+            this.Handler.Dispose();
+            base.Dispose();
+        }
     }
         
     /// <summary>
@@ -179,16 +184,22 @@ namespace MMALSharp.Components
         /// MJPEG encoding - Uses same quality scale as JPEG encoder (Lowest: 1  Highest: 100)
         /// </summary>
         public int Quality { get; set; }
-
-        public byte[] HeaderData { get; set; }
-
+                
         public MMALPortImpl InputPort { get; set; }
         public MMALPortImpl OutputPort { get; set; }
 
         public const int MaxBitrateMJPEG = 25000000; // 25Mbits/s
         public const int MaxBitrateLevel4 = 25000000; // 25Mbits/s
         public const int MaxBitrateLevel42 = 62500000; // 62.5Mbits/s
-        
+
+        public Split Split { get; set; }
+        public DateTime? LastSplit { get; set; }
+        /// <summary>
+        /// Property to indicate whether on the next callback we should split. This is used so that we can request an I-Frame from the camera
+        /// and this can be applied on the next run to the newly created file.
+        /// </summary>
+        public bool PrepareSplit { get; set; }
+
         public MMALVideoEncoder(int encodingType, int bitrate, int framerate, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
         {            
             if (encodingType > 0)
@@ -207,6 +218,8 @@ namespace MMALSharp.Components
         {            
             this.Initialize();
         }
+
+        
 
         public override void Initialize()
         {        
@@ -297,6 +310,38 @@ namespace MMALSharp.Components
             
             this.ConfigureQuantisationParameter();
             this.ConfigureImmutableInput();
+        }
+
+        /// <summary>
+        /// Delegate to process the buffer header containing image data
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="port"></param>
+        public override void ManagedCallback(MMALBufferImpl buffer, MMALPortBase port)
+        {
+            var data = buffer.GetBufferData();
+
+            if (this.PrepareSplit)
+            {
+                this.Handler.Split();
+                this.LastSplit = DateTime.Now;
+                this.PrepareSplit = false;
+            }
+
+            //Ensure that if we need to split then this is done before processing the buffer data.
+            if (this.Split != null)
+            {
+                if (!this.LastSplit.HasValue)
+                    this.LastSplit = DateTime.Now;
+
+                if (DateTime.Now.CompareTo(this.CalculateSplit()) > 0)
+                {
+                    this.PrepareSplit = true;
+                    port.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_REQUEST_I_FRAME, true);                    
+                }
+            }
+
+            this.Handler.Process(data);
         }
 
         internal void ConfigureRateControl()
@@ -391,11 +436,21 @@ namespace MMALSharp.Components
 
         }
 
-        public override void ManagedCallback(MMALBufferImpl buffer, MMALPortBase port)
-        {            
-            base.ManagedCallback(buffer, port);
-        }
-
+        private DateTime CalculateSplit()
+        {
+            DateTime tempDt = new DateTime(this.LastSplit.Value.Ticks);
+            switch (this.Split.Mode)
+            {
+                case TimelapseMode.Millisecond:
+                    return tempDt.AddMilliseconds(this.Split.Value);
+                case TimelapseMode.Second:
+                    return tempDt.AddSeconds(this.Split.Value);
+                case TimelapseMode.Minute:
+                    return tempDt.AddMinutes(this.Split.Value);
+                default:
+                    return tempDt.AddMinutes(this.Split.Value);
+            }
+        }        
     }
 
     /// <summary>

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.Handlers
 {
-    public interface ICaptureHandler
+    public interface ICaptureHandler : IDisposable
     {
         void Process(byte[] data);
         bool CanSplit();
-        void Split(string fileNameConstant);
+        void Split();
         string GetDirectory();
         void PostProcess();
     }

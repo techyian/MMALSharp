@@ -93,7 +93,7 @@ namespace MMALSharp
         /// <param name="timeout"></param>
         /// <param name="split"></param>
         /// <returns></returns>
-        public async Task TakeVideo(MMALPortImpl connPort, int outputPort, ICaptureHandler handler, DateTime? timeout = null, Split split = null)
+        public async Task TakeVideo(MMALPortImpl connPort, int outputPort, DateTime? timeout = null, Split split = null)
         {
             var encoder = this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == connPort).FirstOrDefault();
 
@@ -113,10 +113,10 @@ namespace MMALSharp
             }
 
             //Enable the video encoder output port.
-            encoder.Start(outputPort, encoder.ManagedCallback, handler);                        
+            encoder.Start(outputPort, encoder.ManagedCallback);                        
             encoder.Outputs.ElementAt(outputPort).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
             ((MMALVideoPort)encoder.Outputs.ElementAt(outputPort)).Timeout = timeout;
-            ((MMALVideoPort)encoder.Outputs.ElementAt(outputPort)).Split = split;
+            ((MMALVideoEncoder)encoder).Split = split;
             this.StartCapture(connPort);
                         
             await encoder.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
@@ -131,7 +131,7 @@ namespace MMALSharp
             encoder.Connection.Disable();
             encoder.CleanEncoderPorts();
 
-            handler.PostProcess();
+            encoder.Handler.PostProcess();
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace MMALSharp
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
         /// <returns></returns>
-        public async Task TakeSinglePicture(ICaptureHandler handler, int encodingType = 0, int quality = 0, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakeSinglePicture(int encodingType = 0, int quality = 0, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {            
             var camPreviewPort = this.Camera.PreviewPort;
             var camVideoPort = this.Camera.VideoPort;
@@ -154,7 +154,7 @@ namespace MMALSharp
             if (this.Encoders.Any(c => c.Connection != null && c.Connection.OutputPort == this.Camera.StillPort && c.GetType() == typeof(MMALImageEncoder)))
             {
                 //Reuse if an Image encoder is already connected to the Still camera port
-                await TakePicture(this.Camera.StillPort, 0, handler);
+                await TakePicture(this.Camera.StillPort, 0);
             }
             else
             {
@@ -184,7 +184,7 @@ namespace MMALSharp
                     int outputPort = 0;
 
                     //Enable the image encoder output port.
-                    encoder.Start(outputPort, encoder.ManagedCallback, handler);
+                    encoder.Start(outputPort, encoder.ManagedCallback);
 
                     this.StartCapture(camStillPort);
 
@@ -200,7 +200,7 @@ namespace MMALSharp
                     //Close open connections.                
                     encoder.Connection.Destroy();
 
-                    handler.PostProcess();
+                    encoder.Handler.PostProcess();
                 }
             }                        
         }
@@ -216,7 +216,7 @@ namespace MMALSharp
         /// <param name="useExif"></param>
         /// <param name="exifTags"></param>
         /// <returns></returns>
-        public async Task TakePicture(MMALPortImpl connPort, int outputPort, ICaptureHandler handler, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePicture(MMALPortImpl connPort, int outputPort, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
         {
             Console.WriteLine("Preparing to take picture");
             
@@ -248,7 +248,7 @@ namespace MMALSharp
                 encoder.AnnotateImage();
 
             //Enable the image encoder output port.
-            encoder.Start(outputPort, encoder.ManagedCallback, handler);
+            encoder.Start(outputPort, encoder.ManagedCallback);
 
             this.StartCapture(connPort);
 
@@ -265,7 +265,7 @@ namespace MMALSharp
             encoder.Connection.Disable();
             encoder.CleanEncoderPorts();
 
-            handler.PostProcess();
+            encoder.Handler.PostProcess();
         }
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace MMALSharp
 
                 using (var fs = File.Create(filename))
                 {
-                    await TakePicture(connPort, outputPort, new StreamCaptureResult(fs), useExif, raw, exifTags);
+                    await TakePicture(connPort, outputPort, useExif, raw, exifTags);
                 }
             }
         }
@@ -309,7 +309,7 @@ namespace MMALSharp
 
                 using (var fs = File.Create(filename))
                 {
-                    await TakePicture(connPort, outputPort, new StreamCaptureResult(fs), useExif, raw, exifTags);
+                    await TakePicture(connPort, outputPort, useExif, raw, exifTags);
                 }
             }
         }
@@ -352,7 +352,7 @@ namespace MMALSharp
 
                 using (var fs = File.Create(filename))
                 {
-                    await TakePicture(connPort, outputPort, new StreamCaptureResult(fs), useExif, raw, exifTags);
+                    await TakePicture(connPort, outputPort, useExif, raw, exifTags);
                 }
             }
         }
@@ -382,7 +382,7 @@ namespace MMALSharp
         /// <param name="encoder"></param>
         /// <param name="outputPort"></param>
         /// <returns></returns>
-        public MMALCamera AddEncoder(MMALEncoderBase encoder, MMALPortImpl outputPort)
+        public MMALCamera AddEncoder(MMALEncoderBase encoder, MMALPortImpl outputPort, ICaptureHandler handler)
         {
             if (MMALCameraConfig.Debug)
                 Console.WriteLine("Adding encoder");
@@ -390,6 +390,7 @@ namespace MMALSharp
             this.RemoveEncoder(outputPort);
 
             encoder.CreateConnection(outputPort);
+            encoder.Handler = handler;
             this.Encoders.Add(encoder);
             return this;
         }

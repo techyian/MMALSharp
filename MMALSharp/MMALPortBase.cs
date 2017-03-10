@@ -142,12 +142,7 @@ namespace MMALSharp
         /// Delegate we use to do further processing on buffer headers when they're received by the native callback delegate
         /// </summary>
         public Action<MMALBufferImpl, MMALPortBase> ManagedCallback { get; set; }
-
-        /// <summary>
-        /// The handler to process the final data
-        /// </summary>
-        public ICaptureHandler Handler { get; set; }
-
+                
         protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp)
         {
             this.Ptr = ptr;
@@ -158,9 +153,14 @@ namespace MMALSharp
         /// <summary>
         /// Provides functionality to enable processing on a port.
         /// </summary>
-        /// <param name="managedCallback"></param>
-        /// <param name="processCallback"></param>
-        internal virtual void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, ICaptureHandler handler) { }
+        /// <param name="managedCallback"></param>        
+        internal virtual void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback) { }
+        
+        /// <summary>
+        /// Represents the native callback method that's called by MMAL
+        /// </summary>
+        /// <param name="port"></param>
+        /// <param name="buffer"></param>
         internal virtual void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer) { }
 
         /// <summary>

@@ -95,7 +95,7 @@ namespace MMALSharp.Components
             if (MMALCameraConfig.SetChangeEventRequest)
                 this.Control.SetChangeEventRequest(eventRequest);
 
-            this.Control.EnablePort(CameraControlCallback, null);
+            this.Control.EnablePort(CameraControlCallback);
             
             var camConfig = new MMAL_PARAMETER_CAMERA_CONFIG_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_CAMERA_CONFIG, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_CONFIG_T>()),
                                                                 this.CameraInfo.MaxWidth,

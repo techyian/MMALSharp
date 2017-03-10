@@ -11,14 +11,16 @@ namespace MMALSharp.Handlers
     /// <summary>
     /// Processes the image data to a stream.
     /// </summary>
-    public class StreamCaptureResult : ICaptureHandler, IDisposable
+    public class StreamCaptureResult : ICaptureHandler
     {
         private Stream _stream;
         private int _processed;
+        private string _origFilename;
 
         public StreamCaptureResult(Stream stream)
         {
             this._stream = stream;
+            this._origFilename = this.GetFilename();
         }
                 
         public void Process(byte[] data)
@@ -46,12 +48,12 @@ namespace MMALSharp.Handlers
             return false;
         }
 
-        public void Split(string fileNameConstant)
+        public void Split()
         {
-            if(this.CanSplit() && !string.IsNullOrEmpty(fileNameConstant))
+            if(this.CanSplit())
             {
                 this._stream.Dispose();
-                this._stream = File.Create(this.GetDirectory() + "/" + fileNameConstant + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + this.GetExtension());
+                this._stream = File.Create(this.GetDirectory() + "/" + this._origFilename + " " + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + this.GetExtension());
             }
         }
 
@@ -69,6 +71,15 @@ namespace MMALSharp.Handlers
             if (this._stream.GetType() == typeof(FileStream))
             {
                 return Path.GetExtension(((FileStream)this._stream).Name);
+            }
+            return null;
+        }
+
+        private string GetFilename()
+        {
+            if (this._stream.GetType() == typeof(FileStream))
+            {
+                return Path.GetFileNameWithoutExtension(((FileStream)this._stream).Name);
             }
             return null;
         }

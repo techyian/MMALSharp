@@ -329,9 +329,8 @@ namespace MMALSharp
 
     public class Split
     {
-        public int SplitMinutes { get; set; }
-        public string Filename { get; set; }
-        public DateTime? LastSplit { get; set; }
+        public int Value { get; set; }
+        public TimelapseMode Mode { get; set; }        
     }
 
     public enum TimelapseMode
