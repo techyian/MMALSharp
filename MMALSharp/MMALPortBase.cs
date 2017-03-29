@@ -180,22 +180,17 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Commit format changes on a port.        
+        /// Commit format changes on this port.        
         /// </summary>
         internal void Commit()
         {
             MMALCheck(MMALPort.mmal_port_format_commit(this.Ptr), "Unable to commit port changes.");
         }
-
-        internal static void Commit(MMAL_PORT_T* ptr)
-        {
-            MMALCheck(MMALPort.mmal_port_format_commit(ptr), "Unable to commit port changes.");
-        }
-
+        
         /// <summary>
         /// Shallow copy a format structure. It is worth noting that the extradata buffer will not be copied in the new format.
         /// </summary>
-        /// <param name="destination"></param>
+        /// <param name="destination">The destination port we're copying to</param>
         internal void ShallowCopy(MMALPortBase destination)
         {
             MMALFormat.mmal_format_copy(destination.Ptr->Format, this.Ptr->Format);
@@ -204,7 +199,7 @@ namespace MMALSharp
         /// <summary>
         /// Fully copy a format structure, including the extradata buffer.
         /// </summary>
-        /// <param name="destination"></param>
+        /// <param name="destination">The destination port we're copying to</param>
         internal void FullCopy(MMALPortBase destination)
         {
             MMALFormat.mmal_format_full_copy(destination.Ptr->Format, this.Ptr->Format);

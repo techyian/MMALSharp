@@ -23,7 +23,7 @@ namespace MMALSharpExample
             MMALCameraConfig.VideoWidth = 768;
             MMALCameraConfig.Debug = true;
             MMALCameraConfig.InlineHeaders = true;
-
+                                                
             using (MMALCamera cam = MMALCamera.Instance)
             {
                 //Create our component pipeline.                
@@ -38,7 +38,7 @@ namespace MMALSharpExample
                     await cam.TakeVideo(cam.Camera.VideoPort, new StreamCaptureResult(File.Create("/home/pi/testvideo.avi")), DateTime.Now.AddMinutes(1), new Split { Mode = TimelapseMode.Second, Value = 30 });
 
                     //Take multiple pictures every 20 seconds for 1 hour as a timelapse. 
-                    await cam.TakePictureTimelapse("/home/pi/timelapse", "jpg", new Timelapse { Mode = TimelapseMode.Second, Value = 20 }, DateTime.Now.AddHours(1));
+                    await cam.TakePictureTimelapse("/home/pi/timelapse", "jpg", new Timelapse { Mode = TimelapseMode.Second, Value = 20, Timeout = DateTime.Now.AddHours(1) });
 
                     //Take a picture on the camera's still port using the encoder connected to the still port
                     await cam.TakePicture(cam.Camera.StillPort, cam.Camera.StillPort, new StreamCaptureResult(File.Create("/home/pi/testimage1.jpg")));

@@ -85,8 +85,8 @@ namespace MMALSharp
         /// <summary>
         /// Provides a facility to get data from the port using the native helper functions
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="ptr"></param>
+        /// <param name="port">The port to get the parameter from</param>
+        /// <param name="key">The unique key for the parameter</param>
         /// <returns></returns>
         public unsafe static dynamic GetParameter(this MMALPortBase port, int key)
         {
@@ -134,9 +134,9 @@ namespace MMALSharp
         /// <summary>
         /// Provides a facility to set data on the port using the native helper functions
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        /// <param name="ptr"></param>
+        /// <param name="port">The port we want to set the parameter on</param>
+        /// <param name="key">The unique key of the parameter</param>
+        /// <param name="value">The value of the parameter</param>
         public unsafe static void SetParameter(this MMALPortBase port, int key, dynamic value)
         {
             if (MMALCameraConfig.Debug)

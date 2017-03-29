@@ -35,7 +35,7 @@ namespace MMALSharp
         /// <summary>
         /// Get a MMAL_BUFFER_HEADER_T from a queue
         /// </summary>
-        /// <param name="ptr"></param>
+        /// <param name="ptr">The queue to get a buffer from</param>
         /// <returns></returns>
         internal static MMALBufferImpl GetBuffer(MMAL_QUEUE_T* ptr)
         {

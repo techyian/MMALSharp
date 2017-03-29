@@ -42,8 +42,8 @@ namespace MMALSharp
         /// <summary>
         /// Resize a pool of MMAL_BUFFER_HEADER_T. This allows modifying either the number of allocated buffers, the payload size or both at the same time.
         /// </summary>
-        /// <param name="numHeaders"></param>
-        /// <param name="size"></param>
+        /// <param name="numHeaders">Number of headers to be contained in this pool</param>
+        /// <param name="size">The size of the headers</param>
         internal void Resize(uint numHeaders, uint size)
         {
             MMALCheck(MMALPool.mmal_pool_resize(this.Ptr, numHeaders, size), "Unable to resize pool");

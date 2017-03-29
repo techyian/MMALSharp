@@ -127,6 +127,9 @@ namespace MMALSharp.Components
             }
         }
 
+        /// <summary>
+        /// Helper method to destroy any port pools still in action. Failure to do this will cause MMAL to block indefinitely.
+        /// </summary>
         internal void CleanEncoderPorts()
         {
             //See if any pools need disposing before destroying component.
@@ -211,14 +214,20 @@ namespace MMALSharp.Components
         public MMALVideoEncoder(int encodingType, int bitrate, int framerate, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
         {            
             if (encodingType > 0)
+            {
                 this.EncodingType = encodingType;
-
+            }
+                
             if (bitrate > 0)
+            {
                 this.Bitrate = bitrate;
-
+            }
+                
             if (framerate > 0)
+            {
                 this.Framerate = framerate;
-
+            }
+                
             this.Initialize();
         }
 
@@ -226,9 +235,7 @@ namespace MMALSharp.Components
         {            
             this.Initialize();
         }
-
         
-
         public override void Initialize()
         {        
             if(this.EncodingType != MMALEncodings.MMAL_ENCODING_H264 && this.EncodingType != MMALEncodings.MMAL_ENCODING_MJPEG)
@@ -323,8 +330,8 @@ namespace MMALSharp.Components
         /// <summary>
         /// Delegate to process the buffer header containing image data
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="port"></param>
+        /// <param name="buffer">The buffer header we're currently processing</param>
+        /// <param name="port">The port we're currently processing on</param>
         public override void ManagedCallback(MMALBufferImpl buffer, MMALPortBase port)
         {
             var data = buffer.GetBufferData();
@@ -340,8 +347,10 @@ namespace MMALSharp.Components
             if (this.Split != null)
             {
                 if (!this.LastSplit.HasValue)
+                {
                     this.LastSplit = DateTime.Now;
-
+                }
+                    
                 if (DateTime.Now.CompareTo(this.CalculateSplit()) > 0)
                 {                    
                     this.PrepareSplit = true;
@@ -361,7 +370,9 @@ namespace MMALSharp.Components
         internal void ConfigureIntraPeriod()
         {
             if(this.EncodingType == MMALEncodings.MMAL_ENCODING_H264 && MMALCameraConfig.IntraPeriod != -1)
+            {
                 this.OutputPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_INTRAPERIOD, MMALCameraConfig.IntraPeriod);
+            }                
         }
 
         internal void ConfigureQuantisationParameter()
@@ -416,8 +427,10 @@ namespace MMALSharp.Components
 
         internal void ConfigureInlineVectorsFlag()
         {
-            if (this.EncodingType == MMALEncodings.MMAL_ENCODING_H264)            
-                this.OutputPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INLINE_VECTORS, MMALCameraConfig.InlineMotionVectors);            
+            if (this.EncodingType == MMALEncodings.MMAL_ENCODING_H264)
+            {
+                this.OutputPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INLINE_VECTORS, MMALCameraConfig.InlineMotionVectors);
+            }                                       
         }
 
         internal void ConfigureIntraRefresh()
@@ -498,9 +511,15 @@ namespace MMALSharp.Components
         public MMALImageEncoder(int encodingType, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
         {            
             if (encodingType > 0)
+            {
                 this.EncodingType = encodingType;
+            }
+                
             if(quality > 0)
+            {
                 this.Quality = quality;
+            }
+                
             this.Initialize();
         }
 
@@ -538,15 +557,17 @@ namespace MMALSharp.Components
             output.Commit();
                         
             if (this.EncodingType == MMALEncodings.MMAL_ENCODING_JPEG)
+            {
                 output.SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, this.Quality);
+            }
+                
         }
         
         /// <summary>
         /// Adds EXIF tags to the resulting image
-        /// </summary>
-        /// <param name="encoder"></param>
-        /// <param name="exifTags"></param>                     
-        internal void AddExifTags(MMALImageEncoder encoder, params ExifTag[] exifTags)
+        /// </summary>        
+        /// <param name="exifTags">A list of user defined EXIF tags</param>                     
+        internal void AddExifTags(params ExifTag[] exifTags)
         {
             //Add the same defaults as per Raspistill.c
             List<ExifTag> defaultTags = new List<ExifTag>
@@ -558,30 +579,34 @@ namespace MMALSharp.Components
                 new ExifTag { Key = "IFD0.DateTime", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") }
             };
 
-            defaultTags.ForEach(c => encoder.AddExifTag(c));
+            defaultTags.ForEach(c => this.AddExifTag(c));
 
             if ((defaultTags.Count + exifTags.Length) > 32)
+            {
                 throw new PiCameraError("Maximum number of EXIF tags exceeded.");
-
+            }
+                
             //Add user defined tags.                 
             foreach (ExifTag tag in exifTags)
             {
-                encoder.AddExifTag(tag);
+                this.AddExifTag(tag);
             }
         }
 
         /// <summary>
         /// Provides a facility to add an EXIF tag to the image. 
         /// </summary>
-        /// <param name="exifTag"></param>
+        /// <param name="exifTag">The EXIF tag to add to</param>
         internal unsafe void AddExifTag(ExifTag exifTag)
         {
             this.SetDisableExif(false);            
             var formattedExif = exifTag.Key + "=" + exifTag.Value + char.MinValue;
           
             if (formattedExif.Length > MaxExifPayloadLength)
+            {
                 throw new PiCameraError("EXIF payload greater than allowed max.");
-            
+            }
+                            
             var bytes = Encoding.ASCII.GetBytes(formattedExif);
             
             IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_EXIF_T>() + (bytes.Length - 1));

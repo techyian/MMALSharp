@@ -85,7 +85,7 @@ namespace MMALSharp
         /// <summary>
         /// Provides a facility to create a component with a given name
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">The name of the component to create</param>
         /// <returns></returns>
         private static MMAL_COMPONENT_T* CreateComponent(string name)
         {

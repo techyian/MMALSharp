@@ -108,8 +108,8 @@ namespace MMALSharp
         /// <summary>
         /// Facility to create a connection between two port objects
         /// </summary>
-        /// <param name="output"></param>
-        /// <param name="input"></param>
+        /// <param name="output">The output port of the connection</param>
+        /// <param name="input">The input port of the connection</param>
         /// <returns></returns>
         internal static MMALConnectionImpl CreateConnection(MMALPortBase output, MMALPortBase input)
         {

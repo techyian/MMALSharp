@@ -44,7 +44,7 @@ namespace MMALSharp.Components
             {
                 for (int i = 0; i < this.Ptr->InputNum; i++)
                 {
-                    Inputs.Add(new MMALPortImpl(&(*this.Ptr->Input[i]), this));
+                    this.Inputs.Add(new MMALPortImpl(&(*this.Ptr->Input[i]), this));
                 }
             }
 
@@ -52,7 +52,7 @@ namespace MMALSharp.Components
             {
                 for (int i = 0; i < this.Ptr->OutputNum; i++)
                 {
-                    Outputs.Add(new MMALPortImpl(&(*this.Ptr->Output[i]), this));
+                    this.Outputs.Add(new MMALPortImpl(&(*this.Ptr->Output[i]), this));
                 }
             }
 

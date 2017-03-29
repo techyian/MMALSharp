@@ -3,18 +3,18 @@
 MMALSharp is an unofficial C# API for the Raspberry Pi camera. It is currently an early experimental build which features the ability to 
 take pictures with your Raspberry Pi. Under the hood, MMALSharp makes use of the native MMAL interface designed by Broadcom.
 
-##Goals
+## Goals
 
 My goal for the project is to provide a fully functional API to the Raspberry Pi camera, supporting Still image capture, Video capture and Preview rendering.
 I aim to allow users the ability to build up their own component pipeline with respective encoders/decoders in an easy to use manner, adhering to what is 
 possible via MMAL. 
 
-##Install Mono
+## Install Mono
 
 In order for the Raspberry Pi to run C# programs, you will need to install Mono. Installation differs between the original Model A/B/B+/Zero boards and
 the newer Pi Model B 2/3 boards running the ARMV7/8 chipsets.
 
-###Model A/B/B+/Zero
+### Model A/B/B+/Zero
 
 The version of Mono currently available in the Raspbian repositories is 3.2.8 and isn't compatible with this library. Therefore, we need to do a few
 extra steps to get a compatible version installed. Luckily, member 'plugwash' from the Raspberry Pi forums has built a version of Mono and provided a
@@ -29,7 +29,7 @@ In order to install the required version, please open a console window and follo
 
 Once completed, if you run `mono --version` from your command window, you should see the mono version 4.0.2 returned.
 
-###Model B 2/3
+### Model B 2/3
 
 Using a later model of the Raspberry Pi allows you to install the latest Mono version from the Mono repositories without issue. To do so, please follow the below steps:
 
@@ -41,7 +41,7 @@ sudo apt-get install mono-complete
 ```
 
 
-##Building
+## Building
 
 The project is currently targeting .NET framework 4.5.2, and therefore requires Mono 4.x.
 
@@ -66,7 +66,7 @@ dos2unix ./build.sh
 
 Once the library has built, you can reference it as a project within your application.
 
-##Basic Usage
+## Basic Usage
 
 Using the library is relatively simple. If you want to change any of the default configuration settings, this can be done by modifying the 
 properties within `MMALCameraConfig`. The main class `MMALCamera` which interfaces to the rest of the functionality the library provides is 
@@ -111,7 +111,7 @@ public static void Main(string[] args)
 
 ```
 
-##Status
+## Status
 
 So far, the library has been tested on the following Raspberry Pi devices:
 
@@ -146,12 +146,12 @@ Tested image 'still' features:
 - [x] EXIF tags
 - [x] Raw capture
 
-##Notes
+## Notes
 
 When using more resource intensive encoders such as MMAL_ENCODING_BMP and the Sony IMX219 module, I've found it necessary to increase the memory split
 to around 200mb or otherwise you'll receive an ENOSPC error due to insufficient resources.
 
-##License
+## License
 
 MIT license 
 
@@ -159,7 +159,7 @@ Copyright (c) 2017 Ian Auty
 
 Raspberry Pi is a trademark of the Raspberry Pi Foundation
 
-##Special thanks
+## Special thanks
 
 Dave Jones [@waveform80](https://github.com/waveform80) - your Python header conversions have saved me numerous hours so far. 
 Thank you very much.

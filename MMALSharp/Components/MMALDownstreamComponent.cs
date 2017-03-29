@@ -33,7 +33,7 @@ namespace MMALSharp.Components
         /// <summary>
         /// Provides a facility to create a connection between this component and an upstream component's output port.
         /// </summary>
-        /// <param name="output"></param>
+        /// <param name="output">The output port we're connecting this downstream component to</param>
         public void CreateConnection(MMALPortBase output)
         {
             if (MMALCameraConfig.Debug)
@@ -44,8 +44,8 @@ namespace MMALSharp.Components
         /// <summary>
         /// Delegate to process the buffer header containing image data
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="port"></param>
+        /// <param name="buffer">The current buffer header being processed</param>
+        /// <param name="port">The port we're currently processing on</param>
         public virtual void ManagedCallback(MMALBufferImpl buffer, MMALPortBase port)
         {
             var data = buffer.GetBufferData();

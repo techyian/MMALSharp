@@ -12,7 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace MMALSharp
-{
+{    
     /// <summary>
     /// This class provides an interface to the Raspberry Pi camera module. 
     /// </summary>
@@ -81,16 +81,23 @@ namespace MMALSharp
             if (port == this.Camera.StillPort || this.Encoders.Any(c => c.Enabled))
                 port.SetImageCapture(false);
         }
+        
+        /// <summary>
+        /// Force capture to stop on a port (Still or Video)
+        /// </summary>
+        /// <param name="port">The capture port</param>
+        public void ForceStop(MMALPortImpl port)
+        {
+            port.Trigger.Signal();
+        }        
 
         /// <summary>
-        /// Record video for a specified amount of time. To separate recording into multiple files, use the split parameter
-        /// passing in the number of minutes each split should occur after, and also a constant filename (this will be appended with a datetime during split).
+        /// Record video for a specified amount of time. 
         /// </summary>        
-        /// <param name="connPort"></param>
-        /// <param name="outputPort"></param>
-        /// <param name="handler"></param>
-        /// <param name="timeout"></param>
-        /// <param name="split"></param>
+        /// <param name="connPort">Port the encoder is connected to</param>        
+        /// <param name="handler">The capture handler for this capture method</param>
+        /// <param name="timeout">A timeout to stop the video capture</param>
+        /// <param name="split">Used for Segmented video mode</param>
         /// <returns></returns>
         public async Task TakeVideo(MMALPortImpl connPort, ICaptureHandler handler, DateTime? timeout = null, Split split = null)
         {
@@ -107,7 +114,7 @@ namespace MMALSharp
             }
                 
             encoder.Handler = handler;
-
+            
             if (!encoder.Connection.Enabled)
             {
                 encoder.Connection.Enable();
@@ -136,6 +143,7 @@ namespace MMALSharp
             encoder.Start(outputPort, encoder.ManagedCallback);         
                                        
             encoder.Outputs.ElementAt(outputPort).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+            
             ((MMALVideoPort)encoder.Outputs.ElementAt(outputPort)).Timeout = timeout;
             ((MMALVideoEncoder)encoder).Split = split;
 
@@ -160,13 +168,14 @@ namespace MMALSharp
         /// Captures a single image from the camera's still port. 
         /// Initializes a standalone MMALImageEncoder using the provided encodingType and quality.        
         /// </summary>        
-        /// <param name="handler"></param>
-        /// <param name="encodingType"></param>
-        /// <param name="quality"></param>
-        /// <param name="useExif"></param>
-        /// <param name="exifTags"></param>
+        /// <param name="handler">The capture handler for this capture method</param>
+        /// <param name="encodingType">The image encoding type</param>
+        /// <param name="quality">Quality of the image (valid only for JPEG)</param>
+        /// <param name="raw">Include raw bayer metadeta in the capture</param>        
+        /// <param name="useExif">Specify whether to include EXIF tags in the capture</param>
+        /// <param name="exifTags">Custom EXIF tags to use in the capture</param>
         /// <returns></returns>
-        public async Task TakeSinglePicture(ICaptureHandler handler, int encodingType = 0, int quality = 0, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakeSinglePicture(ICaptureHandler handler, int encodingType = 0, int quality = 0, bool raw = false, bool useExif = true, params ExifTag[] exifTags)
         {            
             var camPreviewPort = this.Camera.PreviewPort;
             var camVideoPort = this.Camera.VideoPort;
@@ -189,7 +198,7 @@ namespace MMALSharp
                 {
                     if (useExif)
                     {
-                        ((MMALImageEncoder)encoder).AddExifTags((MMALImageEncoder)encoder, exifTags);
+                        ((MMALImageEncoder)encoder).AddExifTags(exifTags);
                     }
                         
                     //Create connections
@@ -242,17 +251,18 @@ namespace MMALSharp
                 }
             }                        
         }
-        
+
         /// <summary>
         /// Captures a single image from the output port specified. Expects an MMALImageEncoder to be attached.
         /// </summary>        
-        /// <param name="outputPort"></param>
-        /// <param name="handler"></param>        
-        /// <param name="quality"></param>
-        /// <param name="useExif"></param>
-        /// <param name="exifTags"></param>
+        /// <param name="cameraPort">The port that is currently capturing images (Still or Video)</param>
+        /// <param name="connPort">The port our encoder is attached to</param>
+        /// <param name="handler">The handler to use for this capture method</param>
+        /// <param name="raw">Include raw bayer metadeta in the capture</param>        
+        /// <param name="useExif">Specify whether to include EXIF tags in the capture</param>
+        /// <param name="exifTags">Custom EXIF tags to use in the capture</param>
         /// <returns></returns>
-        public async Task TakePicture(MMALPortImpl cameraPort, MMALPortImpl connPort, ICaptureHandler handler, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePicture(MMALPortImpl cameraPort, MMALPortImpl connPort, ICaptureHandler handler, bool raw = false, bool useExif = true, params ExifTag[] exifTags)
         {
             Console.WriteLine("Preparing to take picture");
             
@@ -276,7 +286,7 @@ namespace MMALSharp
                 
             if (useExif)
             {
-                ((MMALImageEncoder)encoder).AddExifTags((MMALImageEncoder)encoder, exifTags);
+                ((MMALImageEncoder)encoder).AddExifTags(exifTags);
             }
                 
             //Create connections
@@ -326,61 +336,67 @@ namespace MMALSharp
         /// <summary>
         /// Takes a number of images as specified by the iterations parameter.
         /// </summary>
-        /// <param name="directory"></param>
-        /// <param name="extension"></param>
-        /// <param name="encodingType"></param>
-        /// <param name="quality"></param>
-        /// <param name="iterations"></param>
-        /// <param name="useExif"></param>
-        /// <param name="exifTags"></param>
-        public async Task TakePictureIterative(string directory, string extension, int iterations, int encodingType = 0, int quality = 0, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        /// <param name="directory">The directory to save our image</param>
+        /// <param name="extension">The file extension of our image</param>
+        /// <param name="iterations">Number of pictures to take</param>
+        /// <param name="encodingType">The encoding type to use</param>
+        /// <param name="quality">The quality of the image (Valid for JPEG)</param>
+        /// <param name="raw">Include raw bayer metadeta in the capture</param>        
+        /// <param name="useExif">Specify whether to include EXIF tags in the capture</param>
+        /// <param name="exifTags">Custom EXIF tags to use in the capture</param>
+        public async Task TakePictureIterative(string directory, string extension, int iterations, int encodingType = 0, int quality = 0, bool raw = false, bool useExif = true, params ExifTag[] exifTags)
         {
             for (int i = 0; i < iterations; i++)
             {
                 var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
                                 
-                await TakeSinglePicture(new StreamCaptureResult(File.Create(filename)), encodingType, quality, useExif, raw, exifTags);                
+                await TakeSinglePicture(new StreamCaptureResult(File.Create(filename)), encodingType, quality, raw, useExif, exifTags);                
             }
         }
 
         /// <summary>
         /// Takes images until the moment specified in the timeout parameter has been met.
         /// </summary>
-        /// <param name="directory"></param>
-        /// <param name="extension"></param>
-        /// <param name="encodingType"></param>
-        /// <param name="quality"></param>
-        /// <param name="timeout"></param>
-        /// <param name="useExif"></param>
-        /// <param name="exifTags"></param>
-        public async Task TakePictureTimeout(string directory, string extension, DateTime timeout, int encodingType = 0, int quality = 0, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        /// <param name="directory">The directory to save our image</param>
+        /// <param name="extension">The file extension of our image</param>
+        /// <param name="timeout">Take images until this timeout is hit</param>
+        /// <param name="encodingType">The encoding type to use</param>
+        /// <param name="quality">The quality of the image (Valid for JPEG)</param>
+        /// <param name="raw">Include raw bayer metadeta in the capture</param>        
+        /// <param name="useExif">Specify whether to include EXIF tags in the capture</param>
+        /// <param name="exifTags">Custom EXIF tags to use in the capture</param>
+        public async Task TakePictureTimeout(string directory, string extension, DateTime timeout, int encodingType = 0, int quality = 0, bool raw = false, bool useExif = true, params ExifTag[] exifTags)
         {
             while (DateTime.Now.CompareTo(timeout) < 0)
             {
                 var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
                                 
-                await TakeSinglePicture(new StreamCaptureResult(File.Create(filename)), encodingType, quality, useExif, raw, exifTags);                
+                await TakeSinglePicture(new StreamCaptureResult(File.Create(filename)), encodingType, quality, raw, useExif, exifTags);                
             }
         }
 
         /// <summary>
         /// Takes a timelapse image. You can specify the interval between each image taken and also when the operation should finish.
         /// </summary>
-        /// <param name="directory"></param>
-        /// <param name="extension"></param>
-        /// <param name="encodingType"></param>
-        /// <param name="quality"></param>
-        /// <param name="tl"></param>
-        /// <param name="timeout"></param>
-        /// <param name="useExif"></param>
-        /// <param name="raw"></param>
-        /// <param name="exifTags"></param>
+        /// <param name="directory">The directory to save our image</param>
+        /// <param name="extension">The file extension of our image</param>
+        /// <param name="tl">Specifies settings for the Timelapse</param>
+        /// <param name="encodingType">The encoding type to use</param>
+        /// <param name="quality">The quality of the image (Valid for JPEG)</param>
+        /// <param name="raw">Include raw bayer metadeta in the capture</param>        
+        /// <param name="useExif">Specify whether to include EXIF tags in the capture</param>
+        /// <param name="exifTags">Custom EXIF tags to use in the capture</param>
         /// <returns></returns>
-        public async Task TakePictureTimelapse(string directory, string extension, Timelapse tl, DateTime timeout, int encodingType = 0, int quality = 0, bool useExif = true, bool raw = false, params ExifTag[] exifTags)
+        public async Task TakePictureTimelapse(string directory, string extension, Timelapse tl, int encodingType = 0, int quality = 0, bool raw = false, bool useExif = true, params ExifTag[] exifTags)
         {
             int interval = 0;
 
-            while (DateTime.Now.CompareTo(timeout) < 0)
+            if(tl == null)
+            {
+                throw new PiCameraError("Timelapse object null. This must be initialized for Timelapse mode");
+            }
+
+            while (DateTime.Now.CompareTo(tl.Timeout) < 0)
             {
                 switch (tl.Mode)
                 {
@@ -399,10 +415,15 @@ namespace MMALSharp
 
                 var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
                                 
-                await TakeSinglePicture(new StreamCaptureResult(File.Create(filename)), encodingType, quality, useExif, raw, exifTags);                
+                await TakeSinglePicture(new StreamCaptureResult(File.Create(filename)), encodingType, quality, raw, useExif, exifTags);                
             }
         }
 
+        /// <summary>
+        /// Helper method to create a new preview component
+        /// </summary>
+        /// <param name="renderer">The renderer type</param>
+        /// <returns></returns>
         public MMALCamera CreatePreviewComponent(MMALRendererBase renderer)
         {
             if (this.Preview != null)
@@ -416,6 +437,10 @@ namespace MMALSharp
             return this;
         }
 
+        /// <summary>
+        /// Helper method to create a splitter component
+        /// </summary>
+        /// <returns></returns>
         public MMALCamera CreateSplitterComponent()
         {
             this.Splitter = new MMALSplitterComponent();
@@ -425,14 +450,16 @@ namespace MMALSharp
         /// <summary>
         /// Provides a facility to attach an encoder/decoder component to an upstream component's output port
         /// </summary>
-        /// <param name="encoder"></param>
-        /// <param name="outputPort"></param>
+        /// <param name="encoder">The encoder component to attach to the output port</param>
+        /// <param name="outputPort">The output port to attach to</param>
         /// <returns></returns>
         public MMALCamera AddEncoder(MMALEncoderBase encoder, MMALPortImpl outputPort)
         {
             if (MMALCameraConfig.Debug)
+            {
                 Console.WriteLine("Adding encoder");
-
+            }
+                
             this.RemoveEncoder(outputPort);
 
             encoder.CreateConnection(outputPort);
@@ -441,6 +468,11 @@ namespace MMALSharp
             return this;
         }
 
+        /// <summary>
+        /// Remove an encoder component from an output port
+        /// </summary>
+        /// <param name="outputPort">The output port we are removing an encoder component from</param>
+        /// <returns></returns>
         public MMALCamera RemoveEncoder(MMALPortImpl outputPort)
         {            
             var enc = this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == outputPort).FirstOrDefault();
@@ -448,8 +480,10 @@ namespace MMALSharp
             if (enc != null)
             {
                 if (MMALCameraConfig.Debug)
+                {
                     Console.WriteLine("Removing encoder");
-
+                }
+                    
                 enc.Connection.Destroy();
                 enc.Dispose();
                 this.Encoders.Remove(enc);
@@ -485,8 +519,10 @@ namespace MMALSharp
         public MMALCamera ConfigureCamera()
         {
             if (MMALCameraConfig.Debug)
+            {
                 Console.WriteLine("Configuring camera parameters.");
-
+            }
+                
             this.DisableCamera();
             
             this.SetSaturation(MMALCameraConfig.Saturation);
@@ -517,16 +553,22 @@ namespace MMALSharp
         public void Dispose()
         {
             if (MMALCameraConfig.Debug)
+            {
                 Console.WriteLine("Destroying final components");
-
+            }
+                
             this.Encoders.ForEach(c => c.Dispose());
 
             if (this.Preview != null)
+            {
                 this.Preview.Dispose();
-
+            }
+                
             if (this.Camera != null)
+            {
                 this.Camera.Dispose();
-                         
+            }
+                                         
             BcmHost.bcm_host_deinit();
         }
     }

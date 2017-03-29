@@ -54,6 +54,7 @@
     <Compile Include="Components\MMALEncoderComponent.cs" />
     <Compile Include="Components\MMALSplitterComponent.cs" />
     <Compile Include="Exceptions.cs" />
+    <Compile Include="Handlers\FFmpegCaptureHandler.cs" />
     <Compile Include="Handlers\ICaptureHandler.cs" />
     <Compile Include="Handlers\ProcessResult.cs" />
     <Compile Include="Handlers\StreamCaptureResult.cs" />
@@ -339,7 +340,7 @@
         </Reference>
       </ItemGroup>
     </When>
-  </Choose>
+  </Choose> 
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == 'MonoAndroid'">
       <ItemGroup>
@@ -585,5 +586,5 @@
         </Reference>
       </ItemGroup>
     </When>
-  </Choose>
+  </Choose>  
 </Project>

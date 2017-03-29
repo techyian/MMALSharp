@@ -307,6 +307,7 @@ namespace MMALSharp
     public class Timelapse
     {
         public TimelapseMode Mode { get; set; }
+        public DateTime Timeout { get; set; }
         public int Value { get; set; }
     }
 
