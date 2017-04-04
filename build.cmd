@@ -1,6 +1,7 @@
 @echo off
 cls
 
+SET ROOT=%CD%
 SET PWD=%CD%\build.fsx
 
 echo %PWD%
@@ -18,4 +19,8 @@ if errorlevel 1 (
 
 cd ..
 
-packages\FAKE\tools\FAKE.exe "%PWD%" BuildApp
+packages\FAKE\tools\FAKE.exe "%PWD%" Clean
+packages\FAKE\tools\FAKE.exe "%PWD%" ReleaseApp
+packages\FAKE\tools\FAKE.exe "%PWD%" DebugApp
+
+.paket\paket.exe pack output build templatefile MMALSharp\paket.template

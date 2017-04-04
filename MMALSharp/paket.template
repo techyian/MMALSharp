@@ -1,0 +1,13 @@
+type project
+id MMALSharp
+licenseUrl https://github.com/techyian/MMALSharp
+authors Ian Auty (@Techyian)
+description
+	Unofficial C# API for the Raspberry Pi camera
+
+files
+    ../build ==> lib
+	
+dependencies
+	FAKE ~> 4.50.0
+	Nito.AsyncEx ~> 3.0.1

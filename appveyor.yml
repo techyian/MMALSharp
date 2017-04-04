@@ -1,0 +1,28 @@
+image: Visual Studio 2015
+
+assembly_info:
+  patch: true
+  file: AssemblyInfo.cs
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+
+# prevent the double build when a branch has an active PR
+skip_branch_with_pr: true
+
+build_script:
+- cmd: build.cmd
+
+artifacts:
+- path: build\**\*.nupkg
+
+deploy:
+    # MyGet Deployment for builds & releases
+ - provider: NuGet
+   server: https://www.myget.org/F/mmalsharp/api/v2/package
+   symbol_server: https://www.myget.org/F/mmalsharp/symbols/api/v2/package
+   api_key:
+     secure: xii3+2rue3Dhi6r46YYK4ZkMRBRgoWEkN14JuXY6Eb0VbC61P883hwTR2xZUYY06
+   artifact: /.*\.nupkg/
+   on:
+     branch: master
