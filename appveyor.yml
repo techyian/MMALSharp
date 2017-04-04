@@ -3,9 +3,9 @@ image: Visual Studio 2015
 assembly_info:
   patch: true
   file: AssemblyInfo.cs
-  assembly_version: '{version}'
-  assembly_file_version: '{version}'
-  assembly_informational_version: '{version}'
+  assembly_version: '{version}-alpha.{build}'
+  assembly_file_version: '{version}-alpha.{build}'
+  assembly_informational_version: '{version}-alpha.{build}'
 
 # prevent the double build when a branch has an active PR
 skip_branch_with_pr: true
