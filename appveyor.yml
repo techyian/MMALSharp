@@ -1,4 +1,4 @@
-version: 1.0.{build}
+version: $(appveyor_build_version)
 image: Visual Studio 2015
 
 assembly_info:
