@@ -175,7 +175,7 @@ namespace MMALSharp
         /// <param name="useExif">Specify whether to include EXIF tags in the capture</param>
         /// <param name="exifTags">Custom EXIF tags to use in the capture</param>
         /// <returns></returns>
-        public async Task TakeSinglePicture(ICaptureHandler handler, int encodingType = 0, int quality = 0, bool raw = false, bool useExif = true, params ExifTag[] exifTags)
+        public async Task TakeSinglePicture(ICaptureHandler handler, MMALEncoding encodingType, int quality = 0, bool raw = false, bool useExif = true, params ExifTag[] exifTags)
         {            
             var camPreviewPort = this.Camera.PreviewPort;
             var camVideoPort = this.Camera.VideoPort;
@@ -193,6 +193,11 @@ namespace MMALSharp
             }
             else
             {
+                if(encodingType == null)
+                {
+                    throw new PiCameraError("Encoding type cannot be null");
+                }
+
                 Console.WriteLine("Preparing to take picture");
                 using (var encoder = new MMALImageEncoder(encodingType, quality))
                 {
@@ -344,8 +349,13 @@ namespace MMALSharp
         /// <param name="raw">Include raw bayer metadeta in the capture</param>        
         /// <param name="useExif">Specify whether to include EXIF tags in the capture</param>
         /// <param name="exifTags">Custom EXIF tags to use in the capture</param>
-        public async Task TakePictureIterative(string directory, string extension, int iterations, int encodingType = 0, int quality = 0, bool raw = false, bool useExif = true, params ExifTag[] exifTags)
+        public async Task TakePictureIterative(string directory, string extension, int iterations, MMALEncoding encodingType, int quality = 0, bool raw = false, bool useExif = true, params ExifTag[] exifTags)
         {
+            if(encodingType == null)
+            {
+                throw new PiCameraError("Encoding type cannot be null");
+            }
+
             for (int i = 0; i < iterations; i++)
             {
                 var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
@@ -365,8 +375,13 @@ namespace MMALSharp
         /// <param name="raw">Include raw bayer metadeta in the capture</param>        
         /// <param name="useExif">Specify whether to include EXIF tags in the capture</param>
         /// <param name="exifTags">Custom EXIF tags to use in the capture</param>
-        public async Task TakePictureTimeout(string directory, string extension, DateTime timeout, int encodingType = 0, int quality = 0, bool raw = false, bool useExif = true, params ExifTag[] exifTags)
+        public async Task TakePictureTimeout(string directory, string extension, DateTime timeout, MMALEncoding encodingType, int quality = 0, bool raw = false, bool useExif = true, params ExifTag[] exifTags)
         {
+            if (encodingType == null)
+            {
+                throw new PiCameraError("Encoding type cannot be null");
+            }
+
             while (DateTime.Now.CompareTo(timeout) < 0)
             {
                 var filename = (directory.EndsWith("/") ? directory : directory + "/") + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + (extension.StartsWith(".") ? extension : "." + extension);
@@ -387,8 +402,13 @@ namespace MMALSharp
         /// <param name="useExif">Specify whether to include EXIF tags in the capture</param>
         /// <param name="exifTags">Custom EXIF tags to use in the capture</param>
         /// <returns></returns>
-        public async Task TakePictureTimelapse(string directory, string extension, Timelapse tl, int encodingType = 0, int quality = 0, bool raw = false, bool useExif = true, params ExifTag[] exifTags)
+        public async Task TakePictureTimelapse(string directory, string extension, Timelapse tl, MMALEncoding encodingType, int quality = 0, bool raw = false, bool useExif = true, params ExifTag[] exifTags)
         {
+            if (encodingType == null)
+            {
+                throw new PiCameraError("Encoding type cannot be null");
+            }
+
             int interval = 0;
 
             if(tl == null)

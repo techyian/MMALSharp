@@ -121,7 +121,7 @@ namespace MMALSharp.Components
                                                                   this.PreviewPort.Ptr->Format->Es->Video.Par,
                                                                   this.PreviewPort.Ptr->Format->Es->Video.ColorSpace);
 
-            this.PreviewPort.Ptr->Format->Encoding = MMALCameraConfig.PreviewEncoding;
+            this.PreviewPort.Ptr->Format->Encoding = MMALCameraConfig.PreviewEncoding.EncodingVal;
             this.PreviewPort.Ptr->Format->Es->Video = vFormat;
             
             if (MMALCameraConfig.Debug)
@@ -141,8 +141,8 @@ namespace MMALSharp.Components
                                                                   this.VideoPort.Ptr->Format->Es->Video.Par,
                                                                   this.VideoPort.Ptr->Format->Es->Video.ColorSpace);
 
-            this.VideoPort.Ptr->Format->Encoding = MMALCameraConfig.VideoEncoding;
-            this.VideoPort.Ptr->Format->EncodingVariant = MMALCameraConfig.VideoSubformat;
+            this.VideoPort.Ptr->Format->Encoding = MMALCameraConfig.VideoEncoding.EncodingVal;
+            this.VideoPort.Ptr->Format->EncodingVariant = MMALCameraConfig.VideoSubformat.EncodingVal;
             this.VideoPort.Ptr->Format->Es->Video = vFormat;
 
 
@@ -167,8 +167,8 @@ namespace MMALSharp.Components
                                                 this.StillPort.Ptr->Format->Es->Video.Par,
                                                 this.StillPort.Ptr->Format->Es->Video.ColorSpace);
 
-            this.StillPort.Ptr->Format->Encoding = MMALCameraConfig.StillEncoding;
-            this.StillPort.Ptr->Format->EncodingVariant = MMALCameraConfig.StillEncodingSubFormat;
+            this.StillPort.Ptr->Format->Encoding = MMALCameraConfig.StillEncoding.EncodingVal;
+            this.StillPort.Ptr->Format->EncodingVariant = MMALCameraConfig.StillEncodingSubFormat.EncodingVal;
             this.StillPort.Ptr->Format->Es->Video = vFormat;
 
             if (MMALCameraConfig.Debug)

@@ -38,11 +38,6 @@ namespace MMALSharp.Handlers
             throw new NotImplementedException();
         }
 
-        public void Dispose()
-        {
-            this.MyProcess.Close();       
-        }
-
         public string GetDirectory()
         {
             throw new NotImplementedException();
@@ -70,6 +65,11 @@ namespace MMALSharp.Handlers
         public void Split()
         {
             throw new NotImplementedException();
+        }
+
+        ~FFmpegCaptureHandler()
+        {
+            this.MyProcess.Close();
         }
     }
 }

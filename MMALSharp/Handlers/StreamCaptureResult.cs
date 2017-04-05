@@ -84,10 +84,11 @@ namespace MMALSharp.Handlers
             return null;
         }
 
-        public void Dispose()
+        ~StreamCaptureResult()
         {
             if(this._stream != null)
                 this._stream.Dispose();
         }
+                
     }
 }

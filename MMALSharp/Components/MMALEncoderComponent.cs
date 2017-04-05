@@ -173,7 +173,7 @@ namespace MMALSharp.Components
         /// <summary>
         /// The encoding type that the video encoder should use
         /// </summary>
-        public int EncodingType { get; set; } = MMALEncodings.MMAL_ENCODING_H264;
+        public MMALEncoding EncodingType { get; set; } = MMALEncodings.MMAL_ENCODING_H264;
 
         public int Bitrate { get; set; } = 17000000;
 
@@ -211,9 +211,9 @@ namespace MMALSharp.Components
         /// </summary>
         public bool PrepareSplit { get; set; }
 
-        public MMALVideoEncoder(int encodingType, int bitrate, int framerate, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
+        public MMALVideoEncoder(MMALEncoding encodingType, int bitrate, int framerate, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
         {            
-            if (encodingType > 0)
+            if (encodingType.EncodingVal > 0)
             {
                 this.EncodingType = encodingType;
             }
@@ -264,7 +264,7 @@ namespace MMALSharp.Components
 
             base.Initialize();
                         
-            this.OutputPort.Ptr->Format->Encoding = this.EncodingType;
+            this.OutputPort.Ptr->Format->Encoding = this.EncodingType.EncodingVal;
 
             if (this.EncodingType == MMALEncodings.MMAL_ENCODING_H264)
             {
@@ -501,16 +501,16 @@ namespace MMALSharp.Components
         /// <summary>
         /// The encoding type that the image encoder should use
         /// </summary>
-        public int EncodingType { get; set; } = MMALEncodings.MMAL_ENCODING_JPEG;
+        public MMALEncoding EncodingType { get; set; } = MMALEncodings.MMAL_ENCODING_JPEG;
 
         /// <summary>
         /// The quality of the JPEG image
         /// </summary>
         public int Quality { get; set; } = 90;
 
-        public MMALImageEncoder(int encodingType, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
+        public MMALImageEncoder(MMALEncoding encodingType, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
         {            
-            if (encodingType > 0)
+            if (encodingType.EncodingVal > 0)
             {
                 this.EncodingType = encodingType;
             }
@@ -550,7 +550,7 @@ namespace MMALSharp.Components
             var input = this.Inputs.ElementAt(0);
             var output = this.Outputs.ElementAt(0);
                         
-            output.Ptr->Format->Encoding = this.EncodingType;
+            output.Ptr->Format->Encoding = this.EncodingType.EncodingVal;
             output.Ptr->BufferNum = Math.Max(output.Ptr->BufferNumRecommended, output.Ptr->BufferNumMin);
             output.Ptr->BufferSize = Math.Max(output.Ptr->BufferSizeRecommended, output.Ptr->BufferSizeMin);
 

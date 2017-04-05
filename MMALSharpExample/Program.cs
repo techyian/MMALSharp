@@ -23,38 +23,40 @@ namespace MMALSharpExample
             MMALCameraConfig.VideoWidth = 768;
             MMALCameraConfig.Debug = true;
             MMALCameraConfig.InlineHeaders = true;
-                                                
-            using (MMALCamera cam = MMALCamera.Instance)
+
+            MMALCamera cam = MMALCamera.Instance;
+             
+            //Create our component pipeline.                
+            cam.AddEncoder(new MMALVideoEncoder(40), cam.Camera.VideoPort)
+                .AddEncoder(new MMALImageEncoder(), cam.Camera.StillPort)
+                .CreatePreviewComponent(new MMALVideoRenderer())
+                .ConfigureCamera();
+
+            AsyncContext.Run(async () =>
             {
-                //Create our component pipeline.                
-                cam.AddEncoder(new MMALVideoEncoder(40), cam.Camera.VideoPort)
-                   .AddEncoder(new MMALImageEncoder(), cam.Camera.StillPort)
-                   .CreatePreviewComponent(new MMALVideoRenderer())
-                   .ConfigureCamera();
+                //Record video for 1 minute, using segmented video record to split into multiple files every 30 seconds.
+                await cam.TakeVideo(cam.Camera.VideoPort, new StreamCaptureResult(File.Create("/home/pi/testvideo.avi")), DateTime.Now.AddMinutes(1), new Split { Mode = TimelapseMode.Second, Value = 30 });
 
-                AsyncContext.Run(async () =>
-                {
-                    //Record video for 1 minute, using segmented video record to split into multiple files every 30 seconds.
-                    await cam.TakeVideo(cam.Camera.VideoPort, new StreamCaptureResult(File.Create("/home/pi/testvideo.avi")), DateTime.Now.AddMinutes(1), new Split { Mode = TimelapseMode.Second, Value = 30 });
+                //Take multiple pictures every 20 seconds for 1 hour as a timelapse. 
+                await cam.TakePictureTimelapse("/home/pi/timelapse", "jpg", new Timelapse { Mode = TimelapseMode.Second, Value = 20, Timeout = DateTime.Now.AddHours(1) }, null);
 
-                    //Take multiple pictures every 20 seconds for 1 hour as a timelapse. 
-                    await cam.TakePictureTimelapse("/home/pi/timelapse", "jpg", new Timelapse { Mode = TimelapseMode.Second, Value = 20, Timeout = DateTime.Now.AddHours(1) });
-
-                    //Take a picture on the camera's still port using the encoder connected to the still port
-                    await cam.TakePicture(cam.Camera.StillPort, cam.Camera.StillPort, new StreamCaptureResult(File.Create("/home/pi/testimage1.jpg")));
+                //Take a picture on the camera's still port using the encoder connected to the still port
+                await cam.TakePicture(cam.Camera.StillPort, cam.Camera.StillPort, new StreamCaptureResult(File.Create("/home/pi/testimage1.jpg")));
                     
-                    //Example of using the standlone capture method. This will hook up an Image encoder to the Still port of the camera.                    
-                    await cam.TakeSinglePicture(new StreamCaptureResult(File.Create("/home/pi/singlepicture.jpg")));
+                //Example of using the standlone capture method. This will hook up an Image encoder to the Still port of the camera.                    
+                await cam.TakeSinglePicture(new StreamCaptureResult(File.Create("/home/pi/singlepicture.jpg")), null);
                     
-                    /*
-                     * Here we are changing the image encoder being used by the camera's still port by replacing it with a Bitmap encoder. It is important
-                     * to remove any resources being used by the old encoder before replacing with a new one.
-                    */
-                    cam.RemoveEncoder(cam.Camera.StillPort).AddEncoder(new MMALImageEncoder(MMALEncodings.MMAL_ENCODING_BMP, 90), cam.Camera.StillPort);
+                /*
+                    * Here we are changing the image encoder being used by the camera's still port by replacing it with a Bitmap encoder. It is important
+                    * to remove any resources being used by the old encoder before replacing with a new one.
+                */
+                cam.RemoveEncoder(cam.Camera.StillPort).AddEncoder(new MMALImageEncoder(MMALEncodings.MMAL_ENCODING_BMP, 90), cam.Camera.StillPort);
 
-                    await cam.TakePictureIterative("/home/pi/", "bmp", 5);
-                });
-            }
-        }
+                await cam.TakePictureIterative("/home/pi/", "bmp", 5, null);
+
+                cam.Dispose();
+            });
+                        
+        }        
     }
 }

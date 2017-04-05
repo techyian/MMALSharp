@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.Handlers
 {
-    public interface ICaptureHandler : IDisposable
+    public interface ICaptureHandler
     {
         /// <summary>
         /// Used to process the byte array containing our image data

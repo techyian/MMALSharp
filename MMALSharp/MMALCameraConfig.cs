@@ -37,12 +37,7 @@ namespace MMALSharp
         /// Configure the light sensitivity of the sensor
         /// </summary> 
         public static int ISO { get; set; }
-
-        /// <summary>
-        /// Enable video stabilisation
-        /// </summary> 
-        public static bool VideoStabilisation { get; set; } = true;
-
+        
         /// <summary>
         /// Configure the exposure compensation of the camera. Doing so will produce a lighter/darker image beyond the recommended exposure.
         /// </summary>
@@ -50,6 +45,22 @@ namespace MMALSharp
 
         /// <summary>
         /// Configure the exposure mode used by the camera
+        /// 
+        /// Possible options are:
+        ///
+        /// auto: use automatic exposure mode
+        /// night: select setting for night shooting
+        /// nightpreview:
+        /// backlight: select setting for backlit subject
+        /// spotlight:
+        /// sports: select setting for sports(fast shutter etc.)
+        /// snow: select setting optimised for snowy scenery
+        /// beach: select setting optimised for beach
+        /// verylong: select setting for long exposures
+        /// fixedfps: constrain fps to a fixed value
+        /// antishake: antishake mode
+        /// fireworks: select setting optimised for fireworks
+        /// 
         /// </summary>  
         public static MMAL_PARAM_EXPOSUREMODE_T ExposureMode { get; set; } = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
 
@@ -80,21 +91,56 @@ namespace MMALSharp
 
         /// <summary>
         /// Configure the Auto White Balance to be used by the camera
+        /// 
+        /// off: turn off white balance calculation
+        /// auto: automatic mode(default)
+        /// sun: sunny mode(between 5000K and 6500K)
+        /// cloud: cloudy mode(between 6500K and 12000K)
+        /// shade: shade mode
+        /// tungsten: tungsten lighting mode(between 2500K and 3500K)
+        /// fluorescent: fluorescent lighting mode(between 2500K and 4500K)
+        /// incandescent: incandescent lighting mode
+        /// flash: flash mode
+        /// horizon: horizon mode
         /// </summary>
         public static MMAL_PARAM_AWBMODE_T AwbMode { get; set; } = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_AUTO;
 
         /// <summary>
         /// Configure any image effects to be used by the camera
+        /// 
+        /// none: no effect (default)
+        /// negative: invert the image colours
+        /// solarise: solarise the image
+        /// posterise: posterise the image
+        /// whiteboard: whiteboard effect
+        /// blackboard: blackboard effect
+        /// sketch: sketch effect
+        /// denoise: denoise the image
+        /// emboss: emboss the image
+        /// oilpaint: oil paint effect
+        /// hatch: hatch sketch effect
+        /// gpen: graphite sketch effect
+        /// pastel: pastel effect
+        /// watercolour: watercolour effect
+        /// film: film grain effect
+        /// blur: blur the image
+        /// saturation: colour saturate the image
+        /// colourswap: not fully implemented
+        /// washedout: not fully implemented
+        /// colourpoint: not fully implemented
+        /// colourbalance: not fully implemented
+        /// cartoon: not fully implemented
+        /// 
         /// </summary>
         public static MMAL_PARAM_IMAGEFX_T ImageEffect { get; set; } = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NONE;
 
         /// <summary>
-        /// Allows a user to change the colour of an image, e.g. U = 128, V = 128 will result in a greyscale image.
+        /// Allows a user to change the colour of an image, e.g. U = 128, V = 128 will result in a greyscale (monochrome) image.
         /// </summary>
         public static ColourEffects Effects { get; set; } = new ColourEffects();
 
         /// <summary>
-        /// Specify the rotation of the image, this value should be multiples of 90
+        /// Specify the rotation of the image, possible values are 0, 90, 180, 270
         /// </summary>   
         public static int Rotation { get; set; }
 
@@ -109,7 +155,10 @@ namespace MMALSharp
         public static Crop Crop { get; set; } = new Crop();
 
         /// <summary>
-        /// Changing the shutter speed alters how long the sensor is exposed to light.
+        /// Changing the shutter speed alters how long the sensor is exposed to light (in microseconds).
+        /// 
+        /// There's currently an upper limit of approximately 6000000us (6000ms, 6s), past which operation is undefined.
+        /// 
         /// </summary>
         public static int ShutterSpeed { get; set; }
 
@@ -125,6 +174,16 @@ namespace MMALSharp
 
         /// <summary>
         /// Adjust dynamic range compression
+        /// 
+        /// DRC changes the images by increasing the range of dark areas, and decreasing the brighter areas. This can improve the image in low light areas.
+        /// 
+        /// Possble values:
+        /// 
+        /// off
+        /// low
+        /// medium
+        /// high
+        /// 
         /// </summary>
         public static MMAL_PARAMETER_DRC_STRENGTH_T DrcLevel { get; set; } = MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_OFF;
 
@@ -156,7 +215,7 @@ namespace MMALSharp
         /*
          * Camera preview port specific properties
         */
-        public static int PreviewEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
+        public static MMALEncoding PreviewEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
 
         private static int previewWidth;
         public static int PreviewWidth {
@@ -187,8 +246,8 @@ namespace MMALSharp
          * Camera video port specific properties
         */
 
-        public static int VideoEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
-        public static int VideoSubformat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;
+        public static MMALEncoding VideoEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
+        public static MMALEncoding VideoSubformat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;
         private static int videoWidth;
         public static int VideoWidth
         {
@@ -215,6 +274,11 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Enable video stabilisation
+        /// </summary> 
+        public static bool VideoStabilisation { get; set; } = true;
+
         public static MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T RateControl { get; set; } = MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T.MMAL_VIDEO_RATECONTROL_DEFAULT;
 
         public static int IntraPeriod { get; set; } = -1;
@@ -234,9 +298,8 @@ namespace MMALSharp
         /*
          * Camera still port specific properties
         */
-
-        public static int StillEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
-        public static int StillEncodingSubFormat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;
+        public static MMALEncoding StillEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
+        public static MMALEncoding StillEncodingSubFormat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;
 
         private static int stillWidth;
         public static int StillWidth
