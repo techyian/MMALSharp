@@ -159,8 +159,7 @@ namespace MMALSharp.Components
         }
 
         public override void Dispose()
-        {
-            this.Handler.Dispose();
+        {            
             base.Dispose();
         }
     }

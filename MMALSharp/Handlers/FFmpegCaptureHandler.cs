@@ -57,7 +57,7 @@ namespace MMALSharp.Handlers
             }
             catch
             {
-                this.Dispose();
+                this.MyProcess.Close();
                 throw;         
             }            
         }
