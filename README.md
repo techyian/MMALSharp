@@ -1,5 +1,7 @@
 # MMALSharp
 
+[![Build status](https://ci.appveyor.com/api/projects/status/r3o4bqxektnulw7l?svg=true)](https://ci.appveyor.com/project/techyian/mmalsharp)
+
 MMALSharp is an unofficial C# API for the Raspberry Pi camera. It is currently an early experimental build which features the ability to 
 take pictures with your Raspberry Pi. Under the hood, MMALSharp makes use of the native MMAL interface designed by Broadcom.
 
@@ -48,7 +50,9 @@ The project is currently targeting .NET framework 4.5.2, and therefore requires 
 MMALSharp uses FAKE for building, and Paket for dependency management. Currently there is only a dependency on the Nito.AsyncEx library by 
 [@StephenCleary](https://github.com/StephenCleary).
 
-To build, simply run one of the below depending on your development environment.
+Pre-release builds are available from [Myget](https://www.myget.org/gallery/mmalsharp)
+
+Alternatively, to manually build, clone this repository and simply run one of the below depending on your development environment.
 
 Windows:
 
@@ -62,7 +66,6 @@ sudo chmod +x ./build.sh
 dos2unix ./build.sh
 ./build.sh
 ```
-
 
 Once the library has built, you can reference it as a project within your application.
 

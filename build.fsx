@@ -3,28 +3,37 @@
 open Fake
 
 // Properties
-let buildDir = "./build/"
+let releaseDir = "./MMALSharp/bin/Release"
+let debugDir = "./MMALSharp/bin/Debug"
 
 // Targets
 Target "Clean" (fun _ ->
-    CleanDir buildDir
+    CleanDirs [releaseDir; debugDir]
 )
 
-Target "BuildApp" (fun _ ->
+
+
+Target "ReleaseApp" (fun _ ->
     !! "MMALSharp/*.csproj"
-    |> MSBuildRelease buildDir "Build"
+    |> MSBuildRelease releaseDir "Build"
+    |> Log "AppBuild-Output: "
+)
+
+Target "DebugApp" (fun _ ->
+    !! "MMALSharp/*.csproj"
+    |> MSBuildDebug debugDir "Build"
     |> Log "AppBuild-Output: "
 )
 
 
 Target "Default" (fun _ ->
-    trace "Hello World from FAKE"
+    trace "Default target executed"
 )
 
 // Dependencies
 "Clean"
-  ==> "BuildApp"
-  ==> "Default"
+  ==> "ReleaseApp"
+  ==> "DebugApp"
 
 // start build
 RunTargetOrDefault "Default"
