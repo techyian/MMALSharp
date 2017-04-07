@@ -4,8 +4,22 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharp", "MMALSharp\MMALSharp.csproj", "{5B03E4B4-13AA-4EC8-8FD3-9DAA176EAA70}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8} = {D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}
+		{8F2E7EDB-4533-4FC5-A8AA-17F11302CC84} = {8F2E7EDB-4533-4FC5-A8AA-17F11302CC84}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharpExample", "MMALSharpExample\MMALSharpExample.csproj", "{665C0F20-844A-44A8-9EF4-F359A607CAE6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8} = {D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharp.FFmpeg", "MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj", "{8F2E7EDB-4533-4FC5-A8AA-17F11302CC84}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8} = {D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharp.Common", "MMALSharp.Common\MMALSharp.Common.csproj", "{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +35,14 @@ Global
 		{665C0F20-844A-44A8-9EF4-F359A607CAE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{665C0F20-844A-44A8-9EF4-F359A607CAE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{665C0F20-844A-44A8-9EF4-F359A607CAE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F2E7EDB-4533-4FC5-A8AA-17F11302CC84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F2E7EDB-4533-4FC5-A8AA-17F11302CC84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F2E7EDB-4533-4FC5-A8AA-17F11302CC84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F2E7EDB-4533-4FC5-A8AA-17F11302CC84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

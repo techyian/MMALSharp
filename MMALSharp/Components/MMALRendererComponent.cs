@@ -12,7 +12,7 @@ namespace MMALSharp.Components
     /// </summary>
     public unsafe abstract class MMALRendererBase : MMALDownstreamComponent
     {
-        public MMALRendererBase(string name) : base(name)
+        public MMALRendererBase(string name) : base(name, null)
         {
             if (this.Ptr->InputNum > 0)
             {

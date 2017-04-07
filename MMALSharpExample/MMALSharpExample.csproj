@@ -55,6 +55,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MMALSharp.Common\MMALSharp.Common.csproj">
+      <Project>{d8ca0bc9-ca3b-4ec1-9898-542a6f5346f8}</Project>
+      <Name>MMALSharp.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MMALSharp\MMALSharp.csproj">
       <Project>{5b03e4b4-13aa-4ec8-8fd3-9daa176eaa70}</Project>
       <Name>MMALSharp</Name>

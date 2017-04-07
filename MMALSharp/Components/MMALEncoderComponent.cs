@@ -18,7 +18,7 @@ namespace MMALSharp.Components
     /// </summary>
     public abstract unsafe class MMALEncoderBase : MMALDownstreamComponent
     {        
-        protected MMALEncoderBase(string encoderName) : base(encoderName) { }
+        protected MMALEncoderBase(string encoderName, ICaptureHandler handler) : base(encoderName, handler) { }
         
         /// <summary>
         /// Initializes the encoder component to allow processing to commence. Creates the same format between input/output port.
@@ -159,7 +159,19 @@ namespace MMALSharp.Components
         }
 
         public override void Dispose()
-        {            
+        {                        
+            if (MMALCameraConfig.Debug)
+            {
+                Console.WriteLine("Removing encoder");
+            }
+
+            this.Connection.Destroy();
+            
+            MMALCamera.Instance.Encoders.Remove(this);
+
+            //Remove any unmanaged resources held by the capture handler.
+            this.Handler.Dispose();
+
             base.Dispose();
         }
     }
@@ -210,7 +222,7 @@ namespace MMALSharp.Components
         /// </summary>
         public bool PrepareSplit { get; set; }
 
-        public MMALVideoEncoder(MMALEncoding encodingType, int bitrate, int framerate, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
+        public MMALVideoEncoder(ICaptureHandler handler, MMALEncoding encodingType, int bitrate, int framerate, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, handler)
         {            
             if (encodingType.EncodingVal > 0)
             {
@@ -230,7 +242,7 @@ namespace MMALSharp.Components
             this.Initialize();
         }
 
-        public MMALVideoEncoder(int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
+        public MMALVideoEncoder(ICaptureHandler handler, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, handler)
         {            
             this.Initialize();
         }
@@ -332,12 +344,10 @@ namespace MMALSharp.Components
         /// <param name="buffer">The buffer header we're currently processing</param>
         /// <param name="port">The port we're currently processing on</param>
         public override void ManagedCallback(MMALBufferImpl buffer, MMALPortBase port)
-        {
-            var data = buffer.GetBufferData();
-
+        {            
             if (this.PrepareSplit && buffer.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))
             {
-                this.Handler.Split();
+                ((VideoStreamCaptureHandler)this.Handler).Split();
                 this.LastSplit = DateTime.Now;
                 this.PrepareSplit = false;
             }
@@ -357,7 +367,7 @@ namespace MMALSharp.Components
                 }
             }
 
-            this.Handler.Process(data);
+            base.ManagedCallback(buffer, port);            
         }
 
         internal void ConfigureRateControl()
@@ -478,7 +488,7 @@ namespace MMALSharp.Components
     /// </summary>
     public unsafe class MMALVideoDecoder : MMALEncoderBase
     {
-        public MMALVideoDecoder() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_DECODER)
+        public MMALVideoDecoder(ICaptureHandler handler) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_DECODER, handler)
         {
             this.Initialize();
         }
@@ -507,7 +517,7 @@ namespace MMALSharp.Components
         /// </summary>
         public int Quality { get; set; } = 90;
 
-        public MMALImageEncoder(MMALEncoding encodingType, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
+        public MMALImageEncoder(ICaptureHandler handler, MMALEncoding encodingType, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER, handler)
         {            
             if (encodingType.EncodingVal > 0)
             {
@@ -522,7 +532,7 @@ namespace MMALSharp.Components
             this.Initialize();
         }
 
-        public MMALImageEncoder() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
+        public MMALImageEncoder(ICaptureHandler handler) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER, handler)
         {            
             this.Initialize();
         }
@@ -628,7 +638,7 @@ namespace MMALSharp.Components
     /// </summary>
     public unsafe class MMALImageDecoder : MMALEncoderBase
     {
-        public MMALImageDecoder() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_DECODER)
+        public MMALImageDecoder(ICaptureHandler handler) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_DECODER, handler)
         {
             this.Initialize();
         }

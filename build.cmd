@@ -20,7 +20,7 @@ if errorlevel 1 (
 cd ..
 
 packages\FAKE\tools\FAKE.exe "%PWD%" Clean
-packages\FAKE\tools\FAKE.exe "%PWD%" ReleaseApp
-packages\FAKE\tools\FAKE.exe "%PWD%" DebugApp
+packages\FAKE\tools\FAKE.exe "%PWD%" MMALSharpReleaseApp
+packages\FAKE\tools\FAKE.exe "%PWD%" MMALSharpDebugApp
 
 .paket\paket.exe pack output build templatefile MMALSharp\paket.template

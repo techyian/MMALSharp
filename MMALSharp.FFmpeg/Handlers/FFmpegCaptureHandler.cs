@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.Handlers
 {
+    /// <summary>
+    /// Currently experimental. Not working fully.
+    /// </summary>
     public class FFmpegCaptureHandler : ICaptureHandler
     {
         public Process MyProcess { get; set; }
@@ -35,7 +38,7 @@ namespace MMALSharp.Handlers
 
         public bool CanSplit()
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public string GetDirectory()
@@ -67,9 +70,10 @@ namespace MMALSharp.Handlers
             throw new NotImplementedException();
         }
 
-        ~FFmpegCaptureHandler()
+        public void Dispose()
         {
             this.MyProcess.Close();
         }
+                
     }
 }

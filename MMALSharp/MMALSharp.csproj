@@ -54,15 +54,11 @@
     <Compile Include="Components\MMALEncoderComponent.cs" />
     <Compile Include="Components\MMALSplitterComponent.cs" />
     <Compile Include="Exceptions.cs" />
-    <Compile Include="Handlers\FFmpegCaptureHandler.cs" />
-    <Compile Include="Handlers\ICaptureHandler.cs" />
-    <Compile Include="Handlers\ProcessResult.cs" />
-    <Compile Include="Handlers\StreamCaptureResult.cs" />
     <Compile Include="MMALBufferImpl.cs" />
     <Compile Include="Components\MMALCameraComponent.cs" />
     <Compile Include="MMALCamera.cs" />
-    <Compile Include="MMALCameraConfig.cs" />
     <Compile Include="Components\MMALComponentBase.cs" />
+    <Compile Include="MMALCameraConfig.cs" />
     <Compile Include="MMALConnectionImpl.cs" />
     <Compile Include="Components\MMALRendererComponent.cs" />
     <Compile Include="MMALObject.cs" />
@@ -87,12 +83,21 @@
     <Compile Include="Native\MMALQueue.cs" />
     <Compile Include="Native\MMALUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility\Helpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MMALSharp.Common\MMALSharp.Common.csproj">
+      <Project>{d8ca0bc9-ca3b-4ec1-9898-542a6f5346f8}</Project>
+      <Name>MMALSharp.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj">
+      <Project>{8f2e7edb-4533-4fc5-a8aa-17f11302cc84}</Project>
+      <Name>MMALSharp.FFmpeg</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -340,7 +345,7 @@
         </Reference>
       </ItemGroup>
     </When>
-  </Choose> 
+  </Choose>
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == 'MonoAndroid'">
       <ItemGroup>
@@ -586,5 +591,5 @@
         </Reference>
       </ItemGroup>
     </When>
-  </Choose>  
+  </Choose>
 </Project>

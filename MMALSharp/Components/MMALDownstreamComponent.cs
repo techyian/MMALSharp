@@ -26,8 +26,9 @@ namespace MMALSharp.Components
         /// </summary>
         public ICaptureHandler Handler { get; set; }
 
-        public MMALDownstreamComponent(string name) : base(name)
-        {
+        public MMALDownstreamComponent(string name, ICaptureHandler handler) : base(name)
+        {            
+            this.Handler = handler;
         }
 
         /// <summary>
@@ -49,24 +50,51 @@ namespace MMALSharp.Components
         public virtual void ManagedCallback(MMALBufferImpl buffer, MMALPortBase port)
         {
             var data = buffer.GetBufferData();
-            this.Handler.Process(data);            
+
+            if(this.Handler != null)
+            {
+                this.Handler.Process(data);
+            }            
         }
 
+        /// <summary>
+        /// Enable the port with the specified port number.
+        /// </summary>
+        /// <param name="outputPortNumber">The output port number</param>
+        /// <param name="managedCallback">The managed method to callback to from the native callback</param>
         public void Start(int outputPortNumber, Action<MMALBufferImpl, MMALPortBase> managedCallback)
         {            
+            if(this.Handler != null && this.Handler.GetType() == typeof(StreamCaptureHandler))
+            {
+                ((StreamCaptureHandler)this.Handler).NewFile();
+            }
+
             this.Outputs.ElementAt(outputPortNumber).EnablePort(managedCallback);
         }
 
+        /// <summary>
+        /// Enable the port specified.
+        /// </summary>
+        /// <param name="port">The output port</param>
+        /// <param name="managedCallback">The managed method to callback to from the native callback</param>
         public void Start(MMALPortBase port, Action<MMALBufferImpl, MMALPortBase> managedCallback)
         {            
             port.EnablePort(managedCallback);
         }
 
+        /// <summary>
+        /// Disable the port with the specified port number
+        /// </summary>
+        /// <param name="outputPortNumber">The output port number</param>
         public void Stop(int outputPortNumber)
         {
             this.Outputs.ElementAt(outputPortNumber).DisablePort();
         }
 
+        /// <summary>
+        /// Disable the specified port
+        /// </summary>
+        /// <param name="port">The output port</param>
         public void Stop(MMALPortBase port)
         {
             port.DisablePort();

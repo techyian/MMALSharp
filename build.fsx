@@ -3,25 +3,54 @@
 open Fake
 
 // Properties
-let releaseDir = "./MMALSharp/bin/Release"
-let debugDir = "./MMALSharp/bin/Debug"
+
+let mmalSharpCommonReleasedir = "./MMALSharp.Common/bin/Release"
+let mmalSharpCommonDebugdir = "./MMALSharp.Common/bin/Release"
+
+let mmalSharpReleaseDir = "./MMALSharp/bin/Release"
+let mmalSharpDebugDir = "./MMALSharp/bin/Debug"
+
+let mmalSharpFFmpegReleasedir = "./MMALSharp.FFmpeg/bin/Release"
+let mmalSharpFFmpegDebugdir = "./MMALSharp.FFmpeg/bin/Release"
 
 // Targets
 Target "Clean" (fun _ ->
-    CleanDirs [releaseDir; debugDir]
+    CleanDirs [mmalSharpCommonReleasedir; mmalSharpCommonDebugdir; mmalSharpReleaseDir; mmalSharpDebugDir; mmalSharpFFmpegReleasedir; mmalSharpFFmpegDebugdir]
 )
 
-
-
-Target "ReleaseApp" (fun _ ->
-    !! "MMALSharp/*.csproj"
-    |> MSBuildRelease releaseDir "Build"
+Target "MMALSharpCommonReleaseApp" (fun _ ->
+    !! "MMALSharp.Common/*.csproj"
+    |> MSBuildRelease mmalSharpCommonReleasedir "Build"
     |> Log "AppBuild-Output: "
 )
 
-Target "DebugApp" (fun _ ->
+Target "MMALSharpCommonDebugApp" (fun _ ->
+    !! "MMALSharp.Common/*.csproj"
+    |> MSBuildDebug mmalSharpCommonDebugdir "Build"
+    |> Log "AppBuild-Output: "
+)
+
+Target "MMALSharpReleaseApp" (fun _ ->
     !! "MMALSharp/*.csproj"
-    |> MSBuildDebug debugDir "Build"
+    |> MSBuildRelease mmalSharpReleaseDir "Build"
+    |> Log "AppBuild-Output: "
+)
+
+Target "MMALSharpDebugApp" (fun _ ->
+    !! "MMALSharp/*.csproj"
+    |> MSBuildDebug mmalSharpDebugDir "Build"
+    |> Log "AppBuild-Output: "
+)
+
+Target "MMALSharpFFmpegReleaseApp" (fun _ ->
+    !! "MMALSharp.FFmpeg/*.csproj"
+    |> MSBuildRelease mmalSharpFFmpegReleasedir "Build"
+    |> Log "AppBuild-Output: "
+)
+
+Target "MMALSharpFFmpegDebugApp" (fun _ ->
+    !! "MMALSharp.FFmpeg/*.csproj"
+    |> MSBuildDebug mmalSharpFFmpegDebugdir "Build"
     |> Log "AppBuild-Output: "
 )
 
@@ -32,8 +61,12 @@ Target "Default" (fun _ ->
 
 // Dependencies
 "Clean"
-  ==> "ReleaseApp"
-  ==> "DebugApp"
+  ==> "MMALSharpCommonReleaseApp"
+  ==> "MMALSharpCommonDebugApp"
+  ==> "MMALSharpReleaseApp"
+  ==> "MMALSharpDebugApp"
+  ==> "MMALSharpFFmpegReleaseApp"
+  ==> "MMALSharpFFmpegDebugApp"
 
 // start build
 RunTargetOrDefault "Default"

@@ -84,32 +84,38 @@ Below is a basic example of its usage.
 
 public static void Main(string[] args)
 {
-        //Alter any configuration properties required.         
-        MMALCameraConfig.EnableAnnotate = true;
-        MMALCameraConfig.Annotate = new AnnotateImage { ShowDateText = true, ShowTimeText = true };
-		MMALCameraConfig.VideoHeight = 1024;
-        MMALCameraConfig.VideoWidth = 768;
+    Alter any configuration properties required.         
+    MMALCameraConfig.EnableAnnotate = true;
+    MMALCameraConfig.Annotate = new AnnotateImage { ShowDateText = true, ShowTimeText = true };
+	MMALCameraConfig.VideoHeight = 1024;
+    MMALCameraConfig.VideoWidth = 768;
 		
-		//Required for segmented recording
-		MMALCameraConfig.InlineHeaders = true;
+	//Required for segmented recording
+	MMALCameraConfig.InlineHeaders = true;
 		
-        using (MMALCamera cam = MMALCamera.Instance)
+    MMALCamera cam = MMALCamera.Instance;
+                                    
+	AsyncContext.Run(async () =>
+	{
+		using (var vidEncoder = new MMALVideoEncoder(new VideoStreamCaptureHandler("/home/pi/videos", ".avi"), 40))
+		using (var imgEncoder = new MMALImageEncoder(new ImageStreamCaptureHandler("/home/pi/images/", "jpg")))
 		{
-			//Create our component pipeline. 
-			cam.AddEncoder(new MMALVideoEncoder(40), cam.Camera.VideoPort)
-               .AddEncoder(new MMALImageEncoder(), cam.Camera.StillPort)
-               .CreatePreviewComponent(new MMALVideoRenderer())
-               .ConfigureCamera();
-			
-			AsyncContext.Run(async () =>
-			{
-				//Record video for 1 minute, using segmented video record to split into multiple files every 30 seconds.
-                await cam.TakeVideo(cam.Camera.VideoPort, new StreamCaptureResult(File.Create("/home/pi/testvideo.avi")), DateTime.Now.AddMinutes(1), new Split { Mode = TimelapseMode.Second, Value = 30 });                                     
-				
-				//Take a picture on the camera's still port using the encoder connected to the still port
-                await cam.TakePicture(cam.Camera.StillPort, cam.Camera.StillPort, new StreamCaptureResult(File.Create("/home/pi/testimage1.jpg")));
-			});   
+			//Create our component pipeline.         
+			cam.AddEncoder(vidEncoder, cam.Camera.VideoPort)
+			   .AddEncoder(imgEncoder, cam.Camera.StillPort)
+			   .CreatePreviewComponent(new MMALVideoRenderer())
+			   .ConfigureCamera();
+
+			//Record video for 1 minute, using segmented video record to split into multiple files every 30 seconds.
+			await cam.TakeVideo(cam.Camera.VideoPort, DateTime.Now.AddMinutes(1), new Split { Mode = TimelapseMode.Second, Value = 30 });
+
+			//Take a single picture on the camera's still port using the encoder connected to the still port
+			await cam.TakePicture(cam.Camera.StillPort, cam.Camera.StillPort);
 		}
+						
+		//Once we're finished with the camera and will *not* use it again, cleanup any unmanaged resources.
+		cam.Cleanup();                
+	});		
 }
 
 ```
@@ -153,6 +159,7 @@ Tested image 'still' features:
 
 When using more resource intensive encoders such as MMAL_ENCODING_BMP and the Sony IMX219 module, I've found it necessary to increase the memory split
 to around 200mb or otherwise you'll receive an ENOSPC error due to insufficient resources.
+
 
 ## License
 

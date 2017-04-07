@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
-    public static class MMALUtil
+    public static partial class MMALUtil
     {
         public static int VCOS_ALIGN_UP(int value, int roundTo)
         {
