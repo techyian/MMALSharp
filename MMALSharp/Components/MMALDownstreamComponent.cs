@@ -64,11 +64,11 @@ namespace MMALSharp.Components
         /// <param name="managedCallback">The managed method to callback to from the native callback</param>
         public void Start(int outputPortNumber, Action<MMALBufferImpl, MMALPortBase> managedCallback)
         {            
-            if(this.Handler != null && this.Handler.GetType() == typeof(StreamCaptureHandler))
-            {
+            if (this.Handler != null && this.Handler.GetType().IsSubclassOf(typeof(StreamCaptureHandler)))
+            {                
                 ((StreamCaptureHandler)this.Handler).NewFile();
             }
-
+            
             this.Outputs.ElementAt(outputPortNumber).EnablePort(managedCallback);
         }
 
@@ -78,7 +78,12 @@ namespace MMALSharp.Components
         /// <param name="port">The output port</param>
         /// <param name="managedCallback">The managed method to callback to from the native callback</param>
         public void Start(MMALPortBase port, Action<MMALBufferImpl, MMALPortBase> managedCallback)
-        {            
+        {
+            if (this.Handler != null && this.Handler.GetType().IsSubclassOf(typeof(StreamCaptureHandler)))
+            {
+                ((StreamCaptureHandler)this.Handler).NewFile();
+            }
+
             port.EnablePort(managedCallback);
         }
 

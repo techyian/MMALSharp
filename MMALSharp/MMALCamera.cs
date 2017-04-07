@@ -294,6 +294,7 @@ namespace MMALSharp
             {
                 this.Preview?.Connection.Disable();
                 this.Preview?.Connection.Destroy();
+                this.Preview.Dispose();
             }
 
             this.Preview = renderer;

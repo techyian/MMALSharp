@@ -242,8 +242,15 @@ namespace MMALSharp.Components
             this.Initialize();
         }
 
-        public MMALVideoEncoder(ICaptureHandler handler, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, handler)
-        {            
+        public MMALVideoEncoder(ICaptureHandler handler, int quality, int framerate) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, handler)
+        {
+            this.Quality = quality;
+            
+            if (framerate > 0)
+            {
+                this.Framerate = framerate;
+            }
+
             this.Initialize();
         }
         

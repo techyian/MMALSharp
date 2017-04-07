@@ -23,7 +23,7 @@ namespace MMALSharp.FFmpeg
             process.StartInfo.FileName = "ffmpeg";
 
             StringBuilder sb = new StringBuilder();
-            result.ProcessedStreams.ForEach(c => sb.Append(string.Format("-i {0}", c)));
+            result.ProcessedStreams.ForEach(c => sb.Append(string.Format(" -i {0}", c)));
             targetDirectory.TrimEnd('/');
             
             if(fps == 0)

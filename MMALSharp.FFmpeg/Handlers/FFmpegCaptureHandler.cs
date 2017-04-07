@@ -15,7 +15,7 @@ namespace MMALSharp.Handlers
     {
         public Process MyProcess { get; set; }
         
-        public FFmpegCaptureHandler(string streamName, string streamUrl)
+        public FFmpegCaptureHandler(string streamName, string streamUrl, int framerate)
         {
             this.MyProcess = new Process();
 
@@ -24,10 +24,33 @@ namespace MMALSharp.Handlers
                 Console.InputEncoding = Encoding.ASCII;
                 this.MyProcess.StartInfo.UseShellExecute = false;
                 this.MyProcess.StartInfo.RedirectStandardInput = true;
-                this.MyProcess.StartInfo.CreateNoWindow = true;                
+                this.MyProcess.StartInfo.RedirectStandardOutput = true;
+                this.MyProcess.StartInfo.RedirectStandardError = true;
+                this.MyProcess.StartInfo.CreateNoWindow = true;                               
                 this.MyProcess.StartInfo.FileName = "ffmpeg";
-                this.MyProcess.StartInfo.Arguments = string.Format("-i - -c:v copy -an -r 25 -f flv -metadata streamName={0} {1}", streamName, streamUrl);                
-                this.MyProcess.Start();                
+
+                this.MyProcess.EnableRaisingEvents = true;
+                this.MyProcess.OutputDataReceived += (object sendingProcess, DataReceivedEventArgs e) =>
+                {
+                    if (e.Data != null)
+                    {                        
+                        Console.WriteLine(e.Data);                       
+                    }
+                };
+
+                this.MyProcess.ErrorDataReceived += (object sendingProcess, DataReceivedEventArgs e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        Console.WriteLine(e.Data);
+                    }
+                };
+
+                this.MyProcess.StartInfo.Arguments = string.Format("-i - -c:v copy -an -r {0} -f flv -metadata streamName={1} {2}", framerate, streamName, streamUrl);                
+                this.MyProcess.Start();
+                this.MyProcess.BeginOutputReadLine();
+                this.MyProcess.BeginErrorReadLine();
+                
             }
             catch (Exception e)
             {

@@ -20,15 +20,18 @@ namespace MMALSharp.Handlers
         protected string Extension { get; set; }
 
         public StreamCaptureHandler(string directory, string extension)
-        {
+        {            
             this.Directory = directory.TrimEnd('/');
-            this.Extension = extension.TrimStart('.');            
+            this.Extension = extension.TrimStart('.');
+
+            System.IO.Directory.CreateDirectory(this.Directory);
         }
 
         public void NewFile()
         {
             if (this.CurrentStream != null)
                 this.CurrentStream.Dispose();
+            
             this.CurrentStream = File.Create(this.Directory + "/" + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + "." + this.Extension);
         }
                 
@@ -45,8 +48,16 @@ namespace MMALSharp.Handlers
 
         public void PostProcess()
         {
-            this.ProcessedStreams.Add(this.GetDirectory() + "/" + this.GetFilename() + "." + this.GetExtension());
-            Console.WriteLine(string.Format("Successfully processed {0}", Helpers.ConvertBytesToMegabytes(this.Processed)));            
+            try
+            {
+                this.ProcessedStreams.Add("'" + this.GetDirectory() + "/" + this.GetFilename() + this.GetExtension() + "'");
+                Console.WriteLine(string.Format("Successfully processed {0}", Helpers.ConvertBytesToMegabytes(this.Processed)));
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Something went wrong while processing stream.");
+                Console.WriteLine(e.Message);
+            }                   
         }
         
         public string GetDirectory()
