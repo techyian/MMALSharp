@@ -213,66 +213,23 @@ namespace MMALSharp
         public static bool SetChangeEventRequest { get; set; }
 
         /*
+         * -----------------------------------------------------------------------------------------------------------
          * Camera preview port specific properties
+         * -----------------------------------------------------------------------------------------------------------
         */
-        public static MMALEncoding PreviewEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
+        public static MMALEncoding PreviewEncoding { get; set; } = MMALEncoding.MMAL_ENCODING_OPAQUE;
 
-        private static int previewWidth;
-        public static int PreviewWidth {
-            get
-            {
-                return MMALCameraConfig.previewWidth;
-            }
-            set
-            {
-                MMALCameraConfig.previewWidth = MMALUtil.VCOS_ALIGN_UP(value, 32);
-            }                
-        }
-
-        private static int previewHeight;
-        public static int PreviewHeight
-        {
-            get
-            {
-                return MMALCameraConfig.previewHeight;
-            }
-            set
-            {
-                MMALCameraConfig.previewHeight = MMALUtil.VCOS_ALIGN_UP(value, 16);
-            }
-        }
+        public static Resolution PreviewResolution { get; set; } = Resolution.As720p;
 
         /*
+         * -----------------------------------------------------------------------------------------------------------
          * Camera video port specific properties
+         * -----------------------------------------------------------------------------------------------------------
         */
 
-        public static MMALEncoding VideoEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
-        public static MMALEncoding VideoSubformat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;
-        private static int videoWidth;
-        public static int VideoWidth
-        {
-            get
-            {
-                return MMALCameraConfig.videoWidth;
-            }
-            set
-            {
-                MMALCameraConfig.videoWidth = MMALUtil.VCOS_ALIGN_UP(value, 32);
-            }
-        }
-
-        private static int videoHeight;
-        public static int VideoHeight
-        {
-            get
-            {
-                return MMALCameraConfig.videoHeight;
-            }
-            set
-            {
-                MMALCameraConfig.videoHeight = MMALUtil.VCOS_ALIGN_UP(value, 16);
-            }
-        }
+        public static MMALEncoding VideoEncoding { get; set; } = MMALEncoding.MMAL_ENCODING_OPAQUE;
+        public static MMALEncoding VideoSubformat { get; set; } = MMALEncoding.MMAL_ENCODING_I420;
+        public static Resolution VideoResolution { get; set; } = Resolution.As1080p;
 
         /// <summary>
         /// Enable video stabilisation
@@ -296,36 +253,14 @@ namespace MMALSharp
         public static MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T IntraRefresh { get; set; } = MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T.MMAL_VIDEO_INTRA_REFRESH_DISABLED;
 
         /*
+         * -----------------------------------------------------------------------------------------------------------
          * Camera still port specific properties
+         * -----------------------------------------------------------------------------------------------------------
         */
-        public static MMALEncoding StillEncoding { get; set; } = MMALEncodings.MMAL_ENCODING_OPAQUE;
-        public static MMALEncoding StillEncodingSubFormat { get; set; } = MMALEncodings.MMAL_ENCODING_I420;
+        public static MMALEncoding StillEncoding { get; set; } = MMALEncoding.MMAL_ENCODING_OPAQUE;
+        public static MMALEncoding StillEncodingSubFormat { get; set; } = MMALEncoding.MMAL_ENCODING_I420;
 
-        private static int stillWidth;
-        public static int StillWidth
-        {
-            get
-            {
-                return MMALCameraConfig.stillWidth;
-            }
-            set
-            {
-                MMALCameraConfig.stillWidth = MMALUtil.VCOS_ALIGN_UP(value, 32);
-            }
-        }
-
-        private static int stillHeight;
-        public static int StillHeight
-        {
-            get
-            {
-                return MMALCameraConfig.stillHeight;
-            }
-            set
-            {
-                MMALCameraConfig.stillHeight = MMALUtil.VCOS_ALIGN_UP(value, 16);
-            }
-        }
+        public static Resolution StillResolution { get; set; } = Resolution.As5MPixel;
                
 
         /// <summary>
@@ -402,6 +337,49 @@ namespace MMALSharp
         Millisecond,
         Second,
         Minute
+    }
+
+    public class Resolution
+    {
+        public int Width { get; set; }
+        public int Height { get; set; }
+
+        public Resolution(int width, int height)
+        {
+            this.Width = MMALUtil.VCOS_ALIGN_UP(width, 16);
+            this.Height = MMALUtil.VCOS_ALIGN_UP(height, 16);
+        }
+
+        /*
+         * 4:3 Aspect ratios 
+        */
+        public static Resolution As8MPixel => new Resolution(3264, 2448);
+        
+        public static Resolution As7MPixel => new Resolution(3072, 2304);
+        
+        public static Resolution As6MPixel => new Resolution(3032, 2008);
+        
+        public static Resolution As5MPixel => new Resolution(2560, 1920);
+        
+        public static Resolution As4MPixel => new Resolution(2240, 1680);
+        
+        public static Resolution As3MPixel => new Resolution(2048, 1536);
+        
+        public static Resolution As2MPixel => new Resolution(1600, 1200);
+        
+        public static Resolution As1MPixel() => new Resolution(1280, 960);
+        
+        public static Resolution As03MPixel => new Resolution(640, 480);
+        
+        /*
+         * 16:9 Aspect ratios 
+        */
+        public static Resolution As720p => new Resolution(1280, 720);
+        
+        public static Resolution As1080p => new Resolution(1920, 1080);
+        
+        public static Resolution As1440p => new Resolution(2560, 1440);
+        
     }
 
 }

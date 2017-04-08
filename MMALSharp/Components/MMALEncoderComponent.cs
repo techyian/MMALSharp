@@ -184,7 +184,7 @@ namespace MMALSharp.Components
         /// <summary>
         /// The encoding type that the video encoder should use
         /// </summary>
-        public MMALEncoding EncodingType { get; set; } = MMALEncodings.MMAL_ENCODING_H264;
+        public MMALEncoding EncodingType { get; set; } = MMALEncoding.MMAL_ENCODING_H264;
 
         public int Bitrate { get; set; } = 17000000;
 
@@ -256,7 +256,7 @@ namespace MMALSharp.Components
         
         public override void Initialize()
         {        
-            if(this.EncodingType != MMALEncodings.MMAL_ENCODING_H264 && this.EncodingType != MMALEncodings.MMAL_ENCODING_MJPEG)
+            if(this.EncodingType != MMALEncoding.MMAL_ENCODING_H264 && this.EncodingType != MMALEncoding.MMAL_ENCODING_MJPEG)
             {
                 throw new PiCameraError("Unsupported format.");
             }
@@ -284,42 +284,16 @@ namespace MMALSharp.Components
                         
             this.OutputPort.Ptr->Format->Encoding = this.EncodingType.EncodingVal;
 
-            if (this.EncodingType == MMALEncodings.MMAL_ENCODING_H264)
-            {
-                if(this.Level == (int)MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4)
-                {
-                    if(this.Bitrate > MaxBitrateLevel4)
-                    {
-                        Helpers.PrintWarning("Bitrate too high: Reducing to 25MBit/s");
-                        this.Bitrate = MaxBitrateLevel4;
-                    }
-                }
-                else
-                {
-                    if(this.Bitrate > MaxBitrateLevel42)
-                    {
-                        Helpers.PrintWarning("Bitrate too high: Reducing to 62.5MBit/s");
-                        this.Bitrate = MaxBitrateLevel42;
-                    }
-                }                
-            }
-            else if(this.EncodingType == MMALEncodings.MMAL_ENCODING_MJPEG)
-            {
-                if(this.Bitrate > MaxBitrateMJPEG)
-                {
-                    Helpers.PrintWarning("Bitrate too high: Reducing to 25MBit/s");
-                    this.Bitrate = MaxBitrateMJPEG;
-                }
-            }
-
+            this.ConfigureBitrate();
+                        
             this.OutputPort.Ptr->Format->Bitrate = this.Bitrate;
 
             this.OutputPort.Ptr->BufferSize = 512 * 1024;
             this.OutputPort.Ptr->BufferNum = this.OutputPort.BufferNumMin;
 
-            MMAL_VIDEO_FORMAT_T vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.VideoWidth,
-                                                                  MMALCameraConfig.VideoHeight,
-                                                                  new MMAL_RECT_T(0, 0, MMALCameraConfig.VideoWidth, MMALCameraConfig.VideoHeight),
+            MMAL_VIDEO_FORMAT_T vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.VideoResolution.Width,
+                                                                  MMALCameraConfig.VideoResolution.Height,
+                                                                  new MMAL_RECT_T(0, 0, MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height),
                                                                   new MMAL_RATIONAL_T(0, 1),
                                                                   this.OutputPort.Ptr->Format->Es->Video.Par,
                                                                   this.OutputPort.Ptr->Format->Es->Video.ColorSpace);
@@ -328,7 +302,7 @@ namespace MMALSharp.Components
 
             this.OutputPort.Commit();
             
-            if(this.EncodingType == MMALEncodings.MMAL_ENCODING_H264)
+            if(this.EncodingType == MMALEncoding.MMAL_ENCODING_H264)
             {                
                 this.ConfigureIntraPeriod();
                                 
@@ -377,6 +351,43 @@ namespace MMALSharp.Components
             base.ManagedCallback(buffer, port);            
         }
 
+        internal void ConfigureBitrate()
+        {
+            if(this.EncodingType == MMALEncoding.MMAL_ENCODING_H264)
+            {
+                List<VideoLevel> levelList = null;
+                                
+                if (MMALCameraConfig.VideoProfile == MMAL_VIDEO_PROFILE_T.MMAL_VIDEO_PROFILE_H264_HIGH)
+                {
+                    levelList = VideoLevel.GetHighLevelLimits();                    
+                }
+                else if (MMALCameraConfig.VideoProfile == MMAL_VIDEO_PROFILE_T.MMAL_VIDEO_PROFILE_H264_HIGH10)
+                {
+                    levelList = VideoLevel.GetHigh10LevelLimits();                   
+                }
+                else
+                {
+                    levelList = VideoLevel.GetNormalLevelLimits();                    
+                }
+
+                var level = levelList.Where(c => c.Level == MMALCameraConfig.VideoLevel).First();
+
+                if (this.Bitrate > level.Maxbitrate)
+                {
+                    throw new PiCameraError("Bitrate requested exceeds maximum for selected Video Level and Profile");
+                }
+
+            }            
+            else if (this.EncodingType == MMALEncoding.MMAL_ENCODING_MJPEG)
+            {
+                if (this.Bitrate > MaxBitrateMJPEG)
+                {
+                    Helpers.PrintWarning("Bitrate too high: Reducing to 25MBit/s");
+                    this.Bitrate = MaxBitrateMJPEG;
+                }
+            }                                    
+        }
+
         internal void ConfigureRateControl()
         {
             MMAL_PARAMETER_VIDEO_RATECONTROL_T param = new MMAL_PARAMETER_VIDEO_RATECONTROL_T(new MMAL_PARAMETER_HEADER_T(MMALParametersVideo.MMAL_PARAMETER_RATECONTROL, Marshal.SizeOf<MMAL_PARAMETER_VIDEO_RATECONTROL_T>()), MMALCameraConfig.RateControl);
@@ -385,7 +396,7 @@ namespace MMALSharp.Components
 
         internal void ConfigureIntraPeriod()
         {
-            if(this.EncodingType == MMALEncodings.MMAL_ENCODING_H264 && MMALCameraConfig.IntraPeriod != -1)
+            if(this.EncodingType == MMALEncoding.MMAL_ENCODING_H264 && MMALCameraConfig.IntraPeriod != -1)
             {
                 this.OutputPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_INTRAPERIOD, MMALCameraConfig.IntraPeriod);
             }                
@@ -393,7 +404,7 @@ namespace MMALSharp.Components
 
         internal void ConfigureQuantisationParameter()
         {
-            if (this.EncodingType == MMALEncodings.MMAL_ENCODING_H264)
+            if (this.EncodingType == MMALEncoding.MMAL_ENCODING_H264)
             {
                 this.OutputPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INITIAL_QUANT, Quality);
                 this.OutputPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_MIN_QUANT, Quality);
@@ -402,20 +413,24 @@ namespace MMALSharp.Components
         }
 
         internal void ConfigureVideoProfile()
-        {            
-            if ((MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.VideoWidth, 16) >> 4) * (MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.VideoHeight, 16) >> 4) * this.Framerate > 245760)
+        {
+            var macroblocks = (MMALCameraConfig.VideoResolution.Width >> 4) * (MMALCameraConfig.VideoResolution.Height >> 4);
+            var macroblocksPSec = macroblocks * this.Framerate;
+
+            List<VideoLevel> videoLevels = VideoLevel.GetNormalLevelLimits();
+            
+            var level = videoLevels.Where(c => c.Level == MMALCameraConfig.VideoLevel).First();
+
+            if(macroblocks > level.MacroblocksLimit)
             {
-                if ((MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.VideoWidth, 16) >> 4) * (MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.VideoHeight, 16) >> 4) * this.Framerate <= 522240)
-                {
-                    Helpers.PrintWarning("Too many macroblocks/s: Increasing H264 Level to 4.2");
-                    MMALCameraConfig.VideoLevel = MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_42;                    
-                }
-                else
-                {
-                    throw new PiCameraError("Too many macroblocks/s requested");                                        
-                }
+                throw new PiCameraError("Resolution exceeds macroblock limit for selected profile and level.");
             }
 
+            if(macroblocksPSec > level.MacroblocksPerSecLimit)
+            {
+                throw new PiCameraError("Resolution exceeds macroblocks/s limit for selected profile and level.");
+            }
+                        
             MMAL_PARAMETER_VIDEO_PROFILE_S p = new MMAL_PARAMETER_VIDEO_PROFILE_S(MMALCameraConfig.VideoProfile, MMALCameraConfig.VideoLevel);
             
             MMAL_PARAMETER_VIDEO_PROFILE_S[] arr = new MMAL_PARAMETER_VIDEO_PROFILE_S[1] { p };
@@ -443,7 +458,7 @@ namespace MMALSharp.Components
 
         internal void ConfigureInlineVectorsFlag()
         {
-            if (this.EncodingType == MMALEncodings.MMAL_ENCODING_H264)
+            if (this.EncodingType == MMALEncoding.MMAL_ENCODING_H264)
             {
                 this.OutputPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INLINE_VECTORS, MMALCameraConfig.InlineMotionVectors);
             }                                       
@@ -487,7 +502,90 @@ namespace MMALSharp.Components
                 default:
                     return tempDt.AddMinutes(this.Split.Value);
             }
+        }
+        
+        class VideoLevel
+        {
+            public MMAL_VIDEO_LEVEL_T Level { get; set; }
+            public int MacroblocksPerSecLimit { get; set; }
+            public int MacroblocksLimit { get; set; }
+            public int Maxbitrate { get; set; }
+
+            public VideoLevel(MMAL_VIDEO_LEVEL_T level, int mcbps, int mcb, int bitrate)
+            {
+                this.Level = level;
+                this.MacroblocksPerSecLimit = mcbps;
+                this.MacroblocksLimit = mcb;
+                this.Maxbitrate = bitrate;
+            }
+
+            public static List<VideoLevel> GetNormalLevelLimits()
+            {
+                List<VideoLevel> videoLevels = new List<VideoLevel>();
+
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_1, 1485, 99, 64000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_1b, 1485, 99, 128000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_11, 3000, 396, 192000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_12, 6000, 396, 384000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_13, 11880, 396, 768000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_2, 11880, 396, 2000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_21, 19800, 792, 4000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_22, 20250, 1620, 4000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_3, 40500, 1620, 10000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_31, 108000, 3600, 14000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_32, 216000, 5120, 20000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4, 245760, 8192, 20000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_41, 245760, 8192, 50000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_42, 522240, 8704, 50000000));
+
+                return videoLevels;
+            }
+
+            public static List<VideoLevel> GetHighLevelLimits()
+            {
+                List<VideoLevel> videoLevels = new List<VideoLevel>();
+
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_1, 1485, 99, 80000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_1b, 1485, 99, 160000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_11, 3000, 396, 240000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_12, 6000, 396, 480000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_13, 11880, 396, 960000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_2, 11880, 396, 2500000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_21, 19800, 792, 5000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_22, 20250, 1620, 5000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_3, 40500, 1620, 12500000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_31, 108000, 3600, 17500000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_32, 216000, 5120, 25000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4, 245760, 8192, 25000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_41, 245760, 8192, 62500000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_42, 522240, 8704, 62500000));
+
+                return videoLevels;
+            }
+
+            public static List<VideoLevel> GetHigh10LevelLimits()
+            {
+                List<VideoLevel> videoLevels = new List<VideoLevel>();
+
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_1, 1485, 99, 192000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_1b, 1485, 99, 384000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_11, 3000, 396, 576000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_12, 6000, 396, 1152000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_13, 11880, 396, 2304000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_2, 11880, 396, 6000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_21, 19800, 792, 12000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_22, 20250, 1620, 12000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_3, 40500, 1620, 30000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_31, 108000, 3600, 42000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_32, 216000, 5120, 60000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4, 245760, 8192, 60000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_41, 245760, 8192, 150000000));
+                videoLevels.Add(new VideoLevel(MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_42, 522240, 8704, 150000000));
+
+                return videoLevels;
+            }
         }        
+       
     }
 
     /// <summary>
@@ -517,7 +615,7 @@ namespace MMALSharp.Components
         /// <summary>
         /// The encoding type that the image encoder should use
         /// </summary>
-        public MMALEncoding EncodingType { get; set; } = MMALEncodings.MMAL_ENCODING_JPEG;
+        public MMALEncoding EncodingType { get; set; } = MMALEncoding.MMAL_ENCODING_JPEG;
 
         /// <summary>
         /// The quality of the JPEG image
@@ -572,7 +670,7 @@ namespace MMALSharp.Components
 
             output.Commit();
                         
-            if (this.EncodingType == MMALEncodings.MMAL_ENCODING_JPEG)
+            if (this.EncodingType == MMALEncoding.MMAL_ENCODING_JPEG)
             {
                 output.SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, this.Quality);
             }

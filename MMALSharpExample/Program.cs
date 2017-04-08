@@ -15,9 +15,11 @@ namespace MMALSharpExample
             //Alter any configuration properties required.         
             MMALCameraConfig.EnableAnnotate = true;
             MMALCameraConfig.Annotate = new AnnotateImage { ShowDateText = true, ShowTimeText = true };            
-            MMALCameraConfig.VideoHeight = 1024;
-            MMALCameraConfig.VideoWidth = 768;
-            
+            MMALCameraConfig.VideoResolution = new Resolution(1024, 768);
+            MMALCameraConfig.PreviewResolution = new Resolution(1024, 768);
+            MMALCameraConfig.StillResolution = new Resolution(1024, 768);
+            MMALCameraConfig.Debug = true;
+                        
             MMALCameraConfig.InlineHeaders = true;
 
             MMALCamera cam = MMALCamera.Instance;
@@ -55,22 +57,27 @@ namespace MMALSharpExample
                 */
                                 
                 //Here we are changing the image encoder being used by the camera's still port by replacing it with a Bitmap encoder.                 
-                using (var imgEncoder = new MMALImageEncoder(new ImageStreamCaptureHandler("/home/pi/images/", "bmp"), MMALEncodings.MMAL_ENCODING_BMP, 90))
+                using (var imgEncoder = new MMALImageEncoder(new ImageStreamCaptureHandler("/home/pi/images/", "bmp"), MMALEncoding.MMAL_ENCODING_BMP, 90))
                 {
                     cam.AddEncoder(imgEncoder, cam.Camera.StillPort)
-                       .CreatePreviewComponent(new MMALNullSinkComponent());
+                       .CreatePreviewComponent(new MMALNullSinkComponent())
+                       .ConfigureCamera();
                     
                     await cam.TakePicture(cam.Camera.StillPort, cam.Camera.StillPort);
                 }
-
+                                
                 var ffmpegCaptureHandler = new FFmpegCaptureHandler("mystream", "rtmp://192.168.1.91:6767/live", 15);
 
                 using (var vidEncoder = new MMALVideoEncoder(ffmpegCaptureHandler, 40, 15))
                 {
                     cam.AddEncoder(vidEncoder, cam.Camera.VideoPort)                     
-                       .CreatePreviewComponent(new MMALVideoRenderer());
-                    
-                    //Stream video for 1 minute via RTMP using the *FFmpegCaptureHandler* class.
+                       .CreatePreviewComponent(new MMALVideoRenderer())
+                       .ConfigureCamera();
+
+                    /*
+                     * Stream video for 1 minute via RTMP using the *FFmpegCaptureHandler* class. 
+                     * Note: FFmpeg must be installed for this method to work correctly and an appropriate RTMP server running such as https://github.com/arut/nginx-rtmp-module
+                    */
                     await cam.TakeVideo(cam.Camera.VideoPort, DateTime.Now.AddMinutes(1));
                 }
                                     

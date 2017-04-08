@@ -22,12 +22,8 @@ namespace MMALSharp.Native
             this.EncodingVal = val;
             this.EncodingName = name;
         }
-    }
 
-
-    public static class MMALEncodings
-    {
-        public static MMALEncoding MMAL_ENCODING_H264 = new MMALEncoding("H264");        
+        public static MMALEncoding MMAL_ENCODING_H264 = new MMALEncoding("H264");
         public static MMALEncoding MMAL_ENCODING_MVC = new MMALEncoding("MVC ");
         public static MMALEncoding MMAL_ENCODING_H263 = new MMALEncoding("H263");
         public static MMALEncoding MMAL_ENCODING_MP4V = new MMALEncoding("MP4V");
@@ -131,5 +127,7 @@ namespace MMALSharp.Native
         public static MMALEncoding MMAL_COLOR_SPACE_BT470_2_M = new MMALEncoding("Y__M");
         public static MMALEncoding MMAL_COLOR_SPACE_BT470_2_BG = new MMALEncoding("Y_BG");
         public static MMALEncoding MMAL_COLOR_SPACE_JFIF_Y16_255 = new MMALEncoding("YY16");
+
     }
+
 }

@@ -117,6 +117,8 @@ namespace MMALSharp
 
             try
             {
+                Console.WriteLine(string.Format("Preparing to take video - Resolution: {0} x {1}", MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height));
+
                 //Enable the video encoder output port.
                 encoder.Start(outputPort, encoder.ManagedCallback);
 
@@ -156,9 +158,7 @@ namespace MMALSharp
         /// <param name="exifTags">Custom EXIF tags to use in the capture</param>
         /// <returns></returns>
         public async Task TakePicture(MMALPortImpl cameraPort, MMALPortImpl connPort, bool raw = false, bool useExif = true, params ExifTag[] exifTags)
-        {
-            Console.WriteLine("Preparing to take picture");
-            
+        {                        
             //Find the encoder/decoder which is connected to the output port specified.
             var encoder = this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == connPort).FirstOrDefault();
             
@@ -203,6 +203,8 @@ namespace MMALSharp
             //Enable the image encoder output port.            
             try
             {
+                Console.WriteLine(string.Format("Preparing to take picture - Resolution: {0} x {1}", MMALCameraConfig.StillResolution.Width, MMALCameraConfig.StillResolution.Height));
+
                 encoder.Start(outputPort, encoder.ManagedCallback);
 
                 this.StartCapture(cameraPort);

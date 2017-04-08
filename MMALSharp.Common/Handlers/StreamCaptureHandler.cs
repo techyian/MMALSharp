@@ -14,7 +14,7 @@ namespace MMALSharp.Handlers
     public abstract class StreamCaptureHandler : ICaptureHandler
     {
         protected Stream CurrentStream { get; set; }
-        public List<string> ProcessedStreams { get; set; } = new List<string>();
+        public List<Tuple<string, string, string>> ProcessedStreams { get; set; } = new List<Tuple<string, string, string>>();
         protected int Processed { get; set; }
         protected string Directory { get; set; }
         protected string Extension { get; set; }
@@ -49,8 +49,8 @@ namespace MMALSharp.Handlers
         public void PostProcess()
         {
             try
-            {
-                this.ProcessedStreams.Add("'" + this.GetDirectory() + "/" + this.GetFilename() + this.GetExtension() + "'");
+            {                
+                this.ProcessedStreams.Add(new Tuple<string, string, string> (this.GetDirectory(), this.GetFilename(), this.GetExtension()));
                 Console.WriteLine(string.Format("Successfully processed {0}", Helpers.ConvertBytesToMegabytes(this.Processed)));
             }
             catch(Exception e)
