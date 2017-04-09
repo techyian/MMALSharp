@@ -5,9 +5,8 @@ authors Ian Auty (@Techyian)
 description
 	Unofficial C# API for the Raspberry Pi camera
 
-files
-    bin/Release ==> lib
-	
 dependencies
 	FAKE ~> 4.50.0
 	Nito.AsyncEx ~> 3.0.1
+	
+include-referenced-projects true

@@ -33,19 +33,19 @@ namespace MMALSharpExample
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
                     //Create our component pipeline.         
-                    cam.AddEncoder(vidEncoder, cam.Camera.VideoPort)
-                       .AddEncoder(imgEncoder, cam.Camera.StillPort)
+                    cam
+                       .AddEncoder(imgEncoder, cam.Camera.VideoPort)
                        .CreatePreviewComponent(new MMALVideoRenderer())
                        .ConfigureCamera();
 
                     //Record video for 1 minute, using segmented video record to split into multiple files every 30 seconds.
-                    await cam.TakeVideo(cam.Camera.VideoPort, DateTime.Now.AddMinutes(1), new Split { Mode = TimelapseMode.Second, Value = 30 });
+                    //await cam.TakeVideo(cam.Camera.VideoPort, DateTime.Now.AddMinutes(1), new Split { Mode = TimelapseMode.Second, Value = 30 });
 
                     //Take multiple pictures every 5 seconds for 1 minute as a timelapse. 
-                    await cam.TakePictureTimelapse(cam.Camera.StillPort, cam.Camera.StillPort, new Timelapse { Mode = TimelapseMode.Second, Value = 5, Timeout = DateTime.Now.AddMinutes(1) });
+                    //await cam.TakePictureTimelapse(cam.Camera.StillPort, cam.Camera.StillPort, new Timelapse { Mode = TimelapseMode.Second, Value = 5, Timeout = DateTime.Now.AddMinutes(1) });
 
                     //Take a single picture on the camera's still port using the encoder connected to the still port
-                    await cam.TakePicture(cam.Camera.StillPort, cam.Camera.StillPort);
+                    await cam.TakePicture(cam.Camera.VideoPort, cam.Camera.VideoPort);
 
                     //Processes the list of images you've taken with the *ImageStreamCaptureHandler* class into a video
                     imgCaptureHandler.ImagesToVideo("/home/pi/videos", 2);
