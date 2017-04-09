@@ -6,7 +6,7 @@ description
 	Unofficial C# API for the Raspberry Pi camera
 
 files
-    ../build ==> lib
+    bin/Release ==> lib
 	
 dependencies
 	FAKE ~> 4.50.0
