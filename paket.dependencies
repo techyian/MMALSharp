@@ -7,6 +7,7 @@ source https://www.nuget.org/api/v2
 		
 group NetStandard
 source https://www.nuget.org/api/v2
+source https://dotnet.myget.org/F/dotnet-core/api/v3/index.json
 	nuget FAKE ~> 4.50.0
 	nuget Microsoft.CSharp ~> 4.3.0
 	nuget System.Diagnostics.Process ~> 4.3.0
