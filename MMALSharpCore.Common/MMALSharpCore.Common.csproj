@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<RuntimeFrameworkVersion>2.0.0-preview1-002013-00</RuntimeFrameworkVersion>
+    <RuntimeIdentifiers>ubuntu.16.04-arm</RuntimeIdentifiers>
+    <TargetFramework>netstandard1.6</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  
+  <ItemGroup>    
+	<Compile Include="..\MMALSharp.Common\**\*.cs" Exclude="..\MMALSharp.Common\Properties\**;..\MMALSharp.Common\bin\**;..\MMALSharp.Common\obj\**" />    
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RuntimeFrameworkVersion>2.0.0-preview1-002013-00</RuntimeFrameworkVersion>
+    <RuntimeIdentifiers>ubuntu.16.04-arm</RuntimeIdentifiers>
+    <TargetFramework>netstandard1.6</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>	
+    <Compile Include="..\MMALSharp\**\*.cs" Exclude="..\MMALSharp\Properties\**;..\MMALSharp\bin\**;..\MMALSharp\obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MMALSharpCore.Common\MMALSharpCore.Common.csproj">
+      <Private>true</Private>
+      <ReferenceOutputAssembly>
+      </ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="..\.paket\Paket.Restore.targets" />
+</Project>

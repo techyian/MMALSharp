@@ -13,9 +13,24 @@ namespace MMALSharp.Handlers
     /// </summary>
     public abstract class StreamCaptureHandler : ICaptureHandler
     {
+        /// <summary>
+        /// A Stream instance that we can process image data to
+        /// </summary>
         protected Stream CurrentStream { get; set; }
-        public List<Tuple<string, string, string>> ProcessedStreams { get; set; } = new List<Tuple<string, string, string>>();
+
+        /// <summary>
+        /// A list of FileStreams that have been processed by this capture handler
+        /// </summary>
+        public List<Tuple<string, string, string>> ProcessedFiles { get; set; } = new List<Tuple<string, string, string>>();
+
+        /// <summary>
+        /// The total size of data that has been processed by this capture handler
+        /// </summary>
         protected int Processed { get; set; }
+
+        /// <summary>
+        /// The directory
+        /// </summary>
         protected string Directory { get; set; }
         protected string Extension { get; set; }
 
@@ -27,6 +42,9 @@ namespace MMALSharp.Handlers
             System.IO.Directory.CreateDirectory(this.Directory);
         }
 
+        /// <summary>
+        /// Creates a new File (FileStream), assigns it to the Stream instance of this class and disposes of any existing stream. 
+        /// </summary>
         public void NewFile()
         {
             if (this.CurrentStream != null)
@@ -35,6 +53,10 @@ namespace MMALSharp.Handlers
             this.CurrentStream = File.Create(this.Directory + "/" + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + "." + this.Extension);
         }
                 
+        /// <summary>
+        /// Processes the data passed into this method to this class' Stream instance.
+        /// </summary>
+        /// <param name="data">The image data</param>
         public void Process(byte[] data)
         {
             this.Processed += data.Length;
@@ -46,11 +68,18 @@ namespace MMALSharp.Handlers
             
         }
 
+        /// <summary>
+        /// Allows us to do any further processing once the capture method has completed.
+        /// </summary>
         public void PostProcess()
         {
             try
-            {                
-                this.ProcessedStreams.Add(new Tuple<string, string, string> (this.GetDirectory(), this.GetFilename(), this.GetExtension()));
+            {        
+                if (this.CurrentStream.GetType() == typeof(FileStream))
+                {
+                    this.ProcessedFiles.Add(new Tuple<string, string, string>(this.Directory, this.GetFilename(), this.Extension));
+                }
+                
                 Console.WriteLine(string.Format("Successfully processed {0}", Helpers.ConvertBytesToMegabytes(this.Processed)));
             }
             catch(Exception e)
@@ -59,25 +88,11 @@ namespace MMALSharp.Handlers
                 Console.WriteLine(e.Message);
             }                   
         }
-        
-        public string GetDirectory()
-        {
-            if(this.CurrentStream.GetType() == typeof(FileStream))
-            {
-                return Path.GetDirectoryName(((FileStream)this.CurrentStream).Name);                
-            }
-            return null;
-        }
-
-        private string GetExtension()
-        {
-            if (this.CurrentStream.GetType() == typeof(FileStream))
-            {
-                return Path.GetExtension(((FileStream)this.CurrentStream).Name);
-            }
-            return null;
-        }
-
+      
+        /// <summary>
+        /// Gets the filename that a FileStream points to
+        /// </summary>
+        /// <returns>The filename</returns>
         private string GetFilename()
         {
             if (this.CurrentStream.GetType() == typeof(FileStream))

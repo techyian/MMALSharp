@@ -1,5 +1,16 @@
-source https://www.nuget.org/api/v2
-
 // NuGet packages
-nuget FAKE ~> 4.50.0
-nuget Nito.AsyncEx ~> 3.0.1
+
+group NetFramework
+source https://www.nuget.org/api/v2
+	nuget FAKE ~> 4.50.0
+	nuget Nito.AsyncEx ~> 3.0.1 
+	
+group NetStandard
+source https://www.nuget.org/api/v2
+source https://dotnet.myget.org/F/dotnet-core/api/v3/index.json
+	nuget FAKE ~> 4.50.0
+	nuget Nito.AsyncEx ~> 5.0.0-pre-02 
+	nuget Microsoft.CSharp ~> 4.3.0
+	nuget System.Diagnostics.Process ~> 4.3.0
+
+

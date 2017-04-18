@@ -1,14 +1,7 @@
-﻿using MMALSharp.Handlers;
-using MMALSharp.Native;
+﻿using MMALSharp.Native;
 using Nito.AsyncEx;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp

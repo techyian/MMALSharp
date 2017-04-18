@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharp", "MMALSharp\MMALSharp.csproj", "{5B03E4B4-13AA-4EC8-8FD3-9DAA176EAA70}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -20,6 +20,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharp.FFmpeg", "MMALSha
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharp.Common", "MMALSharp.Common\MMALSharp.Common.csproj", "{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharpCore", "MMALSharpCore\MMALSharpCore.csproj", "{B8094B2C-C9D5-4199-9F6B-EDF53B6E4EB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharpCore.Common", "MMALSharpCore.Common\MMALSharpCore.Common.csproj", "{0DBA7A53-6D52-4825-93CC-BBE785A02DBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharpCore.FFmpeg", "MMALSharpCore.FFmpeg\MMALSharpCore.FFmpeg.csproj", "{0A2AAF93-A749-4C04-BA0F-AA7F19E428C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharpCoreExample", "MMALSharpCoreExample\MMALSharpCoreExample.csproj", "{630219BA-72E1-41A9-8AA7-24D4E0DD7BA1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B8094B2C-C9D5-4199-9F6B-EDF53B6E4EB1} = {B8094B2C-C9D5-4199-9F6B-EDF53B6E4EB1}
+		{0DBA7A53-6D52-4825-93CC-BBE785A02DBB} = {0DBA7A53-6D52-4825-93CC-BBE785A02DBB}
+		{0A2AAF93-A749-4C04-BA0F-AA7F19E428C8} = {0A2AAF93-A749-4C04-BA0F-AA7F19E428C8}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +56,22 @@ Global
 		{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8094B2C-C9D5-4199-9F6B-EDF53B6E4EB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8094B2C-C9D5-4199-9F6B-EDF53B6E4EB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8094B2C-C9D5-4199-9F6B-EDF53B6E4EB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8094B2C-C9D5-4199-9F6B-EDF53B6E4EB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DBA7A53-6D52-4825-93CC-BBE785A02DBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DBA7A53-6D52-4825-93CC-BBE785A02DBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DBA7A53-6D52-4825-93CC-BBE785A02DBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DBA7A53-6D52-4825-93CC-BBE785A02DBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A2AAF93-A749-4C04-BA0F-AA7F19E428C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A2AAF93-A749-4C04-BA0F-AA7F19E428C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A2AAF93-A749-4C04-BA0F-AA7F19E428C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A2AAF93-A749-4C04-BA0F-AA7F19E428C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{630219BA-72E1-41A9-8AA7-24D4E0DD7BA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{630219BA-72E1-41A9-8AA7-24D4E0DD7BA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{630219BA-72E1-41A9-8AA7-24D4E0DD7BA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{630219BA-72E1-41A9-8AA7-24D4E0DD7BA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

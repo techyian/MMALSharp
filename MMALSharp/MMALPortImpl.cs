@@ -1,13 +1,8 @@
-﻿using MMALSharp.Handlers;
-using MMALSharp.Native;
+﻿using MMALSharp.Native;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Timers;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
@@ -172,8 +167,7 @@ namespace MMALSharp
                     if (MMALCameraConfig.Debug)
                         Console.WriteLine("Unable to send buffer header");
                 }
-
-                Thread.Sleep(50);
+                                
             }
         }
 
@@ -256,9 +250,7 @@ namespace MMALSharp
                 {
                     if (MMALCameraConfig.Debug)
                         Console.WriteLine("Unable to send buffer header");
-                }
-
-                Thread.Sleep(50);
+                }                                
             }
         }
                

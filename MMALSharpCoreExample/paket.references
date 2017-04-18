@@ -1,0 +1,3 @@
+group NetStandard
+Nito.AsyncEx
+Microsoft.CSharp

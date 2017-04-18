@@ -1,12 +1,7 @@
 ﻿using MMALSharp.Handlers;
-using MMALSharp.Native;
-using Nito.AsyncEx;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace MMALSharp.Components
 {
@@ -64,7 +59,7 @@ namespace MMALSharp.Components
         /// <param name="managedCallback">The managed method to callback to from the native callback</param>
         public void Start(int outputPortNumber, Action<MMALBufferImpl, MMALPortBase> managedCallback)
         {            
-            if (this.Handler != null && this.Handler.GetType().IsSubclassOf(typeof(StreamCaptureHandler)))
+            if (this.Handler != null && this.Handler.GetType().GetTypeInfo().IsSubclassOf(typeof(StreamCaptureHandler)))
             {                
                 ((StreamCaptureHandler)this.Handler).NewFile();
             }
@@ -79,7 +74,7 @@ namespace MMALSharp.Components
         /// <param name="managedCallback">The managed method to callback to from the native callback</param>
         public void Start(MMALPortBase port, Action<MMALBufferImpl, MMALPortBase> managedCallback)
         {
-            if (this.Handler != null && this.Handler.GetType().IsSubclassOf(typeof(StreamCaptureHandler)))
+            if (this.Handler != null && this.Handler.GetType().GetTypeInfo().IsSubclassOf(typeof(StreamCaptureHandler)))
             {
                 ((StreamCaptureHandler)this.Handler).NewFile();
             }

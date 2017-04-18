@@ -15,7 +15,31 @@ namespace MMALSharp.Handlers
     {
         public Process MyProcess { get; set; }
         
-        public FFmpegCaptureHandler(string streamName, string streamUrl, int framerate)
+        /// <summary>
+        /// Streams video from the standard output stream via FFmpeg to an RTMP server.
+        /// </summary>
+        /// <param name="streamName">The meta name of the stream</param>
+        /// <param name="streamUrl">The url of your RTMP server - the url to stream to.</param>
+        /// <returns></returns>
+        public static FFmpegCaptureHandler RTMPStreamer(string streamName, string streamUrl)
+        {
+            return new FFmpegCaptureHandler(string.Format("-re -i - -c:v copy -an -f flv -metadata streamName={0} {1}", streamName, streamUrl));
+        }
+
+        /// <summary>
+        /// Records video from the standard output stream via FFmpeg into a video file that can be opened without explicit command line flags.  
+        /// </summary>
+        /// <param name="directory">The directory to store the output video file</param>
+        /// <param name="extension">The extension of the video file</param>
+        /// <returns></returns>
+        public static FFmpegCaptureHandler TakeVideoMultiplex(string directory, string extension)
+        {            
+            System.IO.Directory.CreateDirectory(directory);
+                        
+            return new FFmpegCaptureHandler(string.Format("-re -i - -c:v copy {0}/out.{1}", directory.TrimEnd(), extension.TrimStart('.')));
+        }
+
+        public FFmpegCaptureHandler(string argument)
         {
             this.MyProcess = new Process();
 
@@ -46,7 +70,7 @@ namespace MMALSharp.Handlers
                     }
                 };
 
-                this.MyProcess.StartInfo.Arguments = string.Format("-i - -c:v copy -an -r {0} -f flv -metadata streamName={1} {2}", framerate, streamName, streamUrl);                
+                this.MyProcess.StartInfo.Arguments = argument;
                 this.MyProcess.Start();
                 this.MyProcess.BeginOutputReadLine();
                 this.MyProcess.BeginErrorReadLine();
@@ -69,10 +93,7 @@ namespace MMALSharp.Handlers
             throw new NotImplementedException();
         }
 
-        public void PostProcess()
-        {
-            
-        }
+        public void PostProcess() { }
 
         public void Process(byte[] data)
         {
@@ -83,7 +104,7 @@ namespace MMALSharp.Handlers
             }
             catch
             {
-                this.MyProcess.Close();
+                this.MyProcess.Kill();
                 throw;         
             }            
         }
@@ -95,7 +116,7 @@ namespace MMALSharp.Handlers
 
         public void Dispose()
         {
-            this.MyProcess.Close();
+            this.MyProcess.Kill();
         }
                 
     }
