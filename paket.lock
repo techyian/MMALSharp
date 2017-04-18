@@ -3,7 +3,7 @@
 GROUP NetFramework
 NUGET
   remote: https://www.nuget.org/api/v2
-    FAKE (4.50.1)
+    FAKE (4.58.6)
     Microsoft.Bcl (1.1.10) - framework: net40, portable-net40+win80+sl40+wp71, portable-net40+win80+sl50+wp80+wpa81, sl50
       Microsoft.Bcl.Build (>= 1.0.14)
     Microsoft.Bcl.Async (1.0.168) - framework: net40, portable-net40+win80+sl40+wp71, portable-net40+win80+sl50+wp80+wpa81, sl50
@@ -15,7 +15,7 @@ NUGET
 GROUP NetStandard
 NUGET
   remote: https://www.nuget.org/api/v2
-    FAKE (4.50.1)
+    FAKE (4.58.6)
     Microsoft.CSharp (4.3)
       System.Collections (>= 4.3) - framework: dnxcore50, >= netstandard13
       System.Diagnostics.Debug (>= 4.3) - framework: dnxcore50, >= netstandard13
@@ -632,3 +632,5 @@ NUGET
       System.Text.Encoding (>= 4.3) - framework: dnxcore50, >= netstandard13
       System.Threading (>= 4.3) - framework: dnxcore50, >= netstandard13
       System.Xml.ReaderWriter (>= 4.3) - framework: dnxcore50, netstandard10, >= netstandard13
+  remote: https://dotnet.myget.org/F/dotnet-core
+    runtime.ubuntu.16.04-arm.Microsoft.NETCore.App (2.0.0-preview1-002028-00)
