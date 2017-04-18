@@ -1,17 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 	<RuntimeFrameworkVersion>2.0.0-preview1-002013-00</RuntimeFrameworkVersion>
-    <RuntimeIdentifiers>ubuntu.16.04-arm</RuntimeIdentifiers>
+	<RuntimeIdentifiers>ubuntu.16.04-arm</RuntimeIdentifiers>
     <TargetFramework>netstandard1.6</TargetFramework>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
-  
-  <ItemGroup>    
-	<Compile Include="..\MMALSharp.Common\**\*.cs" Exclude="..\MMALSharp.Common\Properties\**;..\MMALSharp.Common\bin\**;..\MMALSharp.Common\obj\**" />    
+  <ItemGroup>
+    <Compile Include="..\MMALSharp.Common\**\*.cs" Exclude="..\MMALSharp.Common\Properties\**;..\MMALSharp.Common\bin\**;..\MMALSharp.Common\obj\**" />
   </ItemGroup>
-
+  <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

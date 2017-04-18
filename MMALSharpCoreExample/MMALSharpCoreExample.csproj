@@ -1,11 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
 	<RuntimeFrameworkVersion>2.0.0-preview1-002013-00</RuntimeFrameworkVersion>
-    <RuntimeIdentifiers>ubuntu.16.04-arm</RuntimeIdentifiers>
+	<RuntimeIdentifiers>ubuntu.16.04-arm</RuntimeIdentifiers>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
-  <Import Project="..\.paket\Paket.Restore.targets" />
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="runtime.ubuntu.16.04-arm.Microsoft.NETCore.App" Version="2.0.0-preview1-002028-00" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\MMALSharpCore.Common\MMALSharpCore.Common.csproj" />
     <ProjectReference Include="..\MMALSharpCore.FFmpeg\MMALSharpCore.FFmpeg.csproj" />
