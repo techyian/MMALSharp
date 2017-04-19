@@ -2,21 +2,24 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/r3o4bqxektnulw7l?svg=true)](https://ci.appveyor.com/project/techyian/mmalsharp)
 
-MMALSharp is an unofficial C# API for the Raspberry Pi camera. It is currently an early experimental build which features the ability to 
-take pictures with your Raspberry Pi. Under the hood, MMALSharp makes use of the native MMAL interface designed by Broadcom.
+MMALSharp is an unofficial C# API for the Raspberry Pi camera. Under the hood, MMALSharp makes use of the native MMAL interface designed by Broadcom.
 
-## Goals
+The project is in early stages of development, however the ability to take pictures and record video are working as expected (H.264 & MJPEG).
 
-My goal for the project is to provide a fully functional API to the Raspberry Pi camera, supporting Still image capture, Video capture and Preview rendering.
-I aim to allow users the ability to build up their own component pipeline with respective encoders/decoders in an easy to use manner, adhering to what is 
-possible via MMAL. 
+MMALSharp supports the following runtimes:
 
-## Install Mono
+1) Mono 4.x 
+2) .NET Core 2.0 (beta) with .NET Standard 1.6.
+
+
+## Mono
+
+### Installation
 
 In order for the Raspberry Pi to run C# programs, you will need to install Mono. Installation differs between the original Model A/B/B+/Zero boards and
 the newer Pi Model B 2/3 boards running the ARMV7/8 chipsets.
 
-### Model A/B/B+/Zero
+#### Model A/B/B+/Zero
 
 The version of Mono currently available in the Raspbian repositories is 3.2.8 and isn't compatible with this library. Therefore, we need to do a few
 extra steps to get a compatible version installed. Luckily, member 'plugwash' from the Raspberry Pi forums has built a version of Mono and provided a
@@ -31,7 +34,7 @@ In order to install the required version, please open a console window and follo
 
 Once completed, if you run `mono --version` from your command window, you should see the mono version 4.0.2 returned.
 
-### Model B 2/3
+#### Model B 2/3
 
 Using a later model of the Raspberry Pi allows you to install the latest Mono version from the Mono repositories without issue. To do so, please follow the below steps:
 
@@ -42,17 +45,30 @@ sudo apt-get update && sudo apt-get upgrade
 sudo apt-get install mono-complete
 ```
 
+## .NET Core
 
-## Building
+.NET Core support for the Raspberry Pi is available in .NET Core 2.0 (beta), however only the Pi 2 & 3 are currently supported and you must be using an Ubuntu flavour distro; for local testing I am using Ubuntu MATE 16.04 (LTS).
+ 
+### Installation
+ 
+1) Download the .NET Core SDK v2.0 from [here](https://github.com/dotnet/cli) - scroll down to the 'Installers and Binaries' section and download & install the appropriate binaries.
+2) Install the following packages on your Raspberry Pi: `sudo apt-get install libunwind8 libunwind8-dev gettext libicu-dev liblttng-ust-dev libcurl4-openssl-dev libssl-dev uuid-dev unzip`
+3) Clone MMALSharp
+4) Enter the `.paket` directory and run paket.bootstrapper.exe
+5) When complete, a new executable `paket.exe` can be found in the same directory - run `paket install` which will install all dependencies required for MMALSharp.
+6) Change directory back to the root solution level `cd ..`
+7) Run `dotnet restore` which will configure the .NET Core projects.
+8) Run `dotnet publish -r ubuntu.16.04-arm` - this will create a new directory called `publish` within the `/src/MMALSharpCoreExample/bin/Debug/netcoreapp2.0/ directory.
+9) Copy the contents of that folder over to your Raspberry Pi
+10) Download and extract the .NET Core runtime on your Pi from [here](https://github.com/dotnet/core-setup#daily-builds), ensuring you choose the correct distribution ([Ubuntu 16.04 download location](https://dotnetcli.blob.core.windows.net/dotnet/master/Binaries/Latest/dotnet-ubuntu.16.04-arm.latest.tar.gz) )
+11) Within the extracted directory will be an application called `dotnet`, run `sudo chmod +x ./dotnet` to make it executable, then run `dotnet LOCATION OF YOUR MMALSharpCoreExample.dll`.
 
-The project is currently targeting .NET framework 4.5.2, and therefore requires Mono 4.x.
 
-MMALSharp uses FAKE for building, and Paket for dependency management. Currently there is only a dependency on the Nito.AsyncEx library by 
-[@StephenCleary](https://github.com/StephenCleary).
+## Building from source
+
+**These build instructions are specifically for running MMALSharp with Mono:**
 
 Pre-release builds are available from [Myget](https://www.myget.org/gallery/mmalsharp)
-
-Alternatively, to manually build, clone this repository and simply run one of the below depending on your development environment.
 
 Windows:
 
@@ -155,11 +171,12 @@ Tested image 'still' features:
 - [x] EXIF tags
 - [x] Raw capture
 
-## Notes
+## Notes & Known issues
 
 When using more resource intensive encoders such as MMAL_ENCODING_BMP and the Sony IMX219 module, I've found it necessary to increase the memory split
 to around 200mb or otherwise you'll receive an ENOSPC error due to insufficient resources.
 
+There is an issue with EXIF and Annotation support under the .NET Core build of MMALSharp currently, an issue has been raised for this and will be fixed ASAP.
 
 ## License
 
