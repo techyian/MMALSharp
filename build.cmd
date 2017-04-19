@@ -28,4 +28,4 @@ packages\netframework\FAKE\tools\FAKE.exe "%PWD%" MMALSharpCommonDebugApp
 packages\netframework\FAKE\tools\FAKE.exe "%PWD%" MMALSharpFFmpegReleaseApp
 packages\netframework\FAKE\tools\FAKE.exe "%PWD%" MMALSharpFFmpegDebugApp
 
-.paket\paket.exe pack output build templatefile MMALSharp\paket.template
+.paket\paket.exe pack output build templatefile src\MMALSharp\paket.template

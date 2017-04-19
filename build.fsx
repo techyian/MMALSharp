@@ -4,14 +4,14 @@ open Fake
 
 // Properties
 
-let mmalSharpCommonReleasedir = "./MMALSharp.Common/bin/Release"
-let mmalSharpCommonDebugdir = "./MMALSharp.Common/bin/Release"
+let mmalSharpCommonReleasedir = "./src/MMALSharp.Common/bin/Release"
+let mmalSharpCommonDebugdir = "./src/MMALSharp.Common/bin/Release"
 
-let mmalSharpReleaseDir = "./MMALSharp/bin/Release"
-let mmalSharpDebugDir = "./MMALSharp/bin/Debug"
+let mmalSharpReleaseDir = "./src/MMALSharp/bin/Release"
+let mmalSharpDebugDir = "./src/MMALSharp/bin/Debug"
 
-let mmalSharpFFmpegReleasedir = "./MMALSharp.FFmpeg/bin/Release"
-let mmalSharpFFmpegDebugdir = "./MMALSharp.FFmpeg/bin/Release"
+let mmalSharpFFmpegReleasedir = "./src/MMALSharp.FFmpeg/bin/Release"
+let mmalSharpFFmpegDebugdir = "./src/MMALSharp.FFmpeg/bin/Release"
 
 // Targets
 Target "Clean" (fun _ ->
@@ -19,37 +19,37 @@ Target "Clean" (fun _ ->
 )
 
 Target "MMALSharpCommonReleaseApp" (fun _ ->
-    !! "MMALSharp.Common/*.csproj"
+    !! "src/MMALSharp.Common/*.csproj"
     |> MSBuildRelease mmalSharpCommonReleasedir "Build"
     |> Log "AppBuild-Output: "
 )
 
 Target "MMALSharpCommonDebugApp" (fun _ ->
-    !! "MMALSharp.Common/*.csproj"
+    !! "src/MMALSharp.Common/*.csproj"
     |> MSBuildDebug mmalSharpCommonDebugdir "Build"
     |> Log "AppBuild-Output: "
 )
 
 Target "MMALSharpReleaseApp" (fun _ ->
-    !! "MMALSharp/*.csproj"
+    !! "src/MMALSharp/*.csproj"
     |> MSBuildRelease mmalSharpReleaseDir "Build"
     |> Log "AppBuild-Output: "
 )
 
 Target "MMALSharpDebugApp" (fun _ ->
-    !! "MMALSharp/*.csproj"
+    !! "src/MMALSharp/*.csproj"
     |> MSBuildDebug mmalSharpDebugDir "Build"
     |> Log "AppBuild-Output: "
 )
 
 Target "MMALSharpFFmpegReleaseApp" (fun _ ->
-    !! "MMALSharp.FFmpeg/*.csproj"
+    !! "src/MMALSharp.FFmpeg/*.csproj"
     |> MSBuildRelease mmalSharpFFmpegReleasedir "Build"
     |> Log "AppBuild-Output: "
 )
 
 Target "MMALSharpFFmpegDebugApp" (fun _ ->
-    !! "MMALSharp.FFmpeg/*.csproj"
+    !! "src/MMALSharp.FFmpeg/*.csproj"
     |> MSBuildDebug mmalSharpFFmpegDebugdir "Build"
     |> Log "AppBuild-Output: "
 )

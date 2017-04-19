@@ -14,5 +14,5 @@
   <ItemGroup>
     <ProjectReference Include="..\MMALSharpCore.Common\MMALSharpCore.Common.csproj" />
   </ItemGroup>  
-  <Import Project="..\.paket\Paket.Restore.targets" />
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

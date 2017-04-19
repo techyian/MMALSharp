@@ -11,5 +11,5 @@
   <ItemGroup>
     <Compile Include="..\MMALSharp.Common\**\*.cs" Exclude="..\MMALSharp.Common\Properties\**;..\MMALSharp.Common\bin\**;..\MMALSharp.Common\obj\**" />
   </ItemGroup>
-  <Import Project="..\.paket\Paket.Restore.targets" />
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
