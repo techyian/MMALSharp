@@ -1,10 +1,6 @@
 ﻿using MMALSharp.Native;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
@@ -34,67 +30,33 @@ namespace MMALSharp
         /// <summary>
         /// Name of this connection
         /// </summary>
-        public string Name {
-            get
-            {
-                return Marshal.PtrToStringAnsi((IntPtr)(*this.Ptr).Name);
-            }
-        }
-
+        public string Name => Marshal.PtrToStringAnsi((IntPtr)(*this.Ptr).Name);
+        
         /// <summary>
         /// Indicates whether this connection is enabled
         /// </summary>
-        public bool Enabled {
-            get
-            {
-                return (*this.Ptr).IsEnabled == 1;
-            }
-        }
-
+        public bool Enabled => (*this.Ptr).IsEnabled == 1;
+        
         /// <summary>
         /// Flags passed during the create call (Read Only). A bitwise combination of Connection flags values.
         /// </summary>
-        public uint Flags
-        {
-            get
-            {
-                return (*this.Ptr).Flags;
-            }
-        }
-
+        public uint Flags => (*this.Ptr).Flags;
+        
         /// <summary>
         /// Time in microseconds taken to setup the connection.
         /// </summary>                          
-        public long TimeSetup
-        {
-            get
-            {
-                return (*this.Ptr).TimeSetup;
-            }
-        }
-
+        public long TimeSetup => (*this.Ptr).TimeSetup;
+        
         /// <summary>
         /// Time in microseconds taken to enable the connection.
         /// </summary>
-        public long TimeEnable
-        {
-            get
-            {
-                return (*this.Ptr).TimeEnable;
-            }
-        }
-
+        public long TimeEnable => (*this.Ptr).TimeEnable;
+        
         /// <summary>
         /// Time in microseconds taken to disable the connection.
         /// </summary>
-        public long TimeDisable
-        {
-            get
-            {
-                return (*this.Ptr).TimeDisable;
-            }
-        }
-
+        public long TimeDisable => (*this.Ptr).TimeDisable;
+        
         #endregion
 
         protected MMALConnectionImpl(MMAL_CONNECTION_T* ptr, MMALPortBase output, MMALPortBase input)

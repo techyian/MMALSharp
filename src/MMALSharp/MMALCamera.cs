@@ -52,7 +52,9 @@ namespace MMALSharp
         public void StartCapture(MMALPortImpl port)
         {            
             if (port == this.Camera.StillPort || this.Encoders.Any(c => c.Enabled))
+            {
                 port.SetImageCapture(true);
+            }                
         }
 
         /// <summary>
@@ -62,7 +64,9 @@ namespace MMALSharp
         public void StopCapture(MMALPortImpl port)
         {
             if (port == this.Camera.StillPort || this.Encoders.Any(c => c.Enabled))
+            {
                 port.SetImageCapture(false);
+            }                
         }
         
         /// <summary>
@@ -71,7 +75,10 @@ namespace MMALSharp
         /// <param name="port">The capture port</param>
         public void ForceStop(MMALPortImpl port)
         {
-            port.Trigger.Signal();
+            if(port.Trigger.CurrentCount > 0)
+            {
+                port.Trigger.Signal();
+            }            
         }        
 
         /// <summary>
@@ -129,9 +136,9 @@ namespace MMALSharp
 
                 this.StartCapture(this.Camera.VideoPort);
 
+                //Wait until the process is complete.  
                 await encoder.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
-
-                //Wait until the process is complete.            
+                                          
                 this.StopCapture(this.Camera.VideoPort);
 
                 //Disable the image encoder output port.

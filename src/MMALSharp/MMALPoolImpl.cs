@@ -1,9 +1,5 @@
 ﻿using MMALSharp.Native;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
@@ -26,7 +22,10 @@ namespace MMALSharp
         public MMALPoolImpl(MMALPortBase port)
         {
             if (MMALCameraConfig.Debug)
+            {
                 Console.WriteLine(string.Format("Creating buffer pool with {0} buffers of size {1}", port.BufferNum, port.BufferSize));
+            }
+                
             this.Ptr = MMALUtil.mmal_port_pool_create(port.Ptr, port.BufferNum, port.BufferSize);
             this.Queue = new MMALQueueImpl((*this.Ptr).Queue);            
         }

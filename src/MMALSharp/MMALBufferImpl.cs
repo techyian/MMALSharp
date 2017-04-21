@@ -1,11 +1,7 @@
 ﻿using MMALSharp.Native;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
@@ -25,102 +21,48 @@ namespace MMALSharp
         /// <summary>
         /// Pointer to the data associated with this buffer header
         /// </summary>
-        public byte* Data
-        {
-            get
-            {
-                return this.Ptr->Data;
-            }
-        }
-
+        public byte* Data => this.Ptr->Data;
+        
         /// <summary>
         /// Defines what the buffer header contains. This is a FourCC with 0 as a special value meaning stream data
         /// </summary>
-        public uint Cmd
-        {
-            get
-            {
-                return this.Ptr->Cmd;
-            }
-        }
-
+        public uint Cmd => this.Ptr->Cmd;
+        
         /// <summary>
         /// Allocated size in bytes of payload buffer
         /// </summary>
-        public uint AllocSize {
-            get
-            {
-                return this.Ptr->AllocSize;
-            }
-        }
-
+        public uint AllocSize => this.Ptr->AllocSize;
+        
         /// <summary>
         /// Number of bytes currently used in the payload buffer (starting from offset)
         /// </summary>
-        public uint Length
-        {
-            get
-            {
-                return this.Ptr->Length;
-            }
-        }
-
+        public uint Length => this.Ptr->Length;
+        
         /// <summary>
         /// Offset in bytes to the start of valid data in the payload buffer
         /// </summary>
-        public uint Offset
-        {
-            get
-            {
-                return this.Ptr->Offset;
-            }
-        }
-
+        public uint Offset => this.Ptr->Offset;
+        
         /// <summary>
         /// Flags describing properties of a buffer header
         /// </summary>
-        public uint Flags
-        {
-            get
-            {
-                return this.Ptr->Flags;
-            }
-        }
-
+        public uint Flags => this.Ptr->Flags;
+        
         /// <summary>
         /// Presentation timestamp in microseconds.
         /// </summary>
-        public long Pts
-        {
-            get
-            {
-                return this.Ptr->Pts;
-            }
-        }
-
+        public long Pts => this.Ptr->Pts;
+        
         /// <summary>
         /// Decode timestamp in microseconds (dts = pts, except in the case of video streams with B frames).
         /// </summary>
-        public long Dts
-        {
-            get
-            {
-                return this.Ptr->Dts;
-            }
-        }
-
+        public long Dts => this.Ptr->Dts;
+        
         /// <summary>
         /// Accessor to the specific type this buffer header represents
         /// </summary>
-        public MMAL_BUFFER_HEADER_TYPE_SPECIFIC_T Type
-        {
-            get
-            {
-                var t = Marshal.PtrToStructure<MMAL_BUFFER_HEADER_TYPE_SPECIFIC_T>(this.Ptr->Type);                                
-                return t;
-            }
-        }
-
+        public MMAL_BUFFER_HEADER_TYPE_SPECIFIC_T Type => Marshal.PtrToStructure<MMAL_BUFFER_HEADER_TYPE_SPECIFIC_T>(this.Ptr->Type);    
+       
         #endregion
 
         /// <summary>
@@ -153,6 +95,7 @@ namespace MMALSharp
             {
                 Console.WriteLine(prop.ToString());
             }
+
             Console.WriteLine("|------------|");
             Console.WriteLine(" End buffer debug");
             Console.WriteLine("|------------|");

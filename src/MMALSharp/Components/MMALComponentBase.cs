@@ -137,7 +137,7 @@ namespace MMALSharp
         /// <summary>
         /// Disable processing on a component
         /// </summary>
-        public void DisableComponent()
+        internal void DisableComponent()
         {
             if (this.Enabled)
                 MMALCheck(MMALComponent.mmal_component_disable(this.Ptr), "Unable to disable component");

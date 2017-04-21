@@ -8,8 +8,8 @@ The project is in early stages of development, however the ability to take pictu
 
 MMALSharp supports the following runtimes:
 
-1) Mono 4.x 
-2) .NET Core 2.0 (beta) with .NET Standard 1.6.
+1. Mono 4.x 
+2. .NET Core 2.0 (beta) with .NET Standard 1.6.
 
 
 ## Mono
@@ -135,41 +135,6 @@ public static void Main(string[] args)
 }
 
 ```
-
-## Status
-
-So far, the library has been tested on the following Raspberry Pi devices:
-
-* Raspberry Pi 1 Model B (512mb)
-* Raspberry Pi Zero
-* Raspberry Pi 2 Model B
-
-Both the SUNNY and Sony IMX219 camera modules are working as expected.
-
-Tested image 'still' features:
-
-- [x] Image width/height
-- [x] Image encoding
-- [x] Brightness
-- [x] Contrast
-- [x] Saturation
-- [x] Sharpness
-- [x] Shutter speed
-- [x] ISO
-- [x] Exposure compensation
-- [x] Exposure mode
-- [x] Exposure metering mode
-- [x] Raspistill supported image effects
-- [x] Rotation
-- [x] Flips
-- [x] Annotate
-- [x] Dynamic range compression
-- [x] Stats Pass
-- [x] Colour effects
-- [x] Crop
-- [x] Auto white balance mode/gains
-- [x] EXIF tags
-- [x] Raw capture
 
 ## Notes & Known issues
 

@@ -1,11 +1,8 @@
 ﻿using MMALSharp.Components;
 using MMALSharp.Native;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using static MMALSharp.MMALCallerHelper;
 using static MMALSharp.MMALParameterHelpers;
 using static MMALSharp.Native.MMALParameters;

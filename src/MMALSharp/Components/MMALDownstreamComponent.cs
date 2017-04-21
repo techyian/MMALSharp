@@ -30,7 +30,7 @@ namespace MMALSharp.Components
         /// Provides a facility to create a connection between this component and an upstream component's output port.
         /// </summary>
         /// <param name="output">The output port we're connecting this downstream component to</param>
-        public void CreateConnection(MMALPortBase output)
+        internal void CreateConnection(MMALPortBase output)
         {
             if (MMALCameraConfig.Debug)
                 Console.WriteLine("Creating downstream connection");
@@ -57,7 +57,7 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="outputPortNumber">The output port number</param>
         /// <param name="managedCallback">The managed method to callback to from the native callback</param>
-        public void Start(int outputPortNumber, Action<MMALBufferImpl, MMALPortBase> managedCallback)
+        internal void Start(int outputPortNumber, Action<MMALBufferImpl, MMALPortBase> managedCallback)
         {            
             if (this.Handler != null && this.Handler.GetType().GetTypeInfo().IsSubclassOf(typeof(StreamCaptureHandler)))
             {                
@@ -72,7 +72,7 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="port">The output port</param>
         /// <param name="managedCallback">The managed method to callback to from the native callback</param>
-        public void Start(MMALPortBase port, Action<MMALBufferImpl, MMALPortBase> managedCallback)
+        internal void Start(MMALPortBase port, Action<MMALBufferImpl, MMALPortBase> managedCallback)
         {
             if (this.Handler != null && this.Handler.GetType().GetTypeInfo().IsSubclassOf(typeof(StreamCaptureHandler)))
             {
@@ -86,7 +86,7 @@ namespace MMALSharp.Components
         /// Disable the port with the specified port number
         /// </summary>
         /// <param name="outputPortNumber">The output port number</param>
-        public void Stop(int outputPortNumber)
+        internal void Stop(int outputPortNumber)
         {
             this.Outputs.ElementAt(outputPortNumber).DisablePort();
         }
@@ -95,7 +95,7 @@ namespace MMALSharp.Components
         /// Disable the specified port
         /// </summary>
         /// <param name="port">The output port</param>
-        public void Stop(MMALPortBase port)
+        internal void Stop(MMALPortBase port)
         {
             port.DisablePort();
         }

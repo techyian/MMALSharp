@@ -51,14 +51,8 @@ namespace MMALSharp
         /// <summary>
         /// Specifies minimum number of buffer headers required for this port 
         /// </summary>
-        public int BufferNumMin
-        {
-            get
-            {
-                return this.Ptr->BufferNumMin;
-            }
-        }
-
+        public int BufferNumMin => this.Ptr->BufferNumMin;
+        
         /// <summary>
         /// Specifies minimum size of buffer headers required for this port
         /// </summary>
