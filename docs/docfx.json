@@ -4,17 +4,22 @@
       "src": [
         {
           "files": [
-            "/**.cs"
+            "/MMALSharp/*.csproj",
+			"/MMALSharp.Common/*.csproj",
+			"/MMALSharp.FFmpeg/*.csproj"
           ],
           "exclude": [
             "**/obj/**",
             "**/bin/**",
             "_site/**"
           ],
-		  "src": "src"
+		  "src": "../src"
         }
       ],
-      "dest": "api"
+      "dest": "api",
+	  "properties": {
+            "TargetFramework": "net46"
+      }
     }
   ],
   "build": {

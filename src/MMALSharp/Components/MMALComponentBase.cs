@@ -1,7 +1,9 @@
-﻿using MMALSharp.Native;
+﻿using MMALSharp.Handlers;
+using MMALSharp.Native;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -51,7 +53,12 @@ namespace MMALSharp
         /// Indicates whether this component is enabled
         /// </summary>
         public bool Enabled => this.Ptr->IsEnabled == 1;
-                
+
+        /// <summary>
+        /// The handler to process the final data
+        /// </summary>
+        public ICaptureHandler Handler { get; set; }
+
         protected MMALComponentBase(string name)
         {
             var ptr = CreateComponent(name);
@@ -141,6 +148,100 @@ namespace MMALSharp
         {
             if (this.Enabled)
                 MMALCheck(MMALComponent.mmal_component_disable(this.Ptr), "Unable to disable component");
+        }
+
+        /// <summary>
+        /// Delegate to process the buffer header containing image data
+        /// </summary>
+        /// <param name="buffer">The current buffer header being processed</param>
+        /// <param name="port">The port we're currently processing on</param>
+        public virtual void ManagedCallback(MMALBufferImpl buffer, MMALPortBase port)
+        {
+            var data = buffer.GetBufferData();
+
+            if (this.Handler != null)
+            {
+                this.Handler.Process(data);
+            }
+        }
+
+        /// <summary>
+        /// Enable the port with the specified port number.
+        /// </summary>
+        /// <param name="outputPortNumber">The output port number</param>
+        /// <param name="managedCallback">The managed method to callback to from the native callback</param>
+        internal void Start(int outputPortNumber, Action<MMALBufferImpl, MMALPortBase> managedCallback)
+        {
+            if (this.Handler != null && this.Handler.GetType().GetTypeInfo().IsSubclassOf(typeof(StreamCaptureHandler)))
+            {
+                ((StreamCaptureHandler)this.Handler).NewFile();
+            }
+
+            this.Outputs.ElementAt(outputPortNumber).EnablePort(managedCallback);
+        }
+
+        /// <summary>
+        /// Enable the port specified.
+        /// </summary>
+        /// <param name="port">The output port</param>
+        /// <param name="managedCallback">The managed method to callback to from the native callback</param>
+        internal void Start(MMALPortBase port, Action<MMALBufferImpl, MMALPortBase> managedCallback)
+        {
+            if (this.Handler != null && this.Handler.GetType().GetTypeInfo().IsSubclassOf(typeof(StreamCaptureHandler)))
+            {
+                ((StreamCaptureHandler)this.Handler).NewFile();
+            }
+
+            port.EnablePort(managedCallback);
+        }
+
+        /// <summary>
+        /// Disable the port with the specified port number
+        /// </summary>
+        /// <param name="outputPortNumber">The output port number</param>
+        internal void Stop(int outputPortNumber)
+        {
+            this.Outputs.ElementAt(outputPortNumber).DisablePort();
+        }
+
+        /// <summary>
+        /// Disable the specified port
+        /// </summary>
+        /// <param name="port">The output port</param>
+        internal void Stop(MMALPortBase port)
+        {
+            port.DisablePort();
+        }
+
+        /// <summary>
+        /// Helper method to destroy any port pools still in action. Failure to do this will cause MMAL to block indefinitely.
+        /// </summary>
+        internal void CleanPortPools()
+        {
+            //See if any pools need disposing before destroying component.
+            foreach (var port in this.Inputs)
+            {
+                if (port.BufferPool != null)
+                {
+                    if (MMALCameraConfig.Debug)
+                        Console.WriteLine("Destroying port pool");
+
+                    port.DestroyPortPool();
+                    port.BufferPool = null;
+                }
+
+            }
+            foreach (var port in this.Outputs)
+            {
+                if (port.BufferPool != null)
+                {
+                    if (MMALCameraConfig.Debug)
+                        Console.WriteLine("Destroying port pool");
+
+                    port.DestroyPortPool();
+                    port.BufferPool = null;
+                }
+            }
         }
 
         /// <summary>

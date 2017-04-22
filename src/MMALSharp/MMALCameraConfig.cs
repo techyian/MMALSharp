@@ -37,103 +37,32 @@ namespace MMALSharp
         /// <summary>
         /// Configure the exposure compensation of the camera. Doing so will produce a lighter/darker image beyond the recommended exposure.
         /// </summary>
-        public static MMAL_PARAM_EXPOSUREMODE_T ExposureCompensation { get; set; } = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
+        public static int ExposureCompensation { get; set; } = 0;
 
         /// <summary>
-        /// Configure the exposure mode used by the camera
-        /// 
-        /// Possible options are:
-        ///
-        /// auto: use automatic exposure mode
-        /// night: select setting for night shooting
-        /// nightpreview:
-        /// backlight: select setting for backlit subject
-        /// spotlight:
-        /// sports: select setting for sports(fast shutter etc.)
-        /// snow: select setting optimised for snowy scenery
-        /// beach: select setting optimised for beach
-        /// verylong: select setting for long exposures
-        /// fixedfps: constrain fps to a fixed value
-        /// antishake: antishake mode
-        /// fireworks: select setting optimised for fireworks
-        /// 
+        /// Configure the exposure mode used by the camera       
         /// </summary>  
         public static MMAL_PARAM_EXPOSUREMODE_T ExposureMode { get; set; } = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
 
         /// <summary>
-        /// Configure the exposure metering mode to be used by the camera. The metering mode determines how the camera measures exposure.
-        /// 
-        /// Spot metering (MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_SPOT):
-        /// 
-        /// With spot metering, the camera will only measure a very small area of the scene and ignores everything else.
-        /// On the Raspberry Pi camera, this will be the very centre of the image. 
-        /// 
-        /// Average metering (MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE):
-        /// 
-        /// Using this metering mode, the camera will use the light information coming from the entire scene. It does not focus on any particular
-        /// area of the scene.
-        /// 
-        /// Matrix metering (MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_MATRIX):
-        /// 
-        /// Matrix metering works by dividing the entire frame into multiple "zones" which are then analysed on an individual basis for light and dark tones.
-        /// 
-        /// 
-        /// Sources:
-        /// https://photographylife.com/understanding-metering-modes
-        /// https://en.wikipedia.org/wiki/Metering_mode#Spot_metering
-        /// 
+        /// Configure the exposure metering mode to be used by the camera. The metering mode determines how the camera measures exposure.       
         /// </summary> 
         public static MMAL_PARAM_EXPOSUREMETERINGMODE_T ExposureMeterMode { get; set; } = MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE;
 
         /// <summary>
-        /// Configure the Auto White Balance to be used by the camera
-        /// 
-        /// off: turn off white balance calculation
-        /// auto: automatic mode(default)
-        /// sun: sunny mode(between 5000K and 6500K)
-        /// cloud: cloudy mode(between 6500K and 12000K)
-        /// shade: shade mode
-        /// tungsten: tungsten lighting mode(between 2500K and 3500K)
-        /// fluorescent: fluorescent lighting mode(between 2500K and 4500K)
-        /// incandescent: incandescent lighting mode
-        /// flash: flash mode
-        /// horizon: horizon mode
+        /// Configure the Auto White Balance to be used by the camera        
         /// </summary>
         public static MMAL_PARAM_AWBMODE_T AwbMode { get; set; } = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_AUTO;
 
         /// <summary>
-        /// Configure any image effects to be used by the camera
-        /// 
-        /// none: no effect (default)
-        /// negative: invert the image colours
-        /// solarise: solarise the image
-        /// posterise: posterise the image
-        /// whiteboard: whiteboard effect
-        /// blackboard: blackboard effect
-        /// sketch: sketch effect
-        /// denoise: denoise the image
-        /// emboss: emboss the image
-        /// oilpaint: oil paint effect
-        /// hatch: hatch sketch effect
-        /// gpen: graphite sketch effect
-        /// pastel: pastel effect
-        /// watercolour: watercolour effect
-        /// film: film grain effect
-        /// blur: blur the image
-        /// saturation: colour saturate the image
-        /// colourswap: not fully implemented
-        /// washedout: not fully implemented
-        /// colourpoint: not fully implemented
-        /// colourbalance: not fully implemented
-        /// cartoon: not fully implemented
-        /// 
+        /// Configure any image effects to be used by the camera       
         /// </summary>
-        public static MMAL_PARAM_IMAGEFX_T ImageEffect { get; set; } = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NONE;
+        public static MMAL_PARAM_IMAGEFX_T ImageFx { get; set; } = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NONE;
 
         /// <summary>
         /// Allows a user to change the colour of an image, e.g. U = 128, V = 128 will result in a greyscale (monochrome) image.
         /// </summary>
-        public static ColourEffects Effects { get; set; } = new ColourEffects();
+        public static ColourEffects ColourFx { get; set; } = new ColourEffects();
 
         /// <summary>
         /// Specify the rotation of the image, possible values are 0, 90, 180, 270
@@ -146,9 +75,9 @@ namespace MMALSharp
         public static MMAL_PARAM_MIRROR_T Flips { get; set; } = MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE;
 
         /// <summary>
-        /// Crop an image to focus on a region of interest.
+        /// Zoom in on an image to focus on a region of interest.
         /// </summary>
-        public static Crop Crop { get; set; } = new Crop();
+        public static Zoom ROI { get; set; } = new Zoom();
 
         /// <summary>
         /// Changing the shutter speed alters how long the sensor is exposed to light (in microseconds).
@@ -171,20 +100,12 @@ namespace MMALSharp
         /// <summary>
         /// Adjust dynamic range compression
         /// 
-        /// DRC changes the images by increasing the range of dark areas, and decreasing the brighter areas. This can improve the image in low light areas.
-        /// 
-        /// Possble values:
-        /// 
-        /// off
-        /// low
-        /// medium
-        /// high
-        /// 
+        /// DRC changes the images by increasing the range of dark areas, and decreasing the brighter areas. This can improve the image in low light areas.        
         /// </summary>
         public static MMAL_PARAMETER_DRC_STRENGTH_T DrcLevel { get; set; } = MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_OFF;
 
         /// <summary>
-        /// Enable an extra statistics pass to be made when capturing images
+        /// Displays the exposure, analogue and digital gains, and AWB settings used.
         /// </summary>
         public static bool StatsPass { get; set; }
 
@@ -214,6 +135,7 @@ namespace MMALSharp
          * -----------------------------------------------------------------------------------------------------------
         */
         public static MMALEncoding PreviewEncoding { get; set; } = MMALEncoding.MMAL_ENCODING_OPAQUE;
+        public static MMALEncoding PreviewSubformat { get; set; } = MMALEncoding.MMAL_ENCODING_I420;
 
         public static Resolution PreviewResolution { get; set; } = Resolution.As720p;
 
@@ -254,7 +176,7 @@ namespace MMALSharp
          * -----------------------------------------------------------------------------------------------------------
         */
         public static MMALEncoding StillEncoding { get; set; } = MMALEncoding.MMAL_ENCODING_OPAQUE;
-        public static MMALEncoding StillEncodingSubFormat { get; set; } = MMALEncoding.MMAL_ENCODING_I420;
+        public static MMALEncoding StillSubFormat { get; set; } = MMALEncoding.MMAL_ENCODING_I420;
 
         public static Resolution StillResolution { get; set; } = Resolution.As5MPixel;
                
@@ -277,7 +199,7 @@ namespace MMALSharp
         
     }
     
-    public class Crop
+    public class Zoom
     {
         public double X { get; set; }
         public double Y { get; set; }
@@ -363,7 +285,7 @@ namespace MMALSharp
         
         public static Resolution As2MPixel => new Resolution(1600, 1200);
         
-        public static Resolution As1MPixel() => new Resolution(1280, 960);
+        public static Resolution As1MPixel => new Resolution(1280, 960);
         
         public static Resolution As03MPixel => new Resolution(640, 480);
         

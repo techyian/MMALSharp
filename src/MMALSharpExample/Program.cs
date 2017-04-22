@@ -45,7 +45,7 @@ namespace MMALSharpExample
                     //await cam.TakePictureTimelapse(cam.Camera.StillPort, cam.Camera.StillPort, new Timelapse { Mode = TimelapseMode.Second, Value = 5, Timeout = DateTime.Now.AddMinutes(1) });
 
                     //Take a single picture on the camera's still port using the encoder connected to the still port
-                    await cam.TakePicture(cam.Camera.VideoPort, cam.Camera.VideoPort);
+                    await cam.TakePicture(cam.Camera.VideoPort);
 
                     //Processes the list of images you've taken with the *ImageStreamCaptureHandler* class into a video
                     imgCaptureHandler.ImagesToVideo("/home/pi/videos", 2);
@@ -57,13 +57,13 @@ namespace MMALSharpExample
                 */
                                 
                 //Here we are changing the image encoder being used by the camera's still port by replacing it with a Bitmap encoder.                 
-                using (var imgEncoder = new MMALImageEncoder(new ImageStreamCaptureHandler("/home/pi/images/", "bmp"), MMALEncoding.MMAL_ENCODING_BMP, 90))
+                using (var imgEncoder = new MMALImageEncoder(new ImageStreamCaptureHandler("/home/pi/images/", "bmp"), MMALEncoding.MMAL_ENCODING_BMP, MMALEncoding.MMAL_ENCODING_I420, 90))
                 {
                     cam.AddEncoder(imgEncoder, cam.Camera.StillPort)
                        .CreatePreviewComponent(new MMALNullSinkComponent())
                        .ConfigureCamera();
                     
-                    await cam.TakePicture(cam.Camera.StillPort, cam.Camera.StillPort);
+                    await cam.TakePicture(cam.Camera.StillPort);
                 }
                                 
                 var ffmpegCaptureHandler = FFmpegCaptureHandler.RTMPStreamer("mystream", "rtmp://192.168.1.91:6767/live");

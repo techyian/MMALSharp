@@ -127,6 +127,11 @@ namespace MMALSharp
             if (MMALCameraConfig.Debug)
                 Console.WriteLine(string.Format("Setting ISO: {0}", iso));
 
+            if (iso < 100 || iso > 800)
+            {
+                throw new PiCameraError("Invalid ISO setting. Valid values: 100 - 800");
+            }
+
             camera.Camera.Control.SetParameter(MMAL_PARAMETER_ISO, iso);                        
         }
 
@@ -148,7 +153,7 @@ namespace MMALSharp
             return camera.Camera.Control.GetParameter(MMAL_PARAMETER_EXPOSURE_COMP);
         }
 
-        public static void SetExposureCompensation(this MMALCamera camera, MMAL_PARAM_EXPOSUREMODE_T expCompensation)
+        public static void SetExposureCompensation(this MMALCamera camera, int expCompensation)
         {
             if (MMALCameraConfig.Debug)
                 Console.WriteLine(string.Format("Setting exposure compensation: {0}", expCompensation));
@@ -332,24 +337,24 @@ namespace MMALSharp
 
         }
 
-        public static MMAL_RECT_T GetCrop(this MMALCamera camera)
+        public static MMAL_RECT_T GetZoom(this MMALCamera camera)
         {
             MMAL_PARAMETER_INPUT_CROP_T crop = new MMAL_PARAMETER_INPUT_CROP_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_INPUT_CROP, Marshal.SizeOf<MMAL_PARAMETER_INPUT_CROP_T>()), new MMAL_RECT_T());
                         
-            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &crop.hdr), "Unable to get crop");
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &crop.hdr), "Unable to get zoom");
 
             return crop.Rect;
         }
 
-        public static void SetCrop(this MMALCamera camera, Crop rect)
+        public static void SetZoom(this MMALCamera camera, Zoom rect)
         {
             if (rect.X > 1.0 || rect.Y > 1.0 || rect.Height > 1.0 || rect.Width > 1.0)
-                throw new PiCameraError("Invalid crop settings. Value mustn't be greater than 1.0");
+                throw new PiCameraError("Invalid zoom settings. Value mustn't be greater than 1.0");
             
             MMAL_PARAMETER_INPUT_CROP_T crop = new MMAL_PARAMETER_INPUT_CROP_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_INPUT_CROP, Marshal.SizeOf<MMAL_PARAMETER_INPUT_CROP_T>()), 
                                                                                 new MMAL_RECT_T(Convert.ToInt32(65536 * rect.X), Convert.ToInt32(65536 * rect.Y), Convert.ToInt32(65536 * rect.Width), Convert.ToInt32(65536 * rect.Height)));
                                     
-            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &crop.hdr), "Unable to set crop");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &crop.hdr), "Unable to set zoom");
         }
 
         public static int GetShutterSpeed(this MMALCamera camera)
@@ -361,6 +366,11 @@ namespace MMALSharp
         {
             if (MMALCameraConfig.Debug)
                 Console.WriteLine(string.Format("Setting shutter speed: {0}", speed));
+
+            if (speed > 6000000)
+            {
+                MMALSharp.Utility.Helpers.PrintWarning("Shutter speed exceeds upper supported limit of 6000ms. Undefined behaviour may result.");
+            }
 
             camera.Camera.Control.SetParameter(MMAL_PARAMETER_SHUTTER_SPEED, speed);
         }
