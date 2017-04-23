@@ -13,7 +13,7 @@ MMALSharp supports the following runtimes:
 
 ## Installation
 
-For full installation instructions for Mono 4.x and .NET Core - please visit the [Documentation]() site
+For full installation instructions for Mono 4.x and .NET Core - please visit the [Documentation](https://techyian.github.io/MMALSharp) site
 
 ## Basic Usage
 
