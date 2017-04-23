@@ -1,0 +1,322 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Configuration </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Configuration ">
+    <meta name="generator" content="docfx 2.16.4.1">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+              <h1 id="configuration">Configuration</h1>
+              
+<h2 id="debug-mode">Debug Mode</h2>
+<p>When in debug mode, MMALSharp will print messages to the console output during image capture. The messages are helpful to indicate any potential issues 
+during capture. </p>
+<p><code>MMALCameraConfig.Debug = true;</code></p>
+<p>If further debugging is required, you can enable the native MMAL debugging logs as seen below:</p>
+<ol>
+<li>In the /boot/config.txt file, add the following: <code>start_debug=1</code></li>
+<li>Prior to running MMALSharp, run <code>export VC_LOGLEVEL=mmal:trace</code></li>
+<li>Capture image using MMALSharp</li>
+<li>Run <code>sudo vcdbg log msg</code> and `sudo vcdbg log assert</li>
+</ol>
+<h2 id="resolution">Resolution</h2>
+<p>Changes the resolution of outputted images.</p>
+<h3 id="image-resolution">Image Resolution</h3>
+<p><code>MMALCameraConfig.StillResolution = new Resolution(1920, 1080);</code></p>
+<p>or</p>
+<p><code>MMALCameraConfig.StillResolution = Resolution.As5MPixel;</code></p>
+<h3 id="video-resolution">Video Resolution</h3>
+<p><code>MMALCameraConfig.VideoResolution = new Resolution(1920, 1080);</code></p>
+<p>or </p>
+<p><code>MMALCameraConfig.VideoResolution = Resolution.As1080p;</code></p>
+<h3 id="preview-resolution">Preview Resolution</h3>
+<p>When recording Video, the Preview resolution must be the same as the Resolution of the recording video - this is automatically applied by MMALSharp if needed.
+Does not apply to stills capture.</p>
+<p><code>MMALCameraConfig.PreviewResolution = new Resolution(1920, 1080);</code></p>
+<p>or </p>
+<p><code>MMALCameraConfig.PreviewResolution = Resolution.As1080p;</code></p>
+<h2 id="sharpness">Sharpness</h2>
+<p>Changes the Sharpness of an image.</p>
+<p>Valid values: <code>0 - 100</code></p>
+<p><code>MMALCameraConfig.Sharpness = 50;</code></p>
+<h2 id="contrast">Contrast</h2>
+<p>Changes the Contrast of an image.</p>
+<p>Valid values: <code>0 - 100</code></p>
+<p><code>MMALCameraConfig.Contrast = 50;</code></p>
+<h2 id="brightness">Brightness</h2>
+<p>Changes the Brightness of an image.</p>
+<p>Valid values: <code>0 - 100</code></p>
+<p><code>MMALCameraConfig.Brightness = 50;</code></p>
+<h2 id="saturation">Saturation</h2>
+<p>Changes the Saturation of an image.</p>
+<p>Valid values: <code>0 - 100</code></p>
+<p><code>MMALCameraConfig.Saturation = 50;</code></p>
+<h2 id="iso">ISO</h2>
+<p>Changes the ISO setting used by the sensor. Relates to the amount of time the sensor is exposed to light. A lower value means 
+the sensor will be exposed for longer. The Shutter Speed will automatically adjust based on the ISO value committed.</p>
+<p>Valid values: <code>100 - 800</code></p>
+<p><code>MMALCameraConfig.ISO = 200;</code></p>
+<h2 id="exposure-compensation">Exposure Compensation</h2>
+<p>Change the Exposure Compensation of the sensor - doing so will produce a lighter/darker image beyond the recommended exposure.</p>
+<p><code>MMALCameraConfig.ExposureCompensation = 0</code></p>
+<h2 id="exposure-mode">Exposure Mode</h2>
+<p>Configure the Exposure Mode used by the sensor.</p>
+<p>Valid values:</p>
+<pre><code>MMAL_PARAM_EXPOSUREMODE_AUTO, // auto: use automatic exposure mode
+MMAL_PARAM_EXPOSUREMODE_NIGHT, // night: select setting for night shooting
+MMAL_PARAM_EXPOSUREMODE_NIGHTPREVIEW,
+MMAL_PARAM_EXPOSUREMODE_BACKLIGHT, // backlight: select setting for backlit subject
+MMAL_PARAM_EXPOSUREMODE_SPOTLIGHT,
+MMAL_PARAM_EXPOSUREMODE_SPORTS, // sports: select setting for sports(fast shutter etc.)
+MMAL_PARAM_EXPOSUREMODE_SNOW, // snow: select setting optimised for snowy scenery
+MMAL_PARAM_EXPOSUREMODE_BEACH, // beach: select setting optimised for beach
+MMAL_PARAM_EXPOSUREMODE_VERYLONG, // verylong: select setting for long exposures
+MMAL_PARAM_EXPOSUREMODE_FIXEDFPS, // fixedfps: constrain fps to a fixed value
+MMAL_PARAM_EXPOSUREMODE_ANTISHAKE, // antishake: antishake mode
+MMAL_PARAM_EXPOSUREMODE_FIREWORKS // fireworks: select setting optimised for fireworks
+</code></pre><p><code>MMALCameraConfig.ExposureCompensation = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;</code></p>
+<h2 id="exposure-metering-mode">Exposure Metering Mode</h2>
+<p>Configure the exposure metering mode to be used by the camera. The metering mode determines how the camera measures exposure.</p>
+<p>Spot metering (MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_SPOT):</p>
+<p>With spot metering, the camera will only measure a very small area of the scene and ignores everything else.
+On the Raspberry Pi camera, this will be the very centre of the image. </p>
+<p>Average metering (MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE):</p>
+<p>Using this metering mode, the camera will use the light information coming from the entire scene. It does not focus on any particular
+area of the scene.</p>
+<p>Matrix metering (MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_MATRIX):</p>
+<p>Matrix metering works by dividing the entire frame into multiple &quot;zones&quot; which are then analysed on an individual basis for light and dark tones.</p>
+<p>Sources:
+<a href="https://photographylife.com/understanding-metering-modes">https://photographylife.com/understanding-metering-modes</a>
+<a href="https://en.wikipedia.org/wiki/Metering_mode#Spot_metering">https://en.wikipedia.org/wiki/Metering_mode#Spot_metering</a></p>
+<p>Valid values:</p>
+<pre><code>MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE,
+MMAL_PARAM_EXPOSUREMETERINGMODE_SPOT,
+MMAL_PARAM_EXPOSUREMETERINGMODE_BACKLIT,
+MMAL_PARAM_EXPOSUREMETERINGMODE_MATRIX
+</code></pre><p><code>MMALCameraConfig.ExposureMeterMode = MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE;</code></p>
+<h2 id="automatic-white-balance-mode">Automatic white balance mode</h2>
+<p>Configure the Auto White Balance to be used by the camera</p>
+<p>Valid values:</p>
+<pre><code>MMAL_PARAM_AWBMODE_OFF, // off: turn off white balance calculation
+MMAL_PARAM_AWBMODE_AUTO, // auto: automatic mode(default)
+MMAL_PARAM_AWBMODE_SUNLIGHT, // sun: sunny mode(between 5000K and 6500K)
+MMAL_PARAM_AWBMODE_CLOUDY, // cloud: cloudy mode(between 6500K and 12000K)
+MMAL_PARAM_AWBMODE_SHADE, // shade: shade mode
+MMAL_PARAM_AWBMODE_TUNGSTEN, // tungsten: tungsten lighting mode(between 2500K and 3500K)
+MMAL_PARAM_AWBMODE_FLUORESCENT, // fluorescent: fluorescent lighting mode(between 2500K and 4500K)
+MMAL_PARAM_AWBMODE_INCANDESCENT, // incandescent: incandescent lighting mode
+MMAL_PARAM_AWBMODE_FLASH, // flash: flash mode
+MMAL_PARAM_AWBMODE_HORIZON // horizon: horizon mode
+</code></pre><p><code>MMALCameraConfig.AwbMode = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_AUTO;</code></p>
+<h2 id="image-effects">Image effects</h2>
+<p>Apply effects to the resulting image. Some effects may not be applicable depending on the firmware version.</p>
+<p>Valid values:</p>
+<pre><code>MMAL_PARAM_IMAGEFX_NONE, // none: no effect (default)
+MMAL_PARAM_IMAGEFX_NEGATIVE, // negative: invert the image colours
+MMAL_PARAM_IMAGEFX_SOLARIZE, // solarise: solarise the image
+MMAL_PARAM_IMAGEFX_POSTERIZE, // posterise: posterise the image
+MMAL_PARAM_IMAGEFX_WHITEBOARD, // whiteboard: whiteboard effect
+MMAL_PARAM_IMAGEFX_BLACKBOARD, // blackboard: blackboard effect
+MMAL_PARAM_IMAGEFX_SKETCH, // sketch: sketch effect
+MMAL_PARAM_IMAGEFX_DENOISE, // denoise: denoise the image
+MMAL_PARAM_IMAGEFX_EMBOSS, // emboss: emboss the image
+MMAL_PARAM_IMAGEFX_OILPAINT, // oilpaint: oil paint effect
+MMAL_PARAM_IMAGEFX_HATCH, // hatch: hatch sketch effect
+MMAL_PARAM_IMAGEFX_GPEN, // gpen: graphite sketch effect
+MMAL_PARAM_IMAGEFX_PASTEL, // pastel: pastel effect
+MMAL_PARAM_IMAGEFX_WATERCOLOUR, // watercolour: watercolour effect
+MMAL_PARAM_IMAGEFX_FILM, // film: film grain effect
+MMAL_PARAM_IMAGEFX_BLUR, // blur: blur the image
+MMAL_PARAM_IMAGEFX_SATURATION, // saturation: colour saturate the image
+MMAL_PARAM_IMAGEFX_COLOURSWAP, // colourswap: not fully implemented
+MMAL_PARAM_IMAGEFX_WASHEDOUT, // washedout: not fully implemented
+MMAL_PARAM_IMAGEFX_COLOURPOINT, // colourpoint: not fully implemented
+MMAL_PARAM_IMAGEFX_COLOURBALANCE, // colourbalance: not fully implemented
+MMAL_PARAM_IMAGEFX_CARTOON // cartoon: not fully implemented
+</code></pre><p><code>MMALCameraConfig.ImageFx = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NONE;</code></p>
+<h2 id="colour-effects">Colour effects</h2>
+<p>Allows a user to change the colour of an image (CIE 1960), e.g. U = 128, V = 128 will result in a greyscale (monochrome) image.</p>
+<p><code>MMALCameraConfig.ColourFx = new ColourEffects { Enable = true, U = 128, V = 128 };</code></p>
+<h2 id="rotation">Rotation</h2>
+<p>Rotate the resulting image - possible values are 0, 90, 180, 270</p>
+<p><code>MMALCameraConfig.Rotation = 90;</code></p>
+<h2 id="flip-image">Flip image</h2>
+<p>Flip the resulting image.</p>
+<p>Valid values:</p>
+<pre><code>MMAL_PARAM_MIRROR_NONE,
+MMAL_PARAM_MIRROR_VERTICAL,
+MMAL_PARAM_MIRROR_HORIZONTAL,
+MMAL_PARAM_MIRROR_BOTH
+</code></pre><p><code>MMALCameraConfig.Flips = MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_VERTICAL;</code></p>
+<h2 id="zoom-region-of-interest">Zoom (Region of interest)</h2>
+<p>Zoom in on the resulting image to produce a Region of Interest.</p>
+<p>X, Y, Height and Width parameters must be less than 1.0.</p>
+<p><code>MMALCameraConfig.ROI = new Zoom { X = 0.5, Y = 0.5, Height = 0.1, Width = 0.1 };</code></p>
+<h2 id="shutter-speed">Shutter speed</h2>
+<p>Adjust the shutter speed, this setting adjusts the length of time that the sensor is exposed to light. A fast shutter speed will reduce the length of time
+it is exposed to light. </p>
+<p>There is an upper limit of 6000000us (6000ms, 6s), past which operation is undefined.</p>
+<p><code>MMALCameraConfig.ShutterSpeed = 1000000;</code></p>
+<h2 id="automatic-white-balance---red-gains">Automatic white balance - Red gains</h2>
+<p>Sets red AWB gains to be applied. Only applies when AwbMode is disabled.</p>
+<p><code>MMALCameraConfig.AwbGainsR = 2;</code></p>
+<h2 id="automatic-white-balance---blue-gains">Automatic white balance - Blue gains</h2>
+<p>Sets blue AWB gains to be applied. Only applies when AwbMode is disabled.</p>
+<p><code>MMALCameraConfig.AwbGainsB = 2;</code></p>
+<h2 id="dynamic-range-compression">Dynamic range compression</h2>
+<p>Dynamic range compression increases the range of dark areas and decreases brighter areas, which helps improve the resulting image in low light areas.</p>
+<p>Valid values:</p>
+<pre><code>MMAL_PARAMETER_DRC_STRENGTH_OFF, 
+MMAL_PARAMETER_DRC_STRENGTH_LOW,
+MMAL_PARAMETER_DRC_STRENGTH_MEDIUM,
+MMAL_PARAMETER_DRC_STRENGTH_HIGH,
+</code></pre><p><code>MMALCameraConfig.DrcLevel = MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_MEDIUM;</code></p>
+<h2 id="statistics-pass">Statistics pass</h2>
+<p>Displays the exposure, analogue and digital gains, and AWB settings used.</p>
+<p><code>MMALCameraConfig.StatsPass = true;</code></p>
+<h2 id="annotation">Annotation</h2>
+<p>Allows annotation to be applied to the resulting image.</p>
+<p><strong>Enable annotation</strong></p>
+<p><code>MMALCameraConfig.EnableAnnotate = true;</code></p>
+<p><strong>Customise annotation options</strong></p>
+<p><code>MMALCameraConfig.Annotate = new AnnotateImage { ShowDateText = true, ShowTimeText = true };</code></p>
+<h2 id="encoding">Encoding</h2>
+<p>In MMALSharp, Components provide the ability to have their encoding type and pixel format changed. </p>
+<p>A user is able to change the encoding type and pixel format used by a Component by using one of the Encoding formats available in the <code>MMALSharp.Native.MMALEncoding</code> class.</p>
+<p>In order to change the encoding type and pixel format for the Camera component, a user can alter the properties seen below:</p>
+<pre><code>MMALCameraConfig.StillEncoding
+MMALCameraConfig.StillSubFormat
+
+MMALCameraConfig.VideoEncoding
+MMALCameraConfig.VideoSubformat
+
+MMALCameraConfig.PreviewEncoding
+MMALCameraConfig.PreviewSubformat
+</code></pre><p>For <code>MMALEncoderBase</code> inheritors, the encoding type and pixel format are specified when the instances are constructed. </p>
+<h1 id="video-specific-configuration">Video specific configuration</h1>
+<h2 id="video-stabilisation">Video stabilisation</h2>
+<p>Enables video stabilisation support when recording video</p>
+<p><code>MMALCameraConfig.VideoStabilisation = true;</code></p>
+<h2 id="rate-control">Rate control</h2>
+<p>Not supported by firmware however code present.</p>
+<h2 id="intra-refresh-period-gop">Intra refresh period (GoP)</h2>
+<p><strong>H.264 encoding only</strong></p>
+<p>Every intra refresh period, H.264 video uses a complete frame (I-frame) which subsequent frames are then based upon. This setting specifies the number of frames between each I-frame. A higher value will reduce the size of the resulting video, and
+a smaller value will result in a less error prone stream.</p>
+<p><code>MMALCameraConfig.IntraPeriod = 1;</code></p>
+<h2 id="video-profile">Video profile</h2>
+<p>Sets the encoding profile. </p>
+<p>Valid values: See <code>MMALSharp.Native.MMALParametersVideo.MMAL_VIDEO_PROFILE_T</code></p>
+<p><code>MMALCameraConfig.MMALParametersVideo.MMAL_VIDEO_PROFILE_T.MMAL_VIDEO_PROFILE_H264_HIGH;</code></p>
+<h2 id="video-level">Video level</h2>
+<p>Sets the encoding level.</p>
+<p>Valid values: See <code>MMALSharp.Native.MMALParametersVideo.MMAL_VIDEO_LEVEL_T</code></p>
+<p><code>MMALCameraConfig.MMALParametersVideo.MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4;</code></p>
+<h2 id="inline-headers">Inline headers</h2>
+<p>When enabled, the stream will include PPS and SPS headers on every I-frame. Certain
+streaming methods require this to be enabled e.g. Apple HLS.</p>
+<p><code>MMALCameraConfig.InlineHeaders = true;</code></p>
+<h2 id="inline-motion-vectors">Inline Motion Vectors</h2>
+<p>When enabled, Inline Motion Vector headers will be produced. These Vectors display
+motion occurred between frames.</p>
+<p><code>MMALCameraConfig.InlineMotionVectors = true;</code></p>
+
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/techyian/MMALSharp/blob/dev/docs/articles/configuration.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
