@@ -1,0 +1,4 @@
+group NetFramework
+xunit
+xunit.runner.console
+Nito.AsyncEx

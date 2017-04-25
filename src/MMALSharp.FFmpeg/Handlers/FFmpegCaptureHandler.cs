@@ -32,7 +32,7 @@ namespace MMALSharp.Handlers
         /// <param name="directory">The directory to store the output video file</param>
         /// <param name="extension">The extension of the video file</param>
         /// <returns></returns>
-        public static FFmpegCaptureHandler TakeVideoMultiplex(string directory, string extension)
+        public static FFmpegCaptureHandler RawVideoConvert(string directory, string extension)
         {            
             System.IO.Directory.CreateDirectory(directory);
                         

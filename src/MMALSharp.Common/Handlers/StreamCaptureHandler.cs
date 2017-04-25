@@ -28,8 +28,8 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// The directory
         /// </summary>
-        protected string Directory { get; set; }
-        protected string Extension { get; set; }
+        public string Directory { get; protected set; }
+        public string Extension { get; protected set; }
 
         public StreamCaptureHandler(string directory, string extension)
         {            
@@ -85,18 +85,29 @@ namespace MMALSharp.Handlers
                 Console.WriteLine(e.Message);
             }                   
         }
-      
+        
         /// <summary>
         /// Gets the filename that a FileStream points to
         /// </summary>
         /// <returns>The filename</returns>
-        private string GetFilename()
+        public string GetFilename()
         {
             if (this.CurrentStream.GetType() == typeof(FileStream))
             {
                 return Path.GetFileNameWithoutExtension(((FileStream)this.CurrentStream).Name);
             }
-            return null;
+
+            throw new NotSupportedException("Cannot get filename from non FileStream object");
+        }
+
+        public string GetFilepath()
+        {
+            if (this.CurrentStream.GetType() == typeof(FileStream))
+            {
+                return ((FileStream)this.CurrentStream).Name;
+            }
+
+            throw new NotSupportedException("Cannot get path from non FileStream object");
         }
 
         public void Dispose()

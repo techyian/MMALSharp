@@ -132,6 +132,13 @@ namespace MMALSharp
         /// <returns>The awaitable Task</returns>
         public async Task TakeRawPicture()
         {
+            var encoder = this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == this.Camera.StillPort).FirstOrDefault();
+
+            if (encoder != null)
+            {
+                throw new PiCameraError("A connection was found to the Camera still port. No encoder should be connected to the Camera's still port for raw capture.");
+            }
+
             this.CheckPreviewComponentStatus();
 
             //Enable the image encoder output port.            

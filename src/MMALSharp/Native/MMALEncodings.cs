@@ -13,7 +13,8 @@ namespace MMALSharp.Native
             Image,
             Video,
             Audio,
-            PixelFormat
+            PixelFormat,
+            Internal
         }
 
         public int EncodingVal { get; set; }
@@ -83,7 +84,7 @@ namespace MMALSharp.Native
         public static MMALEncoding MMAL_ENCODING_BAYER_SBGGR16 = new MMALEncoding("BYR2", EncodingType.PixelFormat);
         public static MMALEncoding MMAL_ENCODING_BAYER_SBGGR10DPCM8 = new MMALEncoding("bBA8", EncodingType.PixelFormat);
         public static MMALEncoding MMAL_ENCODING_YUVUV128 = new MMALEncoding("SAND", EncodingType.PixelFormat);
-        public static MMALEncoding MMAL_ENCODING_OPAQUE = new MMALEncoding("OPQV", EncodingType.PixelFormat);
+        public static MMALEncoding MMAL_ENCODING_OPAQUE = new MMALEncoding("OPQV", EncodingType.Internal);
         public static MMALEncoding MMAL_ENCODING_EGL_IMAGE = new MMALEncoding("EGLI", EncodingType.PixelFormat);
         public static MMALEncoding MMAL_ENCODING_PCM_UNSIGNED_BE = new MMALEncoding("PCMU", EncodingType.PixelFormat);
         public static MMALEncoding MMAL_ENCODING_PCM_UNSIGNED_LE = new MMALEncoding("pcmu", EncodingType.PixelFormat);
