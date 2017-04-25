@@ -127,7 +127,8 @@ namespace MMALSharp
             if (MMALCameraConfig.Debug)
                 Console.WriteLine(string.Format("Setting ISO: {0}", iso));
 
-            if (iso < 100 || iso > 800)
+            //0 = auto
+            if ((iso < 100 || iso > 800) && iso > 0)
             {
                 throw new PiCameraError("Invalid ISO setting. Valid values: 100 - 800");
             }
