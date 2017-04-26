@@ -25,7 +25,7 @@ static void Main(string[] args)
 			await cam.TakePicture(cam.Camera.StillPort);
 			
 		}
-	}		
+	});		
 }
 
 ```
@@ -84,7 +84,7 @@ static void Main(string[] args)
             await cam.TakePictureTimeout(cam.Camera.StillPort, DateTime.Now.AddMinutes(5));
 			
 		}
-	}		
+	});		
 }
 
 ```
@@ -130,7 +130,7 @@ static void Main(string[] args)
 			
 		}	
 		
-	}		
+	});	
 }
 
 ```
@@ -163,7 +163,7 @@ static void Main(string[] args)
             await cam.TakeVideo(cam.Camera.VideoPort, DateTime.Now.AddMinutes(1));
 			
 		}
-	}		
+	});		
 }
 
 ```
@@ -195,7 +195,7 @@ static void Main(string[] args)
             await cam.TakeVideo(cam.Camera.VideoPort, DateTime.Now.AddMinutes(1), new Split { Mode = TimelapseMode.Second, Value = 30 });
 			
 		}
-	}		
+	});		
 }
 
 ```
@@ -241,7 +241,7 @@ static void Main(string[] args)
 			
 		}
 				
-	}		
+	});		
 }
 
 ```
@@ -279,7 +279,7 @@ static void Main(string[] args)
 			*/
 			await cam.TakeVideo(cam.Camera.VideoPort, DateTime.Now.AddMinutes(5));
 		}
-	}		
+	});		
 }
 
 ```
@@ -305,7 +305,7 @@ static void Main(string[] args)
 			
 			await cam.TakeVideo(cam.Camera.VideoPort, DateTime.Now.AddMinutes(1));
 		}
-	}		
+	});		
 }
 
 ```
@@ -338,7 +338,7 @@ static void Main(string[] args)
             imgCaptureHandler.ImagesToVideo("/home/pi/videos", 2);
 			
 		}
-	}		
+	});		
 }
 
 ```
