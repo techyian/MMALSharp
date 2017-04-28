@@ -23,7 +23,7 @@ namespace MMALSharp.Handlers
         /// <returns></returns>
         public static FFmpegCaptureHandler RTMPStreamer(string streamName, string streamUrl)
         {
-            return new FFmpegCaptureHandler(string.Format("-re -i - -c:v copy -an -f flv -metadata streamName={0} {1}", streamName, streamUrl));
+            return new FFmpegCaptureHandler($"-re -i - -c:v copy -an -f flv -metadata streamName={streamName} {streamUrl}");
         }
 
         /// <summary>
@@ -32,11 +32,11 @@ namespace MMALSharp.Handlers
         /// <param name="directory">The directory to store the output video file</param>
         /// <param name="extension">The extension of the video file</param>
         /// <returns></returns>
-        public static FFmpegCaptureHandler RawVideoConvert(string directory, string extension)
+        public static FFmpegCaptureHandler RawVideoToH264(string directory, string extension)
         {            
             System.IO.Directory.CreateDirectory(directory);
                         
-            return new FFmpegCaptureHandler(string.Format("-re -i - -c:v copy {0}/out.{1}", directory.TrimEnd(), extension.TrimStart('.')));
+            return new FFmpegCaptureHandler($"-re -i - -c:v libx264 {directory.TrimEnd()}/out.{extension.TrimStart('.')}");
         }
 
         public FFmpegCaptureHandler(string argument)

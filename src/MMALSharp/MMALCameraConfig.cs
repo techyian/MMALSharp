@@ -193,9 +193,9 @@ namespace MMALSharp
     
     public class ColourEffects
     {
-        public int Enable { get; set; }
-        public uint U { get; set; } = 128;
-        public uint V { get; set; } = 128;
+        public bool Enable { get; set; }
+        public int U { get; set; } = 128;
+        public int V { get; set; } = 128;
         
     }
     

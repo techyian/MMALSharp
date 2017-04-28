@@ -112,7 +112,7 @@ namespace MMALSharp
             
             try
             {
-                Console.WriteLine(string.Format("Preparing to take video - Resolution: {0} x {1}", MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height));
+                Console.WriteLine($"Preparing to take video - Resolution: {MMALCameraConfig.VideoResolution.Width} x {MMALCameraConfig.VideoResolution.Height}");
                                 
                 ((MMALVideoPort)encoder.Outputs.ElementAt(0)).Timeout = timeout;
                 ((MMALVideoEncoder)encoder).Split = split;
@@ -144,7 +144,7 @@ namespace MMALSharp
             //Enable the image encoder output port.            
             try
             {
-                Console.WriteLine(string.Format("Preparing to take picture - Resolution: {0} x {1}", MMALCameraConfig.StillResolution.Width, MMALCameraConfig.StillResolution.Height));
+                Console.WriteLine($"Preparing to take picture - Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}");
 
                 await BeginProcessing(this.Camera, null, this.Camera.StillPort, 0);
             }
@@ -203,7 +203,7 @@ namespace MMALSharp
             //Enable the image encoder output port.            
             try
             {
-                Console.WriteLine(string.Format("Preparing to take picture - Resolution: {0} x {1}", MMALCameraConfig.StillResolution.Width, MMALCameraConfig.StillResolution.Height));
+                Console.WriteLine($"Preparing to take picture - Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}");
 
                 await BeginProcessing(encoder, encoder.Connection, this.Camera.StillPort, 0);
             }

@@ -228,7 +228,9 @@ static void Main(string[] args)
 		
 		//Cleanup any resources used by the old encoder, and attach a new MJPEG encoder using I420 pixel format at 25mb/s bitrate.
 		
-		using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, MMALEncoding.MMAL_ENCODING_MJPEG, MMALEncoding.MMAL_ENCODING_I420, 25000000, 25, 90))
+		vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos", "mjpeg");
+		
+		using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, MMALEncoding.MMAL_ENCODING_MJPEG, MMALEncoding.MMAL_ENCODING_I420, 25000000, 90, 25))
 		{
 			//Create our component pipeline.         
 			cam

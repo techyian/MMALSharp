@@ -6,6 +6,7 @@ source https://www.nuget.org/api/v2
 	nuget Nito.AsyncEx ~> 3.0.1
 	nuget xunit ~> 2.2.0
 	nuget xunit.runner.console ~> 2.2.0
+	nuget xunit.runner.visualstudio ~> 2.2.0
 		
 group NetStandard
 source https://www.nuget.org/api/v2

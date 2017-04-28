@@ -151,13 +151,13 @@ namespace MMALSharp.Components
             {
                 Console.WriteLine("Removing encoder");
             }
-
-            this.Connection.Destroy();
+            
+            this.Connection?.Destroy();
             
             MMALCamera.Instance.Encoders.Remove(this);
 
             //Remove any unmanaged resources held by the capture handler.
-            this.Handler.Dispose();
+            this.Handler?.Dispose();
 
             base.Dispose();
         }
@@ -166,7 +166,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// Represents a video encoder component
     /// </summary>
-    public unsafe class MMALVideoEncoder : MMALEncoderBase
+    public sealed unsafe class MMALVideoEncoder : MMALEncoderBase
     {        
         public int Bitrate { get; set; } = 17000000;
 
@@ -201,8 +201,10 @@ namespace MMALSharp.Components
         /// </summary>
         public bool PrepareSplit { get; set; }
 
-        public MMALVideoEncoder(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, int bitrate, int framerate, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, encodingType, pixelFormat, handler)
-        {                            
+        public MMALVideoEncoder(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, int bitrate, int quality, int framerate) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, encodingType, pixelFormat, handler)
+        {
+            this.Quality = quality;
+
             if (bitrate > 0)
             {
                 this.Bitrate = bitrate;
@@ -212,7 +214,7 @@ namespace MMALSharp.Components
             {
                 this.Framerate = framerate;
             }
-                
+            
             this.Initialize();
         }
 
@@ -566,7 +568,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// Represents a video decoder component
     /// </summary>
-    public unsafe class MMALVideoDecoder : MMALEncoderBase
+    public sealed unsafe class MMALVideoDecoder : MMALEncoderBase
     {
         public MMALVideoDecoder(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_DECODER, encodingType, pixelFormat, handler)
         {
@@ -583,7 +585,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// Represents an image encoder component
     /// </summary>
-    public unsafe class MMALImageEncoder : MMALEncoderBase
+    public sealed unsafe class MMALImageEncoder : MMALEncoderBase
     {
         public const int MaxExifPayloadLength = 128;
                 
@@ -708,7 +710,7 @@ namespace MMALSharp.Components
 
             Marshal.StructureToPtr(str, ptr, false);
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs.ElementAt(0).Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), string.Format("Unable to set EXIF {0}", formattedExif));
+            MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs.ElementAt(0).Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), $"Unable to set EXIF {formattedExif}");
 
             Marshal.FreeHGlobal(ptr);
         }
@@ -718,7 +720,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// Represents an image decoder component
     /// </summary>
-    public unsafe class MMALImageDecoder : MMALEncoderBase
+    public sealed unsafe class MMALImageDecoder : MMALEncoderBase
     {
         public MMALImageDecoder(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_DECODER, encodingType, pixelFormat, handler)
         {

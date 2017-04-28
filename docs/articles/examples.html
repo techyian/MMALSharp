@@ -256,7 +256,9 @@ static void Main(string[] args)
 
         //Cleanup any resources used by the old encoder, and attach a new MJPEG encoder using I420 pixel format at 25mb/s bitrate.
 
-        using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, MMALEncoding.MMAL_ENCODING_MJPEG, MMALEncoding.MMAL_ENCODING_I420, 25000000, 25, 90))
+        vidCaptureHandler = new VideoStreamCaptureHandler(&quot;/home/pi/videos&quot;, &quot;mjpeg&quot;);
+
+        using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, MMALEncoding.MMAL_ENCODING_MJPEG, MMALEncoding.MMAL_ENCODING_I420, 25000000, 90, 25))
         {
             //Create our component pipeline.         
             cam
@@ -357,7 +359,7 @@ static void Main(string[] args)
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/techyian/MMALSharp/blob/dev/docfx/articles/examples.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/techyian/MMALSharp/blob/master/docfx/articles/examples.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

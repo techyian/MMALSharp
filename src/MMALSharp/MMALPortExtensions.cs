@@ -7,7 +7,7 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
-    internal unsafe static class MMALParameterHelpers
+    internal static class MMALParameterHelpers
     {
         public static Dictionary<int, Type> ParameterHelper = new Dictionary<int, Type>
         {
@@ -86,7 +86,7 @@ namespace MMALSharp
         /// <param name="port">The port to get the parameter from</param>
         /// <param name="key">The unique key for the parameter</param>
         /// <returns></returns>
-        public unsafe static dynamic GetParameter(this MMALPortBase port, int key)
+        public static unsafe dynamic GetParameter(this MMALPortBase port, int key)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace MMALSharp
                     case "MMAL_PARAMETER_BOOLEAN_T":
                         int boolVal = 0;
                         MMALCheck(MMALUtil.mmal_port_parameter_get_boolean(port.Ptr, (uint)key, ref boolVal), "Unable to get boolean value");
-                        return (boolVal == 1) ? true : false;
+                        return boolVal == 1;
                     case "MMAL_PARAMETER_UINT64_T":
                         ulong ulongVal = 0UL;
                         MMALCheck(MMALUtil.mmal_port_parameter_get_uint64(port.Ptr, (uint)key, ref ulongVal), "Unable to get ulong value");
@@ -135,7 +135,7 @@ namespace MMALSharp
         /// <param name="port">The port we want to set the parameter on</param>
         /// <param name="key">The unique key of the parameter</param>
         /// <param name="value">The value of the parameter</param>
-        public unsafe static void SetParameter(this MMALPortBase port, int key, dynamic value)
+        public static unsafe void SetParameter(this MMALPortBase port, int key, dynamic value)
         {
             if (MMALCameraConfig.Debug)
                 Console.WriteLine("Setting parameter");
@@ -174,7 +174,7 @@ namespace MMALSharp
             }
             catch
             {
-                throw new PiCameraError(string.Format("Something went wrong whilst setting parameter {0}. Name: {1}", key, Helpers.GetMemberName(() => t.Key)));
+                throw new PiCameraError($"Something went wrong whilst setting parameter {key}. Name: {Helpers.GetMemberName(() => t.Key)}");
             }
         }
     }

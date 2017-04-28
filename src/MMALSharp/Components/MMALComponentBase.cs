@@ -252,7 +252,7 @@ namespace MMALSharp
         public override void Dispose()
         {
             if (MMALCameraConfig.Debug)
-                Console.WriteLine(string.Format("Disposing component {0}.", this.Name));
+                Console.WriteLine($"Disposing component {this.Name}.");
             
             //See if any pools need disposing before destroying component.
             foreach (var port in this.Inputs)

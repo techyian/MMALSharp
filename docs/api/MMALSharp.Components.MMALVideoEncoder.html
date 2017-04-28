@@ -157,16 +157,16 @@
               <h6><strong>Assembly</strong>:MMALSharp.dll</h6>
               <h5 id="MMALSharp_Components_MMALVideoEncoder_syntax">Syntax</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public class MMALVideoEncoder : MMALEncoderBase, IDisposable</code></pre>
+                <pre><code class="lang-csharp hljs">public sealed class MMALVideoEncoder : MMALEncoderBase, IDisposable</code></pre>
               </div>
               <h3 id="constructors">Constructors
               </h3>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/dev/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder__ctor_MMALSharp_Handlers_ICaptureHandler_MMALSharp_Native_MMALEncoding_MMALSharp_Native_MMALEncoding_System_Int32_System_Int32_System_Int32_.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.%23ctor(MMALSharp.Handlers.ICaptureHandler%2CMMALSharp.Native.MMALEncoding%2CMMALSharp.Native.MMALEncoding%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder__ctor_MMALSharp_Handlers_ICaptureHandler_MMALSharp_Native_MMALEncoding_MMALSharp_Native_MMALEncoding_System_Int32_System_Int32_System_Int32_.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.%23ctor(MMALSharp.Handlers.ICaptureHandler%2CMMALSharp.Native.MMALEncoding%2CMMALSharp.Native.MMALEncoding%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/dev/src/MMALSharp/Components/MMALEncoderComponent.cs/#L204">View Source</a>
+                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Components/MMALEncoderComponent.cs/#L204">View Source</a>
               </span>
               <a id="MMALSharp_Components_MMALVideoEncoder__ctor_" data-uid="MMALSharp.Components.MMALVideoEncoder.#ctor*"></a>
               <h4 id="MMALSharp_Components_MMALVideoEncoder__ctor_MMALSharp_Handlers_ICaptureHandler_MMALSharp_Native_MMALEncoding_MMALSharp_Native_MMALEncoding_System_Int32_System_Int32_System_Int32_" data-uid="MMALSharp.Components.MMALVideoEncoder.#ctor(MMALSharp.Handlers.ICaptureHandler,MMALSharp.Native.MMALEncoding,MMALSharp.Native.MMALEncoding,System.Int32,System.Int32,System.Int32)">MMALVideoEncoder(ICaptureHandler, MMALEncoding, MMALEncoding, Int32, Int32, Int32)</h4>
@@ -174,7 +174,7 @@
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public MMALVideoEncoder(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, int bitrate, int framerate, int quality)</code></pre>
+                <pre><code class="lang-csharp hljs">public MMALVideoEncoder(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, int bitrate, int quality, int framerate)</code></pre>
               </div>
               <h5 class="parameters">Parameters</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -208,22 +208,22 @@
                   </tr>
                   <tr>
                     <td><span class="xref">System.Int32</span></td>
-                    <td><span class="parametername">framerate</span></td>
+                    <td><span class="parametername">quality</span></td>
                     <td></td>
                   </tr>
                   <tr>
                     <td><span class="xref">System.Int32</span></td>
-                    <td><span class="parametername">quality</span></td>
+                    <td><span class="parametername">framerate</span></td>
                     <td></td>
                   </tr>
                 </tbody>
               </table>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/dev/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder__ctor_MMALSharp_Handlers_ICaptureHandler_System_Int32_System_Int32_.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.%23ctor(MMALSharp.Handlers.ICaptureHandler%2CSystem.Int32%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder__ctor_MMALSharp_Handlers_ICaptureHandler_System_Int32_System_Int32_.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.%23ctor(MMALSharp.Handlers.ICaptureHandler%2CSystem.Int32%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/dev/src/MMALSharp/Components/MMALEncoderComponent.cs/#L219">View Source</a>
+                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Components/MMALEncoderComponent.cs/#L221">View Source</a>
               </span>
               <a id="MMALSharp_Components_MMALVideoEncoder__ctor_" data-uid="MMALSharp.Components.MMALVideoEncoder.#ctor*"></a>
               <h4 id="MMALSharp_Components_MMALVideoEncoder__ctor_MMALSharp_Handlers_ICaptureHandler_System_Int32_System_Int32_" data-uid="MMALSharp.Components.MMALVideoEncoder.#ctor(MMALSharp.Handlers.ICaptureHandler,System.Int32,System.Int32)">MMALVideoEncoder(ICaptureHandler, Int32, Int32)</h4>
@@ -264,10 +264,10 @@
               </h3>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/dev/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_MaxBitrateLevel4.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.MaxBitrateLevel4%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_MaxBitrateLevel4.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.MaxBitrateLevel4%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/dev/src/MMALSharp/Components/MMALEncoderComponent.cs/#L185">View Source</a>
+                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Components/MMALEncoderComponent.cs/#L185">View Source</a>
               </span>
               <h4 id="MMALSharp_Components_MMALVideoEncoder_MaxBitrateLevel4" data-uid="MMALSharp.Components.MMALVideoEncoder.MaxBitrateLevel4">MaxBitrateLevel4</h4>
               <div class="markdown level1 summary"></div>
@@ -293,10 +293,10 @@
               </table>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/dev/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_MaxBitrateLevel42.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.MaxBitrateLevel42%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_MaxBitrateLevel42.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.MaxBitrateLevel42%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/dev/src/MMALSharp/Components/MMALEncoderComponent.cs/#L186">View Source</a>
+                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Components/MMALEncoderComponent.cs/#L186">View Source</a>
               </span>
               <h4 id="MMALSharp_Components_MMALVideoEncoder_MaxBitrateLevel42" data-uid="MMALSharp.Components.MMALVideoEncoder.MaxBitrateLevel42">MaxBitrateLevel42</h4>
               <div class="markdown level1 summary"></div>
@@ -322,10 +322,10 @@
               </table>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/dev/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_MaxBitrateMJPEG.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.MaxBitrateMJPEG%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_MaxBitrateMJPEG.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.MaxBitrateMJPEG%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/dev/src/MMALSharp/Components/MMALEncoderComponent.cs/#L184">View Source</a>
+                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Components/MMALEncoderComponent.cs/#L184">View Source</a>
               </span>
               <h4 id="MMALSharp_Components_MMALVideoEncoder_MaxBitrateMJPEG" data-uid="MMALSharp.Components.MMALVideoEncoder.MaxBitrateMJPEG">MaxBitrateMJPEG</h4>
               <div class="markdown level1 summary"></div>
@@ -353,10 +353,10 @@
               </h3>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/dev/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_Bitrate.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.Bitrate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_Bitrate.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.Bitrate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/dev/src/MMALSharp/Components/MMALEncoderComponent.cs/#L171">View Source</a>
+                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Components/MMALEncoderComponent.cs/#L171">View Source</a>
               </span>
               <a id="MMALSharp_Components_MMALVideoEncoder_Bitrate_" data-uid="MMALSharp.Components.MMALVideoEncoder.Bitrate*"></a>
               <h4 id="MMALSharp_Components_MMALVideoEncoder_Bitrate" data-uid="MMALSharp.Components.MMALVideoEncoder.Bitrate">Bitrate</h4>
@@ -383,10 +383,10 @@
               </table>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/dev/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_Framerate.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.Framerate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_Framerate.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.Framerate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/dev/src/MMALSharp/Components/MMALEncoderComponent.cs/#L173">View Source</a>
+                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Components/MMALEncoderComponent.cs/#L173">View Source</a>
               </span>
               <a id="MMALSharp_Components_MMALVideoEncoder_Framerate_" data-uid="MMALSharp.Components.MMALVideoEncoder.Framerate*"></a>
               <h4 id="MMALSharp_Components_MMALVideoEncoder_Framerate" data-uid="MMALSharp.Components.MMALVideoEncoder.Framerate">Framerate</h4>
@@ -413,10 +413,10 @@
               </table>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/dev/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_LastSplit.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.LastSplit%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_LastSplit.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.LastSplit%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/dev/src/MMALSharp/Components/MMALEncoderComponent.cs/#L196">View Source</a>
+                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Components/MMALEncoderComponent.cs/#L196">View Source</a>
               </span>
               <a id="MMALSharp_Components_MMALVideoEncoder_LastSplit_" data-uid="MMALSharp.Components.MMALVideoEncoder.LastSplit*"></a>
               <h4 id="MMALSharp_Components_MMALVideoEncoder_LastSplit" data-uid="MMALSharp.Components.MMALVideoEncoder.LastSplit">LastSplit</h4>
@@ -444,10 +444,10 @@
               </table>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/dev/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_Level.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.Level%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_Level.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.Level%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/dev/src/MMALSharp/Components/MMALEncoderComponent.cs/#L175">View Source</a>
+                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Components/MMALEncoderComponent.cs/#L175">View Source</a>
               </span>
               <a id="MMALSharp_Components_MMALVideoEncoder_Level_" data-uid="MMALSharp.Components.MMALVideoEncoder.Level*"></a>
               <h4 id="MMALSharp_Components_MMALVideoEncoder_Level" data-uid="MMALSharp.Components.MMALVideoEncoder.Level">Level</h4>
@@ -474,10 +474,10 @@
               </table>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/dev/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_PrepareSplit.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.PrepareSplit%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_PrepareSplit.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.PrepareSplit%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/dev/src/MMALSharp/Components/MMALEncoderComponent.cs/#L202">View Source</a>
+                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Components/MMALEncoderComponent.cs/#L202">View Source</a>
               </span>
               <a id="MMALSharp_Components_MMALVideoEncoder_PrepareSplit_" data-uid="MMALSharp.Components.MMALVideoEncoder.PrepareSplit*"></a>
               <h4 id="MMALSharp_Components_MMALVideoEncoder_PrepareSplit" data-uid="MMALSharp.Components.MMALVideoEncoder.PrepareSplit">PrepareSplit</h4>
@@ -506,10 +506,10 @@ and this can be applied on the next run to the newly created file.</p>
               </table>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/dev/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_Quality.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.Quality%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_Quality.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.Quality%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/dev/src/MMALSharp/Components/MMALEncoderComponent.cs/#L182">View Source</a>
+                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Components/MMALEncoderComponent.cs/#L182">View Source</a>
               </span>
               <a id="MMALSharp_Components_MMALVideoEncoder_Quality_" data-uid="MMALSharp.Components.MMALVideoEncoder.Quality*"></a>
               <h4 id="MMALSharp_Components_MMALVideoEncoder_Quality" data-uid="MMALSharp.Components.MMALVideoEncoder.Quality">Quality</h4>
@@ -539,10 +539,10 @@ MJPEG encoding - Uses same quality scale as JPEG encoder (Lowest: 1  Highest: 10
               </table>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/dev/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_Split.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.Split%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_Split.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.Split%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/dev/src/MMALSharp/Components/MMALEncoderComponent.cs/#L191">View Source</a>
+                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Components/MMALEncoderComponent.cs/#L191">View Source</a>
               </span>
               <a id="MMALSharp_Components_MMALVideoEncoder_Split_" data-uid="MMALSharp.Components.MMALVideoEncoder.Split*"></a>
               <h4 id="MMALSharp_Components_MMALVideoEncoder_Split" data-uid="MMALSharp.Components.MMALVideoEncoder.Split">Split</h4>
@@ -572,10 +572,10 @@ MJPEG encoding - Uses same quality scale as JPEG encoder (Lowest: 1  Highest: 10
               </h3>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/dev/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_Initialize.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.Initialize%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_Initialize.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.Initialize%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/dev/src/MMALSharp/Components/MMALEncoderComponent.cs/#L231">View Source</a>
+                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Components/MMALEncoderComponent.cs/#L233">View Source</a>
               </span>
               <a id="MMALSharp_Components_MMALVideoEncoder_Initialize_" data-uid="MMALSharp.Components.MMALVideoEncoder.Initialize*"></a>
               <h4 id="MMALSharp_Components_MMALVideoEncoder_Initialize" data-uid="MMALSharp.Components.MMALVideoEncoder.Initialize">Initialize()</h4>
@@ -589,10 +589,10 @@ MJPEG encoding - Uses same quality scale as JPEG encoder (Lowest: 1  Highest: 10
               <div><a class="xref" href="MMALSharp.Components.MMALEncoderBase.html#MMALSharp_Components_MMALEncoderBase_Initialize">MMALEncoderBase.Initialize()</a></div>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/dev/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_ManagedCallback_MMALSharp_MMALBufferImpl_MMALSharp_MMALPortBase_.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.ManagedCallback(MMALSharp.MMALBufferImpl%2CMMALSharp.MMALPortBase)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder_ManagedCallback_MMALSharp_MMALBufferImpl_MMALSharp_MMALPortBase_.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder.ManagedCallback(MMALSharp.MMALBufferImpl%2CMMALSharp.MMALPortBase)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/dev/src/MMALSharp/Components/MMALEncoderComponent.cs/#L302">View Source</a>
+                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Components/MMALEncoderComponent.cs/#L304">View Source</a>
               </span>
               <a id="MMALSharp_Components_MMALVideoEncoder_ManagedCallback_" data-uid="MMALSharp.Components.MMALVideoEncoder.ManagedCallback*"></a>
               <h4 id="MMALSharp_Components_MMALVideoEncoder_ManagedCallback_MMALSharp_MMALBufferImpl_MMALSharp_MMALPortBase_" data-uid="MMALSharp.Components.MMALVideoEncoder.ManagedCallback(MMALSharp.MMALBufferImpl,MMALSharp.MMALPortBase)">ManagedCallback(MMALBufferImpl, MMALPortBase)</h4>
@@ -637,10 +637,10 @@ MJPEG encoding - Uses same quality scale as JPEG encoder (Lowest: 1  Highest: 10
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/techyian/MMALSharp/new/dev/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Components_MMALVideoEncoder.md&amp;value=---%0Auid%3A%20MMALSharp.Components.MMALVideoEncoder%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/techyian/MMALSharp/blob/dev/src/MMALSharp/Components/MMALEncoderComponent.cs/#L169" class="contribution-link">View Source</a>
+                    <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Components/MMALEncoderComponent.cs/#L169" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

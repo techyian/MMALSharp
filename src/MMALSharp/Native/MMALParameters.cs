@@ -816,17 +816,17 @@ namespace MMALSharp.Native
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe struct MMAL_PARAMETER_COLOURFX_T
+    public struct MMAL_PARAMETER_COLOURFX_T
     {
         public MMAL_PARAMETER_HEADER_T hdr;
         private int enable;
-        private uint u, v;
+        private int u, v;
 
         public int Enable => enable;
-        public uint U => u;
-        public uint V => v;
+        public int U => u;
+        public int V => v;
 
-        public MMAL_PARAMETER_COLOURFX_T(MMAL_PARAMETER_HEADER_T hdr, int enable, uint u, uint v)
+        public MMAL_PARAMETER_COLOURFX_T(MMAL_PARAMETER_HEADER_T hdr, int enable, int u, int v)
         {
             this.hdr = hdr;
             this.enable = enable;
@@ -2417,16 +2417,16 @@ namespace MMALSharp.Native
 
     //mmal_parameters.h
 
+    public enum MMAL_PARAM_MIRROR_T
+    {
+        MMAL_PARAM_MIRROR_NONE,
+        MMAL_PARAM_MIRROR_VERTICAL,
+        MMAL_PARAM_MIRROR_HORIZONTAL,
+        MMAL_PARAM_MIRROR_BOTH
+    }
+
     public static class MMALParameters
     {
-        public enum MMAL_PARAM_MIRROR_T
-        {
-            MMAL_PARAM_MIRROR_NONE,
-            MMAL_PARAM_MIRROR_VERTICAL,
-            MMAL_PARAM_MIRROR_HORIZONTAL,
-            MMAL_PARAM_MIRROR_BOTH
-        }
-
         public const string MMAL_COMPONENT_DEFAULT_VIDEO_DECODER = "vc.ril.video_decode";
         public const string MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER = "vc.ril.video_encode";
         public const string MMAL_COMPONENT_DEFAULT_VIDEO_RENDERER = "vc.ril.video_render";
@@ -2445,11 +2445,8 @@ namespace MMALSharp.Native
         public const string MMAL_COMPONENT_DEFAULT_CAMERA_INFO = "vc.camera_info";
 
         //@waveform80 The following two components aren't in the MMAL headers, but do exist
-
         public const string MMAL_COMPONENT_DEFAULT_NULL_SINK = "vc.null_sink";
         public const string MMAL_COMPONENT_DEFAULT_RESIZER = "vc.ril.resize";
-
-
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -2587,11 +2584,11 @@ namespace MMALSharp.Native
     public unsafe struct MMAL_PARAMETER_MIRROR_T
     {
         public MMAL_PARAMETER_HEADER_T hdr;
-        private MMALParameters.MMAL_PARAM_MIRROR_T value;
+        private MMAL_PARAM_MIRROR_T value;
 
-        public MMALParameters.MMAL_PARAM_MIRROR_T Value => value;
+        public MMAL_PARAM_MIRROR_T Value => value;
 
-        public MMAL_PARAMETER_MIRROR_T(MMAL_PARAMETER_HEADER_T hdr, MMALParameters.MMAL_PARAM_MIRROR_T value)
+        public MMAL_PARAMETER_MIRROR_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_MIRROR_T value)
         {
             this.hdr = hdr;
             this.value = value;

@@ -77,7 +77,7 @@ namespace MMALSharp.Handlers
                     this.ProcessedFiles.Add(new Tuple<string, string, string>(this.Directory, this.GetFilename(), this.Extension));
                 }
                 
-                Console.WriteLine(string.Format("Successfully processed {0}", Helpers.ConvertBytesToMegabytes(this.Processed)));
+                Console.WriteLine($"Successfully processed {Helpers.ConvertBytesToMegabytes(this.Processed)}");
             }
             catch(Exception e)
             {
@@ -112,8 +112,7 @@ namespace MMALSharp.Handlers
 
         public void Dispose()
         {
-            if (this.CurrentStream != null)
-                this.CurrentStream.Dispose();
+            CurrentStream?.Dispose();
         }
                         
     }

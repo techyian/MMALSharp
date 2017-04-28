@@ -203,7 +203,7 @@ namespace MMALSharp
                 {
                     if (MMALCameraConfig.Debug)
                     {
-                        Console.WriteLine(string.Format("Unable to send buffer header. {0}", e.Message));
+                        Console.WriteLine($"Unable to send buffer header. {e.Message}");
                     }                        
                 }                                
             }
@@ -301,7 +301,7 @@ namespace MMALSharp
                 {
                     if (MMALCameraConfig.Debug)
                     {
-                        Console.WriteLine(string.Format("Unable to send buffer header. {0}", e.Message));
+                        Console.WriteLine($"Unable to send buffer header. {e.Message}");
                     }
                         
                 }                                

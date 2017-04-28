@@ -13,56 +13,118 @@ namespace MMALSharp
         public PiCameraError(string msg) : base(msg) { }
     }
 
-    public class MMALError : Exception
+    public class MMALException : Exception
     {
-        private MMALUtil.MMAL_STATUS_T Status { get; set; }
-        private string Prefix { get; set; }
-
-        public MMALError(MMALUtil.MMAL_STATUS_T status, string prefix)
+        public MMALException(MMALUtil.MMAL_STATUS_T status, string prefix) : base(prefix)
         {
-            this.Status = status;
-            this.Prefix = prefix;
-        }
-
-        public override string ToString()
-        {            
-            switch (this.Status)
-            {
-                case MMALUtil.MMAL_STATUS_T.MMAL_ENOMEM:
-                    return Prefix + " : Out of memory";
-                case MMALUtil.MMAL_STATUS_T.MMAL_ENOSPC:
-                    return Prefix + " : Out of resources";
-                case MMALUtil.MMAL_STATUS_T.MMAL_EINVAL:
-                    return Prefix + " : Argument is invalid";
-                case MMALUtil.MMAL_STATUS_T.MMAL_ENOSYS:
-                    return Prefix + " : Function not implemented";
-                case MMALUtil.MMAL_STATUS_T.MMAL_ENOENT:
-                    return Prefix + " : No such file or directory";
-                case MMALUtil.MMAL_STATUS_T.MMAL_ENXIO:
-                    return Prefix + " : No such device or address";
-                case MMALUtil.MMAL_STATUS_T.MMAL_EIO:
-                    return Prefix + " : I/O error";
-                case MMALUtil.MMAL_STATUS_T.MMAL_ESPIPE:
-                    return Prefix + " : Illegal seek";
-                case MMALUtil.MMAL_STATUS_T.MMAL_ECORRUPT:
-                    return Prefix + " : Data is corrupt #FIXME not POSIX";
-                case MMALUtil.MMAL_STATUS_T.MMAL_ENOTREADY:
-                    return Prefix + " : Component is not ready #FIXME not POSIX";
-                case MMALUtil.MMAL_STATUS_T.MMAL_ECONFIG:
-                    return Prefix + " : Component is not configured #FIXME not POSIX";
-                case MMALUtil.MMAL_STATUS_T.MMAL_EISCONN:
-                    return Prefix + " : Port is already connected";
-                case MMALUtil.MMAL_STATUS_T.MMAL_ENOTCONN:
-                    return Prefix + " : Port is disconnected";
-                case MMALUtil.MMAL_STATUS_T.MMAL_EAGAIN:
-                    return Prefix + " : Resource temporarily unavailable; try again later";
-                case MMALUtil.MMAL_STATUS_T.MMAL_EFAULT:
-                    return Prefix + " : Bad address";
-                default:
-                    return Prefix + " : Unknown status error";
-            }                        
         }
     }
+
+    public class MMALNoMemoryException : MMALException
+    {
+        public MMALNoMemoryException() : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOMEM, "Out of memory")
+        {
+        }
+    }
+
+    public class MMALNoSpaceException : MMALException
+    {
+        public MMALNoSpaceException() : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOSPC, "Out of resources")
+        {
+        }
+    }
+
+    public class MMALInvalidException : MMALException
+    {
+        public MMALInvalidException() : base(MMALUtil.MMAL_STATUS_T.MMAL_EINVAL, "Argument is invalid")
+        {
+        }
+    }
+
+    public class MMALNotImplementedException : MMALException
+    {
+        public MMALNotImplementedException() : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOSYS, "Function not implemented")
+        {
+        }
+    }
+
+    public class MMALInvalidDirectoryException : MMALException
+    {
+        public MMALInvalidDirectoryException() : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOENT, "No such file or directory")
+        {
+        }
+    }
+
+    public class MMALInvalidDeviceException : MMALException
+    {
+        public MMALInvalidDeviceException() : base(MMALUtil.MMAL_STATUS_T.MMAL_ENXIO, "No such device or address")
+        {
+        }
+    }
+
+    public class MMALIOException : MMALException
+    {
+        public MMALIOException() : base(MMALUtil.MMAL_STATUS_T.MMAL_EIO, "I/O error")
+        {
+        }
+    }
+
+    public class MMALIllegalSeekException : MMALException
+    {
+        public MMALIllegalSeekException() : base(MMALUtil.MMAL_STATUS_T.MMAL_ESPIPE, "Illegal seek")
+        {
+        }
+    }
+
+    public class MMALCorruptException : MMALException
+    {
+        public MMALCorruptException() : base(MMALUtil.MMAL_STATUS_T.MMAL_ECORRUPT, "Data is corrupt")
+        {
+        }
+    }
+
+    public class MMALComponentNotReadyException : MMALException
+    {
+        public MMALComponentNotReadyException() : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOTREADY, "Component is not ready")
+        {
+        }
+    }
+
+    public class MMALComponentNotConfiguredException : MMALException
+    {
+        public MMALComponentNotConfiguredException() : base(MMALUtil.MMAL_STATUS_T.MMAL_ECONFIG, "Component is not configured")
+        {
+        }
+    }
+
+    public class MMALPortConnectedException : MMALException
+    {
+        public MMALPortConnectedException() : base(MMALUtil.MMAL_STATUS_T.MMAL_EISCONN, "Port is already connected")
+        {
+        }
+    }
+
+    public class MMALPortNotConnectedException : MMALException
+    {
+        public MMALPortNotConnectedException() : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOTCONN, "Port is disconnected")
+        {
+        }
+    }
+
+    public class MMALResourceUnavailableException : MMALException
+    {
+        public MMALResourceUnavailableException() : base(MMALUtil.MMAL_STATUS_T.MMAL_EAGAIN, "Resource temporarily unavailable; try again later")
+        {
+        }
+    }
+
+    public class MMALBadAddressException : MMALException
+    {
+        public MMALBadAddressException() : base(MMALUtil.MMAL_STATUS_T.MMAL_EFAULT, "Bad address")
+        {
+        }
+    }
+
 
     public static class MMALCallerHelper
     {
@@ -70,7 +132,44 @@ namespace MMALSharp
         {
             if (status != MMALUtil.MMAL_STATUS_T.MMAL_SUCCESS)
             {
-                throw new MMALError(status, prefix);
+                switch (status)
+                {
+                    case MMALUtil.MMAL_STATUS_T.MMAL_ENOMEM:
+                        throw new MMALNoMemoryException();
+                    case MMALUtil.MMAL_STATUS_T.MMAL_ENOSPC:
+                        throw new MMALNoSpaceException();
+                    case MMALUtil.MMAL_STATUS_T.MMAL_EINVAL:
+                        throw new MMALInvalidException();
+                    case MMALUtil.MMAL_STATUS_T.MMAL_ENOSYS:
+                        throw new MMALNotImplementedException();
+                    case MMALUtil.MMAL_STATUS_T.MMAL_ENOENT:
+                        throw new MMALInvalidDirectoryException();
+                    case MMALUtil.MMAL_STATUS_T.MMAL_ENXIO:
+                        throw new MMALInvalidDeviceException();
+                    case MMALUtil.MMAL_STATUS_T.MMAL_EIO:
+                        throw new MMALIOException();
+                    case MMALUtil.MMAL_STATUS_T.MMAL_ESPIPE:
+                        throw new MMALIllegalSeekException();
+                    case MMALUtil.MMAL_STATUS_T.MMAL_ECORRUPT:
+                        throw new MMALCorruptException();
+                    case MMALUtil.MMAL_STATUS_T.MMAL_ENOTREADY:
+                        throw new MMALComponentNotReadyException();
+                    case MMALUtil.MMAL_STATUS_T.MMAL_ECONFIG:
+                        throw new MMALComponentNotConfiguredException();
+                    case MMALUtil.MMAL_STATUS_T.MMAL_EISCONN:
+                        throw new MMALPortConnectedException();
+                    case MMALUtil.MMAL_STATUS_T.MMAL_ENOTCONN:
+                        throw new MMALPortNotConnectedException();
+                    case MMALUtil.MMAL_STATUS_T.MMAL_EAGAIN:
+                        throw new MMALResourceUnavailableException();
+                    case MMALUtil.MMAL_STATUS_T.MMAL_EFAULT:
+                        throw new MMALBadAddressException();
+                    default:
+                        throw new MMALException(status, "Unknown error occurred");
+                }
+
+
+                throw new MMALException(status, prefix);
             }
         }
     }

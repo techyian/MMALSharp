@@ -23,7 +23,7 @@ namespace MMALSharp
         {
             if (MMALCameraConfig.Debug)
             {
-                Console.WriteLine(string.Format("Creating buffer pool with {0} buffers of size {1}", port.BufferNum, port.BufferSize));
+                Console.WriteLine($"Creating buffer pool with {port.BufferNum} buffers of size {port.BufferSize}");
             }
                 
             this.Ptr = MMALUtil.mmal_port_pool_create(port.Ptr, port.BufferNum, port.BufferSize);

@@ -46,7 +46,7 @@ namespace MMALSharp.FFmpeg
                     fps = 25;
                 }
 
-                process.StartInfo.Arguments = string.Format("-framerate {0} -f image2 -pattern_type glob -i {1} {2}/out.avi", fps, tempDirectory + "'*" + extension + "'", targetDirectory);
+                process.StartInfo.Arguments = $"-framerate {fps} -f image2 -pattern_type glob -i {tempDirectory + "'*" + extension + "'"} {targetDirectory}/out.avi";
                 process.Start();
                 process.WaitForExit();
             }
