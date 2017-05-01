@@ -1,12 +1,57 @@
 ﻿using MMALSharp.Native;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MMALSharp.Tests
 {
+    public class TestHelper
+    {
+        public static void SetConfigurationDefaults()
+        {
+            MMALCameraConfig.Brightness = 0;
+            MMALCameraConfig.Sharpness = 0;
+            MMALCameraConfig.Contrast = 0;
+            MMALCameraConfig.Saturation = 0;
+            MMALCameraConfig.AwbGainsB = 0;
+            MMALCameraConfig.AwbGainsR = 0;
+            MMALCameraConfig.AwbMode = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_AUTO;
+            MMALCameraConfig.ColourFx = new ColourEffects();
+            MMALCameraConfig.ExposureCompensation = -1;
+            MMALCameraConfig.ExposureMeterMode = MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE;
+            MMALCameraConfig.ExposureMode = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
+            MMALCameraConfig.ROI = new Zoom();
+            MMALCameraConfig.ISO = 0;
+            MMALCameraConfig.StatsPass = false;
+            MMALCameraConfig.Flips = MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE;
+            MMALCameraConfig.ImageFx = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NONE;
+            MMALCameraConfig.Rotation = 0;
+            MMALCameraConfig.DrcLevel = MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_OFF;
+            MMALCameraConfig.ShutterSpeed = 0;
+            MMALCameraConfig.Reload();
+        }
+
+        public static void CleanDirectory(string directory)
+        {
+            try
+            {
+                var files = Directory.GetFiles(directory);
+
+                //Clear directory first
+                foreach (string file in files)
+                {
+                    File.Delete(file);
+                }
+            }
+            catch
+            {
+            }
+        }
+    }
+
     public class TestData
     {        
         public static List<MMALEncoding> PixelFormats = new List<MMALEncoding>

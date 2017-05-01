@@ -68,6 +68,12 @@
             <article class="content wrap" id="_content" data-uid="">
               <h1 id="examples">Examples</h1>
               
+<p>If you want to change any of the default configuration settings, this can be done by modifying the 
+static properties within the <code>MMALCameraConfig</code> class. The main class, <code>MMALCamera</code> which interfaces to the rest of the functionality the library provides is 
+a Singleton and is called as follows: <code>MMALCamera cam = MMALCamera.Instance</code>.</p>
+<p>MMALSharp is asynchronous in nature, preventing any blocking of the main thread in your application. If you are planning on using MMALSharp within a console 
+application, it is important to provide a context which your application will use when returning from asynchronous method calls. In the examples below, we 
+are demonstrating usage with <code>AsyncContext</code> included in the <code>Nito.AsyncEx</code> library by <a href="https://github.com/StephenCleary/AsyncEx">@StephenClary</a>. GUI applications provide their own context and therefore this should not be necessary.</p>
 <h2 id="image-capture">Image capture</h2>
 <h3 id="simple-jpeg-capture">Simple JPEG capture</h3>
 <pre><code>
@@ -359,7 +365,7 @@ static void Main(string[] args)
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/techyian/MMALSharp/blob/master/docfx/articles/examples.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/techyian/MMALSharp/blob/dev/docfx/articles/examples.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

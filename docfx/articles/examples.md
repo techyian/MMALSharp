@@ -1,5 +1,13 @@
 # Examples
 
+If you want to change any of the default configuration settings, this can be done by modifying the 
+static properties within the `MMALCameraConfig` class. The main class, `MMALCamera` which interfaces to the rest of the functionality the library provides is 
+a Singleton and is called as follows: `MMALCamera cam = MMALCamera.Instance`.
+
+MMALSharp is asynchronous in nature, preventing any blocking of the main thread in your application. If you are planning on using MMALSharp within a console 
+application, it is important to provide a context which your application will use when returning from asynchronous method calls. In the examples below, we 
+are demonstrating usage with `AsyncContext` included in the `Nito.AsyncEx` library by [@StephenClary](https://github.com/StephenCleary/AsyncEx). GUI applications provide their own context and therefore this should not be necessary.
+
 ## Image capture
 
 ### Simple JPEG capture

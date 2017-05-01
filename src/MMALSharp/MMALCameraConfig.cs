@@ -90,12 +90,12 @@ namespace MMALSharp
         /// <summary>
         /// Adjust auto white balance 'red' gains
         /// </summary>
-        public static int AwbGainsR { get; set; }
+        public static double AwbGainsR { get; set; }
 
         /// <summary>
         /// Adjust auto white balance 'blue' gains
         /// </summary>
-        public static int AwbGainsB { get; set; }
+        public static double AwbGainsB { get; set; }
 
         /// <summary>
         /// Adjust dynamic range compression

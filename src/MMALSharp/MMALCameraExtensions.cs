@@ -119,7 +119,7 @@ namespace MMALSharp
 
         public static int GetISO(this MMALCamera camera)
         {
-            return camera.Camera.Control.GetParameter(MMAL_PARAMETER_ISO);
+            return (int)camera.Camera.Control.GetParameter(MMAL_PARAMETER_ISO);
         }
 
         internal static void SetISO(this MMALCamera camera, int iso)
@@ -230,10 +230,21 @@ namespace MMALSharp
             MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &awbMode.hdr), "Unable to set awb mode");
         }
 
+        public static MMAL_PARAMETER_CAMERA_SETTINGS_T GetCameraSettings(this MMALCamera camera)
+        {
+            MMAL_PARAMETER_CAMERA_SETTINGS_T settings = new MMAL_PARAMETER_CAMERA_SETTINGS_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CAMERA_SETTINGS, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_SETTINGS_T>()),
+                                                                                             0, new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0), 
+                                                                                             new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0), 0);
+
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &settings.hdr), "Unable to get camera settings");
+            
+            return settings;
+        }
+
         public static Tuple<double, double> GetAwbGains(this MMALCamera camera)
         {
             MMAL_PARAMETER_AWB_GAINS_T awbGains = new MMAL_PARAMETER_AWB_GAINS_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CUSTOM_AWB_GAINS, Marshal.SizeOf<MMAL_PARAMETER_AWB_GAINS_T>()),
-                                                                                                        new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0));
+                                                                                                        new MMAL_RATIONAL_T(0, 65536), new MMAL_RATIONAL_T(0, 65536));
 
             MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &awbGains.hdr), "Unable to get awb gains");
 
@@ -253,7 +264,7 @@ namespace MMALSharp
 
             if (MMALCameraConfig.AwbMode != MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_OFF && (rGain > 0 || bGain > 0))
                 throw new PiCameraError("AWB Mode must be off when setting AWB gains");
-
+            
             MMAL_PARAMETER_AWB_GAINS_T awbGains = new MMAL_PARAMETER_AWB_GAINS_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CUSTOM_AWB_GAINS, Marshal.SizeOf<MMAL_PARAMETER_AWB_GAINS_T>()),
                                                                                                         new MMAL_RATIONAL_T((int)(rGain * 65536), 65536), 
                                                                                                         new MMAL_RATIONAL_T((int)(bGain * 65536), 65536));
@@ -365,7 +376,7 @@ namespace MMALSharp
 
         public static int GetShutterSpeed(this MMALCamera camera)
         {
-            return camera.Camera.Control.GetParameter(MMAL_PARAMETER_SHUTTER_SPEED);
+            return (int)camera.Camera.Control.GetParameter(MMAL_PARAMETER_SHUTTER_SPEED);
         }
 
         internal static void SetShutterSpeed(this MMALCamera camera, int speed)

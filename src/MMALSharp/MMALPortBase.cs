@@ -216,10 +216,10 @@ namespace MMALSharp
         /// </summary>
         internal void DestroyPortPool()
         {
-            if(this.BufferPool != null)
+            if (this.BufferPool != null)
+            {
                 MMALUtil.mmal_port_pool_destroy(this.Ptr, this.BufferPool.Ptr);
+            }
         }
-        
-
     }
 }

@@ -158,11 +158,8 @@ namespace MMALSharp
         public virtual void ManagedCallback(MMALBufferImpl buffer, MMALPortBase port)
         {
             var data = buffer.GetBufferData();
-
-            if (this.Handler != null)
-            {
-                this.Handler.Process(data);
-            }
+            
+            this.Handler?.Process(data);
         }
 
         /// <summary>

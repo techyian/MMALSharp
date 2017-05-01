@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MMALSharp.Components;
 using Xunit;
 
 namespace MMALSharp.Tests
@@ -10,6 +11,11 @@ namespace MMALSharp.Tests
     public class MMALFixture : IDisposable
     {
         public MMALCamera MMALCamera = MMALCamera.Instance;
+
+        public MMALFixture()
+        {
+            MMALCamera.CreatePreviewComponent(new MMALNullSinkComponent());
+        }
 
         public void Dispose()
         {

@@ -44,8 +44,7 @@ namespace MMALSharp.Handlers
         /// </summary>
         public void NewFile()
         {
-            if (this.CurrentStream != null)
-                this.CurrentStream.Dispose();
+            this.CurrentStream?.Dispose();
             
             this.CurrentStream = File.Create(this.Directory + "/" + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + "." + this.Extension);
         }

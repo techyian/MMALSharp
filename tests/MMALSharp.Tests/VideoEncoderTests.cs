@@ -58,6 +58,8 @@ namespace MMALSharp.Tests
         [InlineData(false)]
         public void SetThenGetVideoStabilisation(bool vstab)
         {
+            TestHelper.SetConfigurationDefaults();
+
             MMALCameraConfig.VideoStabilisation = vstab;
             MMALCameraConfig.Reload();
             Assert.True(fixture.MMALCamera.GetVideoStabilisation() == vstab);
@@ -68,9 +70,13 @@ namespace MMALSharp.Tests
         [Theory, MemberData(nameof(TakeVideoData))]
         public void TakeVideo(string extension, MMALEncoding encodingType, MMALEncoding pixelFormat)
         {
+            TestHelper.SetConfigurationDefaults();
+
             AsyncContext.Run(async () =>
             {
                 var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests", extension);
+
+                TestHelper.CleanDirectory("/home/pi/videos/tests");
 
                 using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, encodingType, pixelFormat, 25000000, 10, 25))
                 {
@@ -80,8 +86,8 @@ namespace MMALSharp.Tests
                         .CreatePreviewComponent(new MMALVideoRenderer())
                         .ConfigureCamera();
 
-                    //Record video for 1 minute
-                    await fixture.MMALCamera.TakeVideo(fixture.MMALCamera.Camera.VideoPort, DateTime.Now.AddMinutes(1));
+                    //Record video for 20 seconds
+                    await fixture.MMALCamera.TakeVideo(fixture.MMALCamera.Camera.VideoPort, DateTime.Now.AddSeconds(20));
 
                     if (System.IO.File.Exists(vidCaptureHandler.GetFilepath()))
                     {
@@ -92,7 +98,6 @@ namespace MMALSharp.Tests
                     {
                         Assert.True(false, $"File {vidCaptureHandler.GetFilepath()} was not created");
                     }
-
                 }
             });
         }
@@ -100,23 +105,15 @@ namespace MMALSharp.Tests
         [Theory, MemberData(nameof(TakeVideoDataH264))]
         public void TakeVideoSplit(string extension, MMALEncoding encodingType, MMALEncoding pixelFormat)
         {
+            TestHelper.SetConfigurationDefaults();
+
+            MMALCameraConfig.InlineHeaders = true;
+            
             AsyncContext.Run(async () =>
             {
                 var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests/split_test", extension);
 
-                try
-                {
-                    var files = Directory.GetFiles("/home/pi/videos/tests/split_test");
-
-                    //Clear directory first
-                    foreach (string file in files)
-                    {
-                        File.Delete(file);
-                    }
-                }
-                catch
-                {
-                }
+                TestHelper.CleanDirectory("/home/pi/videos/tests/split_test");
                 
                 using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, encodingType, pixelFormat, 25000000, 10, 25))
                 {
@@ -127,8 +124,8 @@ namespace MMALSharp.Tests
                         .ConfigureCamera();
                     
                     //2 files should be created from this test. 
-                    await fixture.MMALCamera.TakeVideo(fixture.MMALCamera.Camera.VideoPort, DateTime.Now.AddMinutes(1), 
-                                                        new Split { Mode = TimelapseMode.Second, Value = 30 });
+                    await fixture.MMALCamera.TakeVideo(fixture.MMALCamera.Camera.VideoPort, DateTime.Now.AddSeconds(30), 
+                                                        new Split { Mode = TimelapseMode.Second, Value = 15 });
 
                     Assert.True(Directory.GetFiles("/home/pi/videos/tests/split_test").Length == 2);
 
@@ -139,10 +136,14 @@ namespace MMALSharp.Tests
         [Fact]
         public void ChangeEncoderType()
         {
+            TestHelper.SetConfigurationDefaults();
+
             AsyncContext.Run(async () =>
             {
                 var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "avi");
 
+                TestHelper.CleanDirectory("/home/pi/videos/tests");
+                
                 using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, 10, 25))
                 {
                     //Create our component pipeline.         
@@ -151,8 +152,8 @@ namespace MMALSharp.Tests
                         .CreatePreviewComponent(new MMALVideoRenderer())
                         .ConfigureCamera();
 
-                    //Record video for 1 minute
-                    await fixture.MMALCamera.TakeVideo(fixture.MMALCamera.Camera.VideoPort, DateTime.Now.AddMinutes(1));
+                    //Record video for 20 seconds
+                    await fixture.MMALCamera.TakeVideo(fixture.MMALCamera.Camera.VideoPort, DateTime.Now.AddSeconds(20));
 
                     if (System.IO.File.Exists(vidCaptureHandler.GetFilepath()))
                     {
@@ -176,8 +177,8 @@ namespace MMALSharp.Tests
                         .CreatePreviewComponent(new MMALVideoRenderer())
                         .ConfigureCamera();
 
-                    //Record video for 1 minute
-                    await fixture.MMALCamera.TakeVideo(fixture.MMALCamera.Camera.VideoPort, DateTime.Now.AddMinutes(1));
+                    //Record video for 20 seconds
+                    await fixture.MMALCamera.TakeVideo(fixture.MMALCamera.Camera.VideoPort, DateTime.Now.AddSeconds(20));
 
                     if (System.IO.File.Exists(vidCaptureHandler.GetFilepath()))
                     {
@@ -193,7 +194,5 @@ namespace MMALSharp.Tests
 
             });
         }
-
-
     }
 }

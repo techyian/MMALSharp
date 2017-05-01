@@ -112,7 +112,7 @@ namespace MMALSharp
             
             try
             {
-                Console.WriteLine($"Preparing to take video - Resolution: {MMALCameraConfig.VideoResolution.Width} x {MMALCameraConfig.VideoResolution.Height}");
+                Console.WriteLine($"Preparing to take video. Resolution: {MMALCameraConfig.VideoResolution.Width} x {MMALCameraConfig.VideoResolution.Height}. Encoder: {encoder.EncodingType.EncodingName}. Pixel Format: {encoder.PixelFormat.EncodingName}.");
                                 
                 ((MMALVideoPort)encoder.Outputs.ElementAt(0)).Timeout = timeout;
                 ((MMALVideoEncoder)encoder).Split = split;
@@ -203,7 +203,7 @@ namespace MMALSharp
             //Enable the image encoder output port.            
             try
             {
-                Console.WriteLine($"Preparing to take picture - Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}");
+                Console.WriteLine($"Preparing to take picture. Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}. Encoder: {encoder.EncodingType.EncodingName}. Pixel Format: {encoder.PixelFormat.EncodingName}.");
 
                 await BeginProcessing(encoder, encoder.Connection, this.Camera.StillPort, 0);
             }
@@ -294,10 +294,7 @@ namespace MMALSharp
             component.Stop(outputPort);
 
             //Close open connections.
-            if(connection != null)
-            {
-                connection.Disable();
-            }
+            connection?.Disable();
             
             component.CleanPortPools();
         }
@@ -381,7 +378,7 @@ namespace MMALSharp
         public void DisableCamera()
         {
             this.Encoders.ForEach(c => c.DisableComponent());
-            this.Preview.DisableComponent();
+            this.Preview?.DisableComponent();
             this.Camera.DisableComponent();
         }
 
@@ -391,7 +388,7 @@ namespace MMALSharp
         public void EnableCamera()
         {
             this.Encoders.ForEach(c => c.EnableComponent());
-            this.Preview.EnableComponent();
+            this.Preview?.EnableComponent();
             this.Camera.EnableComponent();
         }
 
@@ -464,16 +461,8 @@ namespace MMALSharp
             }
 
             this.Encoders.ForEach(c => c.Dispose());
-
-            if (this.Preview != null)
-            {
-                this.Preview.Dispose();
-            }
-
-            if (this.Camera != null)
-            {
-                this.Camera.Dispose();
-            }
+            this.Preview?.Dispose();
+            this.Camera?.Dispose();
 
             BcmHost.bcm_host_deinit();
         }

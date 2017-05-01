@@ -11,60 +11,9 @@ MMALSharp supports the following runtimes:
 1) Mono 4.x 
 2) .NET Core 2.0 (beta) with .NET Standard 1.6.
 
-## Installation
+## Documentation
 
-For full installation instructions for Mono 4.x and .NET Core - please visit the [Documentation](https://techyian.github.io/MMALSharp) site
-
-## Basic Usage
-
-Using the library is relatively simple. If you want to change any of the default configuration settings, this can be done by modifying the 
-properties within `MMALCameraConfig`. The main class `MMALCamera` which interfaces to the rest of the functionality the library provides is 
-a Singleton and is called as follows: `MMALCamera cam = MMALCamera.Instance`.
-
-MMALSharp is asynchronous in nature, preventing any blocking of the main thread in your application. From testing, I found it is important that we provide a context
-for the asynchronous code to run in, this is because when we await processing to complete, we need to return to the same thread we began processing on.
-
-Below is a basic example of its usage.
-
-```
-
-public static void Main(string[] args)
-{
-    Alter any configuration properties required.         
-    MMALCameraConfig.EnableAnnotate = true;
-    MMALCameraConfig.Annotate = new AnnotateImage { ShowDateText = true, ShowTimeText = true };
-	MMALCameraConfig.VideoHeight = 1024;
-    MMALCameraConfig.VideoWidth = 768;
-		
-	//Required for segmented recording
-	MMALCameraConfig.InlineHeaders = true;
-		
-    MMALCamera cam = MMALCamera.Instance;
-                                    
-	AsyncContext.Run(async () =>
-	{
-		using (var vidEncoder = new MMALVideoEncoder(new VideoStreamCaptureHandler("/home/pi/videos", ".avi"), 40))
-		using (var imgEncoder = new MMALImageEncoder(new ImageStreamCaptureHandler("/home/pi/images/", "jpg")))
-		{
-			//Create our component pipeline.         
-			cam.AddEncoder(vidEncoder, cam.Camera.VideoPort)
-			   .AddEncoder(imgEncoder, cam.Camera.StillPort)
-			   .CreatePreviewComponent(new MMALVideoRenderer())
-			   .ConfigureCamera();
-
-			//Record video for 1 minute, using segmented video record to split into multiple files every 30 seconds.
-			await cam.TakeVideo(cam.Camera.VideoPort, DateTime.Now.AddMinutes(1), new Split { Mode = TimelapseMode.Second, Value = 30 });
-
-			//Take a single picture on the camera's still port using the encoder connected to the still port
-			await cam.TakePicture(cam.Camera.StillPort);
-		}
-						
-		//Once we're finished with the camera and will *not* use it again, cleanup any unmanaged resources.
-		cam.Cleanup();                
-	});		
-}
-
-```
+For full installation instructions for Mono 4.x and .NET Core, including configuration and examples - please visit the [Documentation](https://techyian.github.io/MMALSharp) site.
 
 ## Status
 
