@@ -271,18 +271,6 @@ references:
   commentId: Overload:MMALSharp.Components.MMALCameraComponent.Dispose
   fullName: MMALSharp.Components.MMALCameraComponent.Dispose
   nameWithType: MMALCameraComponent.Dispose
-- uid: MMALSharp.Components.MMALCameraComponent.Initialize
-  name: Initialize()
-  href: api/MMALSharp.Components.MMALCameraComponent.html#MMALSharp_Components_MMALCameraComponent_Initialize
-  commentId: M:MMALSharp.Components.MMALCameraComponent.Initialize
-  fullName: MMALSharp.Components.MMALCameraComponent.Initialize()
-  nameWithType: MMALCameraComponent.Initialize()
-- uid: MMALSharp.Components.MMALCameraComponent.Initialize*
-  name: Initialize
-  href: api/MMALSharp.Components.MMALCameraComponent.html#MMALSharp_Components_MMALCameraComponent_Initialize_
-  commentId: Overload:MMALSharp.Components.MMALCameraComponent.Initialize
-  fullName: MMALSharp.Components.MMALCameraComponent.Initialize
-  nameWithType: MMALCameraComponent.Initialize
 - uid: MMALSharp.Components.MMALCameraComponent.PreviewPort
   name: PreviewPort
   href: api/MMALSharp.Components.MMALCameraComponent.html#MMALSharp_Components_MMALCameraComponent_PreviewPort
@@ -457,18 +445,6 @@ references:
   commentId: Overload:MMALSharp.Components.MMALEncoderBase.EncodingType
   fullName: MMALSharp.Components.MMALEncoderBase.EncodingType
   nameWithType: MMALEncoderBase.EncodingType
-- uid: MMALSharp.Components.MMALEncoderBase.Initialize
-  name: Initialize()
-  href: api/MMALSharp.Components.MMALEncoderBase.html#MMALSharp_Components_MMALEncoderBase_Initialize
-  commentId: M:MMALSharp.Components.MMALEncoderBase.Initialize
-  fullName: MMALSharp.Components.MMALEncoderBase.Initialize()
-  nameWithType: MMALEncoderBase.Initialize()
-- uid: MMALSharp.Components.MMALEncoderBase.Initialize*
-  name: Initialize
-  href: api/MMALSharp.Components.MMALEncoderBase.html#MMALSharp_Components_MMALEncoderBase_Initialize_
-  commentId: Overload:MMALSharp.Components.MMALEncoderBase.Initialize
-  fullName: MMALSharp.Components.MMALEncoderBase.Initialize
-  nameWithType: MMALEncoderBase.Initialize
 - uid: MMALSharp.Components.MMALEncoderBase.InputPort
   name: InputPort
   href: api/MMALSharp.Components.MMALEncoderBase.html#MMALSharp_Components_MMALEncoderBase_InputPort
@@ -523,18 +499,6 @@ references:
   commentId: Overload:MMALSharp.Components.MMALImageDecoder.#ctor
   fullName: MMALSharp.Components.MMALImageDecoder.MMALImageDecoder
   nameWithType: MMALImageDecoder.MMALImageDecoder
-- uid: MMALSharp.Components.MMALImageDecoder.Initialize
-  name: Initialize()
-  href: api/MMALSharp.Components.MMALImageDecoder.html#MMALSharp_Components_MMALImageDecoder_Initialize
-  commentId: M:MMALSharp.Components.MMALImageDecoder.Initialize
-  fullName: MMALSharp.Components.MMALImageDecoder.Initialize()
-  nameWithType: MMALImageDecoder.Initialize()
-- uid: MMALSharp.Components.MMALImageDecoder.Initialize*
-  name: Initialize
-  href: api/MMALSharp.Components.MMALImageDecoder.html#MMALSharp_Components_MMALImageDecoder_Initialize_
-  commentId: Overload:MMALSharp.Components.MMALImageDecoder.Initialize
-  fullName: MMALSharp.Components.MMALImageDecoder.Initialize
-  nameWithType: MMALImageDecoder.Initialize
 - uid: MMALSharp.Components.MMALImageEncoder
   name: MMALImageEncoder
   href: api/MMALSharp.Components.MMALImageEncoder.html
@@ -553,24 +517,18 @@ references:
   commentId: M:MMALSharp.Components.MMALImageEncoder.#ctor(MMALSharp.Handlers.ICaptureHandler,MMALSharp.Native.MMALEncoding,MMALSharp.Native.MMALEncoding,System.Int32)
   fullName: MMALSharp.Components.MMALImageEncoder.MMALImageEncoder(MMALSharp.Handlers.ICaptureHandler, MMALSharp.Native.MMALEncoding, MMALSharp.Native.MMALEncoding, System.Int32)
   nameWithType: MMALImageEncoder.MMALImageEncoder(ICaptureHandler, MMALEncoding, MMALEncoding, Int32)
+- uid: MMALSharp.Components.MMALImageEncoder.#ctor(MMALSharp.Handlers.ICaptureHandler,System.Int32)
+  name: MMALImageEncoder(ICaptureHandler, Int32)
+  href: api/MMALSharp.Components.MMALImageEncoder.html#MMALSharp_Components_MMALImageEncoder__ctor_MMALSharp_Handlers_ICaptureHandler_System_Int32_
+  commentId: M:MMALSharp.Components.MMALImageEncoder.#ctor(MMALSharp.Handlers.ICaptureHandler,System.Int32)
+  fullName: MMALSharp.Components.MMALImageEncoder.MMALImageEncoder(MMALSharp.Handlers.ICaptureHandler, System.Int32)
+  nameWithType: MMALImageEncoder.MMALImageEncoder(ICaptureHandler, Int32)
 - uid: MMALSharp.Components.MMALImageEncoder.#ctor*
   name: MMALImageEncoder
   href: api/MMALSharp.Components.MMALImageEncoder.html#MMALSharp_Components_MMALImageEncoder__ctor_
   commentId: Overload:MMALSharp.Components.MMALImageEncoder.#ctor
   fullName: MMALSharp.Components.MMALImageEncoder.MMALImageEncoder
   nameWithType: MMALImageEncoder.MMALImageEncoder
-- uid: MMALSharp.Components.MMALImageEncoder.Initialize
-  name: Initialize()
-  href: api/MMALSharp.Components.MMALImageEncoder.html#MMALSharp_Components_MMALImageEncoder_Initialize
-  commentId: M:MMALSharp.Components.MMALImageEncoder.Initialize
-  fullName: MMALSharp.Components.MMALImageEncoder.Initialize()
-  nameWithType: MMALImageEncoder.Initialize()
-- uid: MMALSharp.Components.MMALImageEncoder.Initialize*
-  name: Initialize
-  href: api/MMALSharp.Components.MMALImageEncoder.html#MMALSharp_Components_MMALImageEncoder_Initialize_
-  commentId: Overload:MMALSharp.Components.MMALImageEncoder.Initialize
-  fullName: MMALSharp.Components.MMALImageEncoder.Initialize
-  nameWithType: MMALImageEncoder.Initialize
 - uid: MMALSharp.Components.MMALImageEncoder.MaxExifPayloadLength
   name: MaxExifPayloadLength
   href: api/MMALSharp.Components.MMALImageEncoder.html#MMALSharp_Components_MMALImageEncoder_MaxExifPayloadLength
@@ -643,18 +601,6 @@ references:
   commentId: Overload:MMALSharp.Components.MMALSplitterComponent.#ctor
   fullName: MMALSharp.Components.MMALSplitterComponent.MMALSplitterComponent
   nameWithType: MMALSplitterComponent.MMALSplitterComponent
-- uid: MMALSharp.Components.MMALSplitterComponent.Initialize
-  name: Initialize()
-  href: api/MMALSharp.Components.MMALSplitterComponent.html#MMALSharp_Components_MMALSplitterComponent_Initialize
-  commentId: M:MMALSharp.Components.MMALSplitterComponent.Initialize
-  fullName: MMALSharp.Components.MMALSplitterComponent.Initialize()
-  nameWithType: MMALSplitterComponent.Initialize()
-- uid: MMALSharp.Components.MMALSplitterComponent.Initialize*
-  name: Initialize
-  href: api/MMALSharp.Components.MMALSplitterComponent.html#MMALSharp_Components_MMALSplitterComponent_Initialize_
-  commentId: Overload:MMALSharp.Components.MMALSplitterComponent.Initialize
-  fullName: MMALSharp.Components.MMALSplitterComponent.Initialize
-  nameWithType: MMALSplitterComponent.Initialize
 - uid: MMALSharp.Components.MMALVideoDecoder
   name: MMALVideoDecoder
   href: api/MMALSharp.Components.MMALVideoDecoder.html
@@ -673,36 +619,30 @@ references:
   commentId: Overload:MMALSharp.Components.MMALVideoDecoder.#ctor
   fullName: MMALSharp.Components.MMALVideoDecoder.MMALVideoDecoder
   nameWithType: MMALVideoDecoder.MMALVideoDecoder
-- uid: MMALSharp.Components.MMALVideoDecoder.Initialize
-  name: Initialize()
-  href: api/MMALSharp.Components.MMALVideoDecoder.html#MMALSharp_Components_MMALVideoDecoder_Initialize
-  commentId: M:MMALSharp.Components.MMALVideoDecoder.Initialize
-  fullName: MMALSharp.Components.MMALVideoDecoder.Initialize()
-  nameWithType: MMALVideoDecoder.Initialize()
-- uid: MMALSharp.Components.MMALVideoDecoder.Initialize*
-  name: Initialize
-  href: api/MMALSharp.Components.MMALVideoDecoder.html#MMALSharp_Components_MMALVideoDecoder_Initialize_
-  commentId: Overload:MMALSharp.Components.MMALVideoDecoder.Initialize
-  fullName: MMALSharp.Components.MMALVideoDecoder.Initialize
-  nameWithType: MMALVideoDecoder.Initialize
 - uid: MMALSharp.Components.MMALVideoEncoder
   name: MMALVideoEncoder
   href: api/MMALSharp.Components.MMALVideoEncoder.html
   commentId: T:MMALSharp.Components.MMALVideoEncoder
   fullName: MMALSharp.Components.MMALVideoEncoder
   nameWithType: MMALVideoEncoder
+- uid: MMALSharp.Components.MMALVideoEncoder.#ctor(MMALSharp.Handlers.ICaptureHandler)
+  name: MMALVideoEncoder(ICaptureHandler)
+  href: api/MMALSharp.Components.MMALVideoEncoder.html#MMALSharp_Components_MMALVideoEncoder__ctor_MMALSharp_Handlers_ICaptureHandler_
+  commentId: M:MMALSharp.Components.MMALVideoEncoder.#ctor(MMALSharp.Handlers.ICaptureHandler)
+  fullName: MMALSharp.Components.MMALVideoEncoder.MMALVideoEncoder(MMALSharp.Handlers.ICaptureHandler)
+  nameWithType: MMALVideoEncoder.MMALVideoEncoder(ICaptureHandler)
 - uid: MMALSharp.Components.MMALVideoEncoder.#ctor(MMALSharp.Handlers.ICaptureHandler,MMALSharp.Native.MMALEncoding,MMALSharp.Native.MMALEncoding,System.Int32,System.Int32,System.Int32)
   name: MMALVideoEncoder(ICaptureHandler, MMALEncoding, MMALEncoding, Int32, Int32, Int32)
   href: api/MMALSharp.Components.MMALVideoEncoder.html#MMALSharp_Components_MMALVideoEncoder__ctor_MMALSharp_Handlers_ICaptureHandler_MMALSharp_Native_MMALEncoding_MMALSharp_Native_MMALEncoding_System_Int32_System_Int32_System_Int32_
   commentId: M:MMALSharp.Components.MMALVideoEncoder.#ctor(MMALSharp.Handlers.ICaptureHandler,MMALSharp.Native.MMALEncoding,MMALSharp.Native.MMALEncoding,System.Int32,System.Int32,System.Int32)
   fullName: MMALSharp.Components.MMALVideoEncoder.MMALVideoEncoder(MMALSharp.Handlers.ICaptureHandler, MMALSharp.Native.MMALEncoding, MMALSharp.Native.MMALEncoding, System.Int32, System.Int32, System.Int32)
   nameWithType: MMALVideoEncoder.MMALVideoEncoder(ICaptureHandler, MMALEncoding, MMALEncoding, Int32, Int32, Int32)
-- uid: MMALSharp.Components.MMALVideoEncoder.#ctor(MMALSharp.Handlers.ICaptureHandler,System.Int32,System.Int32)
-  name: MMALVideoEncoder(ICaptureHandler, Int32, Int32)
-  href: api/MMALSharp.Components.MMALVideoEncoder.html#MMALSharp_Components_MMALVideoEncoder__ctor_MMALSharp_Handlers_ICaptureHandler_System_Int32_System_Int32_
-  commentId: M:MMALSharp.Components.MMALVideoEncoder.#ctor(MMALSharp.Handlers.ICaptureHandler,System.Int32,System.Int32)
-  fullName: MMALSharp.Components.MMALVideoEncoder.MMALVideoEncoder(MMALSharp.Handlers.ICaptureHandler, System.Int32, System.Int32)
-  nameWithType: MMALVideoEncoder.MMALVideoEncoder(ICaptureHandler, Int32, Int32)
+- uid: MMALSharp.Components.MMALVideoEncoder.#ctor(MMALSharp.Handlers.ICaptureHandler,System.Int32,System.Int32,System.Int32)
+  name: MMALVideoEncoder(ICaptureHandler, Int32, Int32, Int32)
+  href: api/MMALSharp.Components.MMALVideoEncoder.html#MMALSharp_Components_MMALVideoEncoder__ctor_MMALSharp_Handlers_ICaptureHandler_System_Int32_System_Int32_System_Int32_
+  commentId: M:MMALSharp.Components.MMALVideoEncoder.#ctor(MMALSharp.Handlers.ICaptureHandler,System.Int32,System.Int32,System.Int32)
+  fullName: MMALSharp.Components.MMALVideoEncoder.MMALVideoEncoder(MMALSharp.Handlers.ICaptureHandler, System.Int32, System.Int32, System.Int32)
+  nameWithType: MMALVideoEncoder.MMALVideoEncoder(ICaptureHandler, Int32, Int32, Int32)
 - uid: MMALSharp.Components.MMALVideoEncoder.#ctor*
   name: MMALVideoEncoder
   href: api/MMALSharp.Components.MMALVideoEncoder.html#MMALSharp_Components_MMALVideoEncoder__ctor_
@@ -733,18 +673,6 @@ references:
   commentId: Overload:MMALSharp.Components.MMALVideoEncoder.Framerate
   fullName: MMALSharp.Components.MMALVideoEncoder.Framerate
   nameWithType: MMALVideoEncoder.Framerate
-- uid: MMALSharp.Components.MMALVideoEncoder.Initialize
-  name: Initialize()
-  href: api/MMALSharp.Components.MMALVideoEncoder.html#MMALSharp_Components_MMALVideoEncoder_Initialize
-  commentId: M:MMALSharp.Components.MMALVideoEncoder.Initialize
-  fullName: MMALSharp.Components.MMALVideoEncoder.Initialize()
-  nameWithType: MMALVideoEncoder.Initialize()
-- uid: MMALSharp.Components.MMALVideoEncoder.Initialize*
-  name: Initialize
-  href: api/MMALSharp.Components.MMALVideoEncoder.html#MMALSharp_Components_MMALVideoEncoder_Initialize_
-  commentId: Overload:MMALSharp.Components.MMALVideoEncoder.Initialize
-  fullName: MMALSharp.Components.MMALVideoEncoder.Initialize
-  nameWithType: MMALVideoEncoder.Initialize
 - uid: MMALSharp.Components.MMALVideoEncoder.LastSplit
   name: LastSplit
   href: api/MMALSharp.Components.MMALVideoEncoder.html#MMALSharp_Components_MMALVideoEncoder_LastSplit
@@ -1060,6 +988,18 @@ references:
   commentId: Overload:MMALSharp.Handlers.FFmpegCaptureHandler.Process
   fullName: MMALSharp.Handlers.FFmpegCaptureHandler.Process
   nameWithType: FFmpegCaptureHandler.Process
+- uid: MMALSharp.Handlers.FFmpegCaptureHandler.RawVideoToH264(System.String,System.String)
+  name: RawVideoToH264(String, String)
+  href: api/MMALSharp.Handlers.FFmpegCaptureHandler.html#MMALSharp_Handlers_FFmpegCaptureHandler_RawVideoToH264_System_String_System_String_
+  commentId: M:MMALSharp.Handlers.FFmpegCaptureHandler.RawVideoToH264(System.String,System.String)
+  fullName: MMALSharp.Handlers.FFmpegCaptureHandler.RawVideoToH264(System.String, System.String)
+  nameWithType: FFmpegCaptureHandler.RawVideoToH264(String, String)
+- uid: MMALSharp.Handlers.FFmpegCaptureHandler.RawVideoToH264*
+  name: RawVideoToH264
+  href: api/MMALSharp.Handlers.FFmpegCaptureHandler.html#MMALSharp_Handlers_FFmpegCaptureHandler_RawVideoToH264_
+  commentId: Overload:MMALSharp.Handlers.FFmpegCaptureHandler.RawVideoToH264
+  fullName: MMALSharp.Handlers.FFmpegCaptureHandler.RawVideoToH264
+  nameWithType: FFmpegCaptureHandler.RawVideoToH264
 - uid: MMALSharp.Handlers.FFmpegCaptureHandler.RTMPStreamer(System.String,System.String)
   name: RTMPStreamer(String, String)
   href: api/MMALSharp.Handlers.FFmpegCaptureHandler.html#MMALSharp_Handlers_FFmpegCaptureHandler_RTMPStreamer_System_String_System_String_
@@ -1084,18 +1024,6 @@ references:
   commentId: Overload:MMALSharp.Handlers.FFmpegCaptureHandler.Split
   fullName: MMALSharp.Handlers.FFmpegCaptureHandler.Split
   nameWithType: FFmpegCaptureHandler.Split
-- uid: MMALSharp.Handlers.FFmpegCaptureHandler.TakeVideoMultiplex(System.String,System.String)
-  name: TakeVideoMultiplex(String, String)
-  href: api/MMALSharp.Handlers.FFmpegCaptureHandler.html#MMALSharp_Handlers_FFmpegCaptureHandler_TakeVideoMultiplex_System_String_System_String_
-  commentId: M:MMALSharp.Handlers.FFmpegCaptureHandler.TakeVideoMultiplex(System.String,System.String)
-  fullName: MMALSharp.Handlers.FFmpegCaptureHandler.TakeVideoMultiplex(System.String, System.String)
-  nameWithType: FFmpegCaptureHandler.TakeVideoMultiplex(String, String)
-- uid: MMALSharp.Handlers.FFmpegCaptureHandler.TakeVideoMultiplex*
-  name: TakeVideoMultiplex
-  href: api/MMALSharp.Handlers.FFmpegCaptureHandler.html#MMALSharp_Handlers_FFmpegCaptureHandler_TakeVideoMultiplex_
-  commentId: Overload:MMALSharp.Handlers.FFmpegCaptureHandler.TakeVideoMultiplex
-  fullName: MMALSharp.Handlers.FFmpegCaptureHandler.TakeVideoMultiplex
-  nameWithType: FFmpegCaptureHandler.TakeVideoMultiplex
 - uid: MMALSharp.Handlers.ICaptureHandler
   name: ICaptureHandler
   href: api/MMALSharp.Handlers.ICaptureHandler.html
@@ -1243,6 +1171,30 @@ references:
   commentId: Overload:MMALSharp.Handlers.StreamCaptureHandler.Extension
   fullName: MMALSharp.Handlers.StreamCaptureHandler.Extension
   nameWithType: StreamCaptureHandler.Extension
+- uid: MMALSharp.Handlers.StreamCaptureHandler.GetFilename
+  name: GetFilename()
+  href: api/MMALSharp.Handlers.StreamCaptureHandler.html#MMALSharp_Handlers_StreamCaptureHandler_GetFilename
+  commentId: M:MMALSharp.Handlers.StreamCaptureHandler.GetFilename
+  fullName: MMALSharp.Handlers.StreamCaptureHandler.GetFilename()
+  nameWithType: StreamCaptureHandler.GetFilename()
+- uid: MMALSharp.Handlers.StreamCaptureHandler.GetFilename*
+  name: GetFilename
+  href: api/MMALSharp.Handlers.StreamCaptureHandler.html#MMALSharp_Handlers_StreamCaptureHandler_GetFilename_
+  commentId: Overload:MMALSharp.Handlers.StreamCaptureHandler.GetFilename
+  fullName: MMALSharp.Handlers.StreamCaptureHandler.GetFilename
+  nameWithType: StreamCaptureHandler.GetFilename
+- uid: MMALSharp.Handlers.StreamCaptureHandler.GetFilepath
+  name: GetFilepath()
+  href: api/MMALSharp.Handlers.StreamCaptureHandler.html#MMALSharp_Handlers_StreamCaptureHandler_GetFilepath
+  commentId: M:MMALSharp.Handlers.StreamCaptureHandler.GetFilepath
+  fullName: MMALSharp.Handlers.StreamCaptureHandler.GetFilepath()
+  nameWithType: StreamCaptureHandler.GetFilepath()
+- uid: MMALSharp.Handlers.StreamCaptureHandler.GetFilepath*
+  name: GetFilepath
+  href: api/MMALSharp.Handlers.StreamCaptureHandler.html#MMALSharp_Handlers_StreamCaptureHandler_GetFilepath_
+  commentId: Overload:MMALSharp.Handlers.StreamCaptureHandler.GetFilepath
+  fullName: MMALSharp.Handlers.StreamCaptureHandler.GetFilepath
+  nameWithType: StreamCaptureHandler.GetFilepath
 - uid: MMALSharp.Handlers.StreamCaptureHandler.NewFile
   name: NewFile()
   href: api/MMALSharp.Handlers.StreamCaptureHandler.html#MMALSharp_Handlers_StreamCaptureHandler_NewFile
@@ -1336,6 +1288,24 @@ references:
   commentId: Overload:MMALSharp.Handlers.VideoStreamCaptureHandler.Split
   fullName: MMALSharp.Handlers.VideoStreamCaptureHandler.Split
   nameWithType: VideoStreamCaptureHandler.Split
+- uid: MMALSharp.MMALBadAddressException
+  name: MMALBadAddressException
+  href: api/MMALSharp.MMALBadAddressException.html
+  commentId: T:MMALSharp.MMALBadAddressException
+  fullName: MMALSharp.MMALBadAddressException
+  nameWithType: MMALBadAddressException
+- uid: MMALSharp.MMALBadAddressException.#ctor
+  name: MMALBadAddressException()
+  href: api/MMALSharp.MMALBadAddressException.html#MMALSharp_MMALBadAddressException__ctor
+  commentId: M:MMALSharp.MMALBadAddressException.#ctor
+  fullName: MMALSharp.MMALBadAddressException.MMALBadAddressException()
+  nameWithType: MMALBadAddressException.MMALBadAddressException()
+- uid: MMALSharp.MMALBadAddressException.#ctor*
+  name: MMALBadAddressException
+  href: api/MMALSharp.MMALBadAddressException.html#MMALSharp_MMALBadAddressException__ctor_
+  commentId: Overload:MMALSharp.MMALBadAddressException.#ctor
+  fullName: MMALSharp.MMALBadAddressException.MMALBadAddressException
+  nameWithType: MMALBadAddressException.MMALBadAddressException
 - uid: MMALSharp.MMALBufferImpl
   name: MMALBufferImpl
   href: api/MMALSharp.MMALBufferImpl.html
@@ -1774,6 +1744,300 @@ references:
   commentId: Overload:MMALSharp.MMALCamera.TakeVideo
   fullName: MMALSharp.MMALCamera.TakeVideo
   nameWithType: MMALCamera.TakeVideo
+- uid: MMALSharp.MMALCameraComponentExtensions
+  name: MMALCameraComponentExtensions
+  href: api/MMALSharp.MMALCameraComponentExtensions.html
+  commentId: T:MMALSharp.MMALCameraComponentExtensions
+  fullName: MMALSharp.MMALCameraComponentExtensions
+  nameWithType: MMALCameraComponentExtensions
+- uid: MMALSharp.MMALCameraComponentExtensions.GetAnalogGain(MMALSharp.MMALCamera)
+  name: GetAnalogGain(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetAnalogGain_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetAnalogGain(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetAnalogGain(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetAnalogGain(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetAnalogGain*
+  name: GetAnalogGain
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetAnalogGain_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetAnalogGain
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetAnalogGain
+  nameWithType: MMALCameraComponentExtensions.GetAnalogGain
+- uid: MMALSharp.MMALCameraComponentExtensions.GetAwbBlueGain(MMALSharp.MMALCamera)
+  name: GetAwbBlueGain(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetAwbBlueGain_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetAwbBlueGain(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetAwbBlueGain(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetAwbBlueGain(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetAwbBlueGain*
+  name: GetAwbBlueGain
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetAwbBlueGain_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetAwbBlueGain
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetAwbBlueGain
+  nameWithType: MMALCameraComponentExtensions.GetAwbBlueGain
+- uid: MMALSharp.MMALCameraComponentExtensions.GetAwbMode(MMALSharp.MMALCamera)
+  name: GetAwbMode(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetAwbMode_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetAwbMode(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetAwbMode(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetAwbMode(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetAwbMode*
+  name: GetAwbMode
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetAwbMode_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetAwbMode
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetAwbMode
+  nameWithType: MMALCameraComponentExtensions.GetAwbMode
+- uid: MMALSharp.MMALCameraComponentExtensions.GetAwbRedGain(MMALSharp.MMALCamera)
+  name: GetAwbRedGain(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetAwbRedGain_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetAwbRedGain(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetAwbRedGain(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetAwbRedGain(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetAwbRedGain*
+  name: GetAwbRedGain
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetAwbRedGain_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetAwbRedGain
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetAwbRedGain
+  nameWithType: MMALCameraComponentExtensions.GetAwbRedGain
+- uid: MMALSharp.MMALCameraComponentExtensions.GetBrightness(MMALSharp.MMALCamera)
+  name: GetBrightness(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetBrightness_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetBrightness(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetBrightness(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetBrightness(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetBrightness*
+  name: GetBrightness
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetBrightness_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetBrightness
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetBrightness
+  nameWithType: MMALCameraComponentExtensions.GetBrightness
+- uid: MMALSharp.MMALCameraComponentExtensions.GetColourFx(MMALSharp.MMALCamera)
+  name: GetColourFx(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetColourFx_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetColourFx(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetColourFx(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetColourFx(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetColourFx*
+  name: GetColourFx
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetColourFx_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetColourFx
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetColourFx
+  nameWithType: MMALCameraComponentExtensions.GetColourFx
+- uid: MMALSharp.MMALCameraComponentExtensions.GetContrast(MMALSharp.MMALCamera)
+  name: GetContrast(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetContrast_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetContrast(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetContrast(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetContrast(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetContrast*
+  name: GetContrast
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetContrast_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetContrast
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetContrast
+  nameWithType: MMALCameraComponentExtensions.GetContrast
+- uid: MMALSharp.MMALCameraComponentExtensions.GetDigitalGain(MMALSharp.MMALCamera)
+  name: GetDigitalGain(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetDigitalGain_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetDigitalGain(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetDigitalGain(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetDigitalGain(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetDigitalGain*
+  name: GetDigitalGain
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetDigitalGain_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetDigitalGain
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetDigitalGain
+  nameWithType: MMALCameraComponentExtensions.GetDigitalGain
+- uid: MMALSharp.MMALCameraComponentExtensions.GetDRC(MMALSharp.MMALCamera)
+  name: GetDRC(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetDRC_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetDRC(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetDRC(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetDRC(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetDRC*
+  name: GetDRC
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetDRC_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetDRC
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetDRC
+  nameWithType: MMALCameraComponentExtensions.GetDRC
+- uid: MMALSharp.MMALCameraComponentExtensions.GetExposureCompensation(MMALSharp.MMALCamera)
+  name: GetExposureCompensation(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetExposureCompensation_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetExposureCompensation(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetExposureCompensation(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetExposureCompensation(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetExposureCompensation*
+  name: GetExposureCompensation
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetExposureCompensation_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetExposureCompensation
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetExposureCompensation
+  nameWithType: MMALCameraComponentExtensions.GetExposureCompensation
+- uid: MMALSharp.MMALCameraComponentExtensions.GetExposureMeteringMode(MMALSharp.MMALCamera)
+  name: GetExposureMeteringMode(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetExposureMeteringMode_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetExposureMeteringMode(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetExposureMeteringMode(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetExposureMeteringMode(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetExposureMeteringMode*
+  name: GetExposureMeteringMode
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetExposureMeteringMode_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetExposureMeteringMode
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetExposureMeteringMode
+  nameWithType: MMALCameraComponentExtensions.GetExposureMeteringMode
+- uid: MMALSharp.MMALCameraComponentExtensions.GetExposureMode(MMALSharp.MMALCamera)
+  name: GetExposureMode(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetExposureMode_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetExposureMode(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetExposureMode(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetExposureMode(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetExposureMode*
+  name: GetExposureMode
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetExposureMode_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetExposureMode
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetExposureMode
+  nameWithType: MMALCameraComponentExtensions.GetExposureMode
+- uid: MMALSharp.MMALCameraComponentExtensions.GetExposureSpeed(MMALSharp.MMALCamera)
+  name: GetExposureSpeed(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetExposureSpeed_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetExposureSpeed(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetExposureSpeed(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetExposureSpeed(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetExposureSpeed*
+  name: GetExposureSpeed
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetExposureSpeed_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetExposureSpeed
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetExposureSpeed
+  nameWithType: MMALCameraComponentExtensions.GetExposureSpeed
+- uid: MMALSharp.MMALCameraComponentExtensions.GetFlips(MMALSharp.MMALCamera)
+  name: GetFlips(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetFlips_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetFlips(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetFlips(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetFlips(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetFlips*
+  name: GetFlips
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetFlips_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetFlips
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetFlips
+  nameWithType: MMALCameraComponentExtensions.GetFlips
+- uid: MMALSharp.MMALCameraComponentExtensions.GetFocusPosition(MMALSharp.MMALCamera)
+  name: GetFocusPosition(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetFocusPosition_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetFocusPosition(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetFocusPosition(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetFocusPosition(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetFocusPosition*
+  name: GetFocusPosition
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetFocusPosition_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetFocusPosition
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetFocusPosition
+  nameWithType: MMALCameraComponentExtensions.GetFocusPosition
+- uid: MMALSharp.MMALCameraComponentExtensions.GetImageFx(MMALSharp.MMALCamera)
+  name: GetImageFx(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetImageFx_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetImageFx(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetImageFx(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetImageFx(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetImageFx*
+  name: GetImageFx
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetImageFx_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetImageFx
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetImageFx
+  nameWithType: MMALCameraComponentExtensions.GetImageFx
+- uid: MMALSharp.MMALCameraComponentExtensions.GetISO(MMALSharp.MMALCamera)
+  name: GetISO(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetISO_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetISO(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetISO(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetISO(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetISO*
+  name: GetISO
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetISO_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetISO
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetISO
+  nameWithType: MMALCameraComponentExtensions.GetISO
+- uid: MMALSharp.MMALCameraComponentExtensions.GetRotation(MMALSharp.MMALCamera)
+  name: GetRotation(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetRotation_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetRotation(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetRotation(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetRotation(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetRotation*
+  name: GetRotation
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetRotation_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetRotation
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetRotation
+  nameWithType: MMALCameraComponentExtensions.GetRotation
+- uid: MMALSharp.MMALCameraComponentExtensions.GetSaturation(MMALSharp.MMALCamera)
+  name: GetSaturation(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetSaturation_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetSaturation(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetSaturation(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetSaturation(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetSaturation*
+  name: GetSaturation
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetSaturation_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetSaturation
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetSaturation
+  nameWithType: MMALCameraComponentExtensions.GetSaturation
+- uid: MMALSharp.MMALCameraComponentExtensions.GetSharpness(MMALSharp.MMALCamera)
+  name: GetSharpness(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetSharpness_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetSharpness(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetSharpness(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetSharpness(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetSharpness*
+  name: GetSharpness
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetSharpness_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetSharpness
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetSharpness
+  nameWithType: MMALCameraComponentExtensions.GetSharpness
+- uid: MMALSharp.MMALCameraComponentExtensions.GetShutterSpeed(MMALSharp.MMALCamera)
+  name: GetShutterSpeed(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetShutterSpeed_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetShutterSpeed(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetShutterSpeed(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetShutterSpeed(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetShutterSpeed*
+  name: GetShutterSpeed
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetShutterSpeed_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetShutterSpeed
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetShutterSpeed
+  nameWithType: MMALCameraComponentExtensions.GetShutterSpeed
+- uid: MMALSharp.MMALCameraComponentExtensions.GetStatsPass(MMALSharp.MMALCamera)
+  name: GetStatsPass(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetStatsPass_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetStatsPass(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetStatsPass(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetStatsPass(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetStatsPass*
+  name: GetStatsPass
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetStatsPass_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetStatsPass
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetStatsPass
+  nameWithType: MMALCameraComponentExtensions.GetStatsPass
+- uid: MMALSharp.MMALCameraComponentExtensions.GetVideoStabilisation(MMALSharp.MMALCamera)
+  name: GetVideoStabilisation(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetVideoStabilisation_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetVideoStabilisation(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetVideoStabilisation(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetVideoStabilisation(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetVideoStabilisation*
+  name: GetVideoStabilisation
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetVideoStabilisation_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetVideoStabilisation
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetVideoStabilisation
+  nameWithType: MMALCameraComponentExtensions.GetVideoStabilisation
+- uid: MMALSharp.MMALCameraComponentExtensions.GetZoom(MMALSharp.MMALCamera)
+  name: GetZoom(MMALCamera)
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetZoom_MMALSharp_MMALCamera_
+  commentId: M:MMALSharp.MMALCameraComponentExtensions.GetZoom(MMALSharp.MMALCamera)
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetZoom(MMALSharp.MMALCamera)
+  nameWithType: MMALCameraComponentExtensions.GetZoom(MMALCamera)
+- uid: MMALSharp.MMALCameraComponentExtensions.GetZoom*
+  name: GetZoom
+  href: api/MMALSharp.MMALCameraComponentExtensions.html#MMALSharp_MMALCameraComponentExtensions_GetZoom_
+  commentId: Overload:MMALSharp.MMALCameraComponentExtensions.GetZoom
+  fullName: MMALSharp.MMALCameraComponentExtensions.GetZoom
+  nameWithType: MMALCameraComponentExtensions.GetZoom
 - uid: MMALSharp.MMALCameraConfig
   name: MMALCameraConfig
   href: api/MMALSharp.MMALCameraConfig.html
@@ -2374,18 +2638,6 @@ references:
   commentId: Overload:MMALSharp.MMALComponentBase.Handler
   fullName: MMALSharp.MMALComponentBase.Handler
   nameWithType: MMALComponentBase.Handler
-- uid: MMALSharp.MMALComponentBase.Initialize
-  name: Initialize()
-  href: api/MMALSharp.MMALComponentBase.html#MMALSharp_MMALComponentBase_Initialize
-  commentId: M:MMALSharp.MMALComponentBase.Initialize
-  fullName: MMALSharp.MMALComponentBase.Initialize()
-  nameWithType: MMALComponentBase.Initialize()
-- uid: MMALSharp.MMALComponentBase.Initialize*
-  name: Initialize
-  href: api/MMALSharp.MMALComponentBase.html#MMALSharp_MMALComponentBase_Initialize_
-  commentId: Overload:MMALSharp.MMALComponentBase.Initialize
-  fullName: MMALSharp.MMALComponentBase.Initialize
-  nameWithType: MMALComponentBase.Initialize
 - uid: MMALSharp.MMALComponentBase.Inputs
   name: Inputs
   href: api/MMALSharp.MMALComponentBase.html#MMALSharp_MMALComponentBase_Inputs
@@ -2446,6 +2698,42 @@ references:
   commentId: Overload:MMALSharp.MMALComponentBase.Ports
   fullName: MMALSharp.MMALComponentBase.Ports
   nameWithType: MMALComponentBase.Ports
+- uid: MMALSharp.MMALComponentNotConfiguredException
+  name: MMALComponentNotConfiguredException
+  href: api/MMALSharp.MMALComponentNotConfiguredException.html
+  commentId: T:MMALSharp.MMALComponentNotConfiguredException
+  fullName: MMALSharp.MMALComponentNotConfiguredException
+  nameWithType: MMALComponentNotConfiguredException
+- uid: MMALSharp.MMALComponentNotConfiguredException.#ctor
+  name: MMALComponentNotConfiguredException()
+  href: api/MMALSharp.MMALComponentNotConfiguredException.html#MMALSharp_MMALComponentNotConfiguredException__ctor
+  commentId: M:MMALSharp.MMALComponentNotConfiguredException.#ctor
+  fullName: MMALSharp.MMALComponentNotConfiguredException.MMALComponentNotConfiguredException()
+  nameWithType: MMALComponentNotConfiguredException.MMALComponentNotConfiguredException()
+- uid: MMALSharp.MMALComponentNotConfiguredException.#ctor*
+  name: MMALComponentNotConfiguredException
+  href: api/MMALSharp.MMALComponentNotConfiguredException.html#MMALSharp_MMALComponentNotConfiguredException__ctor_
+  commentId: Overload:MMALSharp.MMALComponentNotConfiguredException.#ctor
+  fullName: MMALSharp.MMALComponentNotConfiguredException.MMALComponentNotConfiguredException
+  nameWithType: MMALComponentNotConfiguredException.MMALComponentNotConfiguredException
+- uid: MMALSharp.MMALComponentNotReadyException
+  name: MMALComponentNotReadyException
+  href: api/MMALSharp.MMALComponentNotReadyException.html
+  commentId: T:MMALSharp.MMALComponentNotReadyException
+  fullName: MMALSharp.MMALComponentNotReadyException
+  nameWithType: MMALComponentNotReadyException
+- uid: MMALSharp.MMALComponentNotReadyException.#ctor
+  name: MMALComponentNotReadyException()
+  href: api/MMALSharp.MMALComponentNotReadyException.html#MMALSharp_MMALComponentNotReadyException__ctor
+  commentId: M:MMALSharp.MMALComponentNotReadyException.#ctor
+  fullName: MMALSharp.MMALComponentNotReadyException.MMALComponentNotReadyException()
+  nameWithType: MMALComponentNotReadyException.MMALComponentNotReadyException()
+- uid: MMALSharp.MMALComponentNotReadyException.#ctor*
+  name: MMALComponentNotReadyException
+  href: api/MMALSharp.MMALComponentNotReadyException.html#MMALSharp_MMALComponentNotReadyException__ctor_
+  commentId: Overload:MMALSharp.MMALComponentNotReadyException.#ctor
+  fullName: MMALSharp.MMALComponentNotReadyException.MMALComponentNotReadyException
+  nameWithType: MMALComponentNotReadyException.MMALComponentNotReadyException
 - uid: MMALSharp.MMALConnectionImpl
   name: MMALConnectionImpl
   href: api/MMALSharp.MMALConnectionImpl.html
@@ -2590,6 +2878,24 @@ references:
   commentId: Overload:MMALSharp.MMALControlPort.#ctor
   fullName: MMALSharp.MMALControlPort.MMALControlPort
   nameWithType: MMALControlPort.MMALControlPort
+- uid: MMALSharp.MMALCorruptException
+  name: MMALCorruptException
+  href: api/MMALSharp.MMALCorruptException.html
+  commentId: T:MMALSharp.MMALCorruptException
+  fullName: MMALSharp.MMALCorruptException
+  nameWithType: MMALCorruptException
+- uid: MMALSharp.MMALCorruptException.#ctor
+  name: MMALCorruptException()
+  href: api/MMALSharp.MMALCorruptException.html#MMALSharp_MMALCorruptException__ctor
+  commentId: M:MMALSharp.MMALCorruptException.#ctor
+  fullName: MMALSharp.MMALCorruptException.MMALCorruptException()
+  nameWithType: MMALCorruptException.MMALCorruptException()
+- uid: MMALSharp.MMALCorruptException.#ctor*
+  name: MMALCorruptException
+  href: api/MMALSharp.MMALCorruptException.html#MMALSharp_MMALCorruptException__ctor_
+  commentId: Overload:MMALSharp.MMALCorruptException.#ctor
+  fullName: MMALSharp.MMALCorruptException.MMALCorruptException
+  nameWithType: MMALCorruptException.MMALCorruptException
 - uid: MMALSharp.MMALError
   name: MMALError
   href: api/MMALSharp.MMALError.html
@@ -2620,6 +2926,168 @@ references:
   commentId: Overload:MMALSharp.MMALError.ToString
   fullName: MMALSharp.MMALError.ToString
   nameWithType: MMALError.ToString
+- uid: MMALSharp.MMALException
+  name: MMALException
+  href: api/MMALSharp.MMALException.html
+  commentId: T:MMALSharp.MMALException
+  fullName: MMALSharp.MMALException
+  nameWithType: MMALException
+- uid: MMALSharp.MMALException.#ctor(MMALSharp.Native.MMALUtil.MMAL_STATUS_T,System.String)
+  name: MMALException(MMALUtil.MMAL_STATUS_T, String)
+  href: api/MMALSharp.MMALException.html#MMALSharp_MMALException__ctor_MMALSharp_Native_MMALUtil_MMAL_STATUS_T_System_String_
+  commentId: M:MMALSharp.MMALException.#ctor(MMALSharp.Native.MMALUtil.MMAL_STATUS_T,System.String)
+  fullName: MMALSharp.MMALException.MMALException(MMALSharp.Native.MMALUtil.MMAL_STATUS_T, System.String)
+  nameWithType: MMALException.MMALException(MMALUtil.MMAL_STATUS_T, String)
+- uid: MMALSharp.MMALException.#ctor*
+  name: MMALException
+  href: api/MMALSharp.MMALException.html#MMALSharp_MMALException__ctor_
+  commentId: Overload:MMALSharp.MMALException.#ctor
+  fullName: MMALSharp.MMALException.MMALException
+  nameWithType: MMALException.MMALException
+- uid: MMALSharp.MMALIllegalSeekException
+  name: MMALIllegalSeekException
+  href: api/MMALSharp.MMALIllegalSeekException.html
+  commentId: T:MMALSharp.MMALIllegalSeekException
+  fullName: MMALSharp.MMALIllegalSeekException
+  nameWithType: MMALIllegalSeekException
+- uid: MMALSharp.MMALIllegalSeekException.#ctor
+  name: MMALIllegalSeekException()
+  href: api/MMALSharp.MMALIllegalSeekException.html#MMALSharp_MMALIllegalSeekException__ctor
+  commentId: M:MMALSharp.MMALIllegalSeekException.#ctor
+  fullName: MMALSharp.MMALIllegalSeekException.MMALIllegalSeekException()
+  nameWithType: MMALIllegalSeekException.MMALIllegalSeekException()
+- uid: MMALSharp.MMALIllegalSeekException.#ctor*
+  name: MMALIllegalSeekException
+  href: api/MMALSharp.MMALIllegalSeekException.html#MMALSharp_MMALIllegalSeekException__ctor_
+  commentId: Overload:MMALSharp.MMALIllegalSeekException.#ctor
+  fullName: MMALSharp.MMALIllegalSeekException.MMALIllegalSeekException
+  nameWithType: MMALIllegalSeekException.MMALIllegalSeekException
+- uid: MMALSharp.MMALInvalidDeviceException
+  name: MMALInvalidDeviceException
+  href: api/MMALSharp.MMALInvalidDeviceException.html
+  commentId: T:MMALSharp.MMALInvalidDeviceException
+  fullName: MMALSharp.MMALInvalidDeviceException
+  nameWithType: MMALInvalidDeviceException
+- uid: MMALSharp.MMALInvalidDeviceException.#ctor
+  name: MMALInvalidDeviceException()
+  href: api/MMALSharp.MMALInvalidDeviceException.html#MMALSharp_MMALInvalidDeviceException__ctor
+  commentId: M:MMALSharp.MMALInvalidDeviceException.#ctor
+  fullName: MMALSharp.MMALInvalidDeviceException.MMALInvalidDeviceException()
+  nameWithType: MMALInvalidDeviceException.MMALInvalidDeviceException()
+- uid: MMALSharp.MMALInvalidDeviceException.#ctor*
+  name: MMALInvalidDeviceException
+  href: api/MMALSharp.MMALInvalidDeviceException.html#MMALSharp_MMALInvalidDeviceException__ctor_
+  commentId: Overload:MMALSharp.MMALInvalidDeviceException.#ctor
+  fullName: MMALSharp.MMALInvalidDeviceException.MMALInvalidDeviceException
+  nameWithType: MMALInvalidDeviceException.MMALInvalidDeviceException
+- uid: MMALSharp.MMALInvalidDirectoryException
+  name: MMALInvalidDirectoryException
+  href: api/MMALSharp.MMALInvalidDirectoryException.html
+  commentId: T:MMALSharp.MMALInvalidDirectoryException
+  fullName: MMALSharp.MMALInvalidDirectoryException
+  nameWithType: MMALInvalidDirectoryException
+- uid: MMALSharp.MMALInvalidDirectoryException.#ctor
+  name: MMALInvalidDirectoryException()
+  href: api/MMALSharp.MMALInvalidDirectoryException.html#MMALSharp_MMALInvalidDirectoryException__ctor
+  commentId: M:MMALSharp.MMALInvalidDirectoryException.#ctor
+  fullName: MMALSharp.MMALInvalidDirectoryException.MMALInvalidDirectoryException()
+  nameWithType: MMALInvalidDirectoryException.MMALInvalidDirectoryException()
+- uid: MMALSharp.MMALInvalidDirectoryException.#ctor*
+  name: MMALInvalidDirectoryException
+  href: api/MMALSharp.MMALInvalidDirectoryException.html#MMALSharp_MMALInvalidDirectoryException__ctor_
+  commentId: Overload:MMALSharp.MMALInvalidDirectoryException.#ctor
+  fullName: MMALSharp.MMALInvalidDirectoryException.MMALInvalidDirectoryException
+  nameWithType: MMALInvalidDirectoryException.MMALInvalidDirectoryException
+- uid: MMALSharp.MMALInvalidException
+  name: MMALInvalidException
+  href: api/MMALSharp.MMALInvalidException.html
+  commentId: T:MMALSharp.MMALInvalidException
+  fullName: MMALSharp.MMALInvalidException
+  nameWithType: MMALInvalidException
+- uid: MMALSharp.MMALInvalidException.#ctor
+  name: MMALInvalidException()
+  href: api/MMALSharp.MMALInvalidException.html#MMALSharp_MMALInvalidException__ctor
+  commentId: M:MMALSharp.MMALInvalidException.#ctor
+  fullName: MMALSharp.MMALInvalidException.MMALInvalidException()
+  nameWithType: MMALInvalidException.MMALInvalidException()
+- uid: MMALSharp.MMALInvalidException.#ctor*
+  name: MMALInvalidException
+  href: api/MMALSharp.MMALInvalidException.html#MMALSharp_MMALInvalidException__ctor_
+  commentId: Overload:MMALSharp.MMALInvalidException.#ctor
+  fullName: MMALSharp.MMALInvalidException.MMALInvalidException
+  nameWithType: MMALInvalidException.MMALInvalidException
+- uid: MMALSharp.MMALIOException
+  name: MMALIOException
+  href: api/MMALSharp.MMALIOException.html
+  commentId: T:MMALSharp.MMALIOException
+  fullName: MMALSharp.MMALIOException
+  nameWithType: MMALIOException
+- uid: MMALSharp.MMALIOException.#ctor
+  name: MMALIOException()
+  href: api/MMALSharp.MMALIOException.html#MMALSharp_MMALIOException__ctor
+  commentId: M:MMALSharp.MMALIOException.#ctor
+  fullName: MMALSharp.MMALIOException.MMALIOException()
+  nameWithType: MMALIOException.MMALIOException()
+- uid: MMALSharp.MMALIOException.#ctor*
+  name: MMALIOException
+  href: api/MMALSharp.MMALIOException.html#MMALSharp_MMALIOException__ctor_
+  commentId: Overload:MMALSharp.MMALIOException.#ctor
+  fullName: MMALSharp.MMALIOException.MMALIOException
+  nameWithType: MMALIOException.MMALIOException
+- uid: MMALSharp.MMALNoMemoryException
+  name: MMALNoMemoryException
+  href: api/MMALSharp.MMALNoMemoryException.html
+  commentId: T:MMALSharp.MMALNoMemoryException
+  fullName: MMALSharp.MMALNoMemoryException
+  nameWithType: MMALNoMemoryException
+- uid: MMALSharp.MMALNoMemoryException.#ctor
+  name: MMALNoMemoryException()
+  href: api/MMALSharp.MMALNoMemoryException.html#MMALSharp_MMALNoMemoryException__ctor
+  commentId: M:MMALSharp.MMALNoMemoryException.#ctor
+  fullName: MMALSharp.MMALNoMemoryException.MMALNoMemoryException()
+  nameWithType: MMALNoMemoryException.MMALNoMemoryException()
+- uid: MMALSharp.MMALNoMemoryException.#ctor*
+  name: MMALNoMemoryException
+  href: api/MMALSharp.MMALNoMemoryException.html#MMALSharp_MMALNoMemoryException__ctor_
+  commentId: Overload:MMALSharp.MMALNoMemoryException.#ctor
+  fullName: MMALSharp.MMALNoMemoryException.MMALNoMemoryException
+  nameWithType: MMALNoMemoryException.MMALNoMemoryException
+- uid: MMALSharp.MMALNoSpaceException
+  name: MMALNoSpaceException
+  href: api/MMALSharp.MMALNoSpaceException.html
+  commentId: T:MMALSharp.MMALNoSpaceException
+  fullName: MMALSharp.MMALNoSpaceException
+  nameWithType: MMALNoSpaceException
+- uid: MMALSharp.MMALNoSpaceException.#ctor
+  name: MMALNoSpaceException()
+  href: api/MMALSharp.MMALNoSpaceException.html#MMALSharp_MMALNoSpaceException__ctor
+  commentId: M:MMALSharp.MMALNoSpaceException.#ctor
+  fullName: MMALSharp.MMALNoSpaceException.MMALNoSpaceException()
+  nameWithType: MMALNoSpaceException.MMALNoSpaceException()
+- uid: MMALSharp.MMALNoSpaceException.#ctor*
+  name: MMALNoSpaceException
+  href: api/MMALSharp.MMALNoSpaceException.html#MMALSharp_MMALNoSpaceException__ctor_
+  commentId: Overload:MMALSharp.MMALNoSpaceException.#ctor
+  fullName: MMALSharp.MMALNoSpaceException.MMALNoSpaceException
+  nameWithType: MMALNoSpaceException.MMALNoSpaceException
+- uid: MMALSharp.MMALNotImplementedException
+  name: MMALNotImplementedException
+  href: api/MMALSharp.MMALNotImplementedException.html
+  commentId: T:MMALSharp.MMALNotImplementedException
+  fullName: MMALSharp.MMALNotImplementedException
+  nameWithType: MMALNotImplementedException
+- uid: MMALSharp.MMALNotImplementedException.#ctor
+  name: MMALNotImplementedException()
+  href: api/MMALSharp.MMALNotImplementedException.html#MMALSharp_MMALNotImplementedException__ctor
+  commentId: M:MMALSharp.MMALNotImplementedException.#ctor
+  fullName: MMALSharp.MMALNotImplementedException.MMALNotImplementedException()
+  nameWithType: MMALNotImplementedException.MMALNotImplementedException()
+- uid: MMALSharp.MMALNotImplementedException.#ctor*
+  name: MMALNotImplementedException
+  href: api/MMALSharp.MMALNotImplementedException.html#MMALSharp_MMALNotImplementedException__ctor_
+  commentId: Overload:MMALSharp.MMALNotImplementedException.#ctor
+  fullName: MMALSharp.MMALNotImplementedException.MMALNotImplementedException
+  nameWithType: MMALNotImplementedException.MMALNotImplementedException
 - uid: MMALSharp.MMALObject
   name: MMALObject
   href: api/MMALSharp.MMALObject.html
@@ -2914,6 +3382,24 @@ references:
   commentId: Overload:MMALSharp.MMALPortBase.Trigger
   fullName: MMALSharp.MMALPortBase.Trigger
   nameWithType: MMALPortBase.Trigger
+- uid: MMALSharp.MMALPortConnectedException
+  name: MMALPortConnectedException
+  href: api/MMALSharp.MMALPortConnectedException.html
+  commentId: T:MMALSharp.MMALPortConnectedException
+  fullName: MMALSharp.MMALPortConnectedException
+  nameWithType: MMALPortConnectedException
+- uid: MMALSharp.MMALPortConnectedException.#ctor
+  name: MMALPortConnectedException()
+  href: api/MMALSharp.MMALPortConnectedException.html#MMALSharp_MMALPortConnectedException__ctor
+  commentId: M:MMALSharp.MMALPortConnectedException.#ctor
+  fullName: MMALSharp.MMALPortConnectedException.MMALPortConnectedException()
+  nameWithType: MMALPortConnectedException.MMALPortConnectedException()
+- uid: MMALSharp.MMALPortConnectedException.#ctor*
+  name: MMALPortConnectedException
+  href: api/MMALSharp.MMALPortConnectedException.html#MMALSharp_MMALPortConnectedException__ctor_
+  commentId: Overload:MMALSharp.MMALPortConnectedException.#ctor
+  fullName: MMALSharp.MMALPortConnectedException.MMALPortConnectedException
+  nameWithType: MMALPortConnectedException.MMALPortConnectedException
 - uid: MMALSharp.MMALPortExtensions
   name: MMALPortExtensions
   href: api/MMALSharp.MMALPortExtensions.html
@@ -2932,6 +3418,18 @@ references:
   commentId: Overload:MMALSharp.MMALPortExtensions.GetParameter
   fullName: MMALSharp.MMALPortExtensions.GetParameter
   nameWithType: MMALPortExtensions.GetParameter
+- uid: MMALSharp.MMALPortExtensions.GetRawCapture(MMALSharp.MMALPortImpl)
+  name: GetRawCapture(MMALPortImpl)
+  href: api/MMALSharp.MMALPortExtensions.html#MMALSharp_MMALPortExtensions_GetRawCapture_MMALSharp_MMALPortImpl_
+  commentId: M:MMALSharp.MMALPortExtensions.GetRawCapture(MMALSharp.MMALPortImpl)
+  fullName: MMALSharp.MMALPortExtensions.GetRawCapture(MMALSharp.MMALPortImpl)
+  nameWithType: MMALPortExtensions.GetRawCapture(MMALPortImpl)
+- uid: MMALSharp.MMALPortExtensions.GetRawCapture*
+  name: GetRawCapture
+  href: api/MMALSharp.MMALPortExtensions.html#MMALSharp_MMALPortExtensions_GetRawCapture_
+  commentId: Overload:MMALSharp.MMALPortExtensions.GetRawCapture
+  fullName: MMALSharp.MMALPortExtensions.GetRawCapture
+  nameWithType: MMALPortExtensions.GetRawCapture
 - uid: MMALSharp.MMALPortExtensions.SetParameter(MMALSharp.MMALPortBase,System.Int32,System.Object)
   name: SetParameter(MMALPortBase, Int32, Object)
   href: api/MMALSharp.MMALPortExtensions.html#MMALSharp_MMALPortExtensions_SetParameter_MMALSharp_MMALPortBase_System_Int32_System_Object_
@@ -2962,6 +3460,24 @@ references:
   commentId: Overload:MMALSharp.MMALPortImpl.#ctor
   fullName: MMALSharp.MMALPortImpl.MMALPortImpl
   nameWithType: MMALPortImpl.MMALPortImpl
+- uid: MMALSharp.MMALPortNotConnectedException
+  name: MMALPortNotConnectedException
+  href: api/MMALSharp.MMALPortNotConnectedException.html
+  commentId: T:MMALSharp.MMALPortNotConnectedException
+  fullName: MMALSharp.MMALPortNotConnectedException
+  nameWithType: MMALPortNotConnectedException
+- uid: MMALSharp.MMALPortNotConnectedException.#ctor
+  name: MMALPortNotConnectedException()
+  href: api/MMALSharp.MMALPortNotConnectedException.html#MMALSharp_MMALPortNotConnectedException__ctor
+  commentId: M:MMALSharp.MMALPortNotConnectedException.#ctor
+  fullName: MMALSharp.MMALPortNotConnectedException.MMALPortNotConnectedException()
+  nameWithType: MMALPortNotConnectedException.MMALPortNotConnectedException()
+- uid: MMALSharp.MMALPortNotConnectedException.#ctor*
+  name: MMALPortNotConnectedException
+  href: api/MMALSharp.MMALPortNotConnectedException.html#MMALSharp_MMALPortNotConnectedException__ctor_
+  commentId: Overload:MMALSharp.MMALPortNotConnectedException.#ctor
+  fullName: MMALSharp.MMALPortNotConnectedException.MMALPortNotConnectedException
+  nameWithType: MMALPortNotConnectedException.MMALPortNotConnectedException
 - uid: MMALSharp.MMALQueueImpl
   name: MMALQueueImpl
   href: api/MMALSharp.MMALQueueImpl.html
@@ -2992,6 +3508,24 @@ references:
   commentId: Overload:MMALSharp.MMALQueueImpl.Dispose
   fullName: MMALSharp.MMALQueueImpl.Dispose
   nameWithType: MMALQueueImpl.Dispose
+- uid: MMALSharp.MMALResourceUnavailableException
+  name: MMALResourceUnavailableException
+  href: api/MMALSharp.MMALResourceUnavailableException.html
+  commentId: T:MMALSharp.MMALResourceUnavailableException
+  fullName: MMALSharp.MMALResourceUnavailableException
+  nameWithType: MMALResourceUnavailableException
+- uid: MMALSharp.MMALResourceUnavailableException.#ctor
+  name: MMALResourceUnavailableException()
+  href: api/MMALSharp.MMALResourceUnavailableException.html#MMALSharp_MMALResourceUnavailableException__ctor
+  commentId: M:MMALSharp.MMALResourceUnavailableException.#ctor
+  fullName: MMALSharp.MMALResourceUnavailableException.MMALResourceUnavailableException()
+  nameWithType: MMALResourceUnavailableException.MMALResourceUnavailableException()
+- uid: MMALSharp.MMALResourceUnavailableException.#ctor*
+  name: MMALResourceUnavailableException
+  href: api/MMALSharp.MMALResourceUnavailableException.html#MMALSharp_MMALResourceUnavailableException__ctor_
+  commentId: Overload:MMALSharp.MMALResourceUnavailableException.#ctor
+  fullName: MMALSharp.MMALResourceUnavailableException.MMALResourceUnavailableException
+  nameWithType: MMALResourceUnavailableException.MMALResourceUnavailableException
 - uid: MMALSharp.MMALStillPort
   name: MMALStillPort
   href: api/MMALSharp.MMALStillPort.html
@@ -5941,6 +6475,36 @@ references:
   commentId: F:MMALSharp.Native.MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_WHITEBOARD
   fullName: MMALSharp.Native.MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_WHITEBOARD
   nameWithType: MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_WHITEBOARD
+- uid: MMALSharp.Native.MMAL_PARAM_MIRROR_T
+  name: MMAL_PARAM_MIRROR_T
+  href: api/MMALSharp.Native.MMAL_PARAM_MIRROR_T.html
+  commentId: T:MMALSharp.Native.MMAL_PARAM_MIRROR_T
+  fullName: MMALSharp.Native.MMAL_PARAM_MIRROR_T
+  nameWithType: MMAL_PARAM_MIRROR_T
+- uid: MMALSharp.Native.MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_BOTH
+  name: MMAL_PARAM_MIRROR_BOTH
+  href: api/MMALSharp.Native.MMAL_PARAM_MIRROR_T.html#MMALSharp_Native_MMAL_PARAM_MIRROR_T_MMAL_PARAM_MIRROR_BOTH
+  commentId: F:MMALSharp.Native.MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_BOTH
+  fullName: MMALSharp.Native.MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_BOTH
+  nameWithType: MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_BOTH
+- uid: MMALSharp.Native.MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_HORIZONTAL
+  name: MMAL_PARAM_MIRROR_HORIZONTAL
+  href: api/MMALSharp.Native.MMAL_PARAM_MIRROR_T.html#MMALSharp_Native_MMAL_PARAM_MIRROR_T_MMAL_PARAM_MIRROR_HORIZONTAL
+  commentId: F:MMALSharp.Native.MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_HORIZONTAL
+  fullName: MMALSharp.Native.MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_HORIZONTAL
+  nameWithType: MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_HORIZONTAL
+- uid: MMALSharp.Native.MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE
+  name: MMAL_PARAM_MIRROR_NONE
+  href: api/MMALSharp.Native.MMAL_PARAM_MIRROR_T.html#MMALSharp_Native_MMAL_PARAM_MIRROR_T_MMAL_PARAM_MIRROR_NONE
+  commentId: F:MMALSharp.Native.MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE
+  fullName: MMALSharp.Native.MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE
+  nameWithType: MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE
+- uid: MMALSharp.Native.MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_VERTICAL
+  name: MMAL_PARAM_MIRROR_VERTICAL
+  href: api/MMALSharp.Native.MMAL_PARAM_MIRROR_T.html#MMALSharp_Native_MMAL_PARAM_MIRROR_T_MMAL_PARAM_MIRROR_VERTICAL
+  commentId: F:MMALSharp.Native.MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_VERTICAL
+  fullName: MMALSharp.Native.MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_VERTICAL
+  nameWithType: MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_VERTICAL
 - uid: MMALSharp.Native.MMAL_PARAM_PRIVACY_INDICATOR_T
   name: MMAL_PARAM_PRIVACY_INDICATOR_T
   href: api/MMALSharp.Native.MMAL_PARAM_PRIVACY_INDICATOR_T.html
@@ -7969,12 +8533,12 @@ references:
   commentId: T:MMALSharp.Native.MMAL_PARAMETER_CAMERA_SETTINGS_T
   fullName: MMALSharp.Native.MMAL_PARAMETER_CAMERA_SETTINGS_T
   nameWithType: MMAL_PARAMETER_CAMERA_SETTINGS_T
-- uid: MMALSharp.Native.MMAL_PARAMETER_CAMERA_SETTINGS_T.#ctor(MMALSharp.Native.MMAL_PARAMETER_HEADER_T,System.UInt32,MMALSharp.Native.MMAL_RATIONAL_T,MMALSharp.Native.MMAL_RATIONAL_T,MMALSharp.Native.MMAL_RATIONAL_T,MMALSharp.Native.MMAL_RATIONAL_T,System.UInt32)
-  name: MMAL_PARAMETER_CAMERA_SETTINGS_T(MMAL_PARAMETER_HEADER_T, UInt32, MMAL_RATIONAL_T, MMAL_RATIONAL_T, MMAL_RATIONAL_T, MMAL_RATIONAL_T, UInt32)
-  href: api/MMALSharp.Native.MMAL_PARAMETER_CAMERA_SETTINGS_T.html#MMALSharp_Native_MMAL_PARAMETER_CAMERA_SETTINGS_T__ctor_MMALSharp_Native_MMAL_PARAMETER_HEADER_T_System_UInt32_MMALSharp_Native_MMAL_RATIONAL_T_MMALSharp_Native_MMAL_RATIONAL_T_MMALSharp_Native_MMAL_RATIONAL_T_MMALSharp_Native_MMAL_RATIONAL_T_System_UInt32_
-  commentId: M:MMALSharp.Native.MMAL_PARAMETER_CAMERA_SETTINGS_T.#ctor(MMALSharp.Native.MMAL_PARAMETER_HEADER_T,System.UInt32,MMALSharp.Native.MMAL_RATIONAL_T,MMALSharp.Native.MMAL_RATIONAL_T,MMALSharp.Native.MMAL_RATIONAL_T,MMALSharp.Native.MMAL_RATIONAL_T,System.UInt32)
-  fullName: MMALSharp.Native.MMAL_PARAMETER_CAMERA_SETTINGS_T.MMAL_PARAMETER_CAMERA_SETTINGS_T(MMALSharp.Native.MMAL_PARAMETER_HEADER_T, System.UInt32, MMALSharp.Native.MMAL_RATIONAL_T, MMALSharp.Native.MMAL_RATIONAL_T, MMALSharp.Native.MMAL_RATIONAL_T, MMALSharp.Native.MMAL_RATIONAL_T, System.UInt32)
-  nameWithType: MMAL_PARAMETER_CAMERA_SETTINGS_T.MMAL_PARAMETER_CAMERA_SETTINGS_T(MMAL_PARAMETER_HEADER_T, UInt32, MMAL_RATIONAL_T, MMAL_RATIONAL_T, MMAL_RATIONAL_T, MMAL_RATIONAL_T, UInt32)
+- uid: MMALSharp.Native.MMAL_PARAMETER_CAMERA_SETTINGS_T.#ctor(MMALSharp.Native.MMAL_PARAMETER_HEADER_T,System.Int32,MMALSharp.Native.MMAL_RATIONAL_T,MMALSharp.Native.MMAL_RATIONAL_T,MMALSharp.Native.MMAL_RATIONAL_T,MMALSharp.Native.MMAL_RATIONAL_T,System.Int32)
+  name: MMAL_PARAMETER_CAMERA_SETTINGS_T(MMAL_PARAMETER_HEADER_T, Int32, MMAL_RATIONAL_T, MMAL_RATIONAL_T, MMAL_RATIONAL_T, MMAL_RATIONAL_T, Int32)
+  href: api/MMALSharp.Native.MMAL_PARAMETER_CAMERA_SETTINGS_T.html#MMALSharp_Native_MMAL_PARAMETER_CAMERA_SETTINGS_T__ctor_MMALSharp_Native_MMAL_PARAMETER_HEADER_T_System_Int32_MMALSharp_Native_MMAL_RATIONAL_T_MMALSharp_Native_MMAL_RATIONAL_T_MMALSharp_Native_MMAL_RATIONAL_T_MMALSharp_Native_MMAL_RATIONAL_T_System_Int32_
+  commentId: M:MMALSharp.Native.MMAL_PARAMETER_CAMERA_SETTINGS_T.#ctor(MMALSharp.Native.MMAL_PARAMETER_HEADER_T,System.Int32,MMALSharp.Native.MMAL_RATIONAL_T,MMALSharp.Native.MMAL_RATIONAL_T,MMALSharp.Native.MMAL_RATIONAL_T,MMALSharp.Native.MMAL_RATIONAL_T,System.Int32)
+  fullName: MMALSharp.Native.MMAL_PARAMETER_CAMERA_SETTINGS_T.MMAL_PARAMETER_CAMERA_SETTINGS_T(MMALSharp.Native.MMAL_PARAMETER_HEADER_T, System.Int32, MMALSharp.Native.MMAL_RATIONAL_T, MMALSharp.Native.MMAL_RATIONAL_T, MMALSharp.Native.MMAL_RATIONAL_T, MMALSharp.Native.MMAL_RATIONAL_T, System.Int32)
+  nameWithType: MMAL_PARAMETER_CAMERA_SETTINGS_T.MMAL_PARAMETER_CAMERA_SETTINGS_T(MMAL_PARAMETER_HEADER_T, Int32, MMAL_RATIONAL_T, MMAL_RATIONAL_T, MMAL_RATIONAL_T, MMAL_RATIONAL_T, Int32)
 - uid: MMALSharp.Native.MMAL_PARAMETER_CAMERA_SETTINGS_T.#ctor*
   name: MMAL_PARAMETER_CAMERA_SETTINGS_T
   href: api/MMALSharp.Native.MMAL_PARAMETER_CAMERA_SETTINGS_T.html#MMALSharp_Native_MMAL_PARAMETER_CAMERA_SETTINGS_T__ctor_
@@ -8533,12 +9097,12 @@ references:
   commentId: T:MMALSharp.Native.MMAL_PARAMETER_COLOURFX_T
   fullName: MMALSharp.Native.MMAL_PARAMETER_COLOURFX_T
   nameWithType: MMAL_PARAMETER_COLOURFX_T
-- uid: MMALSharp.Native.MMAL_PARAMETER_COLOURFX_T.#ctor(MMALSharp.Native.MMAL_PARAMETER_HEADER_T,System.Int32,System.UInt32,System.UInt32)
-  name: MMAL_PARAMETER_COLOURFX_T(MMAL_PARAMETER_HEADER_T, Int32, UInt32, UInt32)
-  href: api/MMALSharp.Native.MMAL_PARAMETER_COLOURFX_T.html#MMALSharp_Native_MMAL_PARAMETER_COLOURFX_T__ctor_MMALSharp_Native_MMAL_PARAMETER_HEADER_T_System_Int32_System_UInt32_System_UInt32_
-  commentId: M:MMALSharp.Native.MMAL_PARAMETER_COLOURFX_T.#ctor(MMALSharp.Native.MMAL_PARAMETER_HEADER_T,System.Int32,System.UInt32,System.UInt32)
-  fullName: MMALSharp.Native.MMAL_PARAMETER_COLOURFX_T.MMAL_PARAMETER_COLOURFX_T(MMALSharp.Native.MMAL_PARAMETER_HEADER_T, System.Int32, System.UInt32, System.UInt32)
-  nameWithType: MMAL_PARAMETER_COLOURFX_T.MMAL_PARAMETER_COLOURFX_T(MMAL_PARAMETER_HEADER_T, Int32, UInt32, UInt32)
+- uid: MMALSharp.Native.MMAL_PARAMETER_COLOURFX_T.#ctor(MMALSharp.Native.MMAL_PARAMETER_HEADER_T,System.Int32,System.Int32,System.Int32)
+  name: MMAL_PARAMETER_COLOURFX_T(MMAL_PARAMETER_HEADER_T, Int32, Int32, Int32)
+  href: api/MMALSharp.Native.MMAL_PARAMETER_COLOURFX_T.html#MMALSharp_Native_MMAL_PARAMETER_COLOURFX_T__ctor_MMALSharp_Native_MMAL_PARAMETER_HEADER_T_System_Int32_System_Int32_System_Int32_
+  commentId: M:MMALSharp.Native.MMAL_PARAMETER_COLOURFX_T.#ctor(MMALSharp.Native.MMAL_PARAMETER_HEADER_T,System.Int32,System.Int32,System.Int32)
+  fullName: MMALSharp.Native.MMAL_PARAMETER_COLOURFX_T.MMAL_PARAMETER_COLOURFX_T(MMALSharp.Native.MMAL_PARAMETER_HEADER_T, System.Int32, System.Int32, System.Int32)
+  nameWithType: MMAL_PARAMETER_COLOURFX_T.MMAL_PARAMETER_COLOURFX_T(MMAL_PARAMETER_HEADER_T, Int32, Int32, Int32)
 - uid: MMALSharp.Native.MMAL_PARAMETER_COLOURFX_T.#ctor*
   name: MMAL_PARAMETER_COLOURFX_T
   href: api/MMALSharp.Native.MMAL_PARAMETER_COLOURFX_T.html#MMALSharp_Native_MMAL_PARAMETER_COLOURFX_T__ctor_
@@ -10369,12 +10933,12 @@ references:
   commentId: T:MMALSharp.Native.MMAL_PARAMETER_MIRROR_T
   fullName: MMALSharp.Native.MMAL_PARAMETER_MIRROR_T
   nameWithType: MMAL_PARAMETER_MIRROR_T
-- uid: MMALSharp.Native.MMAL_PARAMETER_MIRROR_T.#ctor(MMALSharp.Native.MMAL_PARAMETER_HEADER_T,MMALSharp.Native.MMALParameters.MMAL_PARAM_MIRROR_T)
-  name: MMAL_PARAMETER_MIRROR_T(MMAL_PARAMETER_HEADER_T, MMALParameters.MMAL_PARAM_MIRROR_T)
-  href: api/MMALSharp.Native.MMAL_PARAMETER_MIRROR_T.html#MMALSharp_Native_MMAL_PARAMETER_MIRROR_T__ctor_MMALSharp_Native_MMAL_PARAMETER_HEADER_T_MMALSharp_Native_MMALParameters_MMAL_PARAM_MIRROR_T_
-  commentId: M:MMALSharp.Native.MMAL_PARAMETER_MIRROR_T.#ctor(MMALSharp.Native.MMAL_PARAMETER_HEADER_T,MMALSharp.Native.MMALParameters.MMAL_PARAM_MIRROR_T)
-  fullName: MMALSharp.Native.MMAL_PARAMETER_MIRROR_T.MMAL_PARAMETER_MIRROR_T(MMALSharp.Native.MMAL_PARAMETER_HEADER_T, MMALSharp.Native.MMALParameters.MMAL_PARAM_MIRROR_T)
-  nameWithType: MMAL_PARAMETER_MIRROR_T.MMAL_PARAMETER_MIRROR_T(MMAL_PARAMETER_HEADER_T, MMALParameters.MMAL_PARAM_MIRROR_T)
+- uid: MMALSharp.Native.MMAL_PARAMETER_MIRROR_T.#ctor(MMALSharp.Native.MMAL_PARAMETER_HEADER_T,MMALSharp.Native.MMAL_PARAM_MIRROR_T)
+  name: MMAL_PARAMETER_MIRROR_T(MMAL_PARAMETER_HEADER_T, MMAL_PARAM_MIRROR_T)
+  href: api/MMALSharp.Native.MMAL_PARAMETER_MIRROR_T.html#MMALSharp_Native_MMAL_PARAMETER_MIRROR_T__ctor_MMALSharp_Native_MMAL_PARAMETER_HEADER_T_MMALSharp_Native_MMAL_PARAM_MIRROR_T_
+  commentId: M:MMALSharp.Native.MMAL_PARAMETER_MIRROR_T.#ctor(MMALSharp.Native.MMAL_PARAMETER_HEADER_T,MMALSharp.Native.MMAL_PARAM_MIRROR_T)
+  fullName: MMALSharp.Native.MMAL_PARAMETER_MIRROR_T.MMAL_PARAMETER_MIRROR_T(MMALSharp.Native.MMAL_PARAMETER_HEADER_T, MMALSharp.Native.MMAL_PARAM_MIRROR_T)
+  nameWithType: MMAL_PARAMETER_MIRROR_T.MMAL_PARAMETER_MIRROR_T(MMAL_PARAMETER_HEADER_T, MMAL_PARAM_MIRROR_T)
 - uid: MMALSharp.Native.MMAL_PARAMETER_MIRROR_T.#ctor*
   name: MMAL_PARAMETER_MIRROR_T
   href: api/MMALSharp.Native.MMAL_PARAMETER_MIRROR_T.html#MMALSharp_Native_MMAL_PARAMETER_MIRROR_T__ctor_
@@ -13360,6 +13924,12 @@ references:
   commentId: F:MMALSharp.Native.MMALEncoding.EncodingType.Image
   fullName: MMALSharp.Native.MMALEncoding.EncodingType.Image
   nameWithType: MMALEncoding.EncodingType.Image
+- uid: MMALSharp.Native.MMALEncoding.EncodingType.Internal
+  name: Internal
+  href: api/MMALSharp.Native.MMALEncoding.EncodingType.html#MMALSharp_Native_MMALEncoding_EncodingType_Internal
+  commentId: F:MMALSharp.Native.MMALEncoding.EncodingType.Internal
+  fullName: MMALSharp.Native.MMALEncoding.EncodingType.Internal
+  nameWithType: MMALEncoding.EncodingType.Internal
 - uid: MMALSharp.Native.MMALEncoding.EncodingType.PixelFormat
   name: PixelFormat
   href: api/MMALSharp.Native.MMALEncoding.EncodingType.html#MMALSharp_Native_MMALEncoding_EncodingType_PixelFormat
@@ -17293,6 +17863,60 @@ references:
   commentId: Overload:MMALSharp.Native.MMALUtil.VCOS_ALIGN_UP
   fullName: MMALSharp.Native.MMALUtil.VCOS_ALIGN_UP
   nameWithType: MMALUtil.VCOS_ALIGN_UP
+- uid: MMALSharp.Parameter
+  name: Parameter
+  href: api/MMALSharp.Parameter.html
+  commentId: T:MMALSharp.Parameter
+  fullName: MMALSharp.Parameter
+  nameWithType: Parameter
+- uid: MMALSharp.Parameter.#ctor(System.Int32,System.Type,System.String)
+  name: Parameter(Int32, Type, String)
+  href: api/MMALSharp.Parameter.html#MMALSharp_Parameter__ctor_System_Int32_System_Type_System_String_
+  commentId: M:MMALSharp.Parameter.#ctor(System.Int32,System.Type,System.String)
+  fullName: MMALSharp.Parameter.Parameter(System.Int32, System.Type, System.String)
+  nameWithType: Parameter.Parameter(Int32, Type, String)
+- uid: MMALSharp.Parameter.#ctor*
+  name: Parameter
+  href: api/MMALSharp.Parameter.html#MMALSharp_Parameter__ctor_
+  commentId: Overload:MMALSharp.Parameter.#ctor
+  fullName: MMALSharp.Parameter.Parameter
+  nameWithType: Parameter.Parameter
+- uid: MMALSharp.Parameter.ParamName
+  name: ParamName
+  href: api/MMALSharp.Parameter.html#MMALSharp_Parameter_ParamName
+  commentId: P:MMALSharp.Parameter.ParamName
+  fullName: MMALSharp.Parameter.ParamName
+  nameWithType: Parameter.ParamName
+- uid: MMALSharp.Parameter.ParamName*
+  name: ParamName
+  href: api/MMALSharp.Parameter.html#MMALSharp_Parameter_ParamName_
+  commentId: Overload:MMALSharp.Parameter.ParamName
+  fullName: MMALSharp.Parameter.ParamName
+  nameWithType: Parameter.ParamName
+- uid: MMALSharp.Parameter.ParamType
+  name: ParamType
+  href: api/MMALSharp.Parameter.html#MMALSharp_Parameter_ParamType
+  commentId: P:MMALSharp.Parameter.ParamType
+  fullName: MMALSharp.Parameter.ParamType
+  nameWithType: Parameter.ParamType
+- uid: MMALSharp.Parameter.ParamType*
+  name: ParamType
+  href: api/MMALSharp.Parameter.html#MMALSharp_Parameter_ParamType_
+  commentId: Overload:MMALSharp.Parameter.ParamType
+  fullName: MMALSharp.Parameter.ParamType
+  nameWithType: Parameter.ParamType
+- uid: MMALSharp.Parameter.ParamValue
+  name: ParamValue
+  href: api/MMALSharp.Parameter.html#MMALSharp_Parameter_ParamValue
+  commentId: P:MMALSharp.Parameter.ParamValue
+  fullName: MMALSharp.Parameter.ParamValue
+  nameWithType: Parameter.ParamValue
+- uid: MMALSharp.Parameter.ParamValue*
+  name: ParamValue
+  href: api/MMALSharp.Parameter.html#MMALSharp_Parameter_ParamValue_
+  commentId: Overload:MMALSharp.Parameter.ParamValue
+  fullName: MMALSharp.Parameter.ParamValue
+  nameWithType: Parameter.ParamValue
 - uid: MMALSharp.PiCameraError
   name: PiCameraError
   href: api/MMALSharp.PiCameraError.html

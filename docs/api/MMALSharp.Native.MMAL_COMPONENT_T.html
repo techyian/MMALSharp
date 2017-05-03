@@ -18,14 +18,14 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
-    
+    <meta property="docfx:rel" content="../">
     
   </head>
   <body data-spy="scroll" data-target="#affix">
     <div id="wrapper">
       <header>
         
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+        <nav id="autocollapse" class="navbar navbar-mmalsharp ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
@@ -34,17 +34,23 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+        	  
+        	  <a class="pull-right github-link hidden-lg hidden-md" href="https://github.com/techyian/MMALSharp"><img src="/images/GitHub-Mark-32px.png"></a>
               
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../logo.svg" alt="">
-              </a>
+        	  <ul class="nav navbar-nav">
+        		<li><a id="nav-home" href="/">MMALSharp</a></li>
+        	  </ul>
+        	  	  
             </div>
             <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
+              
+        	  <a class="pull-right github-link visible-lg visible-md" href="https://github.com/techyian/MMALSharp"><img src="/images/GitHub-Mark-32px.png"></a>
+        	  
+        	  <form class="navbar-form navbar-right" role="search" id="search">
                 <div class="form-group">
                   <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
                 </div>
-              </form>
+              </form>	  
             </div>
           </div>
         </nav>
@@ -57,6 +63,14 @@
           </div>
         </div>
       </header>
+      <div role="main" class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items"></div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
       <div role="main" class="container body-content hide-when-search">
         
         <div class="sidenav hide-when-search">
@@ -103,13 +117,6 @@
               </div>
               <h3 id="constructors">Constructors
               </h3>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T__ctor_System_IntPtr_System_IntPtr_System_Char__System_UInt32_MMALSharp_Native_MMAL_PORT_T__System_UInt32_MMALSharp_Native_MMAL_PORT_T___System_UInt32_MMALSharp_Native_MMAL_PORT_T___System_UInt32_MMALSharp_Native_MMAL_PORT_T___System_UInt32_MMALSharp_Native_MMAL_PORT_T___System_UInt32_.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T.%23ctor(System.IntPtr%2CSystem.IntPtr%2CSystem.Char*%2CSystem.UInt32%2CMMALSharp.Native.MMAL_PORT_T*%2CSystem.UInt32%2CMMALSharp.Native.MMAL_PORT_T**%2CSystem.UInt32%2CMMALSharp.Native.MMAL_PORT_T**%2CSystem.UInt32%2CMMALSharp.Native.MMAL_PORT_T**%2CSystem.UInt32%2CMMALSharp.Native.MMAL_PORT_T**%2CSystem.UInt32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L69">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_COMPONENT_T__ctor_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.#ctor*"></a>
               <h4 id="MMALSharp_Native_MMAL_COMPONENT_T__ctor_System_IntPtr_System_IntPtr_System_Char__System_UInt32_MMALSharp_Native_MMAL_PORT_T__System_UInt32_MMALSharp_Native_MMAL_PORT_T___System_UInt32_MMALSharp_Native_MMAL_PORT_T___System_UInt32_MMALSharp_Native_MMAL_PORT_T___System_UInt32_MMALSharp_Native_MMAL_PORT_T___System_UInt32_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.#ctor(System.IntPtr,System.IntPtr,System.Char*,System.UInt32,MMALSharp.Native.MMAL_PORT_T*,System.UInt32,MMALSharp.Native.MMAL_PORT_T**,System.UInt32,MMALSharp.Native.MMAL_PORT_T**,System.UInt32,MMALSharp.Native.MMAL_PORT_T**,System.UInt32,MMALSharp.Native.MMAL_PORT_T**,System.UInt32)">MMAL_COMPONENT_T(IntPtr, IntPtr, Char*, UInt32, MMAL_PORT_T*, UInt32, MMAL_PORT_T**, UInt32, MMAL_PORT_T**, UInt32, MMAL_PORT_T**, UInt32, MMAL_PORT_T**, UInt32)</h4>
               <div class="markdown level1 summary"></div>
@@ -202,13 +209,6 @@
               </table>
               <h3 id="properties">Properties
               </h3>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T_Clock.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T.Clock%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L64">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_COMPONENT_T_Clock_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Clock*"></a>
               <h4 id="MMALSharp_Native_MMAL_COMPONENT_T_Clock" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Clock">Clock</h4>
               <div class="markdown level1 summary"></div>
@@ -232,13 +232,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T_ClockNum.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T.ClockNum%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L63">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_COMPONENT_T_ClockNum_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.ClockNum*"></a>
               <h4 id="MMALSharp_Native_MMAL_COMPONENT_T_ClockNum" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.ClockNum">ClockNum</h4>
               <div class="markdown level1 summary"></div>
@@ -262,13 +255,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T_Control.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T.Control%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L58">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_COMPONENT_T_Control_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Control*"></a>
               <h4 id="MMALSharp_Native_MMAL_COMPONENT_T_Control" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Control">Control</h4>
               <div class="markdown level1 summary"></div>
@@ -292,13 +278,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T_Id.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T.Id%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L67">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_COMPONENT_T_Id_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Id*"></a>
               <h4 id="MMALSharp_Native_MMAL_COMPONENT_T_Id" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Id">Id</h4>
               <div class="markdown level1 summary"></div>
@@ -322,13 +301,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T_Input.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T.Input%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L60">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_COMPONENT_T_Input_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Input*"></a>
               <h4 id="MMALSharp_Native_MMAL_COMPONENT_T_Input" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Input">Input</h4>
               <div class="markdown level1 summary"></div>
@@ -352,13 +324,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T_InputNum.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T.InputNum%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L59">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_COMPONENT_T_InputNum_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.InputNum*"></a>
               <h4 id="MMALSharp_Native_MMAL_COMPONENT_T_InputNum" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.InputNum">InputNum</h4>
               <div class="markdown level1 summary"></div>
@@ -382,13 +347,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T_IsEnabled.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T.IsEnabled%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L57">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_COMPONENT_T_IsEnabled_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.IsEnabled*"></a>
               <h4 id="MMALSharp_Native_MMAL_COMPONENT_T_IsEnabled" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.IsEnabled">IsEnabled</h4>
               <div class="markdown level1 summary"></div>
@@ -412,13 +370,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T_Name.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T.Name%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L56">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_COMPONENT_T_Name_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Name*"></a>
               <h4 id="MMALSharp_Native_MMAL_COMPONENT_T_Name" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Name">Name</h4>
               <div class="markdown level1 summary"></div>
@@ -442,13 +393,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T_Output.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T.Output%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L62">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_COMPONENT_T_Output_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Output*"></a>
               <h4 id="MMALSharp_Native_MMAL_COMPONENT_T_Output" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Output">Output</h4>
               <div class="markdown level1 summary"></div>
@@ -472,13 +416,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T_OutputNum.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T.OutputNum%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L61">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_COMPONENT_T_OutputNum_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.OutputNum*"></a>
               <h4 id="MMALSharp_Native_MMAL_COMPONENT_T_OutputNum" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.OutputNum">OutputNum</h4>
               <div class="markdown level1 summary"></div>
@@ -502,13 +439,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T_Port.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T.Port%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L66">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_COMPONENT_T_Port_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Port*"></a>
               <h4 id="MMALSharp_Native_MMAL_COMPONENT_T_Port" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Port">Port</h4>
               <div class="markdown level1 summary"></div>
@@ -532,13 +462,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T_PortNum.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T.PortNum%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L65">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_COMPONENT_T_PortNum_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.PortNum*"></a>
               <h4 id="MMALSharp_Native_MMAL_COMPONENT_T_PortNum" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.PortNum">PortNum</h4>
               <div class="markdown level1 summary"></div>
@@ -562,13 +485,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T_Priv.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T.Priv%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L54">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_COMPONENT_T_Priv_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Priv*"></a>
               <h4 id="MMALSharp_Native_MMAL_COMPONENT_T_Priv" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.Priv">Priv</h4>
               <div class="markdown level1 summary"></div>
@@ -592,13 +508,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T_UserData.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T.UserData%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L55">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_COMPONENT_T_UserData_" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.UserData*"></a>
               <h4 id="MMALSharp_Native_MMAL_COMPONENT_T_UserData" data-uid="MMALSharp.Native.MMAL_COMPONENT_T.UserData">UserData</h4>
               <div class="markdown level1 summary"></div>
@@ -627,16 +536,6 @@
           
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                  <li>
-                    <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_COMPONENT_T.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_COMPONENT_T%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALComponent.cs/#L37" class="contribution-link">View Source</a>
-                  </li>
-                </ul>
-              </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
               <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
               </nav>
@@ -653,7 +552,7 @@
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2016-2017 <a id="footer-copy" href="https://github.com/techyian">Techyian</a><br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>

@@ -10,11 +10,8 @@ namespace MMALSharp.Components
     public class MMALSplitterComponent : MMALDownstreamComponent
     {
         public MMALSplitterComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER, null)
-        {            
+        {     
+            throw new NotImplementedException();
         }
-
-        public override void Initialize()
-        {            
-        }        
     }
 }

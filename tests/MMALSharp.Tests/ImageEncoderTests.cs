@@ -205,31 +205,6 @@ namespace MMALSharp.Tests
         }
 
         [Theory]
-        [InlineData(0.1, 0.5)]
-        [InlineData(0.6, 0.9)]
-        [InlineData(1.0, 1.0)]
-        [InlineData(-1.0, -1.0)]
-        public void SetThenGetAwbGains(double rGain, double bGain)
-        {
-            //Awb mode must be set to off when manually setting gains.
-            MMALCameraConfig.AwbMode = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_OFF;
-            MMALCameraConfig.AwbGainsR = rGain;
-            MMALCameraConfig.AwbGainsB = bGain;
-            
-            if (rGain > 0.0 && bGain > 0.0 && rGain < 1.0 && bGain < 1.0)
-            {
-                MMALCameraConfig.Reload();
-                
-                Assert.True(fixture.MMALCamera.GetAwbGains().Item1 == (int)(rGain * 65536) / 65536 && fixture.MMALCamera.GetAwbGains().Item2 == (int)(bGain * 65536) / 65536);
-            }
-            else
-            {
-                Assert.ThrowsAny<Exception>(() => MMALCameraConfig.Reload());
-                TestHelper.SetConfigurationDefaults();
-            }
-        }
-
-        [Theory]
         [InlineData(MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_CARTOON)]
         [InlineData(MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_COLOURBALANCE)]
         [InlineData(MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_OILPAINT)]

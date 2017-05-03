@@ -240,11 +240,6 @@ namespace MMALSharp
                 }
             }
         }
-
-        /// <summary>
-        /// Helper method to initialize this component
-        /// </summary>
-        public virtual void Initialize() { }
         
         public override void Dispose()
         {

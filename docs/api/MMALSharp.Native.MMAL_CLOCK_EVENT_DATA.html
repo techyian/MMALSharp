@@ -18,14 +18,14 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
-    
+    <meta property="docfx:rel" content="../">
     
   </head>
   <body data-spy="scroll" data-target="#affix">
     <div id="wrapper">
       <header>
         
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+        <nav id="autocollapse" class="navbar navbar-mmalsharp ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
@@ -34,17 +34,23 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+        	  
+        	  <a class="pull-right github-link hidden-lg hidden-md" href="https://github.com/techyian/MMALSharp"><img src="/images/GitHub-Mark-32px.png"></a>
               
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../logo.svg" alt="">
-              </a>
+        	  <ul class="nav navbar-nav">
+        		<li><a id="nav-home" href="/">MMALSharp</a></li>
+        	  </ul>
+        	  	  
             </div>
             <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
+              
+        	  <a class="pull-right github-link visible-lg visible-md" href="https://github.com/techyian/MMALSharp"><img src="/images/GitHub-Mark-32px.png"></a>
+        	  
+        	  <form class="navbar-form navbar-right" role="search" id="search">
                 <div class="form-group">
                   <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
                 </div>
-              </form>
+              </form>	  
             </div>
           </div>
         </nav>
@@ -57,6 +63,14 @@
           </div>
         </div>
       </header>
+      <div role="main" class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items"></div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
       <div role="main" class="container body-content hide-when-search">
         
         <div class="sidenav hide-when-search">
@@ -103,13 +117,6 @@
               </div>
               <h3 id="constructors">Constructors
               </h3>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_CLOCK_EVENT_DATA__ctor_System_Int32_MMALSharp_Native_MMAL_RATIONAL_T_MMALSharp_Native_MMAL_CLOCK_UPDATE_THRESHOLD_T_MMALSharp_Native_MMAL_CLOCK_DISCONT_THRESHOLD_T_MMALSharp_Native_MMAL_CLOCK_REQUEST_THRESHOLD_T_MMALSharp_Native_MMAL_CLOCK_BUFFER_INFO_T_MMALSharp_Native_MMAL_CLOCK_LATENCY_T_.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.%23ctor(System.Int32%2CMMALSharp.Native.MMAL_RATIONAL_T%2CMMALSharp.Native.MMAL_CLOCK_UPDATE_THRESHOLD_T%2CMMALSharp.Native.MMAL_CLOCK_DISCONT_THRESHOLD_T%2CMMALSharp.Native.MMAL_CLOCK_REQUEST_THRESHOLD_T%2CMMALSharp.Native.MMAL_CLOCK_BUFFER_INFO_T%2CMMALSharp.Native.MMAL_CLOCK_LATENCY_T)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALClock.cs/#L125">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA__ctor_" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.#ctor*"></a>
               <h4 id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA__ctor_System_Int32_MMALSharp_Native_MMAL_RATIONAL_T_MMALSharp_Native_MMAL_CLOCK_UPDATE_THRESHOLD_T_MMALSharp_Native_MMAL_CLOCK_DISCONT_THRESHOLD_T_MMALSharp_Native_MMAL_CLOCK_REQUEST_THRESHOLD_T_MMALSharp_Native_MMAL_CLOCK_BUFFER_INFO_T_MMALSharp_Native_MMAL_CLOCK_LATENCY_T_" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.#ctor(System.Int32,MMALSharp.Native.MMAL_RATIONAL_T,MMALSharp.Native.MMAL_CLOCK_UPDATE_THRESHOLD_T,MMALSharp.Native.MMAL_CLOCK_DISCONT_THRESHOLD_T,MMALSharp.Native.MMAL_CLOCK_REQUEST_THRESHOLD_T,MMALSharp.Native.MMAL_CLOCK_BUFFER_INFO_T,MMALSharp.Native.MMAL_CLOCK_LATENCY_T)">MMAL_CLOCK_EVENT_DATA(Int32, MMAL_RATIONAL_T, MMAL_CLOCK_UPDATE_THRESHOLD_T, MMAL_CLOCK_DISCONT_THRESHOLD_T, MMAL_CLOCK_REQUEST_THRESHOLD_T, MMAL_CLOCK_BUFFER_INFO_T, MMAL_CLOCK_LATENCY_T)</h4>
               <div class="markdown level1 summary"></div>
@@ -167,13 +174,6 @@
               </table>
               <h3 id="properties">Properties
               </h3>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_Buffer.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.Buffer%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALClock.cs/#L122">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_Buffer_" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.Buffer*"></a>
               <h4 id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_Buffer" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.Buffer">Buffer</h4>
               <div class="markdown level1 summary"></div>
@@ -197,13 +197,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_DiscontThreshold.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.DiscontThreshold%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALClock.cs/#L120">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_DiscontThreshold_" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.DiscontThreshold*"></a>
               <h4 id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_DiscontThreshold" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.DiscontThreshold">DiscontThreshold</h4>
               <div class="markdown level1 summary"></div>
@@ -227,13 +220,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_Enable.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.Enable%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALClock.cs/#L117">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_Enable_" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.Enable*"></a>
               <h4 id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_Enable" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.Enable">Enable</h4>
               <div class="markdown level1 summary"></div>
@@ -257,13 +243,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_Latency.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.Latency%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALClock.cs/#L123">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_Latency_" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.Latency*"></a>
               <h4 id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_Latency" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.Latency">Latency</h4>
               <div class="markdown level1 summary"></div>
@@ -287,13 +266,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_RequestThreshold.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.RequestThreshold%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALClock.cs/#L121">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_RequestThreshold_" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.RequestThreshold*"></a>
               <h4 id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_RequestThreshold" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.RequestThreshold">RequestThreshold</h4>
               <div class="markdown level1 summary"></div>
@@ -317,13 +289,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_Scale.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.Scale%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALClock.cs/#L118">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_Scale_" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.Scale*"></a>
               <h4 id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_Scale" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.Scale">Scale</h4>
               <div class="markdown level1 summary"></div>
@@ -347,13 +312,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_UpdateThreshold.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.UpdateThreshold%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALClock.cs/#L119">View Source</a>
-              </span>
               <a id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_UpdateThreshold_" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.UpdateThreshold*"></a>
               <h4 id="MMALSharp_Native_MMAL_CLOCK_EVENT_DATA_UpdateThreshold" data-uid="MMALSharp.Native.MMAL_CLOCK_EVENT_DATA.UpdateThreshold">UpdateThreshold</h4>
               <div class="markdown level1 summary"></div>
@@ -382,16 +340,6 @@
           
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                  <li>
-                    <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_Native_MMAL_CLOCK_EVENT_DATA.md&amp;value=---%0Auid%3A%20MMALSharp.Native.MMAL_CLOCK_EVENT_DATA%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/Native/MMALClock.cs/#L106" class="contribution-link">View Source</a>
-                  </li>
-                </ul>
-              </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
               <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
               </nav>
@@ -408,7 +356,7 @@
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2016-2017 <a id="footer-copy" href="https://github.com/techyian">Techyian</a><br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>

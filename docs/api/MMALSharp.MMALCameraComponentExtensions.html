@@ -18,14 +18,14 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
-    
+    <meta property="docfx:rel" content="../">
     
   </head>
   <body data-spy="scroll" data-target="#affix">
     <div id="wrapper">
       <header>
         
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+        <nav id="autocollapse" class="navbar navbar-mmalsharp ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
@@ -34,17 +34,23 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+        	  
+        	  <a class="pull-right github-link hidden-lg hidden-md" href="https://github.com/techyian/MMALSharp"><img src="/images/GitHub-Mark-32px.png"></a>
               
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../logo.svg" alt="">
-              </a>
+        	  <ul class="nav navbar-nav">
+        		<li><a id="nav-home" href="/">MMALSharp</a></li>
+        	  </ul>
+        	  	  
             </div>
             <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
+              
+        	  <a class="pull-right github-link visible-lg visible-md" href="https://github.com/techyian/MMALSharp"><img src="/images/GitHub-Mark-32px.png"></a>
+        	  
+        	  <form class="navbar-form navbar-right" role="search" id="search">
                 <div class="form-group">
                   <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
                 </div>
-              </form>
+              </form>	  
             </div>
           </div>
         </nav>
@@ -57,6 +63,14 @@
           </div>
         </div>
       </header>
+      <div role="main" class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items"></div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
       <div role="main" class="container body-content hide-when-search">
         
         <div class="sidenav hide-when-search">
@@ -111,20 +125,13 @@
               </div>
               <h3 id="methods">Methods
               </h3>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetAwbGains_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetAwbGains(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L233">View Source</a>
-              </span>
-              <a id="MMALSharp_MMALCameraComponentExtensions_GetAwbGains_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetAwbGains*"></a>
-              <h4 id="MMALSharp_MMALCameraComponentExtensions_GetAwbGains_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetAwbGains(MMALSharp.MMALCamera)">GetAwbGains(MMALCamera)</h4>
+              <a id="MMALSharp_MMALCameraComponentExtensions_GetAnalogGain_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetAnalogGain*"></a>
+              <h4 id="MMALSharp_MMALCameraComponentExtensions_GetAnalogGain_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetAnalogGain(MMALSharp.MMALCamera)">GetAnalogGain(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static Tuple&lt;double, double&gt; GetAwbGains(this MMALCamera camera)</code></pre>
+                <pre><code class="lang-csharp hljs">public static double GetAnalogGain(this MMALCamera camera)</code></pre>
               </div>
               <h5 class="parameters">Parameters</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -153,18 +160,51 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td><span class="xref">System.Tuple</span>&lt;<span class="xref">System.Double</span>, <span class="xref">System.Double</span>&gt;</td>
+                    <td><span class="xref">System.Double</span></td>
                     <td></td>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetAwbMode_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetAwbMode(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L212">View Source</a>
-              </span>
+              <a id="MMALSharp_MMALCameraComponentExtensions_GetAwbBlueGain_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetAwbBlueGain*"></a>
+              <h4 id="MMALSharp_MMALCameraComponentExtensions_GetAwbBlueGain_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetAwbBlueGain(MMALSharp.MMALCamera)">GetAwbBlueGain(MMALCamera)</h4>
+              <div class="markdown level1 summary"></div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static double GetAwbBlueGain(this MMALCamera camera)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="MMALSharp.MMALCamera.html">MMALCamera</a></td>
+                    <td><span class="parametername">camera</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Double</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetAwbMode_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetAwbMode*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetAwbMode_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetAwbMode(MMALSharp.MMALCamera)">GetAwbMode(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -205,13 +245,46 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetBrightness_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetBrightness(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L97">View Source</a>
-              </span>
+              <a id="MMALSharp_MMALCameraComponentExtensions_GetAwbRedGain_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetAwbRedGain*"></a>
+              <h4 id="MMALSharp_MMALCameraComponentExtensions_GetAwbRedGain_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetAwbRedGain(MMALSharp.MMALCamera)">GetAwbRedGain(MMALCamera)</h4>
+              <div class="markdown level1 summary"></div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static double GetAwbRedGain(this MMALCamera camera)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="MMALSharp.MMALCamera.html">MMALCamera</a></td>
+                    <td><span class="parametername">camera</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Double</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetBrightness_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetBrightness*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetBrightness_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetBrightness(MMALSharp.MMALCamera)">GetBrightness(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -252,13 +325,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetColourFx_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetColourFx(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L285">View Source</a>
-              </span>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetColourFx_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetColourFx*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetColourFx_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetColourFx(MMALSharp.MMALCamera)">GetColourFx(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -299,13 +365,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetContrast_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetContrast(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L69">View Source</a>
-              </span>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetContrast_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetContrast*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetContrast_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetContrast(MMALSharp.MMALCamera)">GetContrast(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -346,13 +405,46 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetDRC_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetDRC(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L384">View Source</a>
-              </span>
+              <a id="MMALSharp_MMALCameraComponentExtensions_GetDigitalGain_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetDigitalGain*"></a>
+              <h4 id="MMALSharp_MMALCameraComponentExtensions_GetDigitalGain_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetDigitalGain(MMALSharp.MMALCamera)">GetDigitalGain(MMALCamera)</h4>
+              <div class="markdown level1 summary"></div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static double GetDigitalGain(this MMALCamera camera)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="MMALSharp.MMALCamera.html">MMALCamera</a></td>
+                    <td><span class="parametername">camera</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Double</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetDRC_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetDRC*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetDRC_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetDRC(MMALSharp.MMALCamera)">GetDRC(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -393,13 +485,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetExposureCompensation_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetExposureCompensation(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L152">View Source</a>
-              </span>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetExposureCompensation_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetExposureCompensation*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetExposureCompensation_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetExposureCompensation(MMALSharp.MMALCamera)">GetExposureCompensation(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -440,13 +525,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetExposureMeteringMode_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetExposureMeteringMode(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L191">View Source</a>
-              </span>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetExposureMeteringMode_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetExposureMeteringMode*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetExposureMeteringMode_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetExposureMeteringMode(MMALSharp.MMALCamera)">GetExposureMeteringMode(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -487,13 +565,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetExposureMode_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetExposureMode(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L170">View Source</a>
-              </span>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetExposureMode_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetExposureMode*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetExposureMode_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetExposureMode(MMALSharp.MMALCamera)">GetExposureMode(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -534,13 +605,46 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetFlips_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetFlips(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L326">View Source</a>
-              </span>
+              <a id="MMALSharp_MMALCameraComponentExtensions_GetExposureSpeed_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetExposureSpeed*"></a>
+              <h4 id="MMALSharp_MMALCameraComponentExtensions_GetExposureSpeed_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetExposureSpeed(MMALSharp.MMALCamera)">GetExposureSpeed(MMALCamera)</h4>
+              <div class="markdown level1 summary"></div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static int GetExposureSpeed(this MMALCamera camera)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="MMALSharp.MMALCamera.html">MMALCamera</a></td>
+                    <td><span class="parametername">camera</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Int32</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetFlips_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetFlips*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetFlips_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetFlips(MMALSharp.MMALCamera)">GetFlips(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -581,13 +685,46 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetImageFx_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetImageFx(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L264">View Source</a>
-              </span>
+              <a id="MMALSharp_MMALCameraComponentExtensions_GetFocusPosition_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetFocusPosition*"></a>
+              <h4 id="MMALSharp_MMALCameraComponentExtensions_GetFocusPosition_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetFocusPosition(MMALSharp.MMALCamera)">GetFocusPosition(MMALCamera)</h4>
+              <div class="markdown level1 summary"></div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static int GetFocusPosition(this MMALCamera camera)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="MMALSharp.MMALCamera.html">MMALCamera</a></td>
+                    <td><span class="parametername">camera</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Int32</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetImageFx_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetImageFx*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetImageFx_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetImageFx(MMALSharp.MMALCamera)">GetImageFx(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -628,13 +765,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetISO_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetISO(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L120">View Source</a>
-              </span>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetISO_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetISO*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetISO_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetISO(MMALSharp.MMALCamera)">GetISO(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -675,60 +805,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetRawCapture_MMALSharp_MMALPortImpl_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetRawCapture(MMALSharp.MMALPortImpl)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L417">View Source</a>
-              </span>
-              <a id="MMALSharp_MMALCameraComponentExtensions_GetRawCapture_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetRawCapture*"></a>
-              <h4 id="MMALSharp_MMALCameraComponentExtensions_GetRawCapture_MMALSharp_MMALPortImpl_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetRawCapture(MMALSharp.MMALPortImpl)">GetRawCapture(MMALPortImpl)</h4>
-              <div class="markdown level1 summary"></div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static bool GetRawCapture(this MMALPortImpl port)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="MMALSharp.MMALPortImpl.html">MMALPortImpl</a></td>
-                    <td><span class="parametername">port</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Boolean</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetRotation_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetRotation(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L311">View Source</a>
-              </span>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetRotation_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetRotation*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetRotation_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetRotation(MMALSharp.MMALCamera)">GetRotation(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -769,13 +845,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetSaturation_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetSaturation(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L25">View Source</a>
-              </span>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetSaturation_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetSaturation*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetSaturation_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetSaturation(MMALSharp.MMALCamera)">GetSaturation(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -816,13 +885,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetSharpness_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetSharpness(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L47">View Source</a>
-              </span>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetSharpness_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetSharpness*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetSharpness_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetSharpness(MMALSharp.MMALCamera)">GetSharpness(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -863,13 +925,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetShutterSpeed_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetShutterSpeed(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L366">View Source</a>
-              </span>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetShutterSpeed_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetShutterSpeed*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetShutterSpeed_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetShutterSpeed(MMALSharp.MMALCamera)">GetShutterSpeed(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -910,13 +965,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetStatsPass_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetStatsPass(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L402">View Source</a>
-              </span>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetStatsPass_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetStatsPass*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetStatsPass_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetStatsPass(MMALSharp.MMALCamera)">GetStatsPass(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -957,13 +1005,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetVideoStabilisation_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetVideoStabilisation(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L139">View Source</a>
-              </span>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetVideoStabilisation_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetVideoStabilisation*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetVideoStabilisation_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetVideoStabilisation(MMALSharp.MMALCamera)">GetVideoStabilisation(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -1004,13 +1045,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions_GetZoom_MMALSharp_MMALCamera_.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions.GetZoom(MMALSharp.MMALCamera)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L346">View Source</a>
-              </span>
               <a id="MMALSharp_MMALCameraComponentExtensions_GetZoom_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetZoom*"></a>
               <h4 id="MMALSharp_MMALCameraComponentExtensions_GetZoom_MMALSharp_MMALCamera_" data-uid="MMALSharp.MMALCameraComponentExtensions.GetZoom(MMALSharp.MMALCamera)">GetZoom(MMALCamera)</h4>
               <div class="markdown level1 summary"></div>
@@ -1056,16 +1090,6 @@
           
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                  <li>
-                    <a href="https://github.com/techyian/MMALSharp/new/master/apiSpec/new?filename=MMALSharp_MMALCameraComponentExtensions.md&amp;value=---%0Auid%3A%20MMALSharp.MMALCameraComponentExtensions%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/techyian/MMALSharp/blob/master/src/MMALSharp/MMALCameraExtensions.cs/#L13" class="contribution-link">View Source</a>
-                  </li>
-                </ul>
-              </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
               <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
               </nav>
@@ -1082,7 +1106,7 @@
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2016-2017 <a id="footer-copy" href="https://github.com/techyian">Techyian</a><br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>

@@ -230,33 +230,72 @@ namespace MMALSharp
             MMALCheck(MMALPort.mmal_port_parameter_set(camera.Camera.Control.Ptr, &awbMode.hdr), "Unable to set awb mode");
         }
 
-        public static MMAL_PARAMETER_CAMERA_SETTINGS_T GetCameraSettings(this MMALCamera camera)
+        public static int GetExposureSpeed(this MMALCamera camera)
         {
             MMAL_PARAMETER_CAMERA_SETTINGS_T settings = new MMAL_PARAMETER_CAMERA_SETTINGS_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CAMERA_SETTINGS, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_SETTINGS_T>()),
-                                                                                             0, new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0), 
-                                                                                             new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0), 0);
+                0, new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0),
+                new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0), 0);
 
             MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &settings.hdr), "Unable to get camera settings");
-            
-            return settings;
+
+            return settings.Exposure;
         }
 
-        public static Tuple<double, double> GetAwbGains(this MMALCamera camera)
+        public static int GetFocusPosition(this MMALCamera camera)
         {
-            MMAL_PARAMETER_AWB_GAINS_T awbGains = new MMAL_PARAMETER_AWB_GAINS_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CUSTOM_AWB_GAINS, Marshal.SizeOf<MMAL_PARAMETER_AWB_GAINS_T>()),
-                                                                                                        new MMAL_RATIONAL_T(0, 65536), new MMAL_RATIONAL_T(0, 65536));
+            MMAL_PARAMETER_CAMERA_SETTINGS_T settings = new MMAL_PARAMETER_CAMERA_SETTINGS_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CAMERA_SETTINGS, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_SETTINGS_T>()),
+                0, new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0),
+                new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0), 0);
 
-            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &awbGains.hdr), "Unable to get awb gains");
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &settings.hdr), "Unable to get camera settings");
 
-            MMAL_RATIONAL_T rGain = awbGains.RGain;
-            MMAL_RATIONAL_T bGain = awbGains.BGain;
-
-            double r = rGain.Num / rGain.Den;
-            double b = bGain.Num / bGain.Den;
-
-            return new Tuple<double, double>(r, b);
+            return settings.FocusPosition;
         }
 
+        public static double GetAnalogGain(this MMALCamera camera)
+        {
+            MMAL_PARAMETER_CAMERA_SETTINGS_T settings = new MMAL_PARAMETER_CAMERA_SETTINGS_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CAMERA_SETTINGS, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_SETTINGS_T>()),
+                0, new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0),
+                new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0), 0);
+
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &settings.hdr), "Unable to get camera settings");
+
+            return Convert.ToDouble(settings.AnalogGain.Num / settings.AnalogGain.Den);
+        }
+
+        public static double GetDigitalGain(this MMALCamera camera)
+        {
+            MMAL_PARAMETER_CAMERA_SETTINGS_T settings = new MMAL_PARAMETER_CAMERA_SETTINGS_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CAMERA_SETTINGS, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_SETTINGS_T>()),
+                0, new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0),
+                new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0), 0);
+
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &settings.hdr), "Unable to get camera settings");
+
+            return Convert.ToDouble(settings.DigitalGain.Num / settings.DigitalGain.Den);
+        }
+
+        public static double GetAwbRedGain(this MMALCamera camera)
+        {
+            MMAL_PARAMETER_CAMERA_SETTINGS_T settings = new MMAL_PARAMETER_CAMERA_SETTINGS_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CAMERA_SETTINGS, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_SETTINGS_T>()),
+                0, new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0),
+                new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0), 0);
+
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &settings.hdr), "Unable to get camera settings");
+
+            return Convert.ToDouble(settings.AwbRedGain.Num / settings.AwbRedGain.Den);
+        }
+
+        public static double GetAwbBlueGain(this MMALCamera camera)
+        {
+            MMAL_PARAMETER_CAMERA_SETTINGS_T settings = new MMAL_PARAMETER_CAMERA_SETTINGS_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CAMERA_SETTINGS, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_SETTINGS_T>()),
+                0, new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0),
+                new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0), 0);
+
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Camera.Control.Ptr, &settings.hdr), "Unable to get camera settings");
+
+            return Convert.ToDouble(settings.AwbBlueGain.Num / settings.AwbBlueGain.Den);
+        }
+        
         internal static void SetAwbGains(this MMALCamera camera, double rGain, double bGain)
         {
             if (MMALCameraConfig.Debug)
@@ -419,29 +458,6 @@ namespace MMALSharp
         {
             camera.Camera.Control.SetParameter(MMAL_PARAMETER_CAPTURE_STATS_PASS, statsPass);
         }
-
-        internal static void SetImageCapture(this MMALPortImpl port, bool enable)
-        {
-            port.SetParameter(MMAL_PARAMETER_CAPTURE, enable);
-        }
-
-        public static bool GetRawCapture(this MMALPortImpl port)
-        {
-            return port.GetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE);
-        }
-
-        internal static void SetRawCapture(this MMALPortImpl port, bool raw)
-        {
-            port.SetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE, raw);
-        }
-
-        internal static void SetStereoMode(this MMALPortImpl port, StereoMode mode)
-        {
-            MMAL_PARAMETER_STEREOSCOPIC_MODE_T stereo = new MMAL_PARAMETER_STEREOSCOPIC_MODE_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_STEREOSCOPIC_MODE, Marshal.SizeOf<MMAL_PARAMETER_STEREOSCOPIC_MODE_T>()),
-                                                                                            mode.Mode, mode.Decimate, mode.SwapEyes);
-
-            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &stereo.hdr), "Unable to set Stereo mode");
-        }
-
+        
     }
 }

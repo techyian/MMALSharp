@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
-using static MMALSharp.MMALParameterHelpers;
 using static MMALSharp.MMALCallerHelper;
 using static MMALSharp.Native.MMALParametersVideo;
 using MMALSharp.Utility;
@@ -19,9 +17,7 @@ namespace MMALSharp.Components
     public abstract unsafe class MMALEncoderBase : MMALDownstreamComponent
     {        
         public MMALEncoding EncodingType { get; set; }
-
         public MMALEncoding PixelFormat { get; set; }
-
         public MMALPortImpl InputPort { get; set; }
         public MMALPortImpl OutputPort { get; set; }
 
@@ -32,27 +28,20 @@ namespace MMALSharp.Components
                 throw new PiCameraError("Please configure the encoder component correctly.");
             }
 
-            this.EncodingType = encodingType;
-            this.PixelFormat = pixelFormat;
-
             if (pixelFormat.EncType != MMALEncoding.EncodingType.PixelFormat)
             {
                 throw new PiCameraError("Invalid pixel format selected");
             }
+
+            this.EncodingType = encodingType;
+            this.PixelFormat = pixelFormat;
+            
         }
         
         /// <summary>
-        /// Initializes the encoder component to allow processing to commence. Creates the same format between input/output port.
-        /// </summary>
-        public override void Initialize()
-        {        
-            this.Inputs.ElementAt(0).ShallowCopy(this.Outputs.ElementAt(0));
-        }
-                
-        /// <summary>
         /// Annotates the image with various text as specified in the MMALCameraConfig class.
         /// </summary>
-        internal unsafe void AnnotateImage()
+        internal void AnnotateImage()
         {
             if (MMALCameraConfig.Annotate != null)
             {
@@ -168,9 +157,9 @@ namespace MMALSharp.Components
     /// </summary>
     public sealed unsafe class MMALVideoEncoder : MMALEncoderBase
     {        
-        public int Bitrate { get; set; } = 17000000;
+        public int Bitrate { get; set; }
 
-        public int Framerate { get; set; } = 15;
+        public int Framerate { get; set; }
 
         public int Level { get; set; } = (int)MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4;
 
@@ -214,29 +203,12 @@ namespace MMALSharp.Components
             {
                 this.Framerate = framerate;
             }
-            
-            this.Initialize();
-        }
 
-        public MMALVideoEncoder(ICaptureHandler handler, int quality, int framerate) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, MMALEncoding.MMAL_ENCODING_H264, MMALEncoding.MMAL_ENCODING_I420, handler)
-        {
-            this.Quality = quality;
-            
-            if (framerate > 0)
-            {
-                this.Framerate = framerate;
-            }
-
-            this.Initialize();
-        }
-        
-        public override void Initialize()
-        {        
             if (this.EncodingType.EncType != MMALEncoding.EncodingType.Video)
             {
                 throw new PiCameraError("Unsupported format.");
             }
-                
+
             if (this.Ptr->InputNum > 0)
             {
                 for (int i = 0; i < this.Ptr->InputNum; i++)
@@ -253,49 +225,58 @@ namespace MMALSharp.Components
                 }
             }
 
+            this.Inputs.ElementAt(0).ShallowCopy(this.Outputs.ElementAt(0));
+
             this.InputPort = this.Inputs.ElementAt(0);
             this.OutputPort = this.Outputs.ElementAt(0);
-
-            base.Initialize();
-                        
+            
             this.OutputPort.Ptr->Format->Encoding = this.EncodingType.EncodingVal;
             this.OutputPort.Ptr->Format->EncodingVariant = this.PixelFormat.EncodingVal;
 
             this.ConfigureBitrate();
-                        
+
             this.OutputPort.Ptr->Format->Bitrate = this.Bitrate;
 
             this.OutputPort.Ptr->BufferSize = 512 * 1024;
             this.OutputPort.Ptr->BufferNum = this.OutputPort.BufferNumMin;
 
             MMAL_VIDEO_FORMAT_T vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.VideoResolution.Width,
-                                                                  MMALCameraConfig.VideoResolution.Height,
-                                                                  new MMAL_RECT_T(0, 0, MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height),
-                                                                  new MMAL_RATIONAL_T(0, 1),
-                                                                  this.OutputPort.Ptr->Format->Es->Video.Par,
-                                                                  this.OutputPort.Ptr->Format->Es->Video.ColorSpace);
+                MMALCameraConfig.VideoResolution.Height,
+                new MMAL_RECT_T(0, 0, MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height),
+                new MMAL_RATIONAL_T(0, 1),
+                this.OutputPort.Ptr->Format->Es->Video.Par,
+                this.OutputPort.Ptr->Format->Es->Video.ColorSpace);
 
             MMALCamera.Instance.Camera.VideoPort.Ptr->Format->Es->Video = vFormat;
 
             this.OutputPort.Commit();
-            
-            if(this.EncodingType == MMALEncoding.MMAL_ENCODING_H264)
-            {                
+
+            if (this.EncodingType == MMALEncoding.MMAL_ENCODING_H264)
+            {
                 this.ConfigureIntraPeriod();
-                                
+
                 this.ConfigureVideoProfile();
-                                
+
                 this.ConfigureInlineHeaderFlag();
 
                 this.ConfigureInlineVectorsFlag();
 
                 this.ConfigureIntraRefresh();
             }
-            
+
             this.ConfigureQuantisationParameter();
             this.ConfigureImmutableInput();
         }
+        
+        public MMALVideoEncoder(ICaptureHandler handler, int bitrate, int quality, int framerate) : this(handler, MMALEncoding.MMAL_ENCODING_H264, MMALEncoding.MMAL_ENCODING_I420, bitrate, quality, framerate)
+        {
+            this.Quality = quality;
+            this.Framerate = framerate;
+            this.Bitrate = bitrate;
+        }
 
+        public MMALVideoEncoder(ICaptureHandler handler) : this(handler, MMALEncoding.MMAL_ENCODING_H264, MMALEncoding.MMAL_ENCODING_I420, MaxBitrateLevel4, 10, 25) { }
+        
         /// <summary>
         /// Delegate to process the buffer header containing image data
         /// </summary>
@@ -572,14 +553,8 @@ namespace MMALSharp.Components
     {
         public MMALVideoDecoder(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_DECODER, encodingType, pixelFormat, handler)
         {
-            this.Initialize();
-        }
-
-        public override void Initialize()
-        {
             throw new NotImplementedException();
         }
-        
     }
 
     /// <summary>
@@ -595,27 +570,12 @@ namespace MMALSharp.Components
         public int Quality { get; set; } = 90;
 
         public MMALImageEncoder(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER, encodingType, pixelFormat, handler)
-        {            
-            if (encodingType != null)
-            {
-                this.EncodingType = encodingType;
-            }
-                
+        {
             if(quality > 0)
             {
                 this.Quality = quality;
             }
-                
-            this.Initialize();
-        }
 
-        public MMALImageEncoder(ICaptureHandler handler) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER, MMALEncoding.MMAL_ENCODING_JPEG, MMALEncoding.MMAL_ENCODING_I420, handler)
-        {            
-            this.Initialize();
-        }
-        
-        public override void Initialize()
-        {
             if (this.EncodingType.EncType != MMALEncoding.EncodingType.Image)
             {
                 throw new PiCameraError("Unsupported format.");
@@ -637,10 +597,11 @@ namespace MMALSharp.Components
                 }
             }
 
-            base.Initialize();
+            this.Inputs.ElementAt(0).ShallowCopy(this.Outputs.ElementAt(0));
+
             this.InputPort = this.Inputs.ElementAt(0);
             this.OutputPort = this.Outputs.ElementAt(0);
-
+            
             this.OutputPort.Ptr->Format->Encoding = this.EncodingType.EncodingVal;
             this.OutputPort.Ptr->Format->EncodingVariant = this.PixelFormat.EncodingVal;
 
@@ -648,13 +609,16 @@ namespace MMALSharp.Components
             this.OutputPort.Ptr->BufferSize = Math.Max(this.OutputPort.Ptr->BufferSizeRecommended, this.OutputPort.Ptr->BufferSizeMin);
 
             this.OutputPort.Commit();
-                        
+
             if (this.EncodingType == MMALEncoding.MMAL_ENCODING_JPEG)
             {
                 this.OutputPort.SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, this.Quality);
             }
-                
         }
+
+        public MMALImageEncoder(ICaptureHandler handler, int quality) : this(handler, MMALEncoding.MMAL_ENCODING_JPEG, MMALEncoding.MMAL_ENCODING_I420, quality) { }
+
+        public MMALImageEncoder(ICaptureHandler handler) : this(handler, MMALEncoding.MMAL_ENCODING_JPEG, MMALEncoding.MMAL_ENCODING_I420, 0) { }            
         
         /// <summary>
         /// Adds EXIF tags to the resulting image
@@ -724,14 +688,9 @@ namespace MMALSharp.Components
     {
         public MMALImageDecoder(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_DECODER, encodingType, pixelFormat, handler)
         {
-            this.Initialize();
-        }
-
-        public override void Initialize()
-        {
             throw new NotImplementedException();
         }
-
+        
     }
 
 

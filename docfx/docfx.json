@@ -65,8 +65,11 @@
         ]
       }
     ],
-    "dest": "_site",
-    "globalMetadataFiles": [],
+    "dest": "../docs",
+    "globalMetadata": {      
+	  "_enableSearch": true,
+	  "_disableContribution": true
+    },
     "fileMetadataFiles": [],
     "template": [
       "default"

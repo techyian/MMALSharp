@@ -144,7 +144,7 @@ namespace MMALSharp.Tests
 
                 TestHelper.CleanDirectory("/home/pi/videos/tests");
                 
-                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, 10, 25))
+                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler))
                 {
                     //Create our component pipeline.         
                     fixture.MMALCamera

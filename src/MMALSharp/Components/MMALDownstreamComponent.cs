@@ -15,9 +15,8 @@ namespace MMALSharp.Components
         /// Represents the connection between the upstream/downstream component
         /// </summary>
         public MMALConnectionImpl Connection { get; set; }
-
         
-        public MMALDownstreamComponent(string name, ICaptureHandler handler) : base(name)
+        protected MMALDownstreamComponent(string name, ICaptureHandler handler) : base(name)
         {            
             this.Handler = handler;
         }

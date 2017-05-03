@@ -49,35 +49,13 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_HEADER_T
     {
-        private int id, size;
-
-        public int Id
-        {
-            get
-            {
-                return this.id;
-            }
-            set
-            {
-                this.id = value;
-            }
-        }
-        public int Size
-        {
-            get
-            {
-                return this.size;
-            }
-            set
-            {
-                this.size = value;
-            }
-        }
-
+        public int Id { get; set; }
+        public int Size { get; set; }
+        
         public MMAL_PARAMETER_HEADER_T(int id, int size)
         {
-            this.id = id;
-            this.size = size;
+            this.Id = id;
+            this.Size = size;
         }
     }
 
@@ -1409,22 +1387,22 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_SETTINGS_T
     {
         public MMAL_PARAMETER_HEADER_T hdr;
-        private uint exposure;
+        private int exposure;
         private MMAL_RATIONAL_T analogGain, digitalGain, awbRedGain, awbBlueGain;
-        private uint focusPosition;
+        private int focusPosition;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
-        public uint Exposure => exposure;
+        public int Exposure => exposure;
         public MMAL_RATIONAL_T AnalogGain => analogGain;
         public MMAL_RATIONAL_T DigitalGain => digitalGain;
         public MMAL_RATIONAL_T AwbRedGain => awbRedGain;
         public MMAL_RATIONAL_T AwbBlueGain => awbBlueGain;
-        public uint FocusPosition => focusPosition;
+        public int FocusPosition => focusPosition;
 
 
-        public MMAL_PARAMETER_CAMERA_SETTINGS_T(MMAL_PARAMETER_HEADER_T hdr, uint exposure, MMAL_RATIONAL_T analogGain, 
+        public MMAL_PARAMETER_CAMERA_SETTINGS_T(MMAL_PARAMETER_HEADER_T hdr, int exposure, MMAL_RATIONAL_T analogGain, 
                                                 MMAL_RATIONAL_T digitalGain, MMAL_RATIONAL_T awbRedGain, MMAL_RATIONAL_T awbBlueGain,
-                                                uint focusPosition)
+                                                int focusPosition)
         {
             this.hdr = hdr;
             this.exposure = exposure;
@@ -2615,6 +2593,8 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_ENCODING_T
     {
         public MMAL_PARAMETER_HEADER_T hdr;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
         private uint[] value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
