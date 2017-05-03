@@ -9,7 +9,7 @@ namespace MMALSharp.Components
     /// Represents a downstream component. A downstream component is a component that can have data passed to it from further up the component
     /// heirarchy.
     /// </summary>
-    public abstract unsafe class MMALDownstreamComponent : MMALComponentBase
+    public abstract class MMALDownstreamComponent : MMALComponentBase
     {               
         /// <summary>
         /// Represents the connection between the upstream/downstream component

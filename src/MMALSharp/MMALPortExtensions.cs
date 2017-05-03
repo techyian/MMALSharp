@@ -228,7 +228,7 @@ namespace MMALSharp
             MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &stereo.hdr), "Unable to set Stereo mode");
         }
 
-        internal static unsafe uint[] GetSupportedEncodings(this MMALPortImpl port)
+        internal static unsafe int[] GetSupportedEncodings(this MMALPortImpl port)
         {
             MMAL_PARAMETER_ENCODING_T encodings =
                 new MMAL_PARAMETER_ENCODING_T(

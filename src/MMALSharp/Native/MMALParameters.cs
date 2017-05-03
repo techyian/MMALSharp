@@ -2594,13 +2594,13 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T hdr;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        private uint[] value;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        private int[] value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;
-        public uint[] Value => value;
+        public int[] Value => value;
 
-        public MMAL_PARAMETER_ENCODING_T(MMAL_PARAMETER_HEADER_T hdr, uint[] value)
+        public MMAL_PARAMETER_ENCODING_T(MMAL_PARAMETER_HEADER_T hdr, int[] value)
         {
             this.hdr = hdr;
             this.value = value;

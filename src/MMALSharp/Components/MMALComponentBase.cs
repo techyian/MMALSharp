@@ -61,31 +61,33 @@ namespace MMALSharp
 
         protected MMALComponentBase(string name)
         {
-            var ptr = CreateComponent(name);
-
-            this.Ptr = ptr;
-                        
+            this.Ptr = CreateComponent(name);
+            
             Inputs = new List<MMALPortImpl>();
             Outputs = new List<MMALPortImpl>();
             Clocks = new List<MMALPortImpl>();
             Ports = new List<MMALPortImpl>();
 
-            this.Control = new MMALControlPort(ptr->Control, this);
-                                    
-            if (ptr->ClockNum > 0)
-            {                
-                for (int i = 0; i < ptr->ClockNum; i++)
-                {
-                    Clocks.Add(new MMALPortImpl(&(*ptr->Clock[i]), this));
-                }
+            this.Control = new MMALControlPort(this.Ptr->Control, this);
+            
+            for (int i = 0; i < this.Ptr->InputNum; i++)
+            {
+                this.Inputs.Add(new MMALPortImpl(&(*this.Ptr->Input[i]), this));
             }
-
-            if ((*ptr).PortNum > 0)
-            {                
-                for (int i = 0; i < ptr->PortNum; i++)
-                {                    
-                    Ports.Add(new MMALPortImpl(&(*ptr->Port[i]), this));
-                }
+            
+            for (int i = 0; i < this.Ptr->OutputNum; i++)
+            {
+                this.Outputs.Add(new MMALPortImpl(&(*this.Ptr->Output[i]), this));
+            }
+            
+            for (int i = 0; i < this.Ptr->ClockNum; i++)
+            {
+                Clocks.Add(new MMALPortImpl(&(*this.Ptr->Clock[i]), this));
+            }
+            
+            for (int i = 0; i < this.Ptr->PortNum; i++)
+            {                    
+                Ports.Add(new MMALPortImpl(&(*this.Ptr->Port[i]), this));
             }
         }
 

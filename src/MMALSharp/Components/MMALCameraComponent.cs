@@ -40,22 +40,6 @@ namespace MMALSharp.Components
 
         public MMALCameraComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA)
         {
-            if (this.Ptr->InputNum > 0)
-            {
-                for (int i = 0; i < this.Ptr->InputNum; i++)
-                {
-                    this.Inputs.Add(new MMALPortImpl(&(*this.Ptr->Input[i]), this));
-                }
-            }
-
-            if (this.Ptr->OutputNum > 0)
-            {
-                for (int i = 0; i < this.Ptr->OutputNum; i++)
-                {
-                    this.Outputs.Add(new MMALPortImpl(&(*this.Ptr->Output[i]), this));
-                }
-            }
-
             if (this.CameraInfo == null)
                 this.SetSensorDefaults();
             if (this.Outputs.Count == 0)
@@ -93,27 +77,23 @@ namespace MMALSharp.Components
             this.Control.EnablePort(CameraControlCallback);
 
             var camConfig = new MMAL_PARAMETER_CAMERA_CONFIG_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_CAMERA_CONFIG, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_CONFIG_T>()),
-                this.CameraInfo.MaxWidth,
-                this.CameraInfo.MaxHeight,
-                0,
-                1,
-                this.CameraInfo.MaxWidth,
-                this.CameraInfo.MaxHeight,
-                3,
-                0,
-                0,
-                MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T.MMAL_PARAM_TIMESTAMP_MODE_RESET_STC
-            );
+                                                                this.CameraInfo.MaxWidth,
+                                                                this.CameraInfo.MaxHeight,
+                                                                0,
+                                                                1,
+                                                                this.CameraInfo.MaxWidth,
+                                                                this.CameraInfo.MaxHeight,
+                                                                3,
+                                                                0,
+                                                                0,
+                                                                MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T.MMAL_PARAM_TIMESTAMP_MODE_RESET_STC
+                                                              );
+
             if (MMALCameraConfig.Debug)
                 Console.WriteLine("Camera config set");
 
             this.SetCameraConfig(camConfig);
-
-            if (MMALCameraConfig.PreviewResolution == null)
-            {
-                MMALCameraConfig.PreviewResolution = new Resolution(0, 0);
-            }
-
+            
             if (MMALCameraConfig.PreviewResolution.Width == 0 || MMALCameraConfig.PreviewResolution.Width > this.CameraInfo.MaxWidth)
             {
                 MMALCameraConfig.PreviewResolution.Width = this.CameraInfo.MaxWidth;
@@ -130,26 +110,21 @@ namespace MMALSharp.Components
                 MMALCameraConfig.PreviewResolution = MMALCameraConfig.VideoResolution;
             }
 
-            MMAL_VIDEO_FORMAT_T vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.PreviewResolution.Width,
-                MMALCameraConfig.PreviewResolution.Height,
-                new MMAL_RECT_T(0, 0, MMALCameraConfig.PreviewResolution.Width, MMALCameraConfig.PreviewResolution.Height),
-                new MMAL_RATIONAL_T(0, 1),
-                this.PreviewPort.Ptr->Format->Es->Video.Par,
-                this.PreviewPort.Ptr->Format->Es->Video.ColorSpace);
-
+            var vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.PreviewResolution.Width,
+                                                  MMALCameraConfig.PreviewResolution.Height,
+                                                  new MMAL_RECT_T(0, 0, MMALCameraConfig.PreviewResolution.Width, MMALCameraConfig.PreviewResolution.Height),
+                                                  new MMAL_RATIONAL_T(0, 1),
+                                                  this.PreviewPort.Ptr->Format->Es->Video.Par,
+                                                  this.PreviewPort.Ptr->Format->Es->Video.ColorSpace);
+            
             this.PreviewPort.Ptr->Format->Encoding = MMALCameraConfig.PreviewEncoding.EncodingVal;
             this.PreviewPort.Ptr->Format->EncodingVariant = MMALCameraConfig.PreviewSubformat.EncodingVal;
             this.PreviewPort.Ptr->Format->Es->Video = vFormat;
-
+            
             if (MMALCameraConfig.Debug)
                 Console.WriteLine("Commit preview");
 
             this.PreviewPort.Commit();
-
-            if (MMALCameraConfig.VideoResolution == null)
-            {
-                MMALCameraConfig.VideoResolution = new Resolution(0, 0);
-            }
 
             if (MMALCameraConfig.VideoResolution.Width == 0 || MMALCameraConfig.VideoResolution.Width > this.CameraInfo.MaxWidth)
             {
@@ -162,12 +137,12 @@ namespace MMALSharp.Components
             }
 
             vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.VideoResolution.Width,
-                MMALCameraConfig.VideoResolution.Height,
-                new MMAL_RECT_T(0, 0, MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height),
-                new MMAL_RATIONAL_T(0, 1),
-                this.VideoPort.Ptr->Format->Es->Video.Par,
-                this.VideoPort.Ptr->Format->Es->Video.ColorSpace);
-
+                                              MMALCameraConfig.VideoResolution.Height,
+                                              new MMAL_RECT_T(0, 0, MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height),
+                                              new MMAL_RATIONAL_T(0, 1),
+                                              this.VideoPort.Ptr->Format->Es->Video.Par,
+                                              this.VideoPort.Ptr->Format->Es->Video.ColorSpace);
+            
             this.VideoPort.Ptr->Format->Encoding = MMALCameraConfig.VideoEncoding.EncodingVal;
             this.VideoPort.Ptr->Format->EncodingVariant = MMALCameraConfig.VideoSubformat.EncodingVal;
             this.VideoPort.Ptr->Format->Es->Video = vFormat;
@@ -198,12 +173,12 @@ namespace MMALSharp.Components
             }
 
             vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.StillResolution.Width,
-                MMALCameraConfig.StillResolution.Height,
-                new MMAL_RECT_T(0, 0, MMALCameraConfig.StillResolution.Width, MMALCameraConfig.StillResolution.Height),
-                new MMAL_RATIONAL_T(0, 1),
-                this.StillPort.Ptr->Format->Es->Video.Par,
-                this.StillPort.Ptr->Format->Es->Video.ColorSpace);
-
+                                              MMALCameraConfig.StillResolution.Height,
+                                              new MMAL_RECT_T(0, 0, MMALCameraConfig.StillResolution.Width, MMALCameraConfig.StillResolution.Height),
+                                              new MMAL_RATIONAL_T(0, 1),
+                                              this.StillPort.Ptr->Format->Es->Video.Par,
+                                              this.StillPort.Ptr->Format->Es->Video.ColorSpace);
+            
             this.StillPort.Ptr->Format->Encoding = MMALCameraConfig.StillEncoding.EncodingVal;
             this.StillPort.Ptr->Format->EncodingVariant = MMALCameraConfig.StillSubFormat.EncodingVal;
             this.StillPort.Ptr->Format->Es->Video = vFormat;
@@ -235,12 +210,11 @@ namespace MMALSharp.Components
                 {
                     var settings = (MMAL_PARAMETER_CAMERA_SETTINGS_T*)data;
 
-                    Console.WriteLine("Analog gain num " + settings->AnalogGain.Num);
-                    Console.WriteLine("Analog gain den " + settings->AnalogGain.Den);
-                    Console.WriteLine("Exposure " + settings->Exposure);
-                    Console.WriteLine("Focus position " + settings->FocusPosition);                    
+                    Console.WriteLine($"Analog gain num {settings->AnalogGain.Num}");
+                    Console.WriteLine($"Analog gain den {settings->AnalogGain.Den}");
+                    Console.WriteLine($"Exposure {settings->Exposure}");
+                    Console.WriteLine($"Focus position {settings->FocusPosition}");                    
                 }
-
             }
             else if (buffer.Cmd == MMALEvents.MMAL_EVENT_ERROR)
             {
