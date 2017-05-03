@@ -92,24 +92,77 @@
               <div class="inheritance">
                 <h5>Inheritance</h5>
                   <div class="level0"><span class="xref">System.Object</span></div>
-                  <div class="level1"><a class="xref" href="MMALSharp.Components.MMALDownstreamComponent.html">MMALDownstreamComponent</a></div>
-                  <div class="level2"><span class="xref">MMALEncoderBase</span></div>
-                  <div class="level3"><a class="xref" href="MMALSharp.Components.MMALImageDecoder.html">MMALImageDecoder</a></div>
-                  <div class="level3"><a class="xref" href="MMALSharp.Components.MMALImageEncoder.html">MMALImageEncoder</a></div>
-                  <div class="level3"><a class="xref" href="MMALSharp.Components.MMALVideoDecoder.html">MMALVideoDecoder</a></div>
-                  <div class="level3"><a class="xref" href="MMALSharp.Components.MMALVideoEncoder.html">MMALVideoEncoder</a></div>
+                  <div class="level1"><a class="xref" href="MMALSharp.MMALObject.html">MMALObject</a></div>
+                  <div class="level2"><a class="xref" href="MMALSharp.MMALComponentBase.html">MMALComponentBase</a></div>
+                  <div class="level3"><a class="xref" href="MMALSharp.Components.MMALDownstreamComponent.html">MMALDownstreamComponent</a></div>
+                  <div class="level4"><span class="xref">MMALEncoderBase</span></div>
+                  <div class="level5"><a class="xref" href="MMALSharp.Components.MMALImageDecoder.html">MMALImageDecoder</a></div>
+                  <div class="level5"><a class="xref" href="MMALSharp.Components.MMALImageEncoder.html">MMALImageEncoder</a></div>
+                  <div class="level5"><a class="xref" href="MMALSharp.Components.MMALVideoDecoder.html">MMALVideoDecoder</a></div>
+                  <div class="level5"><a class="xref" href="MMALSharp.Components.MMALVideoEncoder.html">MMALVideoEncoder</a></div>
               </div>
               <div class="inheritedMembers">
                 <h5>Inherited Members</h5>
                 <div>
                   <a class="xref" href="MMALSharp.Components.MMALDownstreamComponent.html#MMALSharp_Components_MMALDownstreamComponent_Connection">MMALDownstreamComponent.Connection</a>
                 </div>
+                <div>
+                  <a class="xref" href="MMALSharp.MMALComponentBase.html#MMALSharp_MMALComponentBase_Control">MMALComponentBase.Control</a>
+                </div>
+                <div>
+                  <a class="xref" href="MMALSharp.MMALComponentBase.html#MMALSharp_MMALComponentBase_Inputs">MMALComponentBase.Inputs</a>
+                </div>
+                <div>
+                  <a class="xref" href="MMALSharp.MMALComponentBase.html#MMALSharp_MMALComponentBase_Outputs">MMALComponentBase.Outputs</a>
+                </div>
+                <div>
+                  <a class="xref" href="MMALSharp.MMALComponentBase.html#MMALSharp_MMALComponentBase_Clocks">MMALComponentBase.Clocks</a>
+                </div>
+                <div>
+                  <a class="xref" href="MMALSharp.MMALComponentBase.html#MMALSharp_MMALComponentBase_Ports">MMALComponentBase.Ports</a>
+                </div>
+                <div>
+                  <a class="xref" href="MMALSharp.MMALComponentBase.html#MMALSharp_MMALComponentBase_Name">MMALComponentBase.Name</a>
+                </div>
+                <div>
+                  <a class="xref" href="MMALSharp.MMALComponentBase.html#MMALSharp_MMALComponentBase_Enabled">MMALComponentBase.Enabled</a>
+                </div>
+                <div>
+                  <a class="xref" href="MMALSharp.MMALComponentBase.html#MMALSharp_MMALComponentBase_Handler">MMALComponentBase.Handler</a>
+                </div>
+                <div>
+                  <a class="xref" href="MMALSharp.MMALComponentBase.html#MMALSharp_MMALComponentBase_ManagedCallback_MMALSharp_MMALBufferImpl_MMALSharp_MMALPortBase_">MMALComponentBase.ManagedCallback(MMALBufferImpl, MMALPortBase)</a>
+                </div>
+                <div>
+                  <a class="xref" href="MMALSharp.MMALObject.html#MMALSharp_MMALObject_Objects">MMALObject.Objects</a>
+                </div>
+                <div>
+                  <span class="xref">System.Object.ToString()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.Equals(System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.GetHashCode()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.GetType()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.MemberwiseClone()</span>
+                </div>
               </div>
               <h6><strong>Namespace</strong>:MMALSharp.Components</h6>
               <h6><strong>Assembly</strong>:MMALSharp.dll</h6>
               <h5 id="MMALSharp_Components_MMALEncoderBase_syntax">Syntax</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public abstract class MMALEncoderBase : MMALDownstreamComponent</code></pre>
+                <pre><code class="lang-csharp hljs">public abstract class MMALEncoderBase : MMALDownstreamComponent, IDisposable</code></pre>
               </div>
               <h3 id="constructors">Constructors
               </h3>
@@ -257,6 +310,8 @@
               <div class="codewrapper">
                 <pre><code class="lang-csharp hljs">public override void Dispose()</code></pre>
               </div>
+              <h5 class="overrides">Overrides</h5>
+              <div><a class="xref" href="MMALSharp.MMALComponentBase.html#MMALSharp_MMALComponentBase_Dispose">MMALComponentBase.Dispose()</a></div>
                         </article>
           </div>
           
