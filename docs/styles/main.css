@@ -126,4 +126,9 @@ span.icon-bar {
 		margin-left: auto;
 		margin-right: auto;
 	}
+	
+	.toc-toggle {
+		color: #000000;
+	}
+	
 }
