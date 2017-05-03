@@ -1,0 +1,31 @@
+{{!Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE file in the project root for full license information.}}
+
+<nav id="autocollapse" class="navbar navbar-mmalsharp ng-scope" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  
+	  <a class="pull-right github-link hidden-lg hidden-md" href="https://github.com/techyian/MMALSharp"><img src="https://techyian.github.io/MMALSharp/images/GitHub-Mark-32px.png"></img></a>
+      
+	  <ul class="nav navbar-nav">
+		<li><a id="nav-home" href="/">MMALSharp</a></li>
+	  </ul>
+	  	  
+    </div>
+    <div class="collapse navbar-collapse" id="navbar">
+      
+	  <a class="pull-right github-link visible-lg visible-md" href="https://github.com/techyian/MMALSharp"><img src="https://techyian.github.io/MMALSharp/images/GitHub-Mark-32px.png"></img></a>
+	  
+	  <form class="navbar-form navbar-right" role="search" id="search">
+        <div class="form-group">
+          <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+        </div>
+      </form>	  
+    </div>
+  </div>
+</nav>

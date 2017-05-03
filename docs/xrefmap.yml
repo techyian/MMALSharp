@@ -2698,6 +2698,191 @@ references:
   commentId: Overload:MMALSharp.MMALComponentBase.Ports
   fullName: MMALSharp.MMALComponentBase.Ports
   nameWithType: MMALComponentBase.Ports
+- uid: MMALSharp.MMALComponentBase`1
+  name: MMALComponentBase<T>
+  href: api/MMALSharp.MMALComponentBase-1.html
+  commentId: T:MMALSharp.MMALComponentBase`1
+  name.vb: MMALComponentBase(Of T)
+  fullName: MMALSharp.MMALComponentBase<T>
+  fullName.vb: MMALSharp.MMALComponentBase(Of T)
+  nameWithType: MMALComponentBase<T>
+  nameWithType.vb: MMALComponentBase(Of T)
+- uid: MMALSharp.MMALComponentBase`1.#ctor(System.String)
+  name: MMALComponentBase(String)
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1__ctor_System_String_
+  commentId: M:MMALSharp.MMALComponentBase`1.#ctor(System.String)
+  fullName: MMALSharp.MMALComponentBase<T>.MMALComponentBase(System.String)
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).MMALComponentBase(System.String)
+  nameWithType: MMALComponentBase<T>.MMALComponentBase(String)
+  nameWithType.vb: MMALComponentBase(Of T).MMALComponentBase(String)
+- uid: MMALSharp.MMALComponentBase`1.#ctor*
+  name: MMALComponentBase
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1__ctor_
+  commentId: Overload:MMALSharp.MMALComponentBase`1.#ctor
+  fullName: MMALSharp.MMALComponentBase<T>.MMALComponentBase
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).MMALComponentBase
+  nameWithType: MMALComponentBase<T>.MMALComponentBase
+  nameWithType.vb: MMALComponentBase(Of T).MMALComponentBase
+- uid: MMALSharp.MMALComponentBase`1.Clocks
+  name: Clocks
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Clocks
+  commentId: P:MMALSharp.MMALComponentBase`1.Clocks
+  fullName: MMALSharp.MMALComponentBase<T>.Clocks
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Clocks
+  nameWithType: MMALComponentBase<T>.Clocks
+  nameWithType.vb: MMALComponentBase(Of T).Clocks
+- uid: MMALSharp.MMALComponentBase`1.Clocks*
+  name: Clocks
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Clocks_
+  commentId: Overload:MMALSharp.MMALComponentBase`1.Clocks
+  fullName: MMALSharp.MMALComponentBase<T>.Clocks
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Clocks
+  nameWithType: MMALComponentBase<T>.Clocks
+  nameWithType.vb: MMALComponentBase(Of T).Clocks
+- uid: MMALSharp.MMALComponentBase`1.Control
+  name: Control
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Control
+  commentId: P:MMALSharp.MMALComponentBase`1.Control
+  fullName: MMALSharp.MMALComponentBase<T>.Control
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Control
+  nameWithType: MMALComponentBase<T>.Control
+  nameWithType.vb: MMALComponentBase(Of T).Control
+- uid: MMALSharp.MMALComponentBase`1.Control*
+  name: Control
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Control_
+  commentId: Overload:MMALSharp.MMALComponentBase`1.Control
+  fullName: MMALSharp.MMALComponentBase<T>.Control
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Control
+  nameWithType: MMALComponentBase<T>.Control
+  nameWithType.vb: MMALComponentBase(Of T).Control
+- uid: MMALSharp.MMALComponentBase`1.Dispose
+  name: Dispose()
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Dispose
+  commentId: M:MMALSharp.MMALComponentBase`1.Dispose
+  fullName: MMALSharp.MMALComponentBase<T>.Dispose()
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Dispose()
+  nameWithType: MMALComponentBase<T>.Dispose()
+  nameWithType.vb: MMALComponentBase(Of T).Dispose()
+- uid: MMALSharp.MMALComponentBase`1.Dispose*
+  name: Dispose
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Dispose_
+  commentId: Overload:MMALSharp.MMALComponentBase`1.Dispose
+  fullName: MMALSharp.MMALComponentBase<T>.Dispose
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Dispose
+  nameWithType: MMALComponentBase<T>.Dispose
+  nameWithType.vb: MMALComponentBase(Of T).Dispose
+- uid: MMALSharp.MMALComponentBase`1.Enabled
+  name: Enabled
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Enabled
+  commentId: P:MMALSharp.MMALComponentBase`1.Enabled
+  fullName: MMALSharp.MMALComponentBase<T>.Enabled
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Enabled
+  nameWithType: MMALComponentBase<T>.Enabled
+  nameWithType.vb: MMALComponentBase(Of T).Enabled
+- uid: MMALSharp.MMALComponentBase`1.Enabled*
+  name: Enabled
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Enabled_
+  commentId: Overload:MMALSharp.MMALComponentBase`1.Enabled
+  fullName: MMALSharp.MMALComponentBase<T>.Enabled
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Enabled
+  nameWithType: MMALComponentBase<T>.Enabled
+  nameWithType.vb: MMALComponentBase(Of T).Enabled
+- uid: MMALSharp.MMALComponentBase`1.Handler
+  name: Handler
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Handler
+  commentId: P:MMALSharp.MMALComponentBase`1.Handler
+  fullName: MMALSharp.MMALComponentBase<T>.Handler
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Handler
+  nameWithType: MMALComponentBase<T>.Handler
+  nameWithType.vb: MMALComponentBase(Of T).Handler
+- uid: MMALSharp.MMALComponentBase`1.Handler*
+  name: Handler
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Handler_
+  commentId: Overload:MMALSharp.MMALComponentBase`1.Handler
+  fullName: MMALSharp.MMALComponentBase<T>.Handler
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Handler
+  nameWithType: MMALComponentBase<T>.Handler
+  nameWithType.vb: MMALComponentBase(Of T).Handler
+- uid: MMALSharp.MMALComponentBase`1.Inputs
+  name: Inputs
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Inputs
+  commentId: P:MMALSharp.MMALComponentBase`1.Inputs
+  fullName: MMALSharp.MMALComponentBase<T>.Inputs
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Inputs
+  nameWithType: MMALComponentBase<T>.Inputs
+  nameWithType.vb: MMALComponentBase(Of T).Inputs
+- uid: MMALSharp.MMALComponentBase`1.Inputs*
+  name: Inputs
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Inputs_
+  commentId: Overload:MMALSharp.MMALComponentBase`1.Inputs
+  fullName: MMALSharp.MMALComponentBase<T>.Inputs
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Inputs
+  nameWithType: MMALComponentBase<T>.Inputs
+  nameWithType.vb: MMALComponentBase(Of T).Inputs
+- uid: MMALSharp.MMALComponentBase`1.ManagedCallback(MMALSharp.MMALBufferImpl,MMALSharp.MMALPortBase)
+  name: ManagedCallback(MMALBufferImpl, MMALPortBase)
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_ManagedCallback_MMALSharp_MMALBufferImpl_MMALSharp_MMALPortBase_
+  commentId: M:MMALSharp.MMALComponentBase`1.ManagedCallback(MMALSharp.MMALBufferImpl,MMALSharp.MMALPortBase)
+  fullName: MMALSharp.MMALComponentBase<T>.ManagedCallback(MMALSharp.MMALBufferImpl, MMALSharp.MMALPortBase)
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).ManagedCallback(MMALSharp.MMALBufferImpl, MMALSharp.MMALPortBase)
+  nameWithType: MMALComponentBase<T>.ManagedCallback(MMALBufferImpl, MMALPortBase)
+  nameWithType.vb: MMALComponentBase(Of T).ManagedCallback(MMALBufferImpl, MMALPortBase)
+- uid: MMALSharp.MMALComponentBase`1.ManagedCallback*
+  name: ManagedCallback
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_ManagedCallback_
+  commentId: Overload:MMALSharp.MMALComponentBase`1.ManagedCallback
+  fullName: MMALSharp.MMALComponentBase<T>.ManagedCallback
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).ManagedCallback
+  nameWithType: MMALComponentBase<T>.ManagedCallback
+  nameWithType.vb: MMALComponentBase(Of T).ManagedCallback
+- uid: MMALSharp.MMALComponentBase`1.Name
+  name: Name
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Name
+  commentId: P:MMALSharp.MMALComponentBase`1.Name
+  fullName: MMALSharp.MMALComponentBase<T>.Name
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Name
+  nameWithType: MMALComponentBase<T>.Name
+  nameWithType.vb: MMALComponentBase(Of T).Name
+- uid: MMALSharp.MMALComponentBase`1.Name*
+  name: Name
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Name_
+  commentId: Overload:MMALSharp.MMALComponentBase`1.Name
+  fullName: MMALSharp.MMALComponentBase<T>.Name
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Name
+  nameWithType: MMALComponentBase<T>.Name
+  nameWithType.vb: MMALComponentBase(Of T).Name
+- uid: MMALSharp.MMALComponentBase`1.Outputs
+  name: Outputs
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Outputs
+  commentId: P:MMALSharp.MMALComponentBase`1.Outputs
+  fullName: MMALSharp.MMALComponentBase<T>.Outputs
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Outputs
+  nameWithType: MMALComponentBase<T>.Outputs
+  nameWithType.vb: MMALComponentBase(Of T).Outputs
+- uid: MMALSharp.MMALComponentBase`1.Outputs*
+  name: Outputs
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Outputs_
+  commentId: Overload:MMALSharp.MMALComponentBase`1.Outputs
+  fullName: MMALSharp.MMALComponentBase<T>.Outputs
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Outputs
+  nameWithType: MMALComponentBase<T>.Outputs
+  nameWithType.vb: MMALComponentBase(Of T).Outputs
+- uid: MMALSharp.MMALComponentBase`1.Ports
+  name: Ports
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Ports
+  commentId: P:MMALSharp.MMALComponentBase`1.Ports
+  fullName: MMALSharp.MMALComponentBase<T>.Ports
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Ports
+  nameWithType: MMALComponentBase<T>.Ports
+  nameWithType.vb: MMALComponentBase(Of T).Ports
+- uid: MMALSharp.MMALComponentBase`1.Ports*
+  name: Ports
+  href: api/MMALSharp.MMALComponentBase-1.html#MMALSharp_MMALComponentBase_1_Ports_
+  commentId: Overload:MMALSharp.MMALComponentBase`1.Ports
+  fullName: MMALSharp.MMALComponentBase<T>.Ports
+  fullName.vb: MMALSharp.MMALComponentBase(Of T).Ports
+  nameWithType: MMALComponentBase<T>.Ports
+  nameWithType.vb: MMALComponentBase(Of T).Ports
 - uid: MMALSharp.MMALComponentNotConfiguredException
   name: MMALComponentNotConfiguredException
   href: api/MMALSharp.MMALComponentNotConfiguredException.html
