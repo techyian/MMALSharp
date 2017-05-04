@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MMALSharp.Handlers;
 
 namespace MMALSharp
 {    
@@ -35,8 +36,8 @@ namespace MMALSharp
 
         private static readonly Lazy<MMALCamera> lazy = new Lazy<MMALCamera>(() => new MMALCamera());
 
-        public static MMALCamera Instance { get { return lazy.Value; } }
-        
+        public static MMALCamera Instance => lazy.Value;
+
         private MMALCamera()
         {
             BcmHost.bcm_host_init();
@@ -130,7 +131,7 @@ namespace MMALSharp
         /// Capture raw image data directly from the Camera component - this method does not use an Image encoder.
         /// </summary>
         /// <returns>The awaitable Task</returns>
-        public async Task TakeRawPicture()
+        public async Task TakeRawPicture(ICaptureHandler handler)
         {
             var encoder = this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == this.Camera.StillPort).FirstOrDefault();
 
@@ -138,6 +139,12 @@ namespace MMALSharp
             {
                 throw new PiCameraError("A connection was found to the Camera still port. No encoder should be connected to the Camera's still port for raw capture.");
             }
+            if (handler == null)
+            {
+                throw new PiCameraError("No handler specified");
+            }
+
+            this.Camera.Handler = handler;
 
             this.CheckPreviewComponentStatus();
 
@@ -151,6 +158,7 @@ namespace MMALSharp
             finally
             {
                 this.Camera.Handler.PostProcess();
+                this.Camera.Handler.Dispose();
             }
         }
 
@@ -166,8 +174,7 @@ namespace MMALSharp
         {
             if (connPort == null)
             {
-                await TakeRawPicture();
-                return;
+                throw new PiCameraError("The port an Image encoder is attached to has not been specified.");
             }
 
             //Find the encoder/decoder which is connected to the output port specified.

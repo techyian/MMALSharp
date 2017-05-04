@@ -27,16 +27,16 @@ namespace MMALSharp.Handlers
         }
 
         /// <summary>
-        /// Records video from the standard output stream via FFmpeg into a video file that can be opened without explicit command line flags.  
+        /// Records video from the standard output stream via FFmpeg, forcing it into an avi container that can be opened by media players without explicit command line flags.  
         /// </summary>
         /// <param name="directory">The directory to store the output video file</param>
-        /// <param name="extension">The extension of the video file</param>
+        /// <param name="filename">The name of the video file</param>
         /// <returns></returns>
-        public static FFmpegCaptureHandler RawVideoToH264(string directory, string extension)
+        public static FFmpegCaptureHandler RawVideoToAvi(string directory, string filename)
         {            
             System.IO.Directory.CreateDirectory(directory);
                         
-            return new FFmpegCaptureHandler($"-re -i - -c:v libx264 {directory.TrimEnd()}/out.{extension.TrimStart('.')}");
+            return new FFmpegCaptureHandler($"-re -i - -c:v copy -an -f avi {directory.TrimEnd()}/{filename}.avi");
         }
 
         public FFmpegCaptureHandler(string argument)
