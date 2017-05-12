@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace MMALSharp.Utility
+namespace MMALSharp
 {
     public class Helpers
     {

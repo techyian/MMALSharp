@@ -137,7 +137,7 @@ namespace MMALSharp
         public static MMALEncoding PreviewEncoding { get; set; } = MMALEncoding.MMAL_ENCODING_OPAQUE;
         public static MMALEncoding PreviewSubformat { get; set; } = MMALEncoding.MMAL_ENCODING_I420;
 
-        public static Resolution PreviewResolution { get; set; } = Resolution.As720p;
+        public static Resolution PreviewResolution { get; set; } = new Resolution(1024, 768);
 
         /*
          * -----------------------------------------------------------------------------------------------------------
@@ -257,15 +257,15 @@ namespace MMALSharp
         Minute
     }
 
-    public class Resolution
+    public class Resolution : IComparable<Resolution>
     {
         public int Width { get; set; }
         public int Height { get; set; }
 
         public Resolution(int width, int height)
         {
-            this.Width = MMALUtil.VCOS_ALIGN_UP(width, 16);
-            this.Height = MMALUtil.VCOS_ALIGN_UP(height, 16);
+            this.Width = width;
+            this.Height = height;
         }
 
         /*
@@ -297,7 +297,32 @@ namespace MMALSharp
         public static Resolution As1080p => new Resolution(1920, 1080);
         
         public static Resolution As1440p => new Resolution(2560, 1440);
-        
+
+        /// <summary>
+        /// Compares this Resolution instance against the Resolution passed in. 
+        /// </summary>
+        /// <param name="res"></param>
+        /// <returns>0 if width and height are same. 1 if source width is greater than target. -1 if target greater than source.</returns>
+        public int CompareTo(Resolution res)
+        {
+            if (this.Width == res.Width && this.Height == res.Height)
+            {
+                return 0;
+            }
+            if (this.Width == res.Width && this.Height > res.Height)
+            {
+                return 1;
+            }
+            if (this.Width == res.Width && this.Height < res.Height)
+            {
+                return -1;
+            }
+            
+            if (this.Width > res.Width)
+                return 1;
+
+            return -1;
+        }
     }
 
 }

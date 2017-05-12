@@ -1,9 +1,5 @@
 ﻿using MMALSharp.Native;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMALSharp
 {
@@ -167,9 +163,6 @@ namespace MMALSharp
                     default:
                         throw new MMALException(status, "Unknown error occurred");
                 }
-
-
-                throw new MMALException(status, prefix);
             }
         }
     }

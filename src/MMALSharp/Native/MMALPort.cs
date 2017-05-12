@@ -104,13 +104,7 @@ namespace MMALSharp.Native
         public ushort Index => index;
         public ushort IndexAll => indexAll;
         public int IsEnabled => isEnabled;
-        public MMAL_ES_FORMAT_T* Format
-        {
-            get
-            {
-                return format;
-            }
-        }
+        public MMAL_ES_FORMAT_T* Format => format;
         public int BufferNumMin => bufferNumMin;        
         public int BufferSizeMin => bufferSizeMin;        
         public int BufferAlignmentMin => bufferAlignmentMin;        

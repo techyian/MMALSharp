@@ -29,7 +29,7 @@ namespace MMALSharp.Tests
                 var list = new List<object[]>();
 
                 list.AddRange(TestData.H264EncoderData.Cast<object[]>().ToList());
-                list.AddRange(TestData.MVCEncoderData.Cast<object[]>().ToList());
+                /*list.AddRange(TestData.MVCEncoderData.Cast<object[]>().ToList());
                 list.AddRange(TestData.H263EncoderData.Cast<object[]>().ToList());
                 list.AddRange(TestData.MP4EncoderData.Cast<object[]>().ToList());
                 list.AddRange(TestData.MP2EncoderData.Cast<object[]>().ToList());
@@ -42,7 +42,7 @@ namespace MMALSharp.Tests
                 list.AddRange(TestData.VP7EncoderData.Cast<object[]>().ToList());
                 list.AddRange(TestData.VP6EncoderData.Cast<object[]>().ToList());
                 list.AddRange(TestData.TheoraEncoderData.Cast<object[]>().ToList());
-                list.AddRange(TestData.SparkEncoderData.Cast<object[]>().ToList());
+                list.AddRange(TestData.SparkEncoderData.Cast<object[]>().ToList());*/
                 list.AddRange(TestData.MJPEGEncoderData.Cast<object[]>().ToList());
 
                 return list;
@@ -62,7 +62,7 @@ namespace MMALSharp.Tests
 
             MMALCameraConfig.VideoStabilisation = vstab;
             MMALCameraConfig.Reload();
-            Assert.True(fixture.MMALCamera.GetVideoStabilisation() == vstab);
+            Assert.True(fixture.MMALCamera.Camera.GetVideoStabilisation() == vstab);
         }
 
         #endregion

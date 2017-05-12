@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using static MMALSharp.MMALCallerHelper;
 using static MMALSharp.Native.MMALParametersVideo;
-using MMALSharp.Utility;
 
 namespace MMALSharp.Components
 {
@@ -217,12 +216,12 @@ namespace MMALSharp.Components
             this.InputPort = this.Inputs.ElementAt(0);
             this.OutputPort = this.Outputs.ElementAt(0);
             
-            this.OutputPort.Ptr->Format->Encoding = this.EncodingType.EncodingVal;
-            this.OutputPort.Ptr->Format->EncodingVariant = this.PixelFormat.EncodingVal;
+            this.OutputPort.Ptr->Format->encoding = this.EncodingType.EncodingVal;
+            this.OutputPort.Ptr->Format->encodingVariant = this.PixelFormat.EncodingVal;
 
             this.ConfigureBitrate();
 
-            this.OutputPort.Ptr->Format->Bitrate = this.Bitrate;
+            this.OutputPort.Ptr->Format->bitrate = this.Bitrate;
 
             this.OutputPort.Ptr->BufferSize = 512 * 1024;
             this.OutputPort.Ptr->BufferNum = this.OutputPort.BufferNumMin;
@@ -231,10 +230,10 @@ namespace MMALSharp.Components
                                                   MMALCameraConfig.VideoResolution.Height,
                                                   new MMAL_RECT_T(0, 0, MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height),
                                                   new MMAL_RATIONAL_T(0, 1),
-                                                  this.OutputPort.Ptr->Format->Es->Video.Par,
-                                                  this.OutputPort.Ptr->Format->Es->Video.ColorSpace);
+                                                  this.OutputPort.Ptr->Format->es->video.Par,
+                                                  this.OutputPort.Ptr->Format->es->video.ColorSpace);
 
-            MMALCamera.Instance.Camera.VideoPort.Ptr->Format->Es->Video = vFormat;
+            MMALCamera.Instance.Camera.VideoPort.Ptr->Format->es->video = vFormat;
 
             this.OutputPort.Commit();
 
@@ -581,8 +580,8 @@ namespace MMALSharp.Components
             this.InputPort = this.Inputs.ElementAt(0);
             this.OutputPort = this.Outputs.ElementAt(0);
             
-            this.OutputPort.Ptr->Format->Encoding = this.EncodingType.EncodingVal;
-            this.OutputPort.Ptr->Format->EncodingVariant = this.PixelFormat.EncodingVal;
+            this.OutputPort.Ptr->Format->encoding = this.EncodingType.EncodingVal;
+            this.OutputPort.Ptr->Format->encodingVariant = this.PixelFormat.EncodingVal;
 
             this.OutputPort.Ptr->BufferNum = Math.Max(this.OutputPort.Ptr->BufferNumRecommended, this.OutputPort.Ptr->BufferNumMin);
             this.OutputPort.Ptr->BufferSize = Math.Max(this.OutputPort.Ptr->BufferSizeRecommended, this.OutputPort.Ptr->BufferSizeMin);

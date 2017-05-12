@@ -171,12 +171,7 @@ namespace MMALSharp
         /// <param name="managedCallback">The managed method to callback to from the native callback</param>
         internal void Start(int outputPortNumber, Action<MMALBufferImpl, MMALPortBase> managedCallback)
         {
-            if (this.Handler != null && this.Handler.GetType().GetTypeInfo().IsSubclassOf(typeof(StreamCaptureHandler)))
-            {
-                ((StreamCaptureHandler)this.Handler).NewFile();
-            }
-
-            this.Outputs.ElementAt(outputPortNumber).EnablePort(managedCallback);
+            this.Start(this.Outputs.ElementAt(outputPortNumber), managedCallback);
         }
 
         /// <summary>

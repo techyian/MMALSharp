@@ -1,11 +1,8 @@
 ﻿using MMALSharp.Native;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
+
 
 namespace MMALSharp.Components
 {
@@ -14,9 +11,9 @@ namespace MMALSharp.Components
     /// </summary>
     public unsafe class MMALCameraComponent : MMALComponentBase
     {        
-        private const int MMALCameraPreviewPort = 0;
-        private const int MMALCameraVideoPort = 1;
-        private const int MMALCameraStillPort = 2;
+        public const int MMALCameraPreviewPort = 0;
+        public const int MMALCameraVideoPort = 1;
+        public const int MMALCameraStillPort = 2;
         
         /// <summary>
         /// Managed reference to the Preview port of the camera
@@ -73,16 +70,14 @@ namespace MMALSharp.Components
 
             if (MMALCameraConfig.SetChangeEventRequest)
                 this.Control.SetChangeEventRequest(eventRequest);
-
-            this.Control.EnablePort(CameraControlCallback);
-
+            
             var camConfig = new MMAL_PARAMETER_CAMERA_CONFIG_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_CAMERA_CONFIG, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_CONFIG_T>()),
                                                                 this.CameraInfo.MaxWidth,
                                                                 this.CameraInfo.MaxHeight,
                                                                 0,
                                                                 1,
-                                                                this.CameraInfo.MaxWidth,
-                                                                this.CameraInfo.MaxHeight,
+                                                                MMALCameraConfig.PreviewResolution.Width,
+                                                                MMALCameraConfig.PreviewResolution.Height,
                                                                 3,
                                                                 0,
                                                                 0,
@@ -93,114 +88,21 @@ namespace MMALSharp.Components
                 Console.WriteLine("Camera config set");
 
             this.SetCameraConfig(camConfig);
-            
-            if (MMALCameraConfig.PreviewResolution.Width == 0 || MMALCameraConfig.PreviewResolution.Width > this.CameraInfo.MaxWidth)
-            {
-                MMALCameraConfig.PreviewResolution.Width = this.CameraInfo.MaxWidth;
-            }
 
-            if (MMALCameraConfig.PreviewResolution.Height == 0 || MMALCameraConfig.PreviewResolution.Height > this.CameraInfo.MaxHeight)
-            {
-                MMALCameraConfig.PreviewResolution.Height = this.CameraInfo.MaxHeight;
-            }
+            this.Control.EnablePort(CameraControlCallback);
 
-            if (MMALCameraConfig.VideoResolution != null)
-            {
-                //HW limitation means Preview must be the same as Video resolution if applicable. Does not apply for still capture.
-                MMALCameraConfig.PreviewResolution = MMALCameraConfig.VideoResolution;
-            }
-
-            var vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.PreviewResolution.Width,
-                                                  MMALCameraConfig.PreviewResolution.Height,
-                                                  new MMAL_RECT_T(0, 0, MMALCameraConfig.PreviewResolution.Width, MMALCameraConfig.PreviewResolution.Height),
-                                                  new MMAL_RATIONAL_T(0, 1),
-                                                  this.PreviewPort.Ptr->Format->Es->Video.Par,
-                                                  this.PreviewPort.Ptr->Format->Es->Video.ColorSpace);
-            
-            this.PreviewPort.Ptr->Format->Encoding = MMALCameraConfig.PreviewEncoding.EncodingVal;
-            this.PreviewPort.Ptr->Format->EncodingVariant = MMALCameraConfig.PreviewSubformat.EncodingVal;
-            this.PreviewPort.Ptr->Format->Es->Video = vFormat;
-            
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine("Commit preview");
-
-            this.PreviewPort.Commit();
-
-            if (MMALCameraConfig.VideoResolution.Width == 0 || MMALCameraConfig.VideoResolution.Width > this.CameraInfo.MaxWidth)
-            {
-                MMALCameraConfig.VideoResolution.Width = this.CameraInfo.MaxWidth;
-            }
-
-            if (MMALCameraConfig.VideoResolution.Height == 0 || MMALCameraConfig.VideoResolution.Height > this.CameraInfo.MaxHeight)
-            {
-                MMALCameraConfig.VideoResolution.Height = this.CameraInfo.MaxHeight;
-            }
-
-            vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.VideoResolution.Width,
-                                              MMALCameraConfig.VideoResolution.Height,
-                                              new MMAL_RECT_T(0, 0, MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height),
-                                              new MMAL_RATIONAL_T(0, 1),
-                                              this.VideoPort.Ptr->Format->Es->Video.Par,
-                                              this.VideoPort.Ptr->Format->Es->Video.ColorSpace);
-            
-            this.VideoPort.Ptr->Format->Encoding = MMALCameraConfig.VideoEncoding.EncodingVal;
-            this.VideoPort.Ptr->Format->EncodingVariant = MMALCameraConfig.VideoSubformat.EncodingVal;
-            this.VideoPort.Ptr->Format->Es->Video = vFormat;
-
-
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine("Commit video");
-
-            this.VideoPort.Commit();
-
-            if (this.VideoPort.Ptr->BufferNum < 3)
-                this.VideoPort.Ptr->BufferNum = 3;
-
-            //If user hasn't specified Width/Height, or one which is too high, use highest resolution supported by sensor.
-            if (MMALCameraConfig.StillResolution == null)
-            {
-                MMALCameraConfig.StillResolution = new Resolution(0, 0);
-            }
-
-            if (MMALCameraConfig.StillResolution.Width == 0 || MMALCameraConfig.StillResolution.Width > this.CameraInfo.MaxWidth)
-            {
-                MMALCameraConfig.StillResolution.Width = this.CameraInfo.MaxWidth;
-            }
-
-            if (MMALCameraConfig.StillResolution.Height == 0 || MMALCameraConfig.StillResolution.Height > this.CameraInfo.MaxHeight)
-            {
-                MMALCameraConfig.StillResolution.Height = this.CameraInfo.MaxHeight;
-            }
-
-            vFormat = new MMAL_VIDEO_FORMAT_T(MMALCameraConfig.StillResolution.Width,
-                                              MMALCameraConfig.StillResolution.Height,
-                                              new MMAL_RECT_T(0, 0, MMALCameraConfig.StillResolution.Width, MMALCameraConfig.StillResolution.Height),
-                                              new MMAL_RATIONAL_T(0, 1),
-                                              this.StillPort.Ptr->Format->Es->Video.Par,
-                                              this.StillPort.Ptr->Format->Es->Video.ColorSpace);
-            
-            this.StillPort.Ptr->Format->Encoding = MMALCameraConfig.StillEncoding.EncodingVal;
-            this.StillPort.Ptr->Format->EncodingVariant = MMALCameraConfig.StillSubFormat.EncodingVal;
-            this.StillPort.Ptr->Format->Es->Video = vFormat;
-
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine("Commit still");
-
-            this.StillPort.Commit();
-
-            if (this.StillPort.Ptr->BufferNum < 3)
-                this.StillPort.Ptr->BufferNum = 3;
+            this.Initialise();
 
             if (MMALCameraConfig.Debug)
                 Console.WriteLine("Camera component configured.");
         }
         
-        public void SetSensorDefaults()
+        internal void SetSensorDefaults()
         {
             this.CameraInfo = new MMALCameraInfoComponent();                        
         }
         
-        public void CameraControlCallback(MMALBufferImpl buffer, MMALPortBase port)
+        internal void CameraControlCallback(MMALBufferImpl buffer, MMALPortBase port)
         {            
             if (buffer.Cmd == MMALEvents.MMAL_EVENT_PARAMETER_CHANGED)
             {                
@@ -224,6 +126,176 @@ namespace MMALSharp.Components
             {
                 Console.WriteLine("Received unexpected camera control callback event");
             }            
+        }
+
+        internal void Initialise()
+        {
+            this.SetCameraParameters();
+            this.InitialisePreview();
+            this.InitialiseVideo();
+            this.InitialiseStill();
+        }
+
+        private void InitialisePreview()
+        {
+            if (MMALCameraConfig.PreviewResolution.Width == 0 || MMALCameraConfig.PreviewResolution.Width > this.CameraInfo.MaxWidth)
+            {
+                MMALCameraConfig.PreviewResolution.Width = this.CameraInfo.MaxWidth;
+            }
+
+            if (MMALCameraConfig.PreviewResolution.Height == 0 || MMALCameraConfig.PreviewResolution.Height > this.CameraInfo.MaxHeight)
+            {
+                MMALCameraConfig.PreviewResolution.Height = this.CameraInfo.MaxHeight;
+            }
+
+            if (MMALCameraConfig.VideoResolution != null && MMALCameraConfig.PreviewResolution.CompareTo(MMALCameraConfig.VideoResolution) > 0)
+            {
+                //HW limitation means Preview must be the same as Video resolution if applicable. Does not apply for still capture.
+                MMALCameraConfig.PreviewResolution = MMALCameraConfig.VideoResolution;
+            }
+
+            var vFormat = new MMAL_VIDEO_FORMAT_T(
+                MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.PreviewResolution.Width, 32),
+                MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.PreviewResolution.Height, 16),
+                new MMAL_RECT_T(0, 0, MMALCameraConfig.PreviewResolution.Width, MMALCameraConfig.PreviewResolution.Height),
+                new MMAL_RATIONAL_T(0, 1),
+                this.PreviewPort.Ptr->Format->es->video.Par,
+                this.PreviewPort.Ptr->Format->es->video.ColorSpace
+            );
+            
+            this.PreviewPort.Ptr->Format->encoding = MMALCameraConfig.PreviewEncoding.EncodingVal;
+            this.PreviewPort.Ptr->Format->encodingVariant = MMALCameraConfig.PreviewSubformat.EncodingVal;
+            this.PreviewPort.Ptr->Format->es->video = vFormat;
+
+            if (MMALCameraConfig.Debug)
+                Console.WriteLine("Commit preview");
+
+            this.PreviewPort.Commit();
+        }
+
+        private void InitialiseVideo()
+        {
+            if (MMALCameraConfig.VideoResolution.Width == 0 || MMALCameraConfig.VideoResolution.Width > this.CameraInfo.MaxWidth)
+            {
+                MMALCameraConfig.VideoResolution.Width = this.CameraInfo.MaxWidth;
+            }
+
+            if (MMALCameraConfig.VideoResolution.Height == 0 || MMALCameraConfig.VideoResolution.Height > this.CameraInfo.MaxHeight)
+            {
+                MMALCameraConfig.VideoResolution.Height = this.CameraInfo.MaxHeight;
+            }
+            
+            var vFormat = new MMAL_VIDEO_FORMAT_T(
+                MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.VideoResolution.Width, 32),
+                MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.VideoResolution.Height, 16),
+                new MMAL_RECT_T(0, 0, MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height),
+                new MMAL_RATIONAL_T(0, 1),
+                this.VideoPort.Ptr->Format->es->video.Par,
+                this.VideoPort.Ptr->Format->es->video.ColorSpace
+            );
+
+            this.VideoPort.Ptr->Format->encoding = MMALCameraConfig.VideoEncoding.EncodingVal;
+            this.VideoPort.Ptr->Format->encodingVariant = MMALCameraConfig.VideoSubformat.EncodingVal;
+            this.VideoPort.Ptr->Format->es->video = vFormat;
+
+            if (MMALCameraConfig.Debug)
+                Console.WriteLine("Commit video");
+
+            this.VideoPort.Commit();
+
+            this.VideoPort.Ptr->BufferNum = Math.Max(this.VideoPort.BufferNumRecommended,
+                this.VideoPort.BufferNumMin);
+
+            this.VideoPort.Ptr->BufferSize = Math.Max(this.VideoPort.BufferSizeRecommended,
+                this.VideoPort.BufferSizeMin);
+        }
+
+        private void InitialiseStill()
+        {
+            //If user hasn't specified Width/Height, or one which is too high, use highest resolution supported by sensor.
+            if (MMALCameraConfig.StillResolution == null)
+            {
+                MMALCameraConfig.StillResolution = new Resolution(0, 0);
+            }
+
+            if (MMALCameraConfig.StillResolution.Width == 0 || MMALCameraConfig.StillResolution.Width > this.CameraInfo.MaxWidth)
+            {
+                MMALCameraConfig.StillResolution.Width = this.CameraInfo.MaxWidth;
+            }
+
+            if (MMALCameraConfig.StillResolution.Height == 0 || MMALCameraConfig.StillResolution.Height > this.CameraInfo.MaxHeight)
+            {
+                MMALCameraConfig.StillResolution.Height = this.CameraInfo.MaxHeight;
+            }
+
+            var vFormat = new MMAL_VIDEO_FORMAT_T();
+
+            if (MMALCameraConfig.StillEncoding == MMALEncoding.MMAL_ENCODING_RGB32 ||
+                MMALCameraConfig.StillEncoding == MMALEncoding.MMAL_ENCODING_RGB24 ||
+                MMALCameraConfig.StillEncoding == MMALEncoding.MMAL_ENCODING_RGB16)
+            {
+                Helpers.PrintWarning("Encoding set to RGB. Increasing width padding to multiple of 16.");
+
+                vFormat = new MMAL_VIDEO_FORMAT_T(
+                    MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.StillResolution.Width, 16),
+                    MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.StillResolution.Height, 16),
+                    new MMAL_RECT_T(0, 0, MMALCameraConfig.StillResolution.Width,
+                        MMALCameraConfig.StillResolution.Height),
+                    new MMAL_RATIONAL_T(0, 1),
+                    this.StillPort.Ptr->Format->es->video.Par,
+                    this.StillPort.Ptr->Format->es->video.ColorSpace
+                );
+                
+            }
+            else
+            {
+                vFormat = new MMAL_VIDEO_FORMAT_T(
+                    MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.StillResolution.Width, 32),
+                    MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.StillResolution.Height, 16),
+                    new MMAL_RECT_T(0, 0, MMALCameraConfig.StillResolution.Width, MMALCameraConfig.StillResolution.Height),
+                    new MMAL_RATIONAL_T(0, 1),
+                    this.StillPort.Ptr->Format->es->video.Par,
+                    this.StillPort.Ptr->Format->es->video.ColorSpace
+                );
+            }
+            
+            this.StillPort.Ptr->Format->es->video = vFormat;
+            this.StillPort.Ptr->Format->encoding = MMALCameraConfig.StillEncoding.EncodingVal;
+            this.StillPort.Ptr->Format->encodingVariant = MMALCameraConfig.StillSubFormat.EncodingVal;
+
+            if (MMALCameraConfig.Debug)
+                Console.WriteLine("Commit still");
+
+            this.StillPort.Commit();
+
+            this.StillPort.Ptr->BufferNum = Math.Max(this.StillPort.BufferNumRecommended,
+                this.StillPort.BufferNumMin);
+
+            this.StillPort.Ptr->BufferSize = Math.Max(this.StillPort.BufferSizeRecommended,
+                this.StillPort.BufferSizeMin);
+        }
+
+        internal void SetCameraParameters()
+        {
+            this.SetSaturation(MMALCameraConfig.Saturation);
+            this.SetSharpness(MMALCameraConfig.Sharpness);
+            this.SetContrast(MMALCameraConfig.Contrast);
+            this.SetBrightness(MMALCameraConfig.Brightness);
+            this.SetISO(MMALCameraConfig.ISO);
+            this.SetVideoStabilisation(MMALCameraConfig.VideoStabilisation);
+            this.SetExposureCompensation(MMALCameraConfig.ExposureCompensation);
+            this.SetExposureMode(MMALCameraConfig.ExposureMode);
+            this.SetExposureMeteringMode(MMALCameraConfig.ExposureMeterMode);
+            this.SetAwbMode(MMALCameraConfig.AwbMode);
+            this.SetAwbGains(MMALCameraConfig.AwbGainsR, MMALCameraConfig.AwbGainsB);
+            this.SetImageFx(MMALCameraConfig.ImageFx);
+            this.SetColourFx(MMALCameraConfig.ColourFx);
+            this.SetRotation(MMALCameraConfig.Rotation);
+            this.SetShutterSpeed(MMALCameraConfig.ShutterSpeed);
+            this.SetStatsPass(MMALCameraConfig.StatsPass);
+            this.SetDRC(MMALCameraConfig.DrcLevel);
+            this.SetFlips(MMALCameraConfig.Flips);
+            this.SetZoom(MMALCameraConfig.ROI);
         }
 
         public override void Dispose()

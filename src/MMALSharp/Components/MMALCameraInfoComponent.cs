@@ -1,10 +1,6 @@
 ﻿using MMALSharp.Native;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp.Components
@@ -35,7 +31,7 @@ namespace MMALSharp.Components
             this.MaxWidth = 2592;
             this.MaxHeight = 1944;
 
-            var ptr1 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_T>());
+            IntPtr ptr1 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_T>());
             var str1 = (MMAL_PARAMETER_HEADER_T*)ptr1;
 
             str1->Id = MMALParametersCamera.MMAL_PARAMETER_CAMERA_INFO;      
@@ -51,9 +47,8 @@ namespace MMALSharp.Components
             {
                 Marshal.FreeHGlobal(ptr1);
 
-                //Running on newer firmware - default to first camera found.                
-                //152
-                var ptr2 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_V2_T>());
+                //Running on newer firmware - default to first camera found.
+                IntPtr ptr2 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_V2_T>());
                 var str2 = (MMAL_PARAMETER_HEADER_T*)ptr2;
 
                 str2->Id = MMALParametersCamera.MMAL_PARAMETER_CAMERA_INFO;
@@ -63,7 +58,7 @@ namespace MMALSharp.Components
                 {
                     MMALCheck(MMALPort.mmal_port_parameter_get(this.Control.Ptr, str2), "Unable to get camera info for newer firmware.");
 
-                    var p = (IntPtr)(str2);
+                    var p = (IntPtr)str2;
 
                     var s = Marshal.PtrToStructure<MMAL_PARAMETER_CAMERA_INFO_V2_T>(p);
 

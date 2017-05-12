@@ -58,28 +58,8 @@ namespace MMALSharp.Native
         private MMAL_RATIONAL_T frameRate, par;
         private int colorSpace;
 
-        public int Width
-        {
-            get
-            {
-                return this.width;
-            }
-            set
-            {
-                this.width = value;
-            }
-        }
-        public int Height
-        {
-            get
-            {
-                return this.height;
-            }
-            set
-            {
-                this.height = value;
-            }
-        }
+        public int Width => width;
+        public int Height => height;
         public MMAL_RECT_T Crop => crop;
         public MMAL_RATIONAL_T FrameRate => frameRate;
         public MMAL_RATIONAL_T Par => par;
@@ -135,44 +115,10 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_ES_SPECIFIC_FORMAT_T
     {
-        private MMAL_AUDIO_FORMAT_T audio;
-        private MMAL_VIDEO_FORMAT_T video;
-        private MMAL_SUBPICTURE_FORMAT_T subpicture;
-
-        public MMAL_AUDIO_FORMAT_T Audio
-        {
-            get
-            {
-                return this.audio;
-            }
-            set
-            {
-                this.audio = value;
-            }
-        }
-        public MMAL_VIDEO_FORMAT_T Video
-        {
-            get
-            {
-                return this.video;
-            }
-            set
-            {
-                this.video = value;
-            }
-        }        
-        public MMAL_SUBPICTURE_FORMAT_T SubPicture
-        {
-            get
-            {
-                return this.subpicture;
-            }
-            set
-            {
-                this.subpicture = value;
-            }
-        }
-
+        public MMAL_AUDIO_FORMAT_T audio;
+        public MMAL_VIDEO_FORMAT_T video;
+        public MMAL_SUBPICTURE_FORMAT_T subpicture;
+        
         public MMAL_ES_SPECIFIC_FORMAT_T(MMAL_AUDIO_FORMAT_T audio, MMAL_VIDEO_FORMAT_T video, MMAL_SUBPICTURE_FORMAT_T subpicture)
         {
             this.audio = audio;
@@ -184,53 +130,12 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_ES_FORMAT_T
     {
-        private MMALFormat.MMAL_ES_TYPE_T type;
-        private int encoding, encodingVariant;
-        private MMAL_ES_SPECIFIC_FORMAT_T* es;
-        private int bitrate, flags, extraDataSize;
-        private byte* extraData;
-
-        public MMALFormat.MMAL_ES_TYPE_T Type => type;
-        public int Encoding
-        {
-            get
-            {
-                return this.encoding;
-            }
-            set
-            {
-                this.encoding = value;
-            }
-        }
-        public int EncodingVariant
-        {
-            get
-            {
-                return this.encodingVariant;
-            }
-            set
-            {
-                this.encodingVariant = value;
-            }
-        }
-        public MMAL_ES_SPECIFIC_FORMAT_T* Es => es;
-                
-        public int Bitrate
-        {
-            get
-            {
-                return this.bitrate;
-            }
-            set
-            {
-                this.bitrate = value;
-            }
-        }
-
-        public int Flags => flags;
-        public int ExtraDataSize => extraDataSize;
-        public byte* ExtraData => extraData;
-
+        public MMALFormat.MMAL_ES_TYPE_T type;
+        public int encoding, encodingVariant;
+        public MMAL_ES_SPECIFIC_FORMAT_T* es;
+        public int bitrate, flags, extraDataSize;
+        public byte* extraData;
+        
         public MMAL_ES_FORMAT_T(MMALFormat.MMAL_ES_TYPE_T type, int encoding, int encodingVariant,
                                 MMAL_ES_SPECIFIC_FORMAT_T* es, int bitrate, int flags, int extraDataSize,
                                 byte* extraData)

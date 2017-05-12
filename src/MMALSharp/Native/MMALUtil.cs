@@ -11,7 +11,7 @@ namespace MMALSharp.Native
     {
         public static int VCOS_ALIGN_UP(int value, int roundTo)
         {
-            return (value + (roundTo - 1) & ~(roundTo - 1));
+            return (int)(Math.Ceiling(value / Convert.ToDouble(roundTo)) * roundTo);
         }
 
         public static int MMAL_FOURCC(string s)

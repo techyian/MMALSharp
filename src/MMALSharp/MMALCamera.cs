@@ -1,6 +1,5 @@
 ﻿using MMALSharp.Components;
 using MMALSharp.Native;
-using MMALSharp.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -153,7 +152,7 @@ namespace MMALSharp
             {
                 Console.WriteLine($"Preparing to take picture - Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}");
 
-                await BeginProcessing(this.Camera, null, this.Camera.StillPort, 0);
+                await BeginProcessing(this.Camera, null, this.Camera.StillPort, MMALCameraComponent.MMALCameraStillPort);
             }
             finally
             {
@@ -280,10 +279,10 @@ namespace MMALSharp
         /// Helper method to begin processing image data. Starts the Camera port and awaits until processing is complete.
         /// Cleans up resources upon finish.
         /// </summary>
-        /// <param name="component"></param>
-        /// <param name="connection"></param>
-        /// <param name="cameraPort"></param>
-        /// <param name="outputPort"></param>
+        /// <param name="component">The component we are processing data on</param>
+        /// <param name="connection">The connection between </param>
+        /// <param name="cameraPort">The camera port which image data is coming from</param>
+        /// <param name="outputPort">The output port we are processing data from</param>
         /// <returns>The awaitable Task</returns>
         private async Task BeginProcessing(MMALComponentBase component, MMALConnectionImpl connection, MMALPortImpl cameraPort, int outputPort)
         {
@@ -412,29 +411,11 @@ namespace MMALSharp
             }
                 
             this.DisableCamera();
-            
-            this.SetSaturation(MMALCameraConfig.Saturation);
-            this.SetSharpness(MMALCameraConfig.Sharpness);
-            this.SetContrast(MMALCameraConfig.Contrast);
-            this.SetBrightness(MMALCameraConfig.Brightness);
-            this.SetISO(MMALCameraConfig.ISO);
-            this.SetVideoStabilisation(MMALCameraConfig.VideoStabilisation);
-            this.SetExposureCompensation(MMALCameraConfig.ExposureCompensation);
-            this.SetExposureMode(MMALCameraConfig.ExposureMode);
-            this.SetExposureMeteringMode(MMALCameraConfig.ExposureMeterMode);
-            this.SetAwbMode(MMALCameraConfig.AwbMode);
-            this.SetAwbGains(MMALCameraConfig.AwbGainsR, MMALCameraConfig.AwbGainsB);
-            this.SetImageFx(MMALCameraConfig.ImageFx);
-            this.SetColourFx(MMALCameraConfig.ColourFx);
-            this.SetRotation(MMALCameraConfig.Rotation);
-            this.SetShutterSpeed(MMALCameraConfig.ShutterSpeed);
-            this.SetStatsPass(MMALCameraConfig.StatsPass);
-            this.SetDRC(MMALCameraConfig.DrcLevel);
-            this.SetFlips(MMALCameraConfig.Flips);
-            this.SetZoom(MMALCameraConfig.ROI);
-            
-            this.EnableCamera();
 
+            this.Camera.SetCameraParameters();
+
+            this.EnableCamera();
+            
             return this;
         }
            
