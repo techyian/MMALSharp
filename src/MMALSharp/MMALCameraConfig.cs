@@ -136,9 +136,7 @@ namespace MMALSharp
         */
         public static MMALEncoding PreviewEncoding { get; set; } = MMALEncoding.MMAL_ENCODING_OPAQUE;
         public static MMALEncoding PreviewSubformat { get; set; } = MMALEncoding.MMAL_ENCODING_I420;
-
-        public static Resolution PreviewResolution { get; set; } = new Resolution(1024, 768);
-
+        
         /*
          * -----------------------------------------------------------------------------------------------------------
          * Camera video port specific properties

@@ -123,7 +123,7 @@ namespace MMALSharp
         /// <summary>
         /// Delegate for native port callback
         /// </summary>
-        public MMALSharp.Native.MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
+        internal MMALSharp.Native.MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
 
         /// <summary>
         /// Delegate we use to do further processing on buffer headers when they're received by the native callback delegate
