@@ -140,8 +140,11 @@ namespace MMALSharp
                 throw new PiCameraError("A connection was found to the Camera still port. No encoder should be connected to the Camera's still port for raw capture.");
             }
 
-            this.Camera.Handler = handler ?? throw new PiCameraError("No handler specified");
-
+            if (handler == null)
+            {
+                throw new PiCameraError("No handler specified");
+            }
+                        
             this.CheckPreviewComponentStatus();
 
             //Enable the image encoder output port.            
