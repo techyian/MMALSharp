@@ -136,7 +136,7 @@ namespace MMALSharp.Components
             this.InitialiseStill();
         }
 
-        private void InitialisePreview()
+        internal void InitialisePreview()
         {
             var vFormat = new MMAL_VIDEO_FORMAT_T(
                 MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.VideoResolution.Width, 32),
@@ -157,7 +157,7 @@ namespace MMALSharp.Components
             this.PreviewPort.Commit();
         }
 
-        private void InitialiseVideo()
+        internal void InitialiseVideo()
         {
             if (MMALCameraConfig.VideoResolution.Width == 0 || MMALCameraConfig.VideoResolution.Width > this.CameraInfo.MaxWidth)
             {
@@ -194,7 +194,7 @@ namespace MMALSharp.Components
                 this.VideoPort.BufferSizeMin);
         }
 
-        private void InitialiseStill()
+        internal void InitialiseStill()
         {
             //If user hasn't specified Width/Height, or one which is too high, use highest resolution supported by sensor.
             if (MMALCameraConfig.StillResolution == null)
@@ -218,13 +218,12 @@ namespace MMALSharp.Components
                 MMALCameraConfig.StillEncoding == MMALEncoding.MMAL_ENCODING_RGB24 ||
                 MMALCameraConfig.StillEncoding == MMALEncoding.MMAL_ENCODING_RGB16)
             {
-                Helpers.PrintWarning("Encoding set to RGB. Increasing width padding to multiple of 16.");
+                Helpers.PrintWarning("Encoding set to RGB. Setting width padding to multiple of 16.");
 
                 vFormat = new MMAL_VIDEO_FORMAT_T(
                     MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.StillResolution.Width, 16),
                     MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.StillResolution.Height, 16),
-                    new MMAL_RECT_T(0, 0, MMALCameraConfig.StillResolution.Width,
-                        MMALCameraConfig.StillResolution.Height),
+                    new MMAL_RECT_T(0, 0, MMALCameraConfig.StillResolution.Width, MMALCameraConfig.StillResolution.Height),
                     new MMAL_RATIONAL_T(0, 1),
                     this.StillPort.Ptr->Format->es->video.Par,
                     this.StillPort.Ptr->Format->es->video.ColorSpace
@@ -242,14 +241,14 @@ namespace MMALSharp.Components
                     this.StillPort.Ptr->Format->es->video.ColorSpace
                 );
             }
-            
+
             this.StillPort.Ptr->Format->es->video = vFormat;
             this.StillPort.Ptr->Format->encoding = MMALCameraConfig.StillEncoding.EncodingVal;
             this.StillPort.Ptr->Format->encodingVariant = MMALCameraConfig.StillSubFormat.EncodingVal;
             
             if (MMALCameraConfig.Debug)
                 Console.WriteLine("Commit still");
-
+            
             this.StillPort.Commit();
             
             this.StillPort.Ptr->BufferNum = Math.Max(this.StillPort.BufferNumRecommended,

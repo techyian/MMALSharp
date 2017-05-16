@@ -112,7 +112,8 @@ namespace MMALSharp
             
             try
             {
-                Console.WriteLine($"Preparing to take video. Resolution: {MMALCameraConfig.VideoResolution.Width} x {MMALCameraConfig.VideoResolution.Height}. Encoder: {encoder.EncodingType.EncodingName}. Pixel Format: {encoder.PixelFormat.EncodingName}.");
+                Console.WriteLine($"Preparing to take video. Resolution: {MMALCameraConfig.VideoResolution.Width} x {MMALCameraConfig.VideoResolution.Height}. " +
+                                  $"Encoder: {encoder.EncodingType.EncodingName}. Pixel Format: {encoder.PixelFormat.EncodingName}.");
                                 
                 ((MMALVideoPort)encoder.Outputs.ElementAt(0)).Timeout = timeout;
                 ((MMALVideoEncoder)encoder).Split = split;
@@ -138,19 +139,16 @@ namespace MMALSharp
             {
                 throw new PiCameraError("A connection was found to the Camera still port. No encoder should be connected to the Camera's still port for raw capture.");
             }
-            if (handler == null)
-            {
-                throw new PiCameraError("No handler specified");
-            }
 
-            this.Camera.Handler = handler;
+            this.Camera.Handler = handler ?? throw new PiCameraError("No handler specified");
 
             this.CheckPreviewComponentStatus();
 
             //Enable the image encoder output port.            
             try
             {
-                Console.WriteLine($"Preparing to take picture - Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}");
+                Console.WriteLine($"Preparing to take raw picture - Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}. " +
+                                  $"Encoder: {MMALCameraConfig.StillEncoding.EncodingName}. Pixel Format: {MMALCameraConfig.StillSubFormat.EncodingName}.");
 
                 await BeginProcessing(this.Camera, null, this.Camera.StillPort, MMALCameraComponent.MMALCameraStillPort);
             }
@@ -209,7 +207,8 @@ namespace MMALSharp
             //Enable the image encoder output port.            
             try
             {
-                Console.WriteLine($"Preparing to take picture. Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}. Encoder: {encoder.EncodingType.EncodingName}. Pixel Format: {encoder.PixelFormat.EncodingName}.");
+                Console.WriteLine($"Preparing to take picture. Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}. " +
+                                  $"Encoder: {encoder.EncodingType.EncodingName}. Pixel Format: {encoder.PixelFormat.EncodingName}.");
 
                 await BeginProcessing(encoder, encoder.Connection, this.Camera.StillPort, 0);
             }
@@ -228,8 +227,13 @@ namespace MMALSharp
         /// <param name="useExif">Specify whether to include EXIF tags in the capture</param>
         /// <param name="exifTags">Custom EXIF tags to use in the capture</param>
         /// <returns>The awaitable Task</returns>
-        public async Task TakePictureTimeout(MMALPortImpl connPort, DateTime timeout, bool rawBayer = false, bool useExif = true, params ExifTag[] exifTags)
-        {            
+        public async Task TakePictureTimeout(MMALPortImpl connPort, DateTime timeout, bool rawBayer = false, bool useExif = true, bool burstMode = false, params ExifTag[] exifTags)
+        {    
+            if(burstMode)
+            {
+                this.Camera.StillPort.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_BURST_CAPTURE, true);
+            }
+
             while (DateTime.Now.CompareTo(timeout) < 0)
             {                             
                 await TakePicture(connPort, rawBayer, useExif, exifTags);                
@@ -305,19 +309,16 @@ namespace MMALSharp
             component.CleanPortPools();
         }
 
+        
+
         /// <summary>
         /// Helper method to create a new preview component
         /// </summary>
         /// <param name="renderer">The renderer type</param>
-        /// <returns>The static Camera instance</returns>
+        /// <returns>The camera instance</returns>
         public MMALCamera CreatePreviewComponent(MMALRendererBase renderer)
         {
-            if (this.Preview != null)
-            {
-                this.Preview?.Connection.Disable();
-                this.Preview?.Connection.Destroy();
-                this.Preview.Dispose();
-            }
+            this.DestroyPreviewComponent();
 
             this.Preview = renderer;
             this.Preview.CreateConnection(this.Camera.PreviewPort);
@@ -327,7 +328,7 @@ namespace MMALSharp
         /// <summary>
         /// Helper method to create a splitter component
         /// </summary>
-        /// <returns>The static Camera instance</returns>
+        /// <returns>The camera instance</returns>
         public MMALCamera CreateSplitterComponent()
         {
             this.Splitter = new MMALSplitterComponent();
@@ -339,7 +340,7 @@ namespace MMALSharp
         /// </summary>
         /// <param name="encoder">The encoder component to attach to the output port</param>
         /// <param name="outputPort">The output port to attach to</param>
-        /// <returns>The static Camera instance</returns>
+        /// <returns>The camera instance</returns>
         public MMALCamera AddEncoder(MMALEncoderBase encoder, MMALPortImpl outputPort)
         {            
             if (MMALCameraConfig.Debug)
@@ -359,7 +360,7 @@ namespace MMALSharp
         /// Remove an encoder component from an output port
         /// </summary>
         /// <param name="outputPort">The output port we are removing an encoder component from</param>
-        /// <returns>The static Camera instance</returns>
+        /// <returns>The camera instance</returns>
         public MMALCamera RemoveEncoder(MMALPortImpl outputPort)
         {            
             var enc = this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == outputPort).FirstOrDefault();
@@ -399,26 +400,76 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Configures the camera component. This method applies configuration settings and initialises the components required
-        /// for capturing images.
+        /// Reconfigures the Camera's still port.
         /// </summary>
-        /// <returns>The static Camera instance</returns>
-        public MMALCamera ConfigureCamera()
+        /// <returns>The camera instance</returns>
+        public MMALCamera ConfigureStill()
         {
-            if (MMALCameraConfig.Debug)
-            {
-                Console.WriteLine("Configuring camera parameters.");
-            }
-                
             this.DisableCamera();
 
-            this.Camera.SetCameraParameters();
+            this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == this.Camera.StillPort).ToList().ForEach(c => c.Connection.Disable());
+
+            this.Camera.InitialiseStill();
+
+            this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == this.Camera.StillPort).ToList().ForEach(c => c.Connection.Enable());
 
             this.EnableCamera();
-            
+
             return this;
         }
-           
+
+        /// <summary>
+        /// Reconfigures the Camera's video port.
+        /// </summary>
+        /// <returns>The camera instance</returns>
+        public MMALCamera ConfigureVideo()
+        {
+            this.DisableCamera();
+
+            this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == this.Camera.VideoPort).ToList().ForEach(c => c.Connection.Disable());
+
+            this.Camera.InitialiseVideo();
+
+            this.Encoders.Where(c => c.Connection != null && c.Connection.OutputPort == this.Camera.VideoPort).ToList().ForEach(c => c.Connection.Enable());
+
+            this.EnableCamera();
+
+            return this;
+        }
+
+        /// <summary>
+        /// Reconfigures the Camera's preview port.
+        /// </summary>
+        /// <returns>The camera instance</returns>
+        public MMALCamera ConfigurePreview()
+        {
+            this.DisableCamera();
+
+            this.Preview?.Connection?.Disable();            
+            this.Camera.InitialisePreview();
+            this.Preview?.Connection?.Enable();
+
+            this.EnableCamera();
+
+            return this;
+        }
+             
+
+        private void DestroyPreviewComponent()
+        {
+            if (this.Preview != null)
+            {
+                this.Preview?.Connection.Disable();
+                this.Preview?.Connection.Destroy();
+                this.Preview.Dispose();
+            }
+        }
+
+        private void DestroyEncoders()
+        {
+            this.Encoders.ForEach(c => c.Dispose());
+        }
+
         /// <summary>
         /// Helper method to check the Renderer component status. If a Renderer has not been initialized, a warning will
         /// be shown to the user. If a Renderer has been created but a connection has not been initialized, this will be 

@@ -220,6 +220,9 @@ namespace MMALSharp
                     if (MMALCameraConfig.Debug)
                         Console.WriteLine("Destroying port pool");
 
+                    if (port.Enabled)
+                        port.DisablePort();
+
                     port.DestroyPortPool();
                     port.BufferPool = null;
                 }
@@ -231,6 +234,9 @@ namespace MMALSharp
                 {
                     if (MMALCameraConfig.Debug)
                         Console.WriteLine("Destroying port pool");
+
+                    if (port.Enabled)
+                        port.DisablePort();
 
                     port.DestroyPortPool();
                     port.BufferPool = null;

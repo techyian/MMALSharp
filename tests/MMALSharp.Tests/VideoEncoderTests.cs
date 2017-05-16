@@ -83,8 +83,7 @@ namespace MMALSharp.Tests
                     //Create our component pipeline.         
                     fixture.MMALCamera
                         .AddEncoder(vidEncoder, fixture.MMALCamera.Camera.VideoPort)
-                        .CreatePreviewComponent(new MMALVideoRenderer())
-                        .ConfigureCamera();
+                        .CreatePreviewComponent(new MMALVideoRenderer());
 
                     //Record video for 20 seconds
                     await fixture.MMALCamera.TakeVideo(fixture.MMALCamera.Camera.VideoPort, DateTime.Now.AddSeconds(20));
@@ -120,8 +119,7 @@ namespace MMALSharp.Tests
                     //Create our component pipeline.         
                     fixture.MMALCamera
                         .AddEncoder(vidEncoder, fixture.MMALCamera.Camera.VideoPort)
-                        .CreatePreviewComponent(new MMALVideoRenderer())
-                        .ConfigureCamera();
+                        .CreatePreviewComponent(new MMALVideoRenderer());
                     
                     //2 files should be created from this test. 
                     await fixture.MMALCamera.TakeVideo(fixture.MMALCamera.Camera.VideoPort, DateTime.Now.AddSeconds(30), 
@@ -149,8 +147,7 @@ namespace MMALSharp.Tests
                     //Create our component pipeline.         
                     fixture.MMALCamera
                         .AddEncoder(vidEncoder, fixture.MMALCamera.Camera.VideoPort)
-                        .CreatePreviewComponent(new MMALVideoRenderer())
-                        .ConfigureCamera();
+                        .CreatePreviewComponent(new MMALVideoRenderer());
 
                     //Record video for 20 seconds
                     await fixture.MMALCamera.TakeVideo(fixture.MMALCamera.Camera.VideoPort, DateTime.Now.AddSeconds(20));
@@ -174,8 +171,7 @@ namespace MMALSharp.Tests
                     //Create our component pipeline.         
                     fixture.MMALCamera
                         .AddEncoder(vidEncoder, fixture.MMALCamera.Camera.VideoPort)
-                        .CreatePreviewComponent(new MMALVideoRenderer())
-                        .ConfigureCamera();
+                        .CreatePreviewComponent(new MMALVideoRenderer());
 
                     //Record video for 20 seconds
                     await fixture.MMALCamera.TakeVideo(fixture.MMALCamera.Camera.VideoPort, DateTime.Now.AddSeconds(20));

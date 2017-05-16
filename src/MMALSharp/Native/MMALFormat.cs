@@ -112,11 +112,15 @@ namespace MMALSharp.Native
         }
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    //Union type.
+    [StructLayout(LayoutKind.Explicit)]
     public struct MMAL_ES_SPECIFIC_FORMAT_T
     {
+        [FieldOffset(0)]
         public MMAL_AUDIO_FORMAT_T audio;
+        [FieldOffset(0)]
         public MMAL_VIDEO_FORMAT_T video;
+        [FieldOffset(0)]
         public MMAL_SUBPICTURE_FORMAT_T subpicture;
         
         public MMAL_ES_SPECIFIC_FORMAT_T(MMAL_AUDIO_FORMAT_T audio, MMAL_VIDEO_FORMAT_T video, MMAL_SUBPICTURE_FORMAT_T subpicture)

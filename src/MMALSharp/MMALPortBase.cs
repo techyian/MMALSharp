@@ -218,6 +218,9 @@ namespace MMALSharp
         {
             if (this.BufferPool != null)
             {
+                if (this.Enabled)
+                    this.DisablePort();
+
                 MMALUtil.mmal_port_pool_destroy(this.Ptr, this.BufferPool.Ptr);
             }
         }

@@ -184,7 +184,7 @@ namespace MMALSharp
         /// </summary>
         public static void Reload()
         {
-            MMALCamera.Instance.ConfigureCamera();
+            MMALCamera.Instance.Camera.SetCameraParameters();
         }
 
     }
