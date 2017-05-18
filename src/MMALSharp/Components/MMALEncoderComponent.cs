@@ -190,7 +190,7 @@ namespace MMALSharp.Components
         /// </summary>
         public bool PrepareSplit { get; set; }
 
-        public MMALVideoEncoder(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, int bitrate, int quality, int framerate) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, encodingType, pixelFormat, handler)
+        public MMALVideoEncoder(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int framerate, int bitrate) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, encodingType, pixelFormat, handler)
         {
             this.Quality = quality;
             this.Bitrate = bitrate;
@@ -254,7 +254,7 @@ namespace MMALSharp.Components
             this.ConfigureImmutableInput();
         }
         
-        public MMALVideoEncoder(ICaptureHandler handler, int bitrate, int quality, int framerate) : this(handler, MMALEncoding.MMAL_ENCODING_H264, MMALEncoding.MMAL_ENCODING_I420, bitrate, quality, framerate) { }
+        public MMALVideoEncoder(ICaptureHandler handler, int quality, int framerate, int bitrate = MaxBitrateLevel4) : this(handler, MMALEncoding.MMAL_ENCODING_H264, MMALEncoding.MMAL_ENCODING_I420, bitrate, quality, framerate) { }
 
         public MMALVideoEncoder(ICaptureHandler handler) : this(handler, MMALEncoding.MMAL_ENCODING_H264, MMALEncoding.MMAL_ENCODING_I420, MaxBitrateLevel4, 10, 25) { }
         

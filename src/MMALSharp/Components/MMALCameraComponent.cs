@@ -129,8 +129,7 @@ namespace MMALSharp.Components
         }
 
         internal void Initialise()
-        {
-            this.SetCameraParameters();
+        {          
             this.InitialisePreview();
             this.InitialiseVideo();
             this.InitialiseStill();

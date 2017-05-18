@@ -28,7 +28,7 @@ static void Main(string[] args)
 			cam
 				.AddEncoder(imgEncoder, cam.Camera.StillPort)                    
 				.CreatePreviewComponent(new MMALNullSinkComponent())
-				.ConfigureCamera();
+				.ConfigureCameraSettings();
 				
 			await cam.TakePicture(cam.Camera.StillPort);
 			
@@ -56,7 +56,7 @@ static void Main(string[] args)
 			cam
 				.AddEncoder(imgEncoder, cam.Camera.StillPort)                    
 				.CreatePreviewComponent(new MMALNullSinkComponent())
-				.ConfigureCamera();
+				.ConfigureCameraSettings();
 				
 			//Take pictures every 5 seconds for 1 minute as a timelapse. 
             await cam.TakePictureTimelapse(cam.Camera.StillPort, new Timelapse { Mode = TimelapseMode.Second, Value = 5, Timeout = DateTime.Now.AddMinutes(1) });
@@ -86,7 +86,7 @@ static void Main(string[] args)
 			cam
 				.AddEncoder(imgEncoder, cam.Camera.StillPort)                    
 				.CreatePreviewComponent(new MMALNullSinkComponent())
-				.ConfigureCamera();
+				.ConfigureCameraSettings();
 				
 			//Take pictures continuously for 5 minutes
             await cam.TakePictureTimeout(cam.Camera.StillPort, DateTime.Now.AddMinutes(5));
@@ -117,7 +117,7 @@ static void Main(string[] args)
 			cam
 				.AddEncoder(imgEncoder, cam.Camera.StillPort)                    
 				.CreatePreviewComponent(new MMALNullSinkComponent())
-				.ConfigureCamera();
+				.ConfigureCameraSettings();
 				
 			await cam.TakePicture(cam.Camera.StillPort);
 			
@@ -132,7 +132,7 @@ static void Main(string[] args)
 			//Create our component pipeline.         
 			cam
 				.AddEncoder(imgEncoder, cam.Camera.StillPort)				
-				.ConfigureCamera();
+				.ConfigureCameraSettings();
 				
 			await cam.TakePicture(cam.Camera.StillPort);
 			
@@ -165,7 +165,7 @@ static void Main(string[] args)
 			cam
 				.AddEncoder(vidEncoder, cam.Camera.VideoPort)                    
 				.CreatePreviewComponent(new MMALVideoRenderer())
-				.ConfigureCamera();
+				.ConfigureCameraSettings();
 				
 			//Record video for 1 minute
             await cam.TakeVideo(cam.Camera.VideoPort, DateTime.Now.AddMinutes(1));
@@ -197,7 +197,7 @@ static void Main(string[] args)
 			cam
 				.AddEncoder(vidEncoder, cam.Camera.VideoPort)                    
 				.CreatePreviewComponent(new MMALVideoRenderer())
-				.ConfigureCamera();
+				.ConfigureCameraSettings();
 				
 			//Record video for 1 minute, using segmented video record to split into multiple files every 30 seconds.
             await cam.TakeVideo(cam.Camera.VideoPort, DateTime.Now.AddMinutes(1), new Split { Mode = TimelapseMode.Second, Value = 30 });
@@ -227,7 +227,7 @@ static void Main(string[] args)
 			cam
 				.AddEncoder(vidEncoder, cam.Camera.VideoPort)                    
 				.CreatePreviewComponent(new MMALVideoRenderer())
-				.ConfigureCamera();
+				.ConfigureCameraSettings();
 				
 			//Record video for 1 minute
             await cam.TakeVideo(cam.Camera.VideoPort, DateTime.Now.AddMinutes(1));
@@ -244,7 +244,7 @@ static void Main(string[] args)
 			cam
 				.AddEncoder(vidEncoder, cam.Camera.VideoPort)                    
 				.CreatePreviewComponent(new MMALVideoRenderer())
-				.ConfigureCamera();
+				.ConfigureCameraSettings();
 				
 			//Record video for 1 minute
             await cam.TakeVideo(cam.Camera.VideoPort, DateTime.Now.AddMinutes(1));
@@ -281,7 +281,7 @@ static void Main(string[] args)
 		{
 			cam.AddEncoder(vidEncoder, cam.Camera.VideoPort)                     
 			   .CreatePreviewComponent(new MMALVideoRenderer())
-			   .ConfigureCamera();
+			   .ConfigureCameraSettings();
 
 			/*
 			 * Stream video for 5 minutes via RTMP using the *FFmpegCaptureHandler* class. 
@@ -311,7 +311,7 @@ static void Main(string[] args)
 		{
 			cam.AddEncoder(vidEncoder, cam.Camera.VideoPort)                     
 			   .CreatePreviewComponent(new MMALVideoRenderer())
-			   .ConfigureCamera();
+			   .ConfigureCameraSettings();
 			
 			await cam.TakeVideo(cam.Camera.VideoPort, DateTime.Now.AddMinutes(1));
 		}
@@ -339,7 +339,7 @@ static void Main(string[] args)
 			cam
 				.AddEncoder(imgEncoder, cam.Camera.StillPort)                    
 				.CreatePreviewComponent(new MMALNullSinkComponent())
-				.ConfigureCamera();
+				.ConfigureCameraSettings();
 				
 			//Take pictures every 5 seconds for 1 minute as a timelapse. 
             await cam.TakePictureTimelapse(cam.Camera.StillPort, new Timelapse { Mode = TimelapseMode.Second, Value = 5, Timeout = DateTime.Now.AddMinutes(1) });

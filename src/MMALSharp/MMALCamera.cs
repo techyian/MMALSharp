@@ -118,7 +118,7 @@ namespace MMALSharp
                 ((MMALVideoPort)encoder.Outputs.ElementAt(0)).Timeout = timeout;
                 ((MMALVideoEncoder)encoder).Split = split;
 
-                await BeginProcessing(encoder, encoder.Connection, this.Camera.VideoPort, 0);
+                await BeginProcessing(encoder, encoder.Connection, this.Camera.VideoPort);
                 
             }
             finally
@@ -213,7 +213,7 @@ namespace MMALSharp
                 Console.WriteLine($"Preparing to take picture. Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}. " +
                                   $"Encoder: {encoder.EncodingType.EncodingName}. Pixel Format: {encoder.PixelFormat.EncodingName}.");
 
-                await BeginProcessing(encoder, encoder.Connection, this.Camera.StillPort, 0);
+                await BeginProcessing(encoder, encoder.Connection, this.Camera.StillPort);
             }
             finally
             {
@@ -291,7 +291,7 @@ namespace MMALSharp
         /// <param name="cameraPort">The camera port which image data is coming from</param>
         /// <param name="outputPort">The output port we are processing data from</param>
         /// <returns>The awaitable Task</returns>
-        private async Task BeginProcessing(MMALComponentBase component, MMALConnectionImpl connection, MMALPortImpl cameraPort, int outputPort)
+        private async Task BeginProcessing(MMALComponentBase component, MMALConnectionImpl connection, MMALPortImpl cameraPort, int outputPort = 0)
         {
             component.Start(outputPort, component.ManagedCallback);
 
@@ -403,10 +403,10 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Reconfigures the Camera's still port.
+        /// Reconfigures the Camera's still port. This should be called when you change the Still port resolution or encoding/pixel format types.
         /// </summary>
         /// <returns>The camera instance</returns>
-        public MMALCamera ConfigureStill()
+        public MMALCamera ReconfigureStill()
         {
             this.DisableCamera();
 
@@ -422,10 +422,10 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Reconfigures the Camera's video port.
+        /// Reconfigures the Camera's video port. This should be called when you change the Video port resolution or encoding/pixel format types.
         /// </summary>
         /// <returns>The camera instance</returns>
-        public MMALCamera ConfigureVideo()
+        public MMALCamera ReconfigureVideo()
         {
             this.DisableCamera();
 
@@ -441,10 +441,10 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Reconfigures the Camera's preview port.
+        /// Reconfigures the Camera's preview port. This should be called when you change the Video port resolution 
         /// </summary>
         /// <returns>The camera instance</returns>
-        public MMALCamera ConfigurePreview()
+        public MMALCamera ReconfigurePreview()
         {
             this.DisableCamera();
 
@@ -452,6 +452,24 @@ namespace MMALSharp
             this.Camera.InitialisePreview();
             this.Preview?.Connection?.Enable();
 
+            this.EnableCamera();
+
+            return this;
+        }
+
+        /// <summary>
+        /// This applies the configuration settings against the camera such as Saturation, Contrast etc.
+        /// </summary>
+        /// <returns>The camera instance</returns>
+        public MMALCamera ConfigureCameraSettings()
+        {
+            if (MMALCameraConfig.Debug)
+            {
+                Console.WriteLine("Configuring camera parameters.");
+            }
+
+            this.DisableCamera();
+            this.Camera.SetCameraParameters();            
             this.EnableCamera();
 
             return this;

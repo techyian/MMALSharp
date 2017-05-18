@@ -5,13 +5,13 @@ open Fake
 // Properties
 
 let mmalSharpCommonReleasedir = "./src/MMALSharp.Common/bin/Release"
-let mmalSharpCommonDebugdir = "./src/MMALSharp.Common/bin/Release"
+let mmalSharpCommonDebugdir = "./src/MMALSharp.Common/bin/Debug"
 
 let mmalSharpReleaseDir = "./src/MMALSharp/bin/Release"
 let mmalSharpDebugDir = "./src/MMALSharp/bin/Debug"
 
 let mmalSharpFFmpegReleasedir = "./src/MMALSharp.FFmpeg/bin/Release"
-let mmalSharpFFmpegDebugdir = "./src/MMALSharp.FFmpeg/bin/Release"
+let mmalSharpFFmpegDebugdir = "./src/MMALSharp.FFmpeg/bin/Debug"
 
 // Targets
 Target "Clean" (fun _ ->
