@@ -45,6 +45,7 @@
     <Compile Include="Handlers\ImageStreamCaptureHandler.cs" />
     <Compile Include="Handlers\ProcessResult.cs" />
     <Compile Include="Handlers\StreamCaptureHandler.cs" />
+    <Compile Include="Handlers\TransformStreamCaptureHandler.cs" />
     <Compile Include="Handlers\VideoStreamCaptureHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Helpers.cs" />

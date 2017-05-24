@@ -49,9 +49,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\EncoderComponents\IConvert.cs" />
+    <Compile Include="Components\EncoderComponents\MMALImageDecoder.cs" />
+    <Compile Include="Components\EncoderComponents\MMALImageEncoder.cs" />
+    <Compile Include="Components\EncoderComponents\MMALVideoDecoder.cs" />
+    <Compile Include="Components\EncoderComponents\MMALVideoEncoder.cs" />
     <Compile Include="Components\MMALCameraInfoComponent.cs" />
     <Compile Include="Components\MMALDownstreamComponent.cs" />
-    <Compile Include="Components\MMALEncoderComponent.cs" />
+    <Compile Include="Components\EncoderComponents\MMALEncoderBase.cs" />
     <Compile Include="Components\MMALSplitterComponent.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="MMALBufferImpl.cs" />

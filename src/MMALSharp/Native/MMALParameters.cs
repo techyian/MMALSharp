@@ -2594,7 +2594,7 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T hdr;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
         private int[] value;
 
         public MMAL_PARAMETER_HEADER_T Hdr => hdr;

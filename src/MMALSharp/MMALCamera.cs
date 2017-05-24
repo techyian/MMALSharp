@@ -112,8 +112,8 @@ namespace MMALSharp
             
             try
             {
-                Console.WriteLine($"Preparing to take video. Resolution: {MMALCameraConfig.VideoResolution.Width} x {MMALCameraConfig.VideoResolution.Height}. " +
-                                  $"Encoder: {encoder.EncodingType.EncodingName}. Pixel Format: {encoder.PixelFormat.EncodingName}.");
+                Console.WriteLine($"Preparing to take video. Resolution: {encoder.OutputPort.Width} x {encoder.OutputPort.Height}. " +
+                                  $"Encoder: {encoder.OutputPort.EncodingType.EncodingName}. Pixel Format: {encoder.OutputPort.PixelFormat.EncodingName}.");
                                 
                 ((MMALVideoPort)encoder.Outputs.ElementAt(0)).Timeout = timeout;
                 ((MMALVideoEncoder)encoder).Split = split;
@@ -210,8 +210,8 @@ namespace MMALSharp
             //Enable the image encoder output port.            
             try
             {
-                Console.WriteLine($"Preparing to take picture. Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}. " +
-                                  $"Encoder: {encoder.EncodingType.EncodingName}. Pixel Format: {encoder.PixelFormat.EncodingName}.");
+                Console.WriteLine($"Preparing to take picture. Resolution: {encoder.OutputPort.Width} x {encoder.OutputPort.Height}. " +
+                                  $"Encoder: {encoder.OutputPort.EncodingType.EncodingName}. Pixel Format: {encoder.OutputPort.PixelFormat.EncodingName}.");
 
                 await BeginProcessing(encoder, encoder.Connection, this.Camera.StillPort);
             }
@@ -293,7 +293,7 @@ namespace MMALSharp
         /// <returns>The awaitable Task</returns>
         private async Task BeginProcessing(MMALComponentBase component, MMALConnectionImpl connection, MMALPortImpl cameraPort, int outputPort = 0)
         {
-            component.Start(outputPort, component.ManagedCallback);
+            component.Start(outputPort, component.ManagedOutputCallback);
 
             this.StartCapture(cameraPort);
 

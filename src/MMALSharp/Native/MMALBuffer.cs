@@ -110,7 +110,7 @@ namespace MMALSharp.Native
         private MMAL_BUFFER_HEADER_T* next;
         private IntPtr priv;
         private uint cmd;
-        private byte* data;
+        public byte* data;
         private uint allocSize, length, offset, flags;
         private long pts, dts;
         private IntPtr type, userData;
@@ -118,7 +118,6 @@ namespace MMALSharp.Native
         public MMAL_BUFFER_HEADER_T* Next => next;
         public IntPtr Priv => priv;
         public uint Cmd => cmd;
-        public byte* Data => data;
         public uint AllocSize => allocSize;
         public uint Length => length;
         public uint Offset => offset;

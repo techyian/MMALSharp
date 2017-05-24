@@ -232,7 +232,7 @@ namespace MMALSharp
             MMAL_PARAMETER_ENCODING_T encodings =
                 new MMAL_PARAMETER_ENCODING_T(
                     new MMAL_PARAMETER_HEADER_T(MMALParametersCommon.MMAL_PARAMETER_SUPPORTED_ENCODINGS,
-                        Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>()), null);
+                        Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>()), new[]{0});
 
             MMALCheck(MMALPort.mmal_port_parameter_get(port.Ptr, &encodings.hdr), "Unable to get supported encodings");
 
@@ -247,6 +247,26 @@ namespace MMALSharp
             {
                 throw new PiCameraError("Unsupported encoding type for this port");    
             }
+        }
+
+        internal static bool RgbOrderFixed(this MMALPortImpl port)
+        {
+            int newFirmware = 0;
+            var encodings = port.GetSupportedEncodings();
+
+            foreach (int enc in encodings)
+            {
+                if (enc == MMALUtil.MMAL_FOURCC("BGR3"))
+                {
+                    break;
+                }
+                if (enc == MMALUtil.MMAL_FOURCC("RGB3"))
+                {
+                    newFirmware = 1;
+                }
+            }
+
+            return newFirmware == 1;
         }
     }
 }

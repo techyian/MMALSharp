@@ -343,8 +343,12 @@ namespace MMALSharp.Tests
                 
                 TestHelper.CleanDirectory("/home/pi/images/tests");
 
-                using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler, encodingType, pixelFormat, 90))
+                using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
+                    imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, MMALCameraConfig.StillResolution.Width,
+                        MMALCameraConfig.StillResolution.Height, new MMAL_RATIONAL_T(0, 1),
+                        0);
+
                     //Create our component pipeline.         
                     fixture.MMALCamera
                        .AddEncoder(imgEncoder, fixture.MMALCamera.Camera.StillPort)
@@ -375,8 +379,12 @@ namespace MMALSharp.Tests
 
                 TestHelper.CleanDirectory("/home/pi/images/tests");
 
-                using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler, encodingType, pixelFormat, 90))
+                using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
+                    imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, MMALCameraConfig.StillResolution.Width,
+                        MMALCameraConfig.StillResolution.Height, new MMAL_RATIONAL_T(0, 1),
+                        0);
+
                     //Create our component pipeline.         
                     fixture.MMALCamera
                         .AddEncoder(imgEncoder, fixture.MMALCamera.Camera.StillPort)
@@ -407,8 +415,12 @@ namespace MMALSharp.Tests
 
                 TestHelper.CleanDirectory("/home/pi/images/tests/split_tests");
 
-                using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler, encodingType, pixelFormat, 90))
+                using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
+                    imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, MMALCameraConfig.StillResolution.Width,
+                        MMALCameraConfig.StillResolution.Height, new MMAL_RATIONAL_T(0, 1),
+                        0);
+
                     //Create our component pipeline.         
                     fixture.MMALCamera
                         .AddEncoder(imgEncoder, fixture.MMALCamera.Camera.StillPort)
@@ -430,8 +442,12 @@ namespace MMALSharp.Tests
 
                 TestHelper.CleanDirectory("/home/pi/images/tests/split_tests");
                 
-                using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler, encodingType, pixelFormat, 90))
+                using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
+                    imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, MMALCameraConfig.StillResolution.Width,
+                        MMALCameraConfig.StillResolution.Height, new MMAL_RATIONAL_T(0, 1),
+                        0);
+
                     //Create our component pipeline.         
                     fixture.MMALCamera
                         .AddEncoder(imgEncoder, fixture.MMALCamera.Camera.StillPort)
@@ -453,8 +469,12 @@ namespace MMALSharp.Tests
 
                 TestHelper.CleanDirectory("/home/pi/images/tests");
 
-                using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler, MMALEncoding.MMAL_ENCODING_JPEG, MMALEncoding.MMAL_ENCODING_I420, 90))
+                using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
+                    imgEncoder.ConfigureOutputPort(MMALEncoding.MMAL_ENCODING_JPEG, MMALEncoding.MMAL_ENCODING_I420, MMALCameraConfig.StillResolution.Width,
+                        MMALCameraConfig.StillResolution.Height, new MMAL_RATIONAL_T(0, 1),
+                        0);
+
                     //Create our component pipeline.         
                     fixture.MMALCamera
                         .AddEncoder(imgEncoder, fixture.MMALCamera.Camera.StillPort)
@@ -475,8 +495,12 @@ namespace MMALSharp.Tests
 
                 imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "bmp");
 
-                using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler, MMALEncoding.MMAL_ENCODING_BMP, MMALEncoding.MMAL_ENCODING_I420, 90))
+                using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
+                    imgEncoder.ConfigureOutputPort(MMALEncoding.MMAL_ENCODING_BMP, MMALEncoding.MMAL_ENCODING_I420, MMALCameraConfig.StillResolution.Width,
+                        MMALCameraConfig.StillResolution.Height, new MMAL_RATIONAL_T(0, 1),
+                        0);
+
                     //Create our component pipeline.         
                     fixture.MMALCamera
                         .AddEncoder(imgEncoder, fixture.MMALCamera.Camera.StillPort)

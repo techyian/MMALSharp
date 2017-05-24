@@ -95,6 +95,11 @@ namespace MMALSharp.Handlers
 
         public void PostProcess() { }
 
+        public ProcessResult Process()
+        {
+            throw new NotImplementedException();
+        }
+
         public void Process(byte[] data)
         {
             try

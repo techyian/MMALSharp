@@ -21,7 +21,7 @@ namespace MMALSharp
         /// <summary>
         /// Pointer to the data associated with this buffer header
         /// </summary>
-        public byte* Data => this.Ptr->Data;
+        public byte* Data => this.Ptr->data;
         
         /// <summary>
         /// Defines what the buffer header contains. This is a FourCC with 0 as a special value meaning stream data
@@ -176,7 +176,7 @@ namespace MMALSharp
                 fixed (byte* pTarget = target)
                 {
                     var pt = pTarget;
-                    var ps = this.Ptr->Data + this.Offset;
+                    var ps = this.Ptr->data + this.Offset;
                     
                     for (int i = 0; i < this.Ptr->Length; i++)
                     {
@@ -197,6 +197,39 @@ namespace MMALSharp
                     Console.WriteLine("Unable to handle data. Returning null.");
                 return null;
             }            
+        }
+
+        internal void ReadIntoBuffer(byte[] source)
+        {
+            MMALCheck(MMALBuffer.mmal_buffer_header_mem_lock(this.Ptr), "Unable to lock buffer header.");
+            var ptrAlloc = Marshal.AllocHGlobal(source.Length);
+
+            try
+            {
+                fixed (byte* pSource = source)
+                {
+                    var ps = pSource;
+                    
+                    byte* pt = (byte*)ptrAlloc;
+                    
+                    for (int i = 0; i < this.Ptr->Length; i++)
+                    {
+                        *pt = *ps;
+                        pt++;
+                        ps++;
+                    }
+                }
+
+                MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
+            }
+            catch
+            {
+                //If something goes wrong, unlock the header.
+                MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
+                Marshal.FreeHGlobal(ptrAlloc);
+                if (MMALCameraConfig.Debug)
+                    Console.WriteLine("Unable to write data to buffer.");
+            }
         }
 
         /// <summary>

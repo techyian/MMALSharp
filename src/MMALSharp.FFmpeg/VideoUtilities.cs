@@ -16,12 +16,16 @@ namespace MMALSharp.FFmpeg
         /// <param name="result"></param>
         /// <param name="targetDirectory"></param>
         public static void ImagesToVideo(this ImageStreamCaptureHandler result, string targetDirectory, int fps)
-        {            
-            var process = new Process();
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.FileName = "ffmpeg";
-
+        {
+            var process = new Process
+            {
+                StartInfo =
+                {
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    FileName = "ffmpeg"
+                }
+            };
             
             if (result.ProcessedFiles.Count == 0)
                 return;
@@ -29,6 +33,7 @@ namespace MMALSharp.FFmpeg
             //Create temporary directory and copy all files in the capture handler to it.
             var tempDirectory = result.ProcessedFiles.FirstOrDefault().Item1.TrimEnd('/') + "/mmalsharptemp/";
             var extension = result.ProcessedFiles.FirstOrDefault().Item3;
+            
             try
             {
                 System.IO.Directory.CreateDirectory(tempDirectory);
@@ -58,9 +63,6 @@ namespace MMALSharp.FFmpeg
                     System.IO.Directory.Delete(tempDirectory, true);
                 }                
             }
-            
-
-
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using MMALSharp.Handlers;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
@@ -11,7 +12,7 @@ namespace MMALSharp
     /// </summary>
     public unsafe class MMALControlPort : MMALPortBase
     {
-        public MMALControlPort(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
+        public MMALControlPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type) : base(ptr, comp, type) { }
 
         /// <summary>
         /// Enable processing on a port
@@ -21,8 +22,9 @@ namespace MMALSharp
         {
             if(!this.Enabled)
             {
-                this.ManagedCallback = managedCallback;                
-                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
+                this.ManagedOutputCallback = managedCallback;
+                
+                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativeControlPortCallback);
 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
@@ -53,11 +55,11 @@ namespace MMALSharp
         /// </summary>
         /// <param name="port">The port the buffer is sent to</param>
         /// <param name="buffer">The buffer header</param>
-        internal override void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        internal override void NativeControlPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             var bufferImpl = new MMALBufferImpl(buffer);
             
-            this.ManagedCallback(bufferImpl, this);
+            this.ManagedOutputCallback(bufferImpl, this);
 
             if (MMALCameraConfig.Debug)
             {
@@ -74,19 +76,72 @@ namespace MMALSharp
     /// </summary>
     public unsafe class MMALPortImpl : MMALPortBase
     {
-        public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
+        public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type) : base(ptr, comp, type) { }
 
         /// <summary>
-        /// Enable processing on a port
+        /// Enable processing on an input port
+        /// </summary>
+        /// <param name="managedCallback">A managed callback method we can do further processing on</param>
+        internal override void EnablePort(Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback)
+        {
+            if (!this.Enabled)
+            {
+                this.ManagedInputCallback = managedCallback;
+                
+                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativeInputPortCallback);
+                
+                IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
+
+                if (MMALCameraConfig.Debug)
+                {
+                    Console.WriteLine("Enabling port.");
+                }
+
+                if (managedCallback == null)
+                {
+                    if (MMALCameraConfig.Debug)
+                    {
+                        Console.WriteLine("Callback null");
+                    }
+
+                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
+                }
+                else
+                {
+                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
+                }
+
+                var length = this.BufferPool.Queue.QueueLength();
+
+                for (int i = 0; i < length; i++)
+                {
+                    var buffer = this.BufferPool.Queue.GetBuffer();
+
+                    this.ManagedInputCallback(buffer, this);
+                    
+                    this.SendBuffer(buffer);
+                }
+            }
+
+            if (!this.Enabled)
+            {
+                throw new PiCameraError("Unknown error occurred whilst enabling port");
+            }
+
+        }
+
+        /// <summary>
+        /// Enable processing on an output port
         /// </summary>
         /// <param name="managedCallback">A managed callback method we can do further processing on</param>
         internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback)
         {
             if (!this.Enabled)
             {
-                this.ManagedCallback = managedCallback;                
-                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativePortCallback);
-
+                this.ManagedOutputCallback = managedCallback;
+                
+                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativeOutputPortCallback);
+                
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
                 if (MMALCameraConfig.Debug)
@@ -94,8 +149,6 @@ namespace MMALSharp
                     Console.WriteLine("Enabling port.");
                 }
                 
-                this.BufferPool = new MMALPoolImpl(this);
-
                 if (managedCallback == null)
                 {
                     if (MMALCameraConfig.Debug)
@@ -109,8 +162,7 @@ namespace MMALSharp
                 {
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
                 }
-                    
-
+                
                 var length = this.BufferPool.Queue.QueueLength();
 
                 for (int i = 0; i < length; i++)
@@ -127,14 +179,61 @@ namespace MMALSharp
                 
         }
 
+        internal override void NativeInputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        {
+            lock (MMALPortBase.InputLock)
+            {
+                var bufferImpl = new MMALBufferImpl(buffer);
+
+                if (MMALCameraConfig.Debug)
+                {
+                    bufferImpl.PrintProperties();
+                }
+
+                bufferImpl.Release();
+
+                if (this.Enabled && this.BufferPool != null)
+                {
+                    var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
+
+                    //Populate the new input buffer with user provided image data.
+                    var result = this.ManagedInputCallback(newBuffer, this);
+
+                    if (this.Trigger != null && this.Trigger.CurrentCount > 0 && result.EOF)
+                    {
+                        this.Trigger.Signal();
+                        newBuffer.Release();
+                    }
+
+                    if (newBuffer != null)
+                    {
+                        if (MMALCameraConfig.Debug)
+                        {
+                            Console.WriteLine("Got buffer. Sending to port.");
+                        }
+
+                        this.SendBuffer(newBuffer);
+                    }
+                    else
+                    {
+                        if (MMALCameraConfig.Debug)
+                        {
+                            Console.WriteLine("Buffer null. Continuing.");
+                        }
+                    }
+                }
+                
+            }
+        }
+
         /// <summary>
         /// The native callback MMAL passes buffer headers to
         /// </summary>
         /// <param name="port">The port the buffer is sent to</param>
         /// <param name="buffer">The buffer header</param>
-        internal override void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        internal override void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
-            lock (MMALPortBase.mLock)
+            lock (MMALPortBase.OutputLock)
             {
                 var bufferImpl = new MMALBufferImpl(buffer);
 
@@ -145,7 +244,7 @@ namespace MMALSharp
                     
                 if (bufferImpl.Length > 0)
                 {
-                    this.ManagedCallback(bufferImpl, this);
+                    this.ManagedOutputCallback(bufferImpl, this);
                 }
 
                 //If this buffer signals the end of data stream, allow waiting thread to continue.
@@ -216,7 +315,7 @@ namespace MMALSharp
     /// </summary>
     public unsafe class MMALStillPort : MMALPortImpl
     {  
-        public MMALStillPort(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }         
+        public MMALStillPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type) : base(ptr, comp, type) { }         
     }
 
     /// <summary>
@@ -230,19 +329,19 @@ namespace MMALSharp
         /// </summary>
         public DateTime? Timeout { get; set; }
         
-        public MMALVideoPort(MMAL_PORT_T* ptr, MMALComponentBase comp) : base(ptr, comp) { }
+        public MMALVideoPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type) : base(ptr, comp, type) { }
 
         /// <summary>
         /// The native callback MMAL passes buffer headers to
         /// </summary>
         /// <param name="port">The port the buffer is sent to</param>
         /// <param name="buffer">The buffer header</param>
-        internal override void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        internal override void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
-            lock (MMALPortBase.mLock)
+            lock (MMALPortBase.OutputLock)
             {
                 var bufferImpl = new MMALBufferImpl(buffer);
-
+               
                 if (MMALCameraConfig.Debug)
                 {
                     bufferImpl.PrintProperties();
@@ -250,7 +349,7 @@ namespace MMALSharp
                     
                 if (bufferImpl.Length > 0)
                 {
-                    this.ManagedCallback(bufferImpl, this);
+                    this.ManagedOutputCallback(bufferImpl, this);
                 }
                 
                 if (this.Timeout.HasValue && DateTime.Now.CompareTo(this.Timeout.Value) > 0)

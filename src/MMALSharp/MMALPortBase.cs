@@ -2,10 +2,20 @@
 using Nito.AsyncEx;
 using System;
 using System.Runtime.InteropServices;
+using MMALSharp.Handlers;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
+    public enum PortType
+    {
+        Input,
+        Output,
+        Clock,
+        Control,
+        Unknown
+    }
+
     /// <summary>
     /// Base class for port objects
     /// </summary>
@@ -22,6 +32,11 @@ namespace MMALSharp
         internal MMAL_COMPONENT_T* Comp { get; set; }
 
         /// <summary>
+        /// Specifies the type of port this is
+        /// </summary>
+        public PortType PortType { get; set; }
+
+        /// <summary>
         /// Managed reference to the component this port is associated with
         /// </summary>
         public MMALComponentBase ComponentReference { get; set; }
@@ -35,6 +50,14 @@ namespace MMALSharp
         /// Managed name given to this object (user defined)
         /// </summary>
         public string ObjName { get; set; }
+
+        public MMALEncoding EncodingType { get; set; }
+
+        public MMALEncoding PixelFormat { get; set; }
+
+        public int Width { get; set; }
+
+        public int Height { get; set; }
 
         #region Port struct wrapper properties
 
@@ -107,7 +130,7 @@ namespace MMALSharp
         /// Accessor for the elementary stream
         /// </summary>
         public MMAL_ES_FORMAT_T Format => *this.Ptr->Format;
-
+        
         #endregion
 
         /// <summary>
@@ -116,9 +139,14 @@ namespace MMALSharp
         public AsyncCountdownEvent Trigger { get; set; }
 
         /// <summary>
-        /// Monitor lock for port callback method
+        /// Monitor lock for input port callback method
         /// </summary>
-        protected static Object mLock = new object();
+        protected static Object InputLock = new object();
+
+        /// <summary>
+        /// Monitor lock for output port callback method
+        /// </summary>
+        protected static Object OutputLock = new object();
 
         /// <summary>
         /// Delegate for native port callback
@@ -126,15 +154,21 @@ namespace MMALSharp
         internal MMALSharp.Native.MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
 
         /// <summary>
+        /// Delegate to populate native buffer header with user provided image data
+        /// </summary>
+        public Func<MMALBufferImpl, MMALPortBase, ProcessResult> ManagedInputCallback { get; set; }
+
+        /// <summary>
         /// Delegate we use to do further processing on buffer headers when they're received by the native callback delegate
         /// </summary>
-        public Action<MMALBufferImpl, MMALPortBase> ManagedCallback { get; set; }
-                
-        protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp)
+        public Action<MMALBufferImpl, MMALPortBase> ManagedOutputCallback { get; set; }
+        
+        protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
         {
             this.Ptr = ptr;
             this.Comp = ptr->Component;
             this.ComponentReference = comp;
+            this.PortType = type;
         }
 
         /// <summary>
@@ -142,13 +176,33 @@ namespace MMALSharp
         /// </summary>
         /// <param name="managedCallback"></param>        
         internal virtual void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback) { }
-        
+
         /// <summary>
-        /// Represents the native callback method that's called by MMAL
+        /// Provides functionality to enable processing on a port.
+        /// </summary>
+        /// <param name="managedCallback"></param>        
+        internal virtual void EnablePort(Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback) { }
+
+        /// <summary>
+        /// Represents the native callback method for an input port that's called by MMAL
         /// </summary>
         /// <param name="port"></param>
         /// <param name="buffer"></param>
-        internal virtual void NativePortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer) { }
+        internal virtual void NativeInputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer) { }
+
+        /// <summary>
+        /// Represents the native callback method for an output port that's called by MMAL
+        /// </summary>
+        /// <param name="port"></param>
+        /// <param name="buffer"></param>
+        internal virtual void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer) { }
+
+        /// <summary>
+        /// Represents the native callback method for an output port that's called by MMAL
+        /// </summary>
+        /// <param name="port"></param>
+        /// <param name="buffer"></param>
+        internal virtual void NativeControlPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer) { }
 
         /// <summary>
         /// Disable processing on a port. Disabling a port will stop all processing on this port and return all (non-processed) 

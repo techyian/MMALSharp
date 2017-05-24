@@ -53,18 +53,11 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_VIDEO_FORMAT_T
     {
-        private int width, height;
-        private MMAL_RECT_T crop;
-        private MMAL_RATIONAL_T frameRate, par;
-        private int colorSpace;
-
-        public int Width => width;
-        public int Height => height;
-        public MMAL_RECT_T Crop => crop;
-        public MMAL_RATIONAL_T FrameRate => frameRate;
-        public MMAL_RATIONAL_T Par => par;
-        public int ColorSpace => colorSpace;
-
+        public int width, height;
+        public MMAL_RECT_T crop;
+        public MMAL_RATIONAL_T frameRate, par;
+        public int colorSpace;
+        
         public MMAL_VIDEO_FORMAT_T(int width, int height, MMAL_RECT_T crop, MMAL_RATIONAL_T frameRate,
                                     MMAL_RATIONAL_T par, int colorSpace)
         {
@@ -138,11 +131,13 @@ namespace MMALSharp.Native
         public int encoding, encodingVariant;
         public MMAL_ES_SPECIFIC_FORMAT_T* es;
         public int bitrate, flags, extraDataSize;
-        public byte* extraData;
+        
+        //byte*
+        public IntPtr extraData;
         
         public MMAL_ES_FORMAT_T(MMALFormat.MMAL_ES_TYPE_T type, int encoding, int encodingVariant,
                                 MMAL_ES_SPECIFIC_FORMAT_T* es, int bitrate, int flags, int extraDataSize,
-                                byte* extraData)
+                                IntPtr extraData)
         {
             this.type = type;
             this.encoding = encoding;

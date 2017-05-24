@@ -30,7 +30,7 @@ namespace MMALSharp.Handlers
         public string Directory { get; protected set; }
         public string Extension { get; protected set; }
 
-        public StreamCaptureHandler(string directory, string extension)
+        protected StreamCaptureHandler(string directory, string extension)
         {            
             this.Directory = directory.TrimEnd('/');
             this.Extension = extension.TrimStart('.');
@@ -47,12 +47,17 @@ namespace MMALSharp.Handlers
             
             this.CurrentStream = File.Create(this.Directory + "/" + DateTime.Now.ToString("dd-MMM-yy HH-mm-ss") + "." + this.Extension);
         }
-                
+
+        public virtual ProcessResult Process()
+        {
+            return new ProcessResult();
+        }
+
         /// <summary>
         /// Processes the data passed into this method to this class' Stream instance.
         /// </summary>
         /// <param name="data">The image data</param>
-        public void Process(byte[] data)
+        public virtual void Process(byte[] data)
         {
             this.Processed += data.Length;
                         
@@ -60,7 +65,6 @@ namespace MMALSharp.Handlers
                 this.CurrentStream.Write(data, 0, data.Length);
             else
                 throw new IOException("Stream not writable.");
-            
         }
 
         /// <summary>

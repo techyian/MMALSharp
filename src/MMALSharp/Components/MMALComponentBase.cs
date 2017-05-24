@@ -68,26 +68,26 @@ namespace MMALSharp
             Clocks = new List<MMALPortImpl>();
             Ports = new List<MMALPortImpl>();
 
-            this.Control = new MMALControlPort(this.Ptr->Control, this);
+            this.Control = new MMALControlPort(this.Ptr->Control, this, PortType.Control);
             
             for (int i = 0; i < this.Ptr->InputNum; i++)
             {
-                this.Inputs.Add(new MMALPortImpl(&(*this.Ptr->Input[i]), this));
+                this.Inputs.Add(new MMALPortImpl(&(*this.Ptr->Input[i]), this, PortType.Input));
             }
             
             for (int i = 0; i < this.Ptr->OutputNum; i++)
             {
-                this.Outputs.Add(new MMALPortImpl(&(*this.Ptr->Output[i]), this));
+                this.Outputs.Add(new MMALPortImpl(&(*this.Ptr->Output[i]), this, PortType.Output));
             }
             
             for (int i = 0; i < this.Ptr->ClockNum; i++)
             {
-                Clocks.Add(new MMALPortImpl(&(*this.Ptr->Clock[i]), this));
+                Clocks.Add(new MMALPortImpl(&(*this.Ptr->Clock[i]), this, PortType.Clock));
             }
             
             for (int i = 0; i < this.Ptr->PortNum; i++)
             {                    
-                Ports.Add(new MMALPortImpl(&(*this.Ptr->Port[i]), this));
+                Ports.Add(new MMALPortImpl(&(*this.Ptr->Port[i]), this, PortType.Unknown));
             }
         }
 
@@ -157,12 +157,23 @@ namespace MMALSharp
         /// </summary>
         /// <param name="buffer">The current buffer header being processed</param>
         /// <param name="port">The port we're currently processing on</param>
-        public virtual void ManagedCallback(MMALBufferImpl buffer, MMALPortBase port)
+        public virtual void ManagedInputCallback(MMALBufferImpl buffer, MMALPortBase port)
+        {
+            var data = this.Handler?.Process();
+            buffer.ReadIntoBuffer(data.BufferFeed);
+        }
+
+        /// <summary>
+        /// Delegate to process the buffer header containing image data
+        /// </summary>
+        /// <param name="buffer">The current buffer header being processed</param>
+        /// <param name="port">The port we're currently processing on</param>
+        public virtual void ManagedOutputCallback(MMALBufferImpl buffer, MMALPortBase port)
         {
             var data = buffer.GetBufferData();
-            
             this.Handler?.Process(data);
         }
+        
 
         /// <summary>
         /// Enable the port with the specified port number.

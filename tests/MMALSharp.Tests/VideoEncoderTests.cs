@@ -78,8 +78,12 @@ namespace MMALSharp.Tests
 
                 TestHelper.CleanDirectory("/home/pi/videos/tests");
 
-                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, encodingType, pixelFormat, 25000000, 10, 25))
+                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler))
                 {
+                    vidEncoder.ConfigureOutputPort(encodingType, pixelFormat, MMALCameraConfig.StillResolution.Width,
+                        MMALCameraConfig.StillResolution.Height, new MMAL_RATIONAL_T(25, 1),
+                        25000000, 10);
+
                     //Create our component pipeline.         
                     fixture.MMALCamera
                         .AddEncoder(vidEncoder, fixture.MMALCamera.Camera.VideoPort)
@@ -114,8 +118,12 @@ namespace MMALSharp.Tests
 
                 TestHelper.CleanDirectory("/home/pi/videos/tests/split_test");
                 
-                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, encodingType, pixelFormat, 25000000, 10, 25))
+                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler))
                 {
+                    vidEncoder.ConfigureOutputPort(encodingType, pixelFormat, MMALCameraConfig.StillResolution.Width,
+                        MMALCameraConfig.StillResolution.Height, new MMAL_RATIONAL_T(25, 1),
+                        25000000, 10);
+
                     //Create our component pipeline.         
                     fixture.MMALCamera
                         .AddEncoder(vidEncoder, fixture.MMALCamera.Camera.VideoPort)
@@ -166,8 +174,12 @@ namespace MMALSharp.Tests
 
                 vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "mjpeg");
 
-                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, MMALEncoding.MMAL_ENCODING_MJPEG, MMALEncoding.MMAL_ENCODING_I420, 25000000, 90, 25))
+                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler))
                 {
+                    vidEncoder.ConfigureOutputPort(MMALEncoding.MMAL_ENCODING_MJPEG, MMALEncoding.MMAL_ENCODING_I420, MMALCameraConfig.StillResolution.Width,
+                        MMALCameraConfig.StillResolution.Height, new MMAL_RATIONAL_T(25, 1),
+                        25000000, 90);
+
                     //Create our component pipeline.         
                     fixture.MMALCamera
                         .AddEncoder(vidEncoder, fixture.MMALCamera.Camera.VideoPort)
