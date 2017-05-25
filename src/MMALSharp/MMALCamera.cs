@@ -29,11 +29,6 @@ namespace MMALSharp
         public List<MMALConnectionImpl> Connections { get; set; }
 
         /// <summary>
-        /// Reference to the Preview component to be used by the camera component
-        /// </summary>
-        public MMALRendererBase Preview { get; set; }
-
-        /// <summary>
         /// Reference to the Video splitter component which attaches to the Camera's video output port
         /// </summary>
         public MMALSplitterComponent Splitter { get; set; }
@@ -152,7 +147,9 @@ namespace MMALSharp
             {
                 throw new PiCameraError("No handler specified");
             }
-                        
+
+            this.Camera.Handler = handler;
+
             this.CheckPreviewComponentStatus();
 
             //Enable the image encoder output port.            
@@ -325,7 +322,6 @@ namespace MMALSharp
         public void DisableCamera()
         {
             this.DownstreamComponents.ForEach(c => c.DisableComponent());
-            this.Preview?.DisableComponent();
             this.Camera.DisableComponent();
         }
 
@@ -335,7 +331,6 @@ namespace MMALSharp
         public void EnableCamera()
         {
             this.DownstreamComponents.ForEach(c => c.EnableComponent());
-            this.Preview?.EnableComponent();
             this.Camera.EnableComponent();
         }
 
@@ -422,7 +417,7 @@ namespace MMALSharp
         private void CheckPreviewComponentStatus()
         {
             //Create connections
-            if (this.Preview == null)
+            if (!this.Connections.Any(c => c.OutputPort == this.Camera.PreviewPort))
             {
                 Helpers.PrintWarning("Preview port does not have a Render component configured. Resulting image will be affected.");
             }
@@ -437,10 +432,11 @@ namespace MMALSharp
             {
                 Console.WriteLine("Destroying final components");
             }
+            
+            var tempList = new List<MMALDownstreamComponent>(this.DownstreamComponents);
 
-            this.DownstreamComponents.ForEach(c => c.Dispose());
-            this.Preview?.Dispose();
-            this.Camera?.Dispose();
+            tempList.ForEach(c => c.Dispose());
+            this.Camera.Dispose();
 
             BcmHost.bcm_host_deinit();
         }

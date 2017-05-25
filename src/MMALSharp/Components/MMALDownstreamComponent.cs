@@ -19,41 +19,35 @@ namespace MMALSharp.Components
 
         protected MMALDownstreamComponent(string name, ICaptureHandler handler) : base(name)
         {
-            this.Inputs.ElementAt(0).ShallowCopy(this.Outputs.ElementAt(0));
             this.Handler = handler;
+            MMALCamera.Instance.DownstreamComponents.Add(this);
         }
-
-        /// <summary>
-        /// Removes an encoder component from the pipeline. Recursively removes all connected components associated with this component.
-        /// </summary>
-        public void Remove()
+        
+        private void ClosePipelineConnections()
         {
-            var enc = MMALCamera.Instance.DownstreamComponents.Where(c => c == this).FirstOrDefault();
+            //Find any components this component is connected to, recursively removing these components.
 
-            if (enc != null)
+            foreach (MMALPortImpl port in this.Outputs)
             {
-                if (MMALCameraConfig.Debug)
+                var connection = MMALCamera.Instance.Connections.Where(c => c.InputPort == port).FirstOrDefault();
+                if (connection != null)
                 {
-                    Console.WriteLine("Removing encoder");
+                    //This component has an output port connected to another component.
+                    connection.DownstreamComponent.ClosePipelineConnections();
+
+                    //Destroy the connection
+                    connection.Dispose();
                 }
+            }
 
-                //Find any components this component is connected to, recursively removing these components.
+            //Close any connection held by this component
+            var finalConnection = MMALCamera.Instance.Connections.Where(c => c.DownstreamComponent == this).FirstOrDefault();
 
-                foreach (MMALPortImpl port in this.Outputs)
-                {
-                    var connection = MMALCamera.Instance.Connections.Where(c => c.OutputPort == port).FirstOrDefault();
-                    if (connection != null)
-                    {
-                        //This component has an output port connected to another component.
-                        connection.DownstreamComponent.Remove();
-
-                        //Destroy the connection
-                        connection.Destroy();
-                    }
-                }
+            if (finalConnection != null)
+            {
+                finalConnection.Dispose();
                 
-                MMALCamera.Instance.DownstreamComponents.Remove(enc);
-                enc.Dispose();
+                MMALCamera.Instance.Connections.Remove(finalConnection);
             }
         }
         
@@ -64,10 +58,12 @@ namespace MMALSharp.Components
                 Console.WriteLine("Removing downstream component");
             }
 
-            this.Remove();
+            this.ClosePipelineConnections();
 
             //Remove any unmanaged resources held by the capture handler.
             this.Handler?.Dispose();
+
+            MMALCamera.Instance.DownstreamComponents.Remove(this);
 
             base.Dispose();
         }

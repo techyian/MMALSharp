@@ -90,7 +90,7 @@ namespace MMALSharp.Components
 
             this.SetCameraConfig(camConfig);
 
-            this.Control.EnablePort(CameraControlCallback);
+            this.Control.EnablePort((Action<MMALBufferImpl, MMALPortBase>) CameraControlCallback);
 
             this.Initialise();
 
@@ -103,7 +103,7 @@ namespace MMALSharp.Components
             this.CameraInfo = new MMALCameraInfoComponent();                        
         }
         
-        internal ProcessResult CameraControlCallback(MMALBufferImpl buffer, MMALPortBase port)
+        internal void CameraControlCallback(MMALBufferImpl buffer, MMALPortBase port)
         {            
             if (buffer.Cmd == MMALEvents.MMAL_EVENT_PARAMETER_CHANGED)
             {                
@@ -127,8 +127,7 @@ namespace MMALSharp.Components
             {
                 Console.WriteLine("Received unexpected camera control callback event");
             }
-
-            return new ProcessResult {Success = true};
+            
         }
 
         internal void Initialise()

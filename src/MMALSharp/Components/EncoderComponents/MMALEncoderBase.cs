@@ -19,6 +19,7 @@ namespace MMALSharp.Components
     {   
         protected MMALEncoderBase(string encoderName, ICaptureHandler handler) : base(encoderName, handler)
         {
+            this.Inputs.ElementAt(0).ShallowCopy(this.Outputs.ElementAt(0));
         }
 
         /// <summary>
@@ -69,9 +70,7 @@ namespace MMALSharp.Components
 
             this.InputPort.Ptr->BufferNum = Math.Max(this.InputPort.Ptr->BufferNumRecommended, this.InputPort.Ptr->BufferNumMin);
             this.InputPort.Ptr->BufferSize = Math.Max(this.InputPort.Ptr->BufferSizeRecommended, this.InputPort.Ptr->BufferSizeMin);
-
-            this.InputPort.BufferPool = new MMALPoolImpl(this.InputPort);
-
+            
             this.InputPort.EncodingType = encodingType;
         }
 
@@ -108,9 +107,7 @@ namespace MMALSharp.Components
             {
                 this.OutputPort.SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, quality);
             }
-
-            this.OutputPort.BufferPool = new MMALPoolImpl(this.OutputPort);
-
+            
             this.OutputPort.EncodingType = encodingType;
             this.OutputPort.PixelFormat = pixelFormat;
 
@@ -217,7 +214,6 @@ namespace MMALSharp.Components
         /// <summary>
         /// Encodes/decodes user provided image data
         /// </summary>
-        /// <param name="handler">The capture handler containing user provided data</param>
         /// <param name="outputPort">The output port to begin processing on. Usually will be 0.</param>
         /// <returns>An awaitable task</returns>
         public virtual async Task Convert(int outputPort = 0)

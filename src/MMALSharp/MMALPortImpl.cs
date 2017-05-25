@@ -111,16 +111,7 @@ namespace MMALSharp
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
                 }
 
-                var length = this.BufferPool.Queue.QueueLength();
-
-                for (int i = 0; i < length; i++)
-                {
-                    var buffer = this.BufferPool.Queue.GetBuffer();
-
-                    this.ManagedInputCallback(buffer, this);
-                    
-                    this.SendBuffer(buffer);
-                }
+                base.EnablePort(managedCallback);
             }
 
             if (!this.Enabled)
@@ -162,14 +153,8 @@ namespace MMALSharp
                 {
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
                 }
-                
-                var length = this.BufferPool.Queue.QueueLength();
 
-                for (int i = 0; i < length; i++)
-                {
-                    var buffer = this.BufferPool.Queue.GetBuffer();
-                    this.SendBuffer(buffer);
-                }
+                base.EnablePort(managedCallback);
             }
 
             if (!this.Enabled)

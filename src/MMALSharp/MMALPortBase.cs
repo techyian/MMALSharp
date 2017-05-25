@@ -175,13 +175,35 @@ namespace MMALSharp
         /// Provides functionality to enable processing on a port.
         /// </summary>
         /// <param name="managedCallback"></param>        
-        internal virtual void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback) { }
+        internal virtual void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback)
+        {
+            this.BufferPool = new MMALPoolImpl(this);
+
+            var length = this.BufferPool.Queue.QueueLength();
+
+            for (int i = 0; i < length; i++)
+            {
+                var buffer = this.BufferPool.Queue.GetBuffer();
+                this.SendBuffer(buffer);
+            }
+        }
 
         /// <summary>
         /// Provides functionality to enable processing on a port.
         /// </summary>
         /// <param name="managedCallback"></param>        
-        internal virtual void EnablePort(Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback) { }
+        internal virtual void EnablePort(Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback)
+        {
+            this.BufferPool = new MMALPoolImpl(this);
+
+            var length = this.BufferPool.Queue.QueueLength();
+
+            for (int i = 0; i < length; i++)
+            {
+                var buffer = this.BufferPool.Queue.GetBuffer();
+                this.SendBuffer(buffer);
+            }
+        }
 
         /// <summary>
         /// Represents the native callback method for an input port that's called by MMAL
@@ -291,7 +313,7 @@ namespace MMALSharp
 
             var connection = MMALConnectionImpl.CreateConnection(this, destinationComponent.Inputs.ElementAt(inputPort), destinationComponent);
             MMALCamera.Instance.Connections.Add(connection);
-            MMALCamera.Instance.DownstreamComponents.Add(destinationComponent);
+            
             return destinationComponent.Inputs.ElementAt(inputPort);
         }
 
