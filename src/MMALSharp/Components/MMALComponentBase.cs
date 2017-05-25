@@ -254,7 +254,39 @@ namespace MMALSharp
                 }
             }
         }
-        
+
+        public void EnableConnections()
+        {
+            foreach (MMALPortImpl port in this.Outputs)
+            {
+                var connection = MMALCamera.Instance.Connections.Where(c => c.OutputPort == port).FirstOrDefault();
+                if (connection != null)
+                {
+                    //This component has an output port connected to another component.
+                    connection.DownstreamComponent.EnableConnections();
+
+                    //Enable the connection
+                    connection.Enable();
+                }
+            }
+        }
+
+        public void DisableConnections()
+        {
+            foreach (MMALPortImpl port in this.Outputs)
+            {
+                var connection = MMALCamera.Instance.Connections.Where(c => c.OutputPort == port).FirstOrDefault();
+                if (connection != null)
+                {
+                    //This component has an output port connected to another component.
+                    connection.DownstreamComponent.DisableConnections();
+
+                    //Disable the connection
+                    connection.Disable();
+                }
+            }
+        }
+
         public override void Dispose()
         {
             if (MMALCameraConfig.Debug)

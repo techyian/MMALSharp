@@ -345,14 +345,13 @@ namespace MMALSharp.Tests
 
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
-                    imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, MMALCameraConfig.StillResolution.Width,
-                        MMALCameraConfig.StillResolution.Height, new MMAL_RATIONAL_T(0, 1),
-                        0);
+                    imgEncoder.ConfigureOutputPort(encodingType, pixelFormat);
 
                     //Create our component pipeline.         
-                    fixture.MMALCamera
-                       .AddEncoder(imgEncoder, fixture.MMALCamera.Camera.StillPort)
-                       .CreatePreviewComponent(new MMALNullSinkComponent());
+                    fixture.MMALCamera.Camera.StillPort
+                        .ConnectTo(imgEncoder);
+                    fixture.MMALCamera.Camera.PreviewPort
+                        .ConnectTo(new MMALNullSinkComponent());
                        
                     await fixture.MMALCamera.TakePicture(fixture.MMALCamera.Camera.StillPort);
                 }
@@ -381,14 +380,13 @@ namespace MMALSharp.Tests
 
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
-                    imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, MMALCameraConfig.StillResolution.Width,
-                        MMALCameraConfig.StillResolution.Height, new MMAL_RATIONAL_T(0, 1),
-                        0);
+                    imgEncoder.ConfigureOutputPort(encodingType, pixelFormat);
 
                     //Create our component pipeline.         
-                    fixture.MMALCamera
-                        .AddEncoder(imgEncoder, fixture.MMALCamera.Camera.StillPort)
-                        .CreatePreviewComponent(new MMALNullSinkComponent());
+                    fixture.MMALCamera.Camera.StillPort
+                        .ConnectTo(imgEncoder);
+                    fixture.MMALCamera.Camera.PreviewPort
+                        .ConnectTo(new MMALNullSinkComponent());
 
                     await fixture.MMALCamera.TakePicture(fixture.MMALCamera.Camera.StillPort, true);
                 }
@@ -417,14 +415,13 @@ namespace MMALSharp.Tests
 
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
-                    imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, MMALCameraConfig.StillResolution.Width,
-                        MMALCameraConfig.StillResolution.Height, new MMAL_RATIONAL_T(0, 1),
-                        0);
+                    imgEncoder.ConfigureOutputPort(encodingType, pixelFormat);
 
                     //Create our component pipeline.         
-                    fixture.MMALCamera
-                        .AddEncoder(imgEncoder, fixture.MMALCamera.Camera.StillPort)
-                        .CreatePreviewComponent(new MMALNullSinkComponent());
+                    fixture.MMALCamera.Camera.StillPort
+                        .ConnectTo(imgEncoder);
+                    fixture.MMALCamera.Camera.PreviewPort
+                        .ConnectTo(new MMALNullSinkComponent());
 
                     await fixture.MMALCamera.TakePictureTimelapse(fixture.MMALCamera.Camera.StillPort, 
                                                                     new Timelapse { Mode = TimelapseMode.Second, Value = 5, Timeout = DateTime.Now.AddSeconds(20) });
@@ -444,14 +441,13 @@ namespace MMALSharp.Tests
                 
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
-                    imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, MMALCameraConfig.StillResolution.Width,
-                        MMALCameraConfig.StillResolution.Height, new MMAL_RATIONAL_T(0, 1),
-                        0);
+                    imgEncoder.ConfigureOutputPort(encodingType, pixelFormat);
 
                     //Create our component pipeline.         
-                    fixture.MMALCamera
-                        .AddEncoder(imgEncoder, fixture.MMALCamera.Camera.StillPort)
-                        .CreatePreviewComponent(new MMALNullSinkComponent());
+                    fixture.MMALCamera.Camera.StillPort
+                        .ConnectTo(imgEncoder);
+                    fixture.MMALCamera.Camera.PreviewPort
+                        .ConnectTo(new MMALNullSinkComponent());
 
                     await fixture.MMALCamera.TakePictureTimeout(fixture.MMALCamera.Camera.StillPort, DateTime.Now.AddSeconds(20));
                     
@@ -471,14 +467,13 @@ namespace MMALSharp.Tests
 
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
-                    imgEncoder.ConfigureOutputPort(MMALEncoding.MMAL_ENCODING_JPEG, MMALEncoding.MMAL_ENCODING_I420, MMALCameraConfig.StillResolution.Width,
-                        MMALCameraConfig.StillResolution.Height, new MMAL_RATIONAL_T(0, 1),
-                        0);
+                    imgEncoder.ConfigureOutputPort(MMALEncoding.MMAL_ENCODING_JPEG, MMALEncoding.MMAL_ENCODING_I420);
 
                     //Create our component pipeline.         
-                    fixture.MMALCamera
-                        .AddEncoder(imgEncoder, fixture.MMALCamera.Camera.StillPort)
-                        .CreatePreviewComponent(new MMALNullSinkComponent());
+                    fixture.MMALCamera.Camera.StillPort
+                        .ConnectTo(imgEncoder);
+                    fixture.MMALCamera.Camera.PreviewPort
+                        .ConnectTo(new MMALNullSinkComponent());
 
                     await fixture.MMALCamera.TakePicture(fixture.MMALCamera.Camera.StillPort);
                 }
@@ -497,14 +492,13 @@ namespace MMALSharp.Tests
 
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
-                    imgEncoder.ConfigureOutputPort(MMALEncoding.MMAL_ENCODING_BMP, MMALEncoding.MMAL_ENCODING_I420, MMALCameraConfig.StillResolution.Width,
-                        MMALCameraConfig.StillResolution.Height, new MMAL_RATIONAL_T(0, 1),
-                        0);
+                    imgEncoder.ConfigureOutputPort(MMALEncoding.MMAL_ENCODING_BMP, MMALEncoding.MMAL_ENCODING_I420);
 
                     //Create our component pipeline.         
-                    fixture.MMALCamera
-                        .AddEncoder(imgEncoder, fixture.MMALCamera.Camera.StillPort)
-                        .CreatePreviewComponent(new MMALNullSinkComponent());
+                    fixture.MMALCamera.Camera.StillPort
+                        .ConnectTo(imgEncoder);
+                    fixture.MMALCamera.Camera.PreviewPort
+                        .ConnectTo(new MMALNullSinkComponent());
 
                     await fixture.MMALCamera.TakePicture(fixture.MMALCamera.Camera.StillPort);
                 }

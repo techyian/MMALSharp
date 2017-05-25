@@ -129,12 +129,20 @@ namespace MMALSharp
         /// </summary>
         public static bool SetChangeEventRequest { get; set; }
 
+        /// <summary>
+        /// Specify the Presentation timestamp (PTS) mode.
+        /// </summary>
+        public static MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T ClockMode { get; set; } =
+            MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T.MMAL_PARAM_TIMESTAMP_MODE_RESET_STC;
+
         /*
          * -----------------------------------------------------------------------------------------------------------
          * Camera preview port specific properties
          * -----------------------------------------------------------------------------------------------------------
         */
+
         public static MMALEncoding PreviewEncoding { get; set; } = MMALEncoding.MMAL_ENCODING_OPAQUE;
+
         public static MMALEncoding PreviewSubformat { get; set; } = MMALEncoding.MMAL_ENCODING_I420;
         
         /*
@@ -144,7 +152,9 @@ namespace MMALSharp
         */
 
         public static MMALEncoding VideoEncoding { get; set; } = MMALEncoding.MMAL_ENCODING_OPAQUE;
+
         public static MMALEncoding VideoSubformat { get; set; } = MMALEncoding.MMAL_ENCODING_I420;
+
         public static Resolution VideoResolution { get; set; } = Resolution.As1080p;
 
         /// <summary>
@@ -168,15 +178,20 @@ namespace MMALSharp
 
         public static MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T IntraRefresh { get; set; } = MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T.MMAL_VIDEO_INTRA_REFRESH_DISABLED;
 
+        public static MMAL_RATIONAL_T VideoFramerate { get; set; } = new MMAL_RATIONAL_T(30, 1);
+
         /*
          * -----------------------------------------------------------------------------------------------------------
          * Camera still port specific properties
          * -----------------------------------------------------------------------------------------------------------
         */
         public static MMALEncoding StillEncoding { get; set; } = MMALEncoding.MMAL_ENCODING_OPAQUE;
+
         public static MMALEncoding StillSubFormat { get; set; } = MMALEncoding.MMAL_ENCODING_I420;
 
         public static Resolution StillResolution { get; set; } = Resolution.As5MPixel;
+
+        public static MMAL_RATIONAL_T StillFramerate { get; set; } = new MMAL_RATIONAL_T(0, 1);
                
 
         /// <summary>

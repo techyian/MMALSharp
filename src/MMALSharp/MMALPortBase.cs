@@ -1,7 +1,9 @@
 ﻿using MMALSharp.Native;
 using Nito.AsyncEx;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
+using MMALSharp.Components;
 using MMALSharp.Handlers;
 using static MMALSharp.MMALCallerHelper;
 
@@ -55,10 +57,8 @@ namespace MMALSharp
 
         public MMALEncoding PixelFormat { get; set; }
 
-        public int Width { get; set; }
 
-        public int Height { get; set; }
-
+        
         #region Port struct wrapper properties
 
         /// <summary>
@@ -278,5 +278,29 @@ namespace MMALSharp
                 MMALUtil.mmal_port_pool_destroy(this.Ptr, this.BufferPool.Ptr);
             }
         }
+
+
+        public MMALPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort = 0)
+        {
+            if (MMALCamera.Instance.Connections.Any(c => c.UpstreamComponent == this.ComponentReference &&
+                                                         c.DownstreamComponent == destinationComponent))
+            {
+                Helpers.PrintWarning("A connection has already been established between these components");
+                return destinationComponent.Inputs.ElementAt(inputPort);
+            }
+
+            var connection = MMALConnectionImpl.CreateConnection(this, destinationComponent.Inputs.ElementAt(inputPort), destinationComponent);
+            MMALCamera.Instance.Connections.Add(connection);
+            MMALCamera.Instance.DownstreamComponents.Add(destinationComponent);
+            return destinationComponent.Inputs.ElementAt(inputPort);
+        }
+
+        public MMALPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort, Func<MMALPortBase> callback)
+        {
+            this.ConnectTo(destinationComponent, inputPort);
+            callback();
+            return destinationComponent.Inputs.ElementAt(inputPort);
+        }
+        
     }
 }

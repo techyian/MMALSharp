@@ -79,10 +79,10 @@ namespace MMALSharp.Components
                                                                 1,
                                                                 MMALCameraConfig.VideoResolution.Width,
                                                                 MMALCameraConfig.VideoResolution.Height,
-                                                                3,
+                                                                3 + Math.Max(0, (MMALCameraConfig.VideoFramerate.Num - 30) / 10),
                                                                 0,
                                                                 0,
-                                                                MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T.MMAL_PARAM_TIMESTAMP_MODE_RESET_STC
+                                                                MMALCameraConfig.ClockMode
                                                               );
 
             if (MMALCameraConfig.Debug)
@@ -175,7 +175,7 @@ namespace MMALSharp.Components
                 MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.VideoResolution.Width, 32),
                 MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.VideoResolution.Height, 16),
                 new MMAL_RECT_T(0, 0, MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height),
-                new MMAL_RATIONAL_T(0, 1),
+                MMALCameraConfig.VideoFramerate,
                 this.VideoPort.Ptr->Format->es->video.par,
                 this.VideoPort.Ptr->Format->es->video.colorSpace
             );
@@ -209,7 +209,7 @@ namespace MMALSharp.Components
             }
             
             var vFormat = new MMAL_VIDEO_FORMAT_T();
-
+            
             if (MMALCameraConfig.StillEncoding == MMALEncoding.MMAL_ENCODING_RGB32 ||
                 MMALCameraConfig.StillEncoding == MMALEncoding.MMAL_ENCODING_RGB24 ||
                 MMALCameraConfig.StillEncoding == MMALEncoding.MMAL_ENCODING_RGB16)
@@ -246,7 +246,7 @@ namespace MMALSharp.Components
                     MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.StillResolution.Width, 32),
                     MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.StillResolution.Height, 16),
                     new MMAL_RECT_T(0, 0, MMALCameraConfig.StillResolution.Width, MMALCameraConfig.StillResolution.Height),
-                    new MMAL_RATIONAL_T(0, 1),
+                    MMALCameraConfig.StillFramerate,
                     this.StillPort.Ptr->Format->es->video.par,
                     this.StillPort.Ptr->Format->es->video.colorSpace
                 );

@@ -17,12 +17,8 @@ namespace MMALSharp.Components
     /// </summary>
     public abstract class MMALEncoderBase : MMALDownstreamComponent, IConvert
     {   
-        public MMALPortImpl InputPort { get; set; }
-        public MMALPortImpl OutputPort { get; set; }
-
         protected MMALEncoderBase(string encoderName, ICaptureHandler handler) : base(encoderName, handler)
         {
-            this.Inputs.ElementAt(0).ShallowCopy(this.Outputs.ElementAt(0));
         }
 
         /// <summary>
@@ -43,6 +39,7 @@ namespace MMALSharp.Components
             this.InputPort.Ptr->Format->encoding = encodingType.EncodingVal;
             this.InputPort.Ptr->Format->es->video.height = height;
             this.InputPort.Ptr->Format->es->video.width = width;
+            this.InputPort.Ptr->Format->es->video.frameRate = framerate;
             this.InputPort.Ptr->Format->flags = flags;
             this.InputPort.Ptr->Format->bitrate = bitrate;
 
@@ -76,9 +73,6 @@ namespace MMALSharp.Components
             this.InputPort.BufferPool = new MMALPoolImpl(this.InputPort);
 
             this.InputPort.EncodingType = encodingType;
-            this.InputPort.Width = width;
-            this.InputPort.Height = height;
-
         }
 
         /// <summary>
@@ -86,29 +80,16 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="encodingType"></param>
         /// <param name="pixelFormat"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="framerate"></param>
         /// <param name="bitrate"></param>
         /// <param name="quality"></param>
-        public virtual unsafe void ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height,
-                                                       MMAL_RATIONAL_T framerate, int bitrate, int quality = 90)
+        public virtual unsafe void ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int bitrate = 0, int quality = 90)
         {
             this.OutputPort.Ptr->Format->encoding = encodingType.EncodingVal;
             this.OutputPort.Ptr->Format->encodingVariant = pixelFormat.EncodingVal;
 
             MMAL_VIDEO_FORMAT_T tempVid = this.OutputPort.Ptr->Format->es->video;
 
-            MMAL_VIDEO_FORMAT_T newVid = new MMAL_VIDEO_FORMAT_T(
-                MMALUtil.VCOS_ALIGN_UP(width, 32),
-                MMALUtil.VCOS_ALIGN_UP(height, 16),
-                new MMAL_RECT_T(0, 0, width, height),
-                framerate,
-                tempVid.par,
-                tempVid.colorSpace
-            );
-
-            this.OutputPort.Ptr->Format->es->video = newVid;
+            this.OutputPort.Ptr->Format->es->video.frameRate = new MMAL_RATIONAL_T(0, 1);
             this.OutputPort.Ptr->Format->bitrate = bitrate;
 
             try
@@ -135,10 +116,6 @@ namespace MMALSharp.Components
 
             this.OutputPort.Ptr->BufferNum = Math.Max(this.OutputPort.Ptr->BufferNumRecommended, this.OutputPort.Ptr->BufferNumMin);
             this.OutputPort.Ptr->BufferSize = Math.Max(this.OutputPort.Ptr->BufferSizeRecommended, this.OutputPort.Ptr->BufferSizeMin);
-
-            this.OutputPort.Width = width;
-            this.OutputPort.Height = height;
-
         }
 
         /// <summary>
@@ -237,23 +214,6 @@ namespace MMALSharp.Components
             }
         }
         
-        public override void Dispose()
-        {                        
-            if (MMALCameraConfig.Debug)
-            {
-                Console.WriteLine("Removing encoder");
-            }
-            
-            this.Connection?.Destroy();
-            
-            MMALCamera.Instance.Encoders.Remove(this);
-
-            //Remove any unmanaged resources held by the capture handler.
-            this.Handler?.Dispose();
-
-            base.Dispose();
-        }
-
         /// <summary>
         /// Encodes/decodes user provided image data
         /// </summary>

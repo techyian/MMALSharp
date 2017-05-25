@@ -1,10 +1,23 @@
 ﻿using MMALSharp.Native;
 using System;
 using System.Runtime.InteropServices;
+using MMALSharp.Components;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
+    public class ComponentConnection
+    {
+        public MMALDownstreamComponent Component { get; set; }
+        public int OutputPort { get; set; }
+
+        public ComponentConnection(MMALDownstreamComponent comp, int outputPort)
+        {
+            this.Component = comp;
+            this.OutputPort = outputPort;
+        }
+    }
+
     /// <summary>
     /// Represents a connection between two ports
     /// </summary>
@@ -14,6 +27,9 @@ namespace MMALSharp
         /// Native pointer to the connection that this object represents
         /// </summary>
         internal MMAL_CONNECTION_T* Ptr { get; set; }
+
+        public MMALDownstreamComponent DownstreamComponent { get; set; }
+        public MMALComponentBase UpstreamComponent { get; set; }
 
         /// <summary>
         /// The input port of this connection
@@ -59,11 +75,13 @@ namespace MMALSharp
         
         #endregion
 
-        protected MMALConnectionImpl(MMAL_CONNECTION_T* ptr, MMALPortBase output, MMALPortBase input)
+        protected MMALConnectionImpl(MMAL_CONNECTION_T* ptr, MMALPortBase output, MMALPortBase input, MMALDownstreamComponent inputComponent, MMALComponentBase outputComponent)
         {            
             this.Ptr = ptr;            
             this.OutputPort = output;
             this.InputPort = input;
+            this.DownstreamComponent = inputComponent;
+            this.UpstreamComponent = outputComponent;
             this.Enable();
         }
 
@@ -73,12 +91,12 @@ namespace MMALSharp
         /// <param name="output">The output port of the connection</param>
         /// <param name="input">The input port of the connection</param>
         /// <returns></returns>
-        internal static MMALConnectionImpl CreateConnection(MMALPortBase output, MMALPortBase input)
+        internal static MMALConnectionImpl CreateConnection(MMALPortBase output, MMALPortBase input, MMALDownstreamComponent inputComponent)
         {
             IntPtr ptr = IntPtr.Zero;
             MMALCheck(MMALConnection.mmal_connection_create(&ptr, output.Ptr, input.Ptr, MMALConnection.MMAL_CONNECTION_FLAG_TUNNELLING | MMALConnection.MMAL_CONNECTION_FLAG_ALLOCATION_ON_INPUT), "Unable to create connection");
             
-            return new MMALConnectionImpl((MMAL_CONNECTION_T*)ptr, output, input);
+            return new MMALConnectionImpl((MMAL_CONNECTION_T*)ptr, output, input, inputComponent, output.ComponentReference);
         }
 
         /// <summary>

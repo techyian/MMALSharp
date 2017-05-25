@@ -47,8 +47,37 @@ namespace MMALSharp.Components
         /// and this can be applied on the next run to the newly created file.
         /// </summary>
         public bool PrepareSplit { get; set; }
+
+        private int _width;
+        private int _height;
+
+        public override int Width
+        {
+            get
+            {
+                if (_width == 0)
+                {
+                    return MMALCameraConfig.VideoResolution.Width;
+                }
+                return _width;
+            }
+            set { _width = value; }
+        }
+
+        public override int Height
+        {
+            get
+            {
+                if (_height == 0)
+                {
+                    return MMALCameraConfig.VideoResolution.Height;
+                }
+                return _height;
+            }
+            set { _height = value; }
+        }
         
-        public MMALVideoEncoder(ICaptureHandler handler) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, handler)
+        public MMALVideoEncoder(ICaptureHandler handler, MMAL_RATIONAL_T framerate) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, handler)
         {
             this.Inputs = new List<MMALPortImpl>();
             for (int i = 0; i < this.Ptr->InputNum; i++)
@@ -64,17 +93,16 @@ namespace MMALSharp.Components
 
             this.InputPort = this.Inputs.ElementAt(0);
             this.OutputPort = this.Outputs.ElementAt(0);
-            
+            this.Framerate = framerate.Num / framerate.Den;
         }
 
-        public override void ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, MMAL_RATIONAL_T framerate, int bitrate, int quality = 90)
+        public override void ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int bitrate, int quality)
         {
-            base.ConfigureOutputPort(encodingType, pixelFormat, width, height, framerate, quality);
+            base.ConfigureOutputPort(encodingType, pixelFormat, bitrate, quality);
             this.OutputPort.Ptr->BufferSize = 512 * 1024;
             this.Quality = quality;
             this.Bitrate = bitrate;
-            this.Framerate = framerate.Num / framerate.Den;
-
+        
             if (this.OutputPort.EncodingType == MMALEncoding.MMAL_ENCODING_H264)
             {
                 this.ConfigureIntraPeriod();

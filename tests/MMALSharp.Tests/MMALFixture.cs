@@ -14,7 +14,7 @@ namespace MMALSharp.Tests
 
         public MMALFixture()
         {
-            MMALCamera.CreatePreviewComponent(new MMALNullSinkComponent());
+            MMALCamera.Camera.PreviewPort.ConnectTo(new MMALNullSinkComponent(), 0);
         }
 
         public void Dispose()

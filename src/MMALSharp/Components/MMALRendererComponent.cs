@@ -22,11 +22,39 @@ namespace MMALSharp.Components
     /// </summary>
     public class MMALNullSinkComponent : MMALRendererBase
     {
+        private int _width;
+        private int _height;
+
+        public override int Width
+        {
+            get
+            {
+                if (_width == 0)
+                {
+                    return MMALCameraConfig.VideoResolution.Width;
+                }
+                return _width;
+            }
+            set { _width = value; }
+        }
+
+        public override int Height
+        {
+            get
+            {
+                if (_height == 0)
+                {
+                    return MMALCameraConfig.VideoResolution.Height;
+                }
+                return _height;
+            }
+            set { _height = value; }
+        }
+
         public MMALNullSinkComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_NULL_SINK)
         {
             this.EnableComponent();
         }
-        
     }
 
     /// <summary>
@@ -34,10 +62,38 @@ namespace MMALSharp.Components
     /// </summary>
     public class MMALVideoRenderer : MMALRendererBase
     {
+        private int _width;
+        private int _height;
+
+        public override int Width
+        {
+            get
+            {
+                if (_width == 0)
+                {
+                    return MMALCameraConfig.VideoResolution.Width;
+                }
+                return _width;
+            }
+            set { _width = value; }
+        }
+
+        public override int Height
+        {
+            get
+            {
+                if (_height == 0)
+                {
+                    return MMALCameraConfig.VideoResolution.Height;
+                }
+                return _height;
+            }
+            set { _height = value; }
+        }
+
         public MMALVideoRenderer() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_RENDERER)
         {
             this.EnableComponent();
         }
-        
     }
 }
