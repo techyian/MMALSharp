@@ -111,7 +111,7 @@ namespace MMALSharp.Native
         private IntPtr priv;
         private uint cmd;
         public byte* data;
-        private uint allocSize, length, offset, flags;
+        public uint allocSize, length, offset, flags;
         private long pts, dts;
         private IntPtr type, userData;
 

@@ -23,9 +23,9 @@ namespace MMALSharp.Common.Handlers
         {
             var buffer = new byte[this.BufferSize];
 
-            var read = this.InputStream.Read(buffer, this.Offset, this.BufferSize);
+            var read = this.InputStream.Read(buffer, 0, this.BufferSize);
             this.Offset += read;
-
+            
             if (read == 0)
             {
                 return new ProcessResult { Success = true, BufferFeed = buffer, EOF = true };

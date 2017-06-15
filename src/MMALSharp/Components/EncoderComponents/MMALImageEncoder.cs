@@ -8,6 +8,7 @@ using MMALSharp.Common.Handlers;
 using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp.Components
@@ -15,7 +16,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// Represents an image encoder component
     /// </summary>
-    public sealed unsafe class MMALImageEncoder : MMALEncoderBase
+    public unsafe class MMALImageEncoder : MMALEncoderBase
     {
         public const int MaxExifPayloadLength = 128;
 
@@ -128,4 +129,50 @@ namespace MMALSharp.Components
         }
         
     }
+
+    public class MMALImageEncoderConverter : MMALImageEncoder, IMMALConvert
+    {
+        public unsafe MMALImageEncoderConverter(TransformStreamCaptureHandler handler) : base(handler)
+        {
+            this.Inputs = new List<MMALPortImpl>();
+            for (int i = 0; i < this.Ptr->InputNum; i++)
+            {
+                this.Inputs.Add(new MMALStillConvertPort(&(*this.Ptr->Input[i]), this, PortType.Input));
+            }
+
+            this.Outputs = new List<MMALPortImpl>();
+            for (int i = 0; i < this.Ptr->OutputNum; i++)
+            {
+                this.Outputs.Add(new MMALStillConvertPort(&(*this.Ptr->Output[i]), this, PortType.Output));
+            }
+
+            this.InputPort = this.Inputs.ElementAt(0);
+            this.OutputPort = this.Outputs.ElementAt(0);
+        }
+
+        /// <summary>
+        /// Encodes/decodes user provided image data
+        /// </summary>
+        /// <param name="outputPort">The output port to begin processing on. Usually will be 0.</param>
+        /// <returns>An awaitable task</returns>
+        public virtual async Task Convert(int outputPort = 0)
+        {
+            //Enable both input and output ports. Ports should have been pre-configured by user prior to this point.
+            this.Start(this.InputPort, this.ManagedInputCallback);
+            this.Start(this.OutputPort, new Action<MMALBufferImpl, MMALPortBase>(this.ManagedOutputCallback));
+
+            this.EnableComponent();
+
+            //Wait until the process is complete.
+            this.Outputs.ElementAt(outputPort).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+            await this.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
+
+            this.DisableComponent();
+
+            this.CleanPortPools();
+        }
+
+
+    }
+    
 }

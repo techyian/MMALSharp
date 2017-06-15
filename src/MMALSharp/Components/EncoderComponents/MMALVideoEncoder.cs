@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp.Components

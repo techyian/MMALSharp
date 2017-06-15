@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MMALSharp.Handlers;
+using MMALSharp.Ports;
 
 namespace MMALSharp
 {    
@@ -297,7 +298,7 @@ namespace MMALSharp
             //Enable all connections associated with this component
             component.EnableConnections();
 
-            component.Start(outputPort, component.ManagedOutputCallback);
+            component.Start(outputPort, new Action<MMALBufferImpl, MMALPortBase>(component.ManagedOutputCallback));
 
             this.StartCapture(cameraPort);
 
@@ -397,10 +398,7 @@ namespace MMALSharp
         /// <returns>The camera instance</returns>
         public MMALCamera ConfigureCameraSettings()
         {
-            if (MMALCameraConfig.Debug)
-            {
-                Console.WriteLine("Configuring camera parameters.");
-            }
+            Debugger.Print("Configuring camera parameters.");
 
             this.DisableCamera();
             this.Camera.SetCameraParameters();            
@@ -428,10 +426,7 @@ namespace MMALSharp
         /// </summary>
         public void Cleanup()
         {
-            if (MMALCameraConfig.Debug)
-            {
-                Console.WriteLine("Destroying final components");
-            }
+            Debugger.Print("Destroying final components");
             
             var tempList = new List<MMALDownstreamComponent>(this.DownstreamComponents);
 

@@ -193,17 +193,24 @@ namespace MMALSharp
             {
                 //If something goes wrong, unlock the header.
                 MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
-                if (MMALCameraConfig.Debug)
-                    Console.WriteLine("Unable to handle data. Returning null.");
+                Debugger.Print("Unable to handle data. Returning null.");
                 return null;
             }            
         }
 
-        internal void ReadIntoBuffer(byte[] source)
+        internal void ReadIntoBuffer(byte[] source, bool eof)
         {
             MMALCheck(MMALBuffer.mmal_buffer_header_mem_lock(this.Ptr), "Unable to lock buffer header.");
             var ptrAlloc = Marshal.AllocHGlobal(source.Length);
+            this.Ptr->data = (byte*)ptrAlloc;
+            this.Ptr->allocSize = (uint)source.Length;
+            this.Ptr->length = (uint)source.Length;
 
+            if (eof)
+            {
+                this.Ptr->flags = (uint)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
+            }
+            
             try
             {
                 fixed (byte* pSource = source)
@@ -212,7 +219,7 @@ namespace MMALSharp
                     
                     byte* pt = (byte*)ptrAlloc;
                     
-                    for (int i = 0; i < this.Ptr->Length; i++)
+                    for (int i = 0; i < source.Length; i++)
                     {
                         *pt = *ps;
                         pt++;
@@ -227,9 +234,9 @@ namespace MMALSharp
                 //If something goes wrong, unlock the header.
                 MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
                 Marshal.FreeHGlobal(ptrAlloc);
-                if (MMALCameraConfig.Debug)
-                    Console.WriteLine("Unable to write data to buffer.");
+                Debugger.Print("Unable to write data to buffer.");
             }
+            
         }
 
         /// <summary>

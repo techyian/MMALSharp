@@ -49,7 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\EncoderComponents\IConvert.cs" />
+    <Compile Include="Components\EncoderComponents\IMMALConvert.cs" />
     <Compile Include="Components\EncoderComponents\MMALImageDecoder.cs" />
     <Compile Include="Components\EncoderComponents\MMALImageEncoder.cs" />
     <Compile Include="Components\EncoderComponents\MMALVideoDecoder.cs" />
@@ -68,10 +68,10 @@
     <Compile Include="Components\MMALRendererComponent.cs" />
     <Compile Include="MMALObject.cs" />
     <Compile Include="MMALPoolImpl.cs" />
-    <Compile Include="MMALPortBase.cs" />
+    <Compile Include="Ports\MMALPortBase.cs" />
     <Compile Include="MMALCameraExtensions.cs" />
-    <Compile Include="MMALPortExtensions.cs" />
-    <Compile Include="MMALPortImpl.cs" />
+    <Compile Include="Ports\MMALPortExtensions.cs" />
+    <Compile Include="Ports\MMALPortImpl.cs" />
     <Compile Include="MMALQueueImpl.cs" />
     <Compile Include="Native\BcmHost.cs" />
     <Compile Include="Native\MMALBuffer.cs" />
@@ -87,6 +87,9 @@
     <Compile Include="Native\MMALPort.cs" />
     <Compile Include="Native\MMALQueue.cs" />
     <Compile Include="Native\MMALUtil.cs" />
+    <Compile Include="Ports\MMALControlPort.cs" />
+    <Compile Include="Ports\MMALStillPort.cs" />
+    <Compile Include="Ports\MMALVideoPort.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

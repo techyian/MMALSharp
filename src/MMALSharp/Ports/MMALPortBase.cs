@@ -172,7 +172,7 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Provides functionality to enable processing on a port.
+        /// Provides functionality to enable processing on an output port.
         /// </summary>
         /// <param name="managedCallback"></param>        
         internal virtual void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback)
@@ -189,18 +189,24 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Provides functionality to enable processing on a port.
+        /// Provides functionality to enable processing on an input port.
         /// </summary>
         /// <param name="managedCallback"></param>        
         internal virtual void EnablePort(Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback)
         {
+            //We populate the input buffers with user provided data.
             this.BufferPool = new MMALPoolImpl(this);
 
             var length = this.BufferPool.Queue.QueueLength();
 
             for (int i = 0; i < length; i++)
             {
-                var buffer = this.BufferPool.Queue.GetBuffer();
+                MMALBufferImpl buffer = this.BufferPool.Queue.GetBuffer();
+
+                ProcessResult result = managedCallback(buffer, this);
+
+                buffer.ReadIntoBuffer(result.BufferFeed, result.EOF);
+
                 this.SendBuffer(buffer);
             }
         }
@@ -235,8 +241,7 @@ namespace MMALSharp
         {
             if (Enabled)
             {
-                if (MMALCameraConfig.Debug)
-                    Console.WriteLine("Disabling port");
+                Debugger.Print("Disabling port");
                 MMALCheck(MMALPort.mmal_port_disable(this.Ptr), "Unable to disable port.");
             }
                 

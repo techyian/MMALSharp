@@ -84,9 +84,8 @@ namespace MMALSharp.Components
                                                                 0,
                                                                 MMALCameraConfig.ClockMode
                                                               );
-
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine("Camera config set");
+            
+            Debugger.Print("Camera config set");
 
             this.SetCameraConfig(camConfig);
 
@@ -94,8 +93,7 @@ namespace MMALSharp.Components
 
             this.Initialise();
 
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine("Camera component configured.");
+            Debugger.Print("Camera component configured.");
         }
         
         internal void SetSensorDefaults()
@@ -152,8 +150,7 @@ namespace MMALSharp.Components
             this.PreviewPort.Ptr->Format->encodingVariant = MMALCameraConfig.PreviewSubformat.EncodingVal;
             this.PreviewPort.Ptr->Format->es->video = vFormat;
 
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine("Commit preview");
+            Debugger.Print("Commit preview");
 
             this.PreviewPort.Commit();
         }
@@ -183,8 +180,7 @@ namespace MMALSharp.Components
             this.VideoPort.Ptr->Format->encodingVariant = MMALCameraConfig.VideoSubformat.EncodingVal;
             this.VideoPort.Ptr->Format->es->video = vFormat;
 
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine("Commit video");
+            Debugger.Print("Commit video");
 
             this.VideoPort.Commit();
 
@@ -255,9 +251,8 @@ namespace MMALSharp.Components
             }
 
             this.StillPort.Ptr->Format->es->video = vFormat;
-            
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine("Commit still");
+
+            Debugger.Print("Commit still");
             
             this.StillPort.Commit();
             

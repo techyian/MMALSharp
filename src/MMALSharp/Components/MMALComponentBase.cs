@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MMALSharp.Ports;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
@@ -157,10 +158,11 @@ namespace MMALSharp
         /// </summary>
         /// <param name="buffer">The current buffer header being processed</param>
         /// <param name="port">The port we're currently processing on</param>
-        public virtual void ManagedInputCallback(MMALBufferImpl buffer, MMALPortBase port)
+        public virtual ProcessResult ManagedInputCallback(MMALBufferImpl buffer, MMALPortBase port)
         {
-            var data = this.Handler?.Process();
-            buffer.ReadIntoBuffer(data.BufferFeed);
+            Console.WriteLine("Input callback");
+
+            return this.Handler?.Process();
         }
 
         /// <summary>
@@ -170,6 +172,8 @@ namespace MMALSharp
         /// <param name="port">The port we're currently processing on</param>
         public virtual void ManagedOutputCallback(MMALBufferImpl buffer, MMALPortBase port)
         {
+            Console.WriteLine("Output callback");
+
             var data = buffer.GetBufferData();
             this.Handler?.Process(data);
         }
@@ -186,6 +190,16 @@ namespace MMALSharp
         }
 
         /// <summary>
+        /// Enable the port with the specified port number.
+        /// </summary>
+        /// <param name="outputPortNumber">The output port number</param>
+        /// <param name="managedCallback">The managed method to callback to from the native callback</param>
+        internal void Start(int outputPortNumber, Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback)
+        {
+            this.Start(this.Outputs.ElementAt(outputPortNumber), managedCallback);
+        }
+
+        /// <summary>
         /// Enable the port specified.
         /// </summary>
         /// <param name="port">The output port</param>
@@ -197,6 +211,16 @@ namespace MMALSharp
                 ((StreamCaptureHandler)this.Handler).NewFile();
             }
 
+            port.EnablePort(managedCallback);
+        }
+
+        /// <summary>
+        /// Enable the port specified.
+        /// </summary>
+        /// <param name="port">The output port</param>
+        /// <param name="managedCallback">The managed method to callback to from the native callback</param>
+        internal void Start(MMALPortBase port, Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback)
+        {
             port.EnablePort(managedCallback);
         }
 
@@ -228,8 +252,7 @@ namespace MMALSharp
             {
                 if (port.BufferPool != null)
                 {
-                    if (MMALCameraConfig.Debug)
-                        Console.WriteLine("Destroying port pool");
+                    Debugger.Print("Destroying port pool");
 
                     if (port.Enabled)
                         port.DisablePort();
@@ -243,8 +266,7 @@ namespace MMALSharp
             {
                 if (port.BufferPool != null)
                 {
-                    if (MMALCameraConfig.Debug)
-                        Console.WriteLine("Destroying port pool");
+                    Debugger.Print("Destroying port pool");
 
                     if (port.Enabled)
                         port.DisablePort();
@@ -289,16 +311,14 @@ namespace MMALSharp
 
         public override void Dispose()
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Disposing component {this.Name}.");
+            Debugger.Print($"Disposing component {this.Name}.");
             
             //See if any pools need disposing before destroying component.
             foreach (var port in this.Inputs)
             {
                 if (port.BufferPool != null)
                 {
-                    if (MMALCameraConfig.Debug)
-                        Console.WriteLine("Destroying port pool");
+                    Debugger.Print("Destroying port pool");
 
                     port.DestroyPortPool();
                 }
@@ -308,8 +328,7 @@ namespace MMALSharp
             {
                 if (port.BufferPool != null)
                 {
-                    if (MMALCameraConfig.Debug)
-                        Console.WriteLine("Destroying port pool");
+                    Debugger.Print("Destroying port pool");
 
                     port.DestroyPortPool();
                 }                    
@@ -318,8 +337,7 @@ namespace MMALSharp
             this.DisableComponent();
             this.DestroyComponent();
 
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine("Completed disposal...");
+            Debugger.Print("Completed disposal...");
 
             base.Dispose();
         }

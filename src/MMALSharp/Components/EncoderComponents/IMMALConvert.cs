@@ -7,7 +7,7 @@ using MMALSharp.Common.Handlers;
 
 namespace MMALSharp.Components.EncoderComponents
 {
-    public interface IConvert
+    public interface IMMALConvert
     {
         Task Convert(int outputPort);
     }

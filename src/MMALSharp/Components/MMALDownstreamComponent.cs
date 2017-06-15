@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using MMALSharp.Native;
 
 namespace MMALSharp.Components
 {
@@ -22,7 +23,48 @@ namespace MMALSharp.Components
             this.Handler = handler;
             MMALCamera.Instance.DownstreamComponents.Add(this);
         }
-        
+
+        /// <summary>
+        /// Call to configure changes on an Image Encoder output port.
+        /// </summary>
+        /// <param name="encodingType"></param>
+        /// <param name="pixelFormat"></param>
+        /// <param name="bitrate"></param>
+        /// <param name="quality"></param>
+        public virtual unsafe void ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int bitrate = 0, int quality = 90)
+        {
+            this.OutputPort.Ptr->Format->encoding = encodingType.EncodingVal;
+            this.OutputPort.Ptr->Format->encodingVariant = pixelFormat.EncodingVal;
+
+            MMAL_VIDEO_FORMAT_T tempVid = this.OutputPort.Ptr->Format->es->video;
+
+            this.OutputPort.Ptr->Format->es->video.frameRate = new MMAL_RATIONAL_T(0, 1);
+            this.OutputPort.Ptr->Format->bitrate = bitrate;
+
+            try
+            {
+                this.OutputPort.Commit();
+            }
+            catch
+            {
+                //If commit fails using new settings, attempt to reset using old temp MMAL_VIDEO_FORMAT_T.
+                Helpers.PrintWarning("Commit of output port failed. Attempting to reset values.");
+                this.OutputPort.Ptr->Format->es->video = tempVid;
+                this.OutputPort.Commit();
+            }
+
+            if (encodingType == MMALEncoding.MMAL_ENCODING_JPEG)
+            {
+                this.OutputPort.SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, quality);
+            }
+
+            this.OutputPort.EncodingType = encodingType;
+            this.OutputPort.PixelFormat = pixelFormat;
+
+            this.OutputPort.Ptr->BufferNum = Math.Max(this.OutputPort.Ptr->BufferNumRecommended, this.OutputPort.Ptr->BufferNumMin);
+            this.OutputPort.Ptr->BufferSize = Math.Max(this.OutputPort.Ptr->BufferSizeRecommended, this.OutputPort.Ptr->BufferSizeMin);
+        }
+
         private void ClosePipelineConnections()
         {
             //Find any components this component is connected to, recursively removing these components.
@@ -53,10 +95,7 @@ namespace MMALSharp.Components
         
         public override void Dispose()
         {
-            if (MMALCameraConfig.Debug)
-            {
-                Console.WriteLine("Removing downstream component");
-            }
+            Debugger.Print("Removing downstream component");
 
             this.ClosePipelineConnections();
 

@@ -3,6 +3,7 @@ using MMALSharp.Native;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using MMALSharp.Ports;
 using static MMALSharp.MMALCallerHelper;
 using static MMALSharp.MMALParameterHelpers;
 using static MMALSharp.Native.MMALParameters;
@@ -29,8 +30,7 @@ namespace MMALSharp
 
         internal static void SetSaturation(this MMALCameraComponent camera, double saturation)
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Setting saturation: {saturation}");
+            Debugger.Print($"Setting saturation: {saturation}");
 
             var value = new MMAL_RATIONAL_T((int)saturation, 100);
 
@@ -51,8 +51,7 @@ namespace MMALSharp
 
         internal static void SetSharpness(this MMALCameraComponent camera, double sharpness)
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Setting sharpness: {sharpness}");
+            Debugger.Print($"Setting sharpness: {sharpness}");
 
             var value = new MMAL_RATIONAL_T((int)sharpness, 100);
 
@@ -73,8 +72,7 @@ namespace MMALSharp
 
         internal static void SetContrast(this MMALCameraComponent camera, double contrast)
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Setting contrast: {contrast}");
+            Debugger.Print($"Setting contrast: {contrast}");
 
             var value = new MMAL_RATIONAL_T((int)contrast, 100);
 
@@ -101,8 +99,7 @@ namespace MMALSharp
 
         internal static void SetBrightness(this MMALCameraComponent camera, double brightness)
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Setting brightness: {brightness}");
+            Debugger.Print($"Setting brightness: {brightness}");
 
             var value = new MMAL_RATIONAL_T((int)brightness, 100);
 
@@ -124,8 +121,7 @@ namespace MMALSharp
 
         internal static void SetISO(this MMALCameraComponent camera, int iso)
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Setting ISO: {iso}");
+            Debugger.Print($"Setting ISO: {iso}");
 
             //0 = auto
             if ((iso < 100 || iso > 800) && iso > 0)
@@ -143,8 +139,7 @@ namespace MMALSharp
 
         internal static void SetVideoStabilisation(this MMALCameraComponent camera, bool vstabilisation)
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Setting video stabilisation: {vstabilisation}");
+            Debugger.Print($"Setting video stabilisation: {vstabilisation}");
 
             camera.Control.SetParameter(MMAL_PARAMETER_VIDEO_STABILISATION, vstabilisation);            
         }
@@ -156,8 +151,7 @@ namespace MMALSharp
 
         internal static void SetExposureCompensation(this MMALCameraComponent camera, int expCompensation)
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Setting exposure compensation: {expCompensation}");
+            Debugger.Print($"Setting exposure compensation: {expCompensation}");
 
             if (expCompensation < -10 || expCompensation > 10)
             {
@@ -179,8 +173,7 @@ namespace MMALSharp
 
         internal static void SetExposureMode(this MMALCameraComponent camera, MMAL_PARAM_EXPOSUREMODE_T mode)
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Setting exposure mode: {mode}");
+            Debugger.Print($"Setting exposure mode: {mode}");
 
             MMAL_PARAMETER_EXPOSUREMODE_T expMode = new MMAL_PARAMETER_EXPOSUREMODE_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_EXPOSURE_MODE, Marshal.SizeOf<MMAL_PARAMETER_EXPOSUREMODE_T>()),
                                                                                                         mode);
@@ -200,8 +193,7 @@ namespace MMALSharp
 
         internal static void SetExposureMeteringMode(this MMALCameraComponent camera, MMAL_PARAM_EXPOSUREMETERINGMODE_T mode)
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Setting exposure metering mode: {mode}");
+            Debugger.Print($"Setting exposure metering mode: {mode}");
 
             MMAL_PARAMETER_EXPOSUREMETERINGMODE_T expMode = new MMAL_PARAMETER_EXPOSUREMETERINGMODE_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_EXP_METERING_MODE, Marshal.SizeOf<MMAL_PARAMETER_EXPOSUREMETERINGMODE_T>()),
                                                                                                         mode);
@@ -221,8 +213,7 @@ namespace MMALSharp
 
         internal static void SetAwbMode(this MMALCameraComponent camera, MMAL_PARAM_AWBMODE_T mode)
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Setting AWB mode: {mode}");
+            Debugger.Print($"Setting AWB mode: {mode}");
 
             MMAL_PARAMETER_AWBMODE_T awbMode = new MMAL_PARAMETER_AWBMODE_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_AWB_MODE, Marshal.SizeOf<MMAL_PARAMETER_AWBMODE_T>()),
                                                                                                         mode);
@@ -298,8 +289,7 @@ namespace MMALSharp
         
         internal static void SetAwbGains(this MMALCameraComponent camera, double rGain, double bGain)
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Setting AWB gains: {rGain}, {bGain}");
+            Debugger.Print($"Setting AWB gains: {rGain}, {bGain}");
 
             if (MMALCameraConfig.AwbMode != MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_OFF && (rGain > 0 || bGain > 0))
                 throw new PiCameraError("AWB Mode must be off when setting AWB gains");
@@ -323,8 +313,7 @@ namespace MMALSharp
 
         internal static void SetImageFx(this MMALCameraComponent camera, MMAL_PARAM_IMAGEFX_T imageFx)
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Setting Image FX: {imageFx}");
+            Debugger.Print($"Setting Image FX: {imageFx}");
 
             MMAL_PARAMETER_IMAGEFX_T imgFx = new MMAL_PARAMETER_IMAGEFX_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_IMAGE_EFFECT, Marshal.SizeOf<MMAL_PARAMETER_IMAGEFX_T>()),
                 imageFx);
@@ -349,8 +338,7 @@ namespace MMALSharp
 
         internal static void SetColourFx(this MMALCameraComponent camera, ColourEffects colourFx)
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine("Setting colour effects");
+            Debugger.Print("Setting colour effects");
 
             MMAL_PARAMETER_COLOURFX_T colFx = new MMAL_PARAMETER_COLOURFX_T(new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_COLOUR_EFFECT, Marshal.SizeOf<MMAL_PARAMETER_COLOURFX_T>()),
                                                                                                         (colourFx.Enable ? 1 : 0), colourFx.U, colourFx.V);
@@ -367,8 +355,7 @@ namespace MMALSharp
         {            
             int rot = ((rotation % 360) / 90) * 90;
 
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Setting rotation: {rot}");
+            Debugger.Print($"Setting rotation: {rot}");
 
             camera.StillPort.SetParameter(MMAL_PARAMETER_ROTATION, rot);
         }
@@ -420,8 +407,7 @@ namespace MMALSharp
 
         internal static void SetShutterSpeed(this MMALCameraComponent camera, int speed)
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Setting shutter speed: {speed}");
+            Debugger.Print($"Setting shutter speed: {speed}");
 
             if (speed > 6000000)
             {

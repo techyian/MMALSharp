@@ -63,8 +63,7 @@ namespace MMALSharp
 
         public override void Dispose()
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine("Disposing queue.");            
+            Debugger.Print("Disposing queue.");            
             this.Destroy();
             base.Dispose();
         }

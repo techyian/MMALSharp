@@ -15,7 +15,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// Represents a base class for all encoder components
     /// </summary>
-    public abstract class MMALEncoderBase : MMALDownstreamComponent, IConvert
+    public abstract class MMALEncoderBase : MMALDownstreamComponent
     {   
         protected MMALEncoderBase(string encoderName, ICaptureHandler handler) : base(encoderName, handler)
         {
@@ -36,21 +36,27 @@ namespace MMALSharp.Components
         public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, int width, int height, MMAL_RATIONAL_T framerate, 
                                                       int bitrate, int headerByteSize, int flags)
         {
-            this.InputPort.Ptr->Format->type = MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_VIDEO;
+            Console.WriteLine($"Format type {this.InputPort.Ptr->Format->type}");
+            Console.WriteLine($"Encoding type {this.InputPort.Ptr->Format->encoding}");
+            
             this.InputPort.Ptr->Format->encoding = encodingType.EncodingVal;
-            this.InputPort.Ptr->Format->es->video.height = height;
-            this.InputPort.Ptr->Format->es->video.width = width;
-            this.InputPort.Ptr->Format->es->video.frameRate = framerate;
-            this.InputPort.Ptr->Format->flags = flags;
-            this.InputPort.Ptr->Format->bitrate = bitrate;
+            
+            this.InputPort.Ptr->Format->es->video.height = MMALUtil.VCOS_ALIGN_UP(height, 32);
+            this.InputPort.Ptr->Format->es->video.width = MMALUtil.VCOS_ALIGN_UP(width, 32);
+            this.InputPort.Ptr->Format->es->video.crop = new MMAL_RECT_T(0, 0, width, height);
+            
+            //this.InputPort.Ptr->Format->es->video.frameRate = framerate;
+            //this.InputPort.Ptr->Format->flags = flags;
+            //this.InputPort.Ptr->Format->bitrate = bitrate;
 
-            MMALFormat.mmal_format_extradata_alloc(this.InputPort.Ptr->Format, (uint)headerByteSize);
+            //MMALCheck(MMALFormat.mmal_format_extradata_alloc(this.InputPort.Ptr->Format, (uint)headerByteSize),
+            //        "Unable to allocate extra data buffer");
 
-            this.InputPort.Ptr->Format->extraDataSize = headerByteSize;
+            //this.InputPort.Ptr->Format->extraDataSize = headerByteSize;
 
             //Allocate the correct size for extraData. This will be cleared by MMAL upon disposal.
-            IntPtr extraDataAlloc = Marshal.AllocHGlobal(headerByteSize);
-            this.InputPort.Ptr->Format->extraData = extraDataAlloc;
+            //IntPtr extraDataAlloc = Marshal.AllocHGlobal(headerByteSize);
+            //this.InputPort.Ptr->Format->extraData = extraDataAlloc;
 
             try
             {
@@ -59,12 +65,13 @@ namespace MMALSharp.Components
             catch
             {
                 //If fail, cleanup unmanaged memory allocation.
-                Marshal.FreeHGlobal(extraDataAlloc);
+                //Marshal.FreeHGlobal(extraDataAlloc);
+                throw;
             }
 
             if (this.OutputPort.Ptr->Format->type == MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_UNKNOWN)
             {
-                Marshal.FreeHGlobal(extraDataAlloc);
+                //Marshal.FreeHGlobal(extraDataAlloc);
                 throw new PiCameraError("Unable to determine settings for output port.");
             }
 
@@ -73,48 +80,7 @@ namespace MMALSharp.Components
             
             this.InputPort.EncodingType = encodingType;
         }
-
-        /// <summary>
-        /// Call to configure changes on an Image Encoder output port.
-        /// </summary>
-        /// <param name="encodingType"></param>
-        /// <param name="pixelFormat"></param>
-        /// <param name="bitrate"></param>
-        /// <param name="quality"></param>
-        public virtual unsafe void ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int bitrate = 0, int quality = 90)
-        {
-            this.OutputPort.Ptr->Format->encoding = encodingType.EncodingVal;
-            this.OutputPort.Ptr->Format->encodingVariant = pixelFormat.EncodingVal;
-
-            MMAL_VIDEO_FORMAT_T tempVid = this.OutputPort.Ptr->Format->es->video;
-
-            this.OutputPort.Ptr->Format->es->video.frameRate = new MMAL_RATIONAL_T(0, 1);
-            this.OutputPort.Ptr->Format->bitrate = bitrate;
-
-            try
-            {
-                this.OutputPort.Commit();
-            }
-            catch
-            {
-                //If commit fails using new settings, attempt to reset using old temp MMAL_VIDEO_FORMAT_T.
-                Helpers.PrintWarning("Commit of output port failed. Attempting to reset values.");
-                this.OutputPort.Ptr->Format->es->video = tempVid;
-                this.OutputPort.Commit();
-            }
-
-            if (encodingType == MMALEncoding.MMAL_ENCODING_JPEG)
-            {
-                this.OutputPort.SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, quality);
-            }
-            
-            this.OutputPort.EncodingType = encodingType;
-            this.OutputPort.PixelFormat = pixelFormat;
-
-            this.OutputPort.Ptr->BufferNum = Math.Max(this.OutputPort.Ptr->BufferNumRecommended, this.OutputPort.Ptr->BufferNumMin);
-            this.OutputPort.Ptr->BufferSize = Math.Max(this.OutputPort.Ptr->BufferSizeRecommended, this.OutputPort.Ptr->BufferSizeMin);
-        }
-
+        
         /// <summary>
         /// Annotates the image with various text as specified in the MMALCameraConfig class.
         /// </summary>
@@ -122,8 +88,7 @@ namespace MMALSharp.Components
         {
             if (MMALCameraConfig.Annotate != null)
             {
-                if (MMALCameraConfig.Debug)
-                    Console.WriteLine("Setting annotate");
+                Debugger.Print("Setting annotate");
                                                                
                 var sb = new StringBuilder();
 
@@ -209,28 +174,6 @@ namespace MMALSharp.Components
 
                 Marshal.FreeHGlobal(ptr);
             }
-        }
-        
-        /// <summary>
-        /// Encodes/decodes user provided image data
-        /// </summary>
-        /// <param name="outputPort">The output port to begin processing on. Usually will be 0.</param>
-        /// <returns>An awaitable task</returns>
-        public virtual async Task Convert(int outputPort = 0)
-        {
-            //Enable both input and output ports. Ports should have been pre-configured by user prior to this point.
-            this.Start(this.InputPort, this.ManagedInputCallback);
-            this.Start(this.OutputPort, this.ManagedOutputCallback);
-
-            this.EnableComponent();
-
-            //Wait until the process is complete.
-            this.Outputs.ElementAt(outputPort).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            await this.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
-
-            this.DisableComponent();
-
-            this.CleanPortPools();
         }
     }
 }

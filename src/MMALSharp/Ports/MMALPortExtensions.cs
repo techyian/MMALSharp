@@ -164,8 +164,7 @@ namespace MMALSharp
                 throw new PiCameraError($"Could not find parameter {key}");
             }
 
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine($"Setting parameter {t.ParamName}");
+            Debugger.Print($"Setting parameter {t.ParamName}");
 
             try
             {

@@ -125,16 +125,14 @@ namespace MMALSharp
         /// </summary>
         internal void Destroy()
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine("Destroying connection");
+            Debugger.Print("Destroying connection");
 
             MMALCheck(MMALConnection.mmal_connection_destroy(this.Ptr), "Unable to destroy connection");
         }
 
         public override void Dispose()
         {
-            if (MMALCameraConfig.Debug)
-                Console.WriteLine("Disposing connection.");
+            Debugger.Print("Disposing connection.");
             this.Destroy();
             base.Dispose();
         }
