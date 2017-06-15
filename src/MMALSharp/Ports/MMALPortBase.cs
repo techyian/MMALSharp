@@ -306,6 +306,85 @@ namespace MMALSharp
             }
         }
 
+        internal void ReleaseInputBuffer(MMALBufferImpl bufferImpl)
+        {
+            bufferImpl.Release();
+
+            if (this.Enabled && this.BufferPool != null)
+            {
+                var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
+
+                Console.WriteLine("Input native callback");
+
+                //Populate the new input buffer with user provided image data.
+                var result = this.ManagedInputCallback(newBuffer, this);
+                bufferImpl.ReadIntoBuffer(result.BufferFeed, result.EOF);
+
+                try
+                {
+                    if (this.Trigger != null && this.Trigger.CurrentCount > 0 && result.EOF)
+                    {
+                        Debugger.Print("Received EOF. Releasing.");
+
+                        this.Trigger.Signal();
+                        newBuffer.Release();
+                    }
+
+                    if (newBuffer != null)
+                    {
+                        Debugger.Print("Got buffer. Sending to port.");
+
+                        this.SendBuffer(newBuffer);
+                    }
+                    else
+                    {
+                        Debugger.Print("Buffer null. Continuing.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Buffer handling failed. {ex.Message}");
+                }
+            }
+        }
+
+        internal void ReleaseOutputBuffer(MMALBufferImpl bufferImpl)
+        {
+            bufferImpl.Release();
+
+            try
+            {
+                if (MMALCameraConfig.Debug && !this.Enabled)
+                {
+                    Console.WriteLine("Port not enabled.");
+                }
+
+                if (MMALCameraConfig.Debug && this.BufferPool == null)
+                {
+                    Console.WriteLine("Buffer pool null.");
+                }
+
+                if (this.Enabled && this.BufferPool != null)
+                {
+                    var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
+
+                    if (newBuffer != null)
+                    {
+                        Debugger.Print("Got buffer. Sending to port.");
+
+                        this.SendBuffer(newBuffer);
+                    }
+                    else
+                    {
+                        Debugger.Print("Buffer null. Continuing.");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debugger.Print($"Unable to send buffer header. {e.Message}");
+            }
+        }
 
         public MMALPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort = 0)
         {

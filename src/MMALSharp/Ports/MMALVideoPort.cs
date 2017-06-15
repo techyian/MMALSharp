@@ -49,40 +49,7 @@ namespace MMALSharp.Ports
                     }
                 }
 
-                bufferImpl.Release();
-
-                try
-                {
-                    if (MMALCameraConfig.Debug && !this.Enabled)
-                    {
-                        Console.WriteLine("Port not enabled.");
-                    }
-
-                    if (MMALCameraConfig.Debug && this.BufferPool == null)
-                    {
-                        Console.WriteLine("Buffer pool null.");
-                    }
-
-                    if (this.Enabled && this.BufferPool != null)
-                    {
-                        var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
-
-                        if (newBuffer != null)
-                        {
-                            Debugger.Print("Got buffer. Sending to port.");
-
-                            this.SendBuffer(newBuffer);
-                        }
-                        else
-                        {
-                            Debugger.Print("Buffer null. Continuing.");
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debugger.Print($"Unable to send buffer header. {e.Message}");
-                }
+                this.ReleaseOutputBuffer(bufferImpl);
             }
         }
 
