@@ -159,9 +159,7 @@ namespace MMALSharp
         /// <param name="buffer">The current buffer header being processed</param>
         /// <param name="port">The port we're currently processing on</param>
         public virtual ProcessResult ManagedInputCallback(MMALBufferImpl buffer, MMALPortBase port)
-        {
-            Console.WriteLine("Input callback");
-
+        {            
             return this.Handler?.Process();
         }
 
@@ -171,9 +169,7 @@ namespace MMALSharp
         /// <param name="buffer">The current buffer header being processed</param>
         /// <param name="port">The port we're currently processing on</param>
         public virtual void ManagedOutputCallback(MMALBufferImpl buffer, MMALPortBase port)
-        {
-            Console.WriteLine("Output callback");
-
+        {            
             var data = buffer.GetBufferData();
             this.Handler?.Process(data);
         }

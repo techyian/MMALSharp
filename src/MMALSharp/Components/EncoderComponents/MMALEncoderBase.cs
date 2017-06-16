@@ -35,10 +35,7 @@ namespace MMALSharp.Components
         /// <param name="flags">Bitwise value of flags describing the difference between source and target elementary streams. See class MMALFormat and the url http://www.jvcref.com/files/PI/documentation/html/group___mmal_format.html#ga26178f5c56486c3e5db7f5f7c90598a0 </param>
         public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, int width, int height, MMAL_RATIONAL_T framerate, 
                                                       int bitrate, int headerByteSize, int flags)
-        {
-            Console.WriteLine($"Format type {this.InputPort.Ptr->Format->type}");
-            Console.WriteLine($"Encoding type {this.InputPort.Ptr->Format->encoding}");
-            
+        {                        
             this.InputPort.Ptr->Format->encoding = encodingType.EncodingVal;
             
             this.InputPort.Ptr->Format->es->video.height = MMALUtil.VCOS_ALIGN_UP(height, 32);

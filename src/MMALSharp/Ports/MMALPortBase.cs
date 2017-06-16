@@ -313,9 +313,7 @@ namespace MMALSharp
             if (this.Enabled && this.BufferPool != null)
             {
                 var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
-
-                Console.WriteLine("Input native callback");
-
+                                
                 //Populate the new input buffer with user provided image data.
                 var result = this.ManagedInputCallback(newBuffer, this);
                 bufferImpl.ReadIntoBuffer(result.BufferFeed, result.EOF);
