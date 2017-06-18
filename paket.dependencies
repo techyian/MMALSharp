@@ -10,9 +10,9 @@ source https://www.nuget.org/api/v2
 		
 group NetStandard
 source https://www.nuget.org/api/v2
-source https://dotnet.myget.org/F/dotnet-core/api/v3/index.json
 	nuget FAKE
 	nuget Microsoft.CSharp ~> 4.3.0
 	nuget System.Diagnostics.Process ~> 4.3.0
-	nuget Nito.AsyncEx ~> 5.0.0-pre-02
+	nuget Nito.AsyncEx ~> 5.0.0-pre-02	
+source https://dotnet.myget.org/F/dotnet-core/api/v3/index.json
 	nuget runtime.ubuntu.16.04-arm.Microsoft.NETCore.App
