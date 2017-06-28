@@ -113,7 +113,7 @@ namespace MMALSharp
         /// Enable annotation of captured images
         /// </summary>
         public static bool EnableAnnotate { get; set; }    
-
+        
         /// <summary>
         /// Allows fine tuning of annotation options
         /// </summary>

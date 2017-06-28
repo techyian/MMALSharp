@@ -8,7 +8,7 @@ using MMALSharp.Handlers;
 namespace MMALSharp.Components
 {
     /// <summary>
-    /// Represents a camera component
+    /// Represents a camera component.
     /// </summary>
     public unsafe class MMALCameraComponent : MMALComponentBase
     {        
@@ -45,13 +45,13 @@ namespace MMALSharp.Components
 
             this.Control.ObjName = "Control port";
 
-            this.PreviewPort = this.Outputs.ElementAt(MMALCameraPreviewPort);
+            this.PreviewPort = this.Outputs[MMALCameraPreviewPort];
             this.PreviewPort.ObjName = "Preview port";
 
-            this.VideoPort = this.Outputs.ElementAt(MMALCameraVideoPort);
+            this.VideoPort = this.Outputs[MMALCameraVideoPort];
             this.VideoPort.ObjName = "Video port";
 
-            this.StillPort = this.Outputs.ElementAt(MMALCameraStillPort);
+            this.StillPort = this.Outputs[MMALCameraStillPort];
             this.StillPort.ObjName = "Still port";
 
             /*
@@ -100,7 +100,14 @@ namespace MMALSharp.Components
         {
             this.CameraInfo = new MMALCameraInfoComponent();                        
         }
-        
+
+        /// <summary>
+        /// This is the camera's control port callback function. The callback is used if 
+        /// MMALCameraConfig.SetChangeEventRequest is set to true.
+        /// </summary>
+        /// <seealso cref="MMALCameraConfig.SetChangeEventRequest" />
+        /// <param name="buffer"></param>
+        /// <param name="port"></param>
         internal void CameraControlCallback(MMALBufferImpl buffer, MMALPortBase port)
         {            
             if (buffer.Cmd == MMALEvents.MMAL_EVENT_PARAMETER_CHANGED)
@@ -135,6 +142,9 @@ namespace MMALSharp.Components
             this.InitialiseStill();
         }
 
+        /// <summary>
+        /// Initialises the camera's preview component using the user defined width/height for the video port
+        /// </summary>
         internal void InitialisePreview()
         {
             var vFormat = new MMAL_VIDEO_FORMAT_T(
@@ -155,6 +165,9 @@ namespace MMALSharp.Components
             this.PreviewPort.Commit();
         }
 
+        /// <summary>
+        /// Initialises the camera's video port using the width, height and encoding as specified by the user
+        /// </summary>
         internal void InitialiseVideo()
         {
             if (MMALCameraConfig.VideoResolution.Width == 0 || MMALCameraConfig.VideoResolution.Width > this.CameraInfo.MaxWidth)
@@ -191,6 +204,9 @@ namespace MMALSharp.Components
                 this.VideoPort.BufferSizeMin);
         }
 
+        /// <summary>
+        /// Initialises the camera's still port using the width, height and encoding as specified by the user
+        /// </summary>
         internal void InitialiseStill()
         {
             if (MMALCameraConfig.StillResolution.Width == 0 || MMALCameraConfig.StillResolution.Width > this.CameraInfo.MaxWidth)

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
+using MMALSharp.Ports;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
@@ -130,7 +131,15 @@ namespace MMALSharp
         /// Accessor for the elementary stream
         /// </summary>
         public MMAL_ES_FORMAT_T Format => *this.Ptr->Format;
-        
+
+        public int Width => this.Ptr->Format->es->video.width;
+
+        public int Height => this.Ptr->Format->es->video.height;
+
+        public int CropWidth => this.Ptr->Format->es->video.crop.Width;
+
+        public int CropHeight => this.Ptr->Format->es->video.crop.Height;
+
         #endregion
 
         /// <summary>
@@ -352,14 +361,14 @@ namespace MMALSharp
 
             try
             {
-                if (MMALCameraConfig.Debug && !this.Enabled)
+                if (!this.Enabled)
                 {
-                    Console.WriteLine("Port not enabled.");
+                    Debugger.Print("Port not enabled.");
                 }
 
-                if (MMALCameraConfig.Debug && this.BufferPool == null)
+                if (this.BufferPool == null)
                 {
-                    Console.WriteLine("Buffer pool null.");
+                    Debugger.Print("Buffer pool null.");
                 }
 
                 if (this.Enabled && this.BufferPool != null)
@@ -390,20 +399,20 @@ namespace MMALSharp
                                                          c.DownstreamComponent == destinationComponent))
             {
                 Helpers.PrintWarning("A connection has already been established between these components");
-                return destinationComponent.Inputs.ElementAt(inputPort);
+                return destinationComponent.Inputs[inputPort];
             }
 
-            var connection = MMALConnectionImpl.CreateConnection(this, destinationComponent.Inputs.ElementAt(inputPort), destinationComponent);
+            var connection = MMALConnectionImpl.CreateConnection(this, destinationComponent.Inputs[inputPort], destinationComponent);
             MMALCamera.Instance.Connections.Add(connection);
             
-            return destinationComponent.Inputs.ElementAt(inputPort);
+            return destinationComponent.Inputs[inputPort];
         }
 
         public MMALPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort, Func<MMALPortBase> callback)
         {
             this.ConnectTo(destinationComponent, inputPort);
             callback();
-            return destinationComponent.Inputs.ElementAt(inputPort);
+            return destinationComponent.Inputs[inputPort];
         }
         
     }

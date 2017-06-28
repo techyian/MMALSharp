@@ -57,6 +57,8 @@
     <Compile Include="Components\MMALCameraInfoComponent.cs" />
     <Compile Include="Components\MMALDownstreamComponent.cs" />
     <Compile Include="Components\EncoderComponents\MMALEncoderBase.cs" />
+    <Compile Include="Components\MMALDownstreamHandlerComponent.cs" />
+    <Compile Include="Components\MMALResizerComponent.cs" />
     <Compile Include="Components\MMALSplitterComponent.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="MMALBufferImpl.cs" />
@@ -116,7 +118,7 @@
   </Target>
   -->
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'">
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.0.3')">
       <ItemGroup>
         <Reference Include="System.IO">
           <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\net40\System.IO.dll</HintPath>
@@ -135,7 +137,7 @@
         </Reference>
       </ItemGroup>
     </When>
-    <When Condition="($(TargetFrameworkProfile) == 'Profile3') Or ($(TargetFrameworkProfile) == 'Profile18') Or ($(TargetFrameworkProfile) == 'Profile23') Or ($(TargetFrameworkProfile) == 'Profile41') Or ($(TargetFrameworkProfile) == 'Profile46')">
+    <When Condition="($(TargetFrameworkProfile) == 'Profile3') Or ($(TargetFrameworkProfile) == 'Profile18') Or ($(TargetFrameworkProfile) == 'Profile23') Or ($(TargetFrameworkProfile) == 'Profile36') Or ($(TargetFrameworkProfile) == 'Profile41') Or ($(TargetFrameworkProfile) == 'Profile46') Or ($(TargetFrameworkProfile) == 'Profile88') Or ($(TargetFrameworkProfile) == 'Profile96') Or ($(TargetFrameworkProfile) == 'Profile104') Or ($(TargetFrameworkProfile) == 'Profile143') Or ($(TargetFrameworkProfile) == 'Profile154')">
       <ItemGroup>
         <Reference Include="System.IO">
           <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\portable-net40+sl4+win8\System.IO.dll</HintPath>
@@ -154,83 +156,7 @@
         </Reference>
       </ItemGroup>
     </When>
-    <When Condition="($(TargetFrameworkProfile) == 'Profile88') Or ($(TargetFrameworkProfile) == 'Profile96') Or ($(TargetFrameworkProfile) == 'Profile104')">
-      <ItemGroup>
-        <Reference Include="System.IO">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\portable-net40+sl4+win8+wp71+wpa81\System.IO.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="System.Runtime">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\portable-net40+sl4+win8+wp71+wpa81\System.Runtime.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="System.Threading.Tasks">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\portable-net40+sl4+win8+wp71+wpa81\System.Threading.Tasks.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition="($(TargetFrameworkProfile) == 'Profile36') Or ($(TargetFrameworkProfile) == 'Profile143') Or ($(TargetFrameworkProfile) == 'Profile154')">
-      <ItemGroup>
-        <Reference Include="System.IO">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\portable-net40+sl4+win8+wp8+wpa81\System.IO.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="System.Runtime">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\portable-net40+sl4+win8+wp8+wpa81\System.Runtime.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="System.Threading.Tasks">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\portable-net40+sl4+win8+wp8+wpa81\System.Threading.Tasks.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition="($(TargetFrameworkProfile) == 'Profile14') Or ($(TargetFrameworkProfile) == 'Profile19') Or ($(TargetFrameworkProfile) == 'Profile24') Or ($(TargetFrameworkProfile) == 'Profile37') Or ($(TargetFrameworkProfile) == 'Profile42') Or ($(TargetFrameworkProfile) == 'Profile47') Or ($(TargetFrameworkProfile) == 'Profile136') Or ($(TargetFrameworkProfile) == 'Profile147') Or ($(TargetFrameworkProfile) == 'Profile158') Or ($(TargetFrameworkProfile) == 'Profile225') Or ($(TargetFrameworkProfile) == 'Profile240') Or ($(TargetFrameworkProfile) == 'Profile255') Or ($(TargetFrameworkProfile) == 'Profile328') Or ($(TargetFrameworkProfile) == 'Profile336') Or ($(TargetFrameworkProfile) == 'Profile344')">
-      <ItemGroup>
-        <Reference Include="System.IO">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\portable-net40+sl5+win8+wp8+wpa81\System.IO.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="System.Runtime">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\portable-net40+sl5+win8+wp8+wpa81\System.Runtime.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="System.Threading.Tasks">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\portable-net40+sl5+win8+wp8+wpa81\System.Threading.Tasks.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition="($(TargetFrameworkProfile) == 'Profile5') Or ($(TargetFrameworkProfile) == 'Profile6')">
-      <ItemGroup>
-        <Reference Include="System.IO">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\portable-net40+win8\System.IO.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="System.Runtime">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\portable-net40+win8\System.Runtime.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="System.Threading.Tasks">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\portable-net40+win8\System.Threading.Tasks.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition="($(TargetFrameworkProfile) == 'Profile92') Or ($(TargetFrameworkProfile) == 'Profile102')">
+    <When Condition="($(TargetFrameworkProfile) == 'Profile92') Or ($(TargetFrameworkProfile) == 'Profile102') Or ($(TargetFrameworkProfile) == 'Profile225') Or ($(TargetFrameworkProfile) == 'Profile240') Or ($(TargetFrameworkProfile) == 'Profile255') Or ($(TargetFrameworkProfile) == 'Profile328') Or ($(TargetFrameworkProfile) == 'Profile336') Or ($(TargetFrameworkProfile) == 'Profile344')">
       <ItemGroup>
         <Reference Include="System.IO">
           <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\portable-net40+win8+wp8+wpa81\System.IO.dll</HintPath>
@@ -244,6 +170,44 @@
         </Reference>
         <Reference Include="System.Threading.Tasks">
           <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\portable-net40+win8+wp8+wpa81\System.Threading.Tasks.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == 'Silverlight' And $(TargetFrameworkVersion) == 'v4.0'">
+      <ItemGroup>
+        <Reference Include="System.IO">
+          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\sl4\System.IO.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="System.Runtime">
+          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\sl4\System.Runtime.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="System.Threading.Tasks">
+          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\sl4\System.Threading.Tasks.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == 'WindowsPhone' And ($(TargetFrameworkVersion) == 'v7.1' Or $(TargetFrameworkVersion) == 'v7.5')">
+      <ItemGroup>
+        <Reference Include="System.IO">
+          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\sl4-windowsphone71\System.IO.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="System.Runtime">
+          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\sl4-windowsphone71\System.Runtime.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="System.Threading.Tasks">
+          <HintPath>..\..\packages\netframework\Microsoft.Bcl\lib\sl4-windowsphone71\System.Threading.Tasks.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -270,7 +234,7 @@
     </When>
   </Choose>
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'">
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.0.3')">
       <ItemGroup>
         <Reference Include="System.Net">
           <Paket>True</Paket>
@@ -292,7 +256,7 @@
         </Reference>
       </ItemGroup>
     </When>
-    <When Condition="($(TargetFrameworkProfile) == 'Profile3') Or ($(TargetFrameworkProfile) == 'Profile5') Or ($(TargetFrameworkProfile) == 'Profile6') Or ($(TargetFrameworkProfile) == 'Profile14') Or ($(TargetFrameworkProfile) == 'Profile18') Or ($(TargetFrameworkProfile) == 'Profile19') Or ($(TargetFrameworkProfile) == 'Profile23') Or ($(TargetFrameworkProfile) == 'Profile24') Or ($(TargetFrameworkProfile) == 'Profile36') Or ($(TargetFrameworkProfile) == 'Profile37') Or ($(TargetFrameworkProfile) == 'Profile41') Or ($(TargetFrameworkProfile) == 'Profile42') Or ($(TargetFrameworkProfile) == 'Profile46') Or ($(TargetFrameworkProfile) == 'Profile47') Or ($(TargetFrameworkProfile) == 'Profile88') Or ($(TargetFrameworkProfile) == 'Profile92') Or ($(TargetFrameworkProfile) == 'Profile96') Or ($(TargetFrameworkProfile) == 'Profile102') Or ($(TargetFrameworkProfile) == 'Profile104') Or ($(TargetFrameworkProfile) == 'Profile136') Or ($(TargetFrameworkProfile) == 'Profile143') Or ($(TargetFrameworkProfile) == 'Profile147') Or ($(TargetFrameworkProfile) == 'Profile154') Or ($(TargetFrameworkProfile) == 'Profile158') Or ($(TargetFrameworkProfile) == 'Profile225') Or ($(TargetFrameworkProfile) == 'Profile240') Or ($(TargetFrameworkProfile) == 'Profile255') Or ($(TargetFrameworkProfile) == 'Profile328') Or ($(TargetFrameworkProfile) == 'Profile336') Or ($(TargetFrameworkProfile) == 'Profile344')">
+    <When Condition="($(TargetFrameworkProfile) == 'Profile3') Or ($(TargetFrameworkProfile) == 'Profile18') Or ($(TargetFrameworkProfile) == 'Profile23') Or ($(TargetFrameworkProfile) == 'Profile36') Or ($(TargetFrameworkProfile) == 'Profile41') Or ($(TargetFrameworkProfile) == 'Profile46') Or ($(TargetFrameworkProfile) == 'Profile88') Or ($(TargetFrameworkProfile) == 'Profile92') Or ($(TargetFrameworkProfile) == 'Profile96') Or ($(TargetFrameworkProfile) == 'Profile102') Or ($(TargetFrameworkProfile) == 'Profile104') Or ($(TargetFrameworkProfile) == 'Profile143') Or ($(TargetFrameworkProfile) == 'Profile154') Or ($(TargetFrameworkProfile) == 'Profile225') Or ($(TargetFrameworkProfile) == 'Profile240') Or ($(TargetFrameworkProfile) == 'Profile255') Or ($(TargetFrameworkProfile) == 'Profile328') Or ($(TargetFrameworkProfile) == 'Profile336') Or ($(TargetFrameworkProfile) == 'Profile344')">
       <ItemGroup>
         <Reference Include="Microsoft.Threading.Tasks">
           <HintPath>..\..\packages\netframework\Microsoft.Bcl.Async\lib\portable-net40+sl4+win8+wp71+wpa81\Microsoft.Threading.Tasks.dll</HintPath>
@@ -306,35 +270,7 @@
         </Reference>
       </ItemGroup>
     </When>
-    <When Condition="($(TargetFrameworkProfile) == 'Profile31') Or ($(TargetFrameworkProfile) == 'Profile49') Or ($(TargetFrameworkProfile) == 'Profile78') Or ($(TargetFrameworkProfile) == 'Profile84') Or ($(TargetFrameworkProfile) == 'Profile157') Or ($(TargetFrameworkProfile) == 'Profile259')">
-      <ItemGroup>
-        <Reference Include="Microsoft.Threading.Tasks">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl.Async\lib\portable-net45+win8+wp8+wpa81\Microsoft.Threading.Tasks.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="Microsoft.Threading.Tasks.Extensions">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl.Async\lib\portable-net45+win8+wp8+wpa81\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition="($(TargetFrameworkProfile) == 'Profile7') Or ($(TargetFrameworkProfile) == 'Profile32') Or ($(TargetFrameworkProfile) == 'Profile44') Or ($(TargetFrameworkProfile) == 'Profile111') Or ($(TargetFrameworkProfile) == 'Profile151')">
-      <ItemGroup>
-        <Reference Include="Microsoft.Threading.Tasks">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl.Async\lib\portable-net45+win8+wpa81\Microsoft.Threading.Tasks.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="Microsoft.Threading.Tasks.Extensions">
-          <HintPath>..\..\packages\netframework\Microsoft.Bcl.Async\lib\portable-net45+win8+wpa81\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition="$(TargetFrameworkIdentifier) == 'Silverlight' And $(TargetFrameworkVersion) == 'v5.0'">
+    <When Condition="$(TargetFrameworkIdentifier) == 'Silverlight' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v5.0')">
       <ItemGroup>
         <Reference Include="Microsoft.Threading.Tasks">
           <HintPath>..\..\packages\netframework\Microsoft.Bcl.Async\lib\sl4\Microsoft.Threading.Tasks.dll</HintPath>
@@ -353,9 +289,28 @@
         </Reference>
       </ItemGroup>
     </When>
+    <When Condition="$(TargetFrameworkIdentifier) == 'WindowsPhone' And ($(TargetFrameworkVersion) == 'v7.1' Or $(TargetFrameworkVersion) == 'v7.5')">
+      <ItemGroup>
+        <Reference Include="Microsoft.Threading.Tasks">
+          <HintPath>..\..\packages\netframework\Microsoft.Bcl.Async\lib\sl4-windowsphone71\Microsoft.Threading.Tasks.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="Microsoft.Threading.Tasks.Extensions">
+          <HintPath>..\..\packages\netframework\Microsoft.Bcl.Async\lib\sl4-windowsphone71\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="Microsoft.Threading.Tasks.Extensions.Phone">
+          <HintPath>..\..\packages\netframework\Microsoft.Bcl.Async\lib\sl4-windowsphone71\Microsoft.Threading.Tasks.Extensions.Phone.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
   </Choose>
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == 'MonoAndroid'">
+    <When Condition="$(TargetFrameworkIdentifier) == 'MonoAndroid' And ($(TargetFrameworkVersion) == 'v1.0' Or $(TargetFrameworkVersion) == 'v2.2' Or $(TargetFrameworkVersion) == 'v2.3' Or $(TargetFrameworkVersion) == 'v4.0.3' Or $(TargetFrameworkVersion) == 'v4.1' Or $(TargetFrameworkVersion) == 'v4.2' Or $(TargetFrameworkVersion) == 'v4.3' Or $(TargetFrameworkVersion) == 'v4.4' Or $(TargetFrameworkVersion) == 'v4.4W' Or $(TargetFrameworkVersion) == 'v5.0' Or $(TargetFrameworkVersion) == 'v5.1' Or $(TargetFrameworkVersion) == 'v6.0' Or $(TargetFrameworkVersion) == 'v7.0' Or $(TargetFrameworkVersion) == 'v7.1')">
       <ItemGroup>
         <Reference Include="Nito.AsyncEx">
           <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\MonoAndroid\Nito.AsyncEx.dll</HintPath>
@@ -374,7 +329,45 @@
         </Reference>
       </ItemGroup>
     </When>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'">
+    <When Condition="$(TargetFrameworkIdentifier) == 'Xamarin.Mac'">
+      <ItemGroup>
+        <Reference Include="Nito.AsyncEx">
+          <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\Xamarin.Mac20\Nito.AsyncEx.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="Nito.AsyncEx.Concurrent">
+          <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\Xamarin.Mac20\Nito.AsyncEx.Concurrent.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="Nito.AsyncEx.Enlightenment">
+          <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\Xamarin.Mac20\Nito.AsyncEx.Enlightenment.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == 'Xamarin.iOS'">
+      <ItemGroup>
+        <Reference Include="Nito.AsyncEx">
+          <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\Xamarin.iOS10\Nito.AsyncEx.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="Nito.AsyncEx.Concurrent">
+          <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\Xamarin.iOS10\Nito.AsyncEx.Concurrent.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="Nito.AsyncEx.Enlightenment">
+          <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\Xamarin.iOS10\Nito.AsyncEx.Enlightenment.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.0.3')">
       <ItemGroup>
         <Reference Include="Nito.AsyncEx">
           <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\net40\Nito.AsyncEx.dll</HintPath>
@@ -393,7 +386,7 @@
         </Reference>
       </ItemGroup>
     </When>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1' Or $(TargetFrameworkVersion) == 'v4.6.2' Or $(TargetFrameworkVersion) == 'v4.6.3')">
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1' Or $(TargetFrameworkVersion) == 'v4.6.2' Or $(TargetFrameworkVersion) == 'v4.6.3' Or $(TargetFrameworkVersion) == 'v4.7')">
       <ItemGroup>
         <Reference Include="Nito.AsyncEx">
           <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\net45\Nito.AsyncEx.dll</HintPath>
@@ -431,7 +424,7 @@
         </Reference>
       </ItemGroup>
     </When>
-    <When Condition="($(TargetFrameworkProfile) == 'Profile5') Or ($(TargetFrameworkProfile) == 'Profile6')">
+    <When Condition="($(TargetFrameworkIdentifier) == 'MonoTouch') Or ($(TargetFrameworkProfile) == 'Profile5') Or ($(TargetFrameworkProfile) == 'Profile6')">
       <ItemGroup>
         <Reference Include="Nito.AsyncEx">
           <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\portable-net40+netcore45\Nito.AsyncEx.dll</HintPath>
@@ -472,7 +465,7 @@
         </Reference>
       </ItemGroup>
     </When>
-    <When Condition="($(TargetFrameworkIdentifier) == '.NETStandard' And ($(TargetFrameworkVersion) == 'v1.1' Or $(TargetFrameworkVersion) == 'v1.2' Or $(TargetFrameworkVersion) == 'v1.3' Or $(TargetFrameworkVersion) == 'v1.4' Or $(TargetFrameworkVersion) == 'v1.5' Or $(TargetFrameworkVersion) == 'v1.6')) Or ($(TargetFrameworkIdentifier) == '.NETCoreApp' And $(TargetFrameworkVersion) == 'v1.0') Or ($(TargetFrameworkIdentifier) == 'MonoTouch') Or ($(TargetFrameworkProfile) == 'Profile7') Or ($(TargetFrameworkProfile) == 'Profile32') Or ($(TargetFrameworkProfile) == 'Profile44') Or ($(TargetFrameworkProfile) == 'Profile111') Or ($(TargetFrameworkProfile) == 'Profile151')">
+    <When Condition="($(TargetFrameworkIdentifier) == '.NETStandard' And ($(TargetFrameworkVersion) == 'v1.1' Or $(TargetFrameworkVersion) == 'v1.2' Or $(TargetFrameworkVersion) == 'v1.3' Or $(TargetFrameworkVersion) == 'v1.4' Or $(TargetFrameworkVersion) == 'v1.5' Or $(TargetFrameworkVersion) == 'v1.6' Or $(TargetFrameworkVersion) == 'v2.0')) Or ($(TargetFrameworkIdentifier) == '.NETCoreApp' And ($(TargetFrameworkVersion) == 'v1.0' Or $(TargetFrameworkVersion) == 'v1.1' Or $(TargetFrameworkVersion) == 'v2.0')) Or ($(TargetFrameworkProfile) == 'Profile7') Or ($(TargetFrameworkProfile) == 'Profile32') Or ($(TargetFrameworkProfile) == 'Profile44') Or ($(TargetFrameworkProfile) == 'Profile111') Or ($(TargetFrameworkProfile) == 'Profile151')">
       <ItemGroup>
         <Reference Include="Nito.AsyncEx">
           <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\portable-net45+netcore45+wpa81\Nito.AsyncEx.dll</HintPath>
@@ -514,7 +507,7 @@
         </Reference>
       </ItemGroup>
     </When>
-    <When Condition="$(TargetFrameworkIdentifier) == 'WindowsPhone' And $(TargetFrameworkVersion) == 'v7.1'">
+    <When Condition="$(TargetFrameworkIdentifier) == 'WindowsPhone' And ($(TargetFrameworkVersion) == 'v7.1' Or $(TargetFrameworkVersion) == 'v7.5')">
       <ItemGroup>
         <Reference Include="Nito.AsyncEx">
           <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\wp71\Nito.AsyncEx.dll</HintPath>
@@ -542,7 +535,7 @@
         </Reference>
       </ItemGroup>
     </When>
-    <When Condition="$(TargetFrameworkIdentifier) == 'WindowsPhoneApp'">
+    <When Condition="($(TargetFrameworkIdentifier) == 'WindowsPhoneApp') Or ($(TargetFrameworkIdentifier) == '.NETCore' And $(TargetFrameworkVersion) == 'v5.0')">
       <ItemGroup>
         <Reference Include="Nito.AsyncEx">
           <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\wpa81\Nito.AsyncEx.dll</HintPath>
@@ -556,44 +549,6 @@
         </Reference>
         <Reference Include="Nito.AsyncEx.Enlightenment">
           <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\wpa81\Nito.AsyncEx.Enlightenment.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition="$(TargetFrameworkIdentifier) == 'Xamarin.iOS'">
-      <ItemGroup>
-        <Reference Include="Nito.AsyncEx">
-          <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\Xamarin.iOS10\Nito.AsyncEx.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="Nito.AsyncEx.Concurrent">
-          <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\Xamarin.iOS10\Nito.AsyncEx.Concurrent.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="Nito.AsyncEx.Enlightenment">
-          <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\Xamarin.iOS10\Nito.AsyncEx.Enlightenment.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition="$(TargetFrameworkIdentifier) == 'Xamarin.Mac'">
-      <ItemGroup>
-        <Reference Include="Nito.AsyncEx">
-          <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\Xamarin.Mac20\Nito.AsyncEx.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="Nito.AsyncEx.Concurrent">
-          <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\Xamarin.Mac20\Nito.AsyncEx.Concurrent.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="Nito.AsyncEx.Enlightenment">
-          <HintPath>..\..\packages\netframework\Nito.AsyncEx\lib\Xamarin.Mac20\Nito.AsyncEx.Enlightenment.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>

@@ -12,7 +12,7 @@ namespace MMALSharp.Components
     /// </summary>
     public abstract class MMALRendererBase : MMALDownstreamComponent
     {
-        protected MMALRendererBase(string name) : base(name, null)
+        protected MMALRendererBase(string name) : base(name)
         {
         }
     }

@@ -6,18 +6,6 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
-    public class ComponentConnection
-    {
-        public MMALDownstreamComponent Component { get; set; }
-        public int OutputPort { get; set; }
-
-        public ComponentConnection(MMALDownstreamComponent comp, int outputPort)
-        {
-            this.Component = comp;
-            this.OutputPort = outputPort;
-        }
-    }
-
     /// <summary>
     /// Represents a connection between two ports
     /// </summary>

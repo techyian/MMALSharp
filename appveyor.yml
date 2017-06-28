@@ -1,12 +1,12 @@
-version: '0.2.0-alpha.{build}'
+version: '0.3.0.{build}'
 image: Visual Studio 2015
 
 assembly_info:
   patch: true
   file: AssemblyInfo.*
-  assembly_version: '0.2.0-alpha.{build}'
-  assembly_file_version: '0.2.0-alpha.{build}'
-  assembly_informational_version: '0.2.0-alpha.{build}'
+  assembly_version: '0.3.0.{build}'
+  assembly_file_version: '0.3.0.{build}'
+  assembly_informational_version: '0.3.0.{build}'
 
 # prevent the double build when a branch has an active PR
 skip_branch_with_pr: true

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MMALSharp.Handlers;
-using MMALSharp.Ports;
 
 namespace MMALSharp
 {    
@@ -84,55 +83,46 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Record video for a specified amount of time. 
+        /// Self-contained method for recording H.264 video for a specified amount of time. Records at 30fps, 25Mb/s at the highest quality.
         /// </summary>        
-        /// <param name="connPort">Port the encoder is connected to</param>                
+        /// <param name="handler">The video capture handler to apply to the encoder.</param>        
         /// <param name="timeout">A timeout to stop the video capture</param>
         /// <param name="split">Used for Segmented video mode</param>
         /// <returns>The awaitable Task</returns>
-        public async Task TakeVideo(MMALPortImpl connPort, DateTime? timeout = null, Split split = null)
+        public async Task TakeVideo(VideoStreamCaptureHandler handler, DateTime? timeout = null, Split split = null)
         {
-            var connection = this.Connections.Where(c => c.OutputPort == connPort).FirstOrDefault();
-
-            if (connection == null)
-            {
-                throw new PiCameraError("No connection currently established on the port specified");
-            }
-
-            var encoder = connection.DownstreamComponent as MMALVideoEncoder;
-
-            if (encoder == null)
-            {
-                throw new PiCameraError("No video encoder currently attached to output port specified");
-            }
-                                    
-            if(split != null && !MMALCameraConfig.InlineHeaders)
+            if (split != null && !MMALCameraConfig.InlineHeaders)
             {
                 Helpers.PrintWarning("Inline headers not enabled. Split mode not supported when this is disabled.");
                 split = null;
             }
 
-            this.CheckPreviewComponentStatus();
-            
-            try
+            using (var vidEncoder = new MMALVideoEncoder(handler, new MMAL_RATIONAL_T(30, 1), timeout, split))
+            using (var renderer = new MMALVideoRenderer())
             {
-                Console.WriteLine($"Preparing to take video. Resolution: {encoder.Width} x {encoder.Height}. " +
-                                  $"Encoder: {encoder.OutputPort.EncodingType.EncodingName}. Pixel Format: {encoder.OutputPort.PixelFormat.EncodingName}.");
-                                
-                ((MMALVideoPort)encoder.Outputs.ElementAt(0)).Timeout = timeout;
-                ((MMALVideoEncoder)encoder).Split = split;
+                vidEncoder.ConfigureOutputPort(0, MMALEncoding.MMAL_ENCODING_H264, MMALEncoding.MMAL_ENCODING_I420, 10, 25000000);
 
-                await BeginProcessing(encoder, this.Camera.VideoPort);
+                //Create our component pipeline.         
+                this.Camera.VideoPort.ConnectTo(vidEncoder);
+                this.Camera.PreviewPort.ConnectTo(renderer);
+                this.ConfigureCameraSettings();
                 
-            }
-            finally
-            {
-                encoder.Handler.PostProcess();
-            }            
+                try
+                {
+                    Console.WriteLine($"Preparing to take video. Resolution: {vidEncoder.Width} x {vidEncoder.Height}. " +
+                                      $"Encoder: {vidEncoder.Outputs[0].EncodingType.EncodingName}. Pixel Format: {vidEncoder.Outputs[0].PixelFormat.EncodingName}.");
+                    
+                    await BeginProcessing(this.Camera.VideoPort, vidEncoder);
+                }
+                finally
+                {
+                    vidEncoder.Handler.PostProcess();
+                }
+            }        
         }
 
         /// <summary>
-        /// Capture raw image data directly from the Camera component - this method does not use an Image encoder.
+        /// Self-contained method to capture raw image data directly from the Camera component - this method does not use an Image encoder.
         /// </summary>
         /// <returns>The awaitable Task</returns>
         public async Task TakeRawPicture(ICaptureHandler handler)
@@ -159,7 +149,26 @@ namespace MMALSharp
                 Console.WriteLine($"Preparing to take raw picture - Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}. " +
                                   $"Encoder: {MMALCameraConfig.StillEncoding.EncodingName}. Pixel Format: {MMALCameraConfig.StillSubFormat.EncodingName}.");
 
-                await BeginProcessing(this.Camera, this.Camera.StillPort, MMALCameraComponent.MMALCameraStillPort);
+                //Enable processing on the camera still port.
+                this.Camera.EnableConnections();
+
+                this.Camera.Start(this.Camera.StillPort, new Action<MMALBufferImpl, MMALPortBase>(this.Camera.ManagedOutputCallback));
+                this.Camera.StillPort.Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+
+                this.StartCapture(this.Camera.StillPort);
+
+                //Wait until the process is complete.
+                await this.Camera.StillPort.Trigger.WaitAsync();
+
+                //Stop capturing on the camera still port.
+                this.StopCapture(this.Camera.StillPort);
+                
+                this.Camera.Stop(MMALCameraComponent.MMALCameraStillPort);
+
+                //Close open connections and clean port pools.
+                this.Camera.DisableConnections();
+
+                this.Camera.CleanPortPools();
             }
             finally
             {
@@ -169,152 +178,89 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Captures a single image from the output port specified. Expects an MMALImageEncoder to be attached.
+        /// Self-contained method for capturing a single image from the camera still port. 
+        /// An MMALImageEncoder component will be created and attached to the still port.
         /// </summary>                
-        /// <param name="connPort">The port our encoder is attached to</param>       
-        /// <param name="rawBayer">Include raw bayer metadeta in the capture</param>        
-        /// <param name="useExif">Specify whether to include EXIF tags in the capture</param>
-        /// <param name="exifTags">Custom EXIF tags to use in the capture</param>
+        /// <param name="handler">The image capture handler to apply to the encoder component</param>
+        /// <param name="encodingType">The image encoding type e.g. JPEG, BMP</param>
+        /// <param name="pixelFormat">The pixel format to use with the encoder e.g. I420 (YUV420)</param>
         /// <returns>The awaitable Task</returns>
-        public async Task TakePicture(MMALPortImpl connPort, bool rawBayer = false, bool useExif = true, params ExifTag[] exifTags)
+        public async Task TakePicture(ImageStreamCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat)
         {
-            var connection = this.Connections.Where(c => c.OutputPort == connPort).FirstOrDefault();
-
-            if (connection == null)
+            using (var imgEncoder = new MMALImageEncoder(handler))
+            using (var renderer = new MMALNullSinkComponent())
             {
-                throw new PiCameraError("No connection currently established on the port specified");
-            }
+                imgEncoder.ConfigureOutputPort(0, encodingType, pixelFormat, 90);
 
-            //Find the encoder/decoder which is connected to the output port specified.
-            var encoder = connection.DownstreamComponent as MMALImageEncoder;
-            
-            if (encoder == null)
-            {
-                throw new PiCameraError("No image encoder currently attached to output port specified");
-            }
-            
-            if (useExif)
-            {
-                ((MMALImageEncoder)encoder).AddExifTags(exifTags);
-            }
-
-            this.CheckPreviewComponentStatus();
-
-            if (rawBayer)
-            {
-                this.Camera.StillPort.SetRawCapture(true);
-            }
+                //Create our component pipeline.         
+                this.Camera.StillPort.ConnectTo(imgEncoder);
+                this.Camera.PreviewPort.ConnectTo(renderer);
+                this.ConfigureCameraSettings();
                 
-            if (MMALCameraConfig.EnableAnnotate)
-            {
-                ((MMALImageEncoder)encoder).AnnotateImage();
-            }
-            
-            //Enable the image encoder output port.            
-            try
-            {
-                Console.WriteLine($"Preparing to take picture. Resolution: {encoder.Width} x {encoder.Height}. " +
-                                  $"Encoder: {encoder.OutputPort.EncodingType.EncodingName}. Pixel Format: {encoder.OutputPort.PixelFormat.EncodingName}.");
-
-                await BeginProcessing(encoder, this.Camera.StillPort);
-            }
-            finally
-            {
-                encoder.Handler.PostProcess();
-            }            
-        }
-
-        /// <summary>
-        /// Takes images until the moment specified in the timeout parameter has been met.
-        /// </summary>
-        /// <param name="connPort">The port our encoder is attached to</param>
-        /// <param name="timeout">Take images until this timeout is hit</param>       
-        /// <param name="rawBayer">Include raw bayer metadeta in the capture</param>        
-        /// <param name="useExif">Specify whether to include EXIF tags in the capture</param>
-        /// <param name="exifTags">Custom EXIF tags to use in the capture</param>
-        /// <returns>The awaitable Task</returns>
-        public async Task TakePictureTimeout(MMALPortImpl connPort, DateTime timeout, bool rawBayer = false, bool useExif = true, bool burstMode = false, params ExifTag[] exifTags)
-        {    
-            if(burstMode)
-            {
-                this.Camera.StillPort.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_BURST_CAPTURE, true);
-            }
-
-            while (DateTime.Now.CompareTo(timeout) < 0)
-            {                             
-                await TakePicture(connPort, rawBayer, useExif, exifTags);                
-            }
-        }
-
-        /// <summary>
-        /// Takes a timelapse image. You can specify the interval between each image taken and also when the operation should finish.
-        /// </summary>
-        /// <param name="connPort">The port our encoder is attached to</param>
-        /// <param name="tl">Specifies settings for the Timelapse</param>       
-        /// <param name="rawBayer">Include raw bayer metadeta in the capture</param>        
-        /// <param name="useExif">Specify whether to include EXIF tags in the capture</param>
-        /// <param name="exifTags">Custom EXIF tags to use in the capture</param>
-        /// <returns>The awaitable Task</returns>
-        public async Task TakePictureTimelapse(MMALPortImpl connPort, Timelapse tl, bool rawBayer = false, bool useExif = true, params ExifTag[] exifTags)
-        {           
-            int interval = 0;
-
-            if(tl == null)
-            {
-                throw new PiCameraError("Timelapse object null. This must be initialized for Timelapse mode");
-            }
-            
-            while (DateTime.Now.CompareTo(tl.Timeout) < 0)
-            {
-                switch (tl.Mode)
+                //Enable the image encoder output port.            
+                try
                 {
-                    case TimelapseMode.Millisecond:
-                        interval = tl.Value;
-                        break;
-                    case TimelapseMode.Second:
-                        interval = tl.Value * 1000;
-                        break;
-                    case TimelapseMode.Minute:
-                        interval = (tl.Value * 60) * 1000;
-                        break;
-                }
+                    Console.WriteLine($"Preparing to take picture. Resolution: {imgEncoder.Width} x {imgEncoder.Height}. " +
+                                      $"Encoder: {encodingType.EncodingName}. Pixel Format: {pixelFormat.EncodingName}.");
 
-                await Task.Delay(interval);
-                
-                await TakePicture(connPort, rawBayer, useExif, exifTags);                            
+                    await BeginProcessing(this.Camera.StillPort, imgEncoder);
+                }
+                finally
+                {
+                    imgEncoder.Handler.PostProcess();
+                }
             }
         }
-
+        
         /// <summary>
         /// Helper method to begin processing image data. Starts the Camera port and awaits until processing is complete.
         /// Cleans up resources upon finish.
         /// </summary>
-        /// <param name="component">The component we are processing data on</param>
         /// <param name="cameraPort">The camera port which image data is coming from</param>
-        /// <param name="outputPort">The output port we are processing data from</param>
+        /// <param name="handlerComponents">The handler component(s) we are processing data on</param>
         /// <returns>The awaitable Task</returns>
-        public async Task BeginProcessing(MMALComponentBase component, MMALPortImpl cameraPort, int outputPort = 0)
+        public async Task BeginProcessing(MMALPortImpl cameraPort, params MMALDownstreamHandlerComponent[] handlerComponents)
         {
-            //Enable all connections associated with this component
-            component.EnableConnections();
+            //Enable all connections associated with these components
+            foreach (var component in handlerComponents)
+            {
+                component.EnableConnections();
 
-            component.Start(outputPort, new Action<MMALBufferImpl, MMALPortBase>(component.ManagedOutputCallback));
-
+                foreach (var portNum in component.ProcessingPorts)
+                {
+                    component.Start(portNum, new Action<MMALBufferImpl, MMALPortBase>(component.ManagedOutputCallback));
+                    component.Outputs[portNum].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+                }
+                
+            }
+            
             this.StartCapture(cameraPort);
 
             //Wait until the process is complete.
-            component.Outputs.ElementAt(outputPort).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            await component.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
-
+            foreach (var component in handlerComponents)
+            {
+                foreach (var portNum in component.ProcessingPorts)
+                {
+                    await component.Outputs[portNum].Trigger.WaitAsync();
+                }
+                
+            }
+            
             this.StopCapture(cameraPort);
 
             //Disable the image encoder output port.
-            component.Stop(outputPort);
+            foreach (var component in handlerComponents)
+            {
+                foreach (var portNum in component.ProcessingPorts)
+                {
+                    component.Stop(portNum);
+                }
+                
+                //Close open connections.
+                component.DisableConnections();
 
-            //Close open connections.
-            component.DisableConnections();
-            
-            component.CleanPortPools();
+                component.CleanPortPools();
+            }
         }
         
         /// <summary>

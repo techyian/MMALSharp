@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MMALSharp.Handlers;
 using MMALSharp.Native;
 
 namespace MMALSharp.Components
 {
-    public class MMALSplitterComponent : MMALDownstreamComponent
+    /// <summary>
+    /// The Splitter Component is intended on being connected to the camera video output port. In turn, it
+    /// provides an additional 4 output ports which can be used to produce multiple image/video outputs
+    /// from the single camera video port.
+    /// </summary>
+    public class MMALSplitterComponent : MMALDownstreamHandlerComponent
     {
         private int _width;
         private int _height;
@@ -38,11 +44,11 @@ namespace MMALSharp.Components
             set { _height = value; }
         }
 
-        public MMALSplitterComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER, null)
+        public MMALSplitterComponent(ICaptureHandler handler) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER, handler)
         {     
-            throw new NotImplementedException();
+                
         }
-
         
+
     }
 }

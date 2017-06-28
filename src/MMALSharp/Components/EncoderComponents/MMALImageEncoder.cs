@@ -49,26 +49,51 @@ namespace MMALSharp.Components
             set { _height = value; }
         }
 
-        public MMALImageEncoder(ICaptureHandler handler) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER, handler)
-        {
-            this.Inputs = new List<MMALPortImpl>();
-            for (int i = 0; i < this.Ptr->InputNum; i++)
-            {
-                this.Inputs.Add(new MMALStillPort(&(*this.Ptr->Input[i]), this, PortType.Input));
-            }
+        /// <summary>
+        /// When enabled, raw bayer metadata will be included in JPEG still captures
+        /// </summary>
+        public bool RawBayer { get; set; }
 
-            this.Outputs = new List<MMALPortImpl>();
-            for (int i = 0; i < this.Ptr->OutputNum; i++)
-            {
-                this.Outputs.Add(new MMALStillPort(&(*this.Ptr->Output[i]), this, PortType.Output));
-            }
+        /// <summary>
+        /// When enabled, EXIF metadata will be included in image stills
+        /// </summary>
+        public bool UseExif { get; set; }
 
-            this.InputPort = this.Inputs.ElementAt(0);
-            this.OutputPort = this.Outputs.ElementAt(0);
-
-            
-        }
+        /// <summary>
+        /// Custom list of user defined EXIF metadata
+        /// </summary>
+        public ExifTag[] ExifTags { get; set; }
         
+        public MMALImageEncoder(ICaptureHandler handler, bool rawBayer = false, bool useExif = true, params ExifTag[] exifTags) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER, handler)
+        {
+            this.RawBayer = rawBayer;
+            this.UseExif = useExif;
+            this.ExifTags = exifTags;
+        }
+
+        internal override void InitialiseOutputPort(int outputPort)
+        {
+            this.Outputs[outputPort] = new MMALStillPort(&(*this.Ptr->Output[outputPort]), this, PortType.Output);
+        }
+
+        public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0)
+        {
+            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate);
+
+            if (this.RawBayer)
+            {
+                MMALCamera.Instance.Camera.StillPort.SetRawCapture(true);
+            }
+            if (this.UseExif)
+            {
+                this.AddExifTags(this.ExifTags);
+            }
+            if (MMALCameraConfig.EnableAnnotate)
+            {
+                this.AnnotateImage();
+            }
+        }
+
         /// <summary>
         /// Adds EXIF tags to the resulting image
         /// </summary>        
@@ -123,7 +148,7 @@ namespace MMALSharp.Components
 
             Marshal.StructureToPtr(str, ptr, false);
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs.ElementAt(0).Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), $"Unable to set EXIF {formattedExif}");
+            MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs[0].Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), $"Unable to set EXIF {formattedExif}");
 
             Marshal.FreeHGlobal(ptr);
         }
@@ -134,20 +159,6 @@ namespace MMALSharp.Components
     {
         public unsafe MMALImageEncoderConverter(TransformStreamCaptureHandler handler) : base(handler)
         {
-            this.Inputs = new List<MMALPortImpl>();
-            for (int i = 0; i < this.Ptr->InputNum; i++)
-            {
-                this.Inputs.Add(new MMALStillConvertPort(&(*this.Ptr->Input[i]), this, PortType.Input));
-            }
-
-            this.Outputs = new List<MMALPortImpl>();
-            for (int i = 0; i < this.Ptr->OutputNum; i++)
-            {
-                this.Outputs.Add(new MMALStillConvertPort(&(*this.Ptr->Output[i]), this, PortType.Output));
-            }
-
-            this.InputPort = this.Inputs.ElementAt(0);
-            this.OutputPort = this.Outputs.ElementAt(0);
         }
 
         /// <summary>
@@ -158,14 +169,14 @@ namespace MMALSharp.Components
         public virtual async Task Convert(int outputPort = 0)
         {
             //Enable both input and output ports. Ports should have been pre-configured by user prior to this point.
-            this.Start(this.InputPort, this.ManagedInputCallback);
-            this.Start(this.OutputPort, new Action<MMALBufferImpl, MMALPortBase>(this.ManagedOutputCallback));
+            this.Start(this.Inputs[0], this.ManagedInputCallback);
+            this.Start(this.Outputs[outputPort], new Action<MMALBufferImpl, MMALPortBase>(this.ManagedOutputCallback));
 
             this.EnableComponent();
 
             //Wait until the process is complete.
-            this.Outputs.ElementAt(outputPort).Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            await this.Outputs.ElementAt(outputPort).Trigger.WaitAsync();
+            this.Outputs[outputPort].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+            await this.Outputs[outputPort].Trigger.WaitAsync();
 
             this.DisableComponent();
 

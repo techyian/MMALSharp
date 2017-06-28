@@ -89,7 +89,7 @@ namespace MMALSharp
 
         internal static void SetDisableExif(this MMALImageEncoder encoder, bool disable)
         {
-            encoder.Outputs.ElementAt(0).SetParameter(MMAL_PARAMETER_EXIF_DISABLE, disable);           
+            encoder.Outputs[0].SetParameter(MMAL_PARAMETER_EXIF_DISABLE, disable);           
         }
 
         public static double GetBrightness(this MMALCameraComponent camera)

@@ -5,9 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using MMALSharp.Ports;
 using static MMALSharp.MMALCallerHelper;
 
@@ -182,7 +179,7 @@ namespace MMALSharp
         /// <param name="managedCallback">The managed method to callback to from the native callback</param>
         internal void Start(int outputPortNumber, Action<MMALBufferImpl, MMALPortBase> managedCallback)
         {
-            this.Start(this.Outputs.ElementAt(outputPortNumber), managedCallback);
+            this.Start(this.Outputs[outputPortNumber], managedCallback);
         }
 
         /// <summary>
@@ -192,7 +189,7 @@ namespace MMALSharp
         /// <param name="managedCallback">The managed method to callback to from the native callback</param>
         internal void Start(int outputPortNumber, Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback)
         {
-            this.Start(this.Outputs.ElementAt(outputPortNumber), managedCallback);
+            this.Start(this.Outputs[outputPortNumber], managedCallback);
         }
 
         /// <summary>
@@ -226,7 +223,7 @@ namespace MMALSharp
         /// <param name="outputPortNumber">The output port number</param>
         internal void Stop(int outputPortNumber)
         {
-            this.Outputs.ElementAt(outputPortNumber).DisablePort();
+            this.Outputs[outputPortNumber].DisablePort();
         }
 
         /// <summary>
@@ -273,6 +270,10 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Enables any connections associated with this component, traversing down the pipeline to enable those connections
+        /// also.
+        /// </summary>
         public void EnableConnections()
         {
             foreach (MMALPortImpl port in this.Outputs)
@@ -289,6 +290,10 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Disables any connections associated with this component, traversing down the pipeline to disable those connections
+        /// also.
+        /// </summary>
         public void DisableConnections()
         {
             foreach (MMALPortImpl port in this.Outputs)
