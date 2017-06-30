@@ -41,15 +41,16 @@ namespace MMALSharp.Ports
                     this.ManagedOutputCallback(bufferImpl, this);
                 }
 
+                //Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
+                this.ReleaseOutputBuffer(bufferImpl);
+
                 if (this.Timeout.HasValue && DateTime.Now.CompareTo(this.Timeout.Value) > 0)
                 {
                     if (this.Trigger != null && this.Trigger.CurrentCount > 0)
                     {
                         this.Trigger.Signal();
                     }
-                }
-
-                this.ReleaseOutputBuffer(bufferImpl);
+                }                                
             }
         }
 

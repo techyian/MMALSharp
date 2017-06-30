@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-	<RuntimeFrameworkVersion>2.0.0-preview1-002013-00</RuntimeFrameworkVersion>
-	<RuntimeIdentifiers>ubuntu.16.04-arm</RuntimeIdentifiers>
+  <PropertyGroup>	
+	<RuntimeIdentifiers>linux-arm</RuntimeIdentifiers>
     <TargetFramework>netstandard1.6</TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

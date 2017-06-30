@@ -124,6 +124,9 @@ namespace MMALSharp
                     this.ManagedOutputCallback(bufferImpl, this);
                 }
 
+                //Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
+                this.ReleaseOutputBuffer(bufferImpl);
+
                 //If this buffer signals the end of data stream, allow waiting thread to continue.
                 if (bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END ||
                                                     c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED))
@@ -134,9 +137,7 @@ namespace MMALSharp
                     {
                         this.Trigger.Signal();
                     }                        
-                }
-
-                this.ReleaseOutputBuffer(bufferImpl);                              
+                }                                                             
             }
         }
 

@@ -247,10 +247,20 @@ namespace MMALSharp
         /// Any buffer pool shall be released.
         /// </summary>
         internal void DisablePort()
-        {
+        {            
             if (Enabled)
             {
                 Debugger.Print("Disabling port");
+
+                var length = this.BufferPool.Queue.QueueLength();
+
+                for (int i = 0; i < length; i++)
+                {
+                    Debugger.Print("Releasing active buffer");
+                    var buffer = this.BufferPool.Queue.GetBuffer();
+                    buffer.Release();
+                }
+
                 MMALCheck(MMALPort.mmal_port_disable(this.Ptr), "Unable to disable port.");
             }
                 
@@ -310,7 +320,7 @@ namespace MMALSharp
             {
                 if (this.Enabled)
                     this.DisablePort();
-
+                
                 MMALUtil.mmal_port_pool_destroy(this.Ptr, this.BufferPool.Ptr);
             }
         }
@@ -358,7 +368,7 @@ namespace MMALSharp
         internal void ReleaseOutputBuffer(MMALBufferImpl bufferImpl)
         {
             bufferImpl.Release();
-
+            bufferImpl.Dispose();
             try
             {
                 if (!this.Enabled)

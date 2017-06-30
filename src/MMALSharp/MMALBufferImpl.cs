@@ -255,6 +255,7 @@ namespace MMALSharp
         internal void Release()
         {
             MMALBuffer.mmal_buffer_header_release(this.Ptr);
+            this.Dispose();
         }
 
         /// <summary>
