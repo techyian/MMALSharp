@@ -36,8 +36,16 @@ namespace MMALSharp.Components
             this.InitialiseInputPort(0);
 
             copyPort.ShallowCopy(this.Inputs[0]);
-            this.Inputs[0].Ptr->Format->encoding = encodingType.EncodingVal;
-            this.Inputs[0].Ptr->Format->encodingVariant = pixelFormat.EncodingVal;
+
+            if(encodingType != null)
+            {
+                this.Inputs[0].Ptr->Format->encoding = encodingType.EncodingVal;
+            }
+            if(pixelFormat != null)
+            {
+                this.Inputs[0].Ptr->Format->encodingVariant = pixelFormat.EncodingVal;
+            }
+            
             this.Inputs[0].Commit();
         }
 
@@ -52,7 +60,11 @@ namespace MMALSharp.Components
         {
             this.InitialiseInputPort(0);
             
-            this.Inputs[0].Ptr->Format->encoding = encodingType.EncodingVal;
+            if(encodingType != null)
+            {
+                this.Inputs[0].Ptr->Format->encoding = encodingType.EncodingVal;
+            }
+            
             this.Inputs[0].Ptr->Format->es->video.height = MMALUtil.VCOS_ALIGN_UP(height, 32);
             this.Inputs[0].Ptr->Format->es->video.width = MMALUtil.VCOS_ALIGN_UP(width, 32);
             this.Inputs[0].Ptr->Format->es->video.crop = new MMAL_RECT_T(0, 0, width, height);
@@ -71,7 +83,19 @@ namespace MMALSharp.Components
         }
 
         /// <summary>
-        /// Call to configure changes on an Image Encoder output port.
+        /// Call to configure changes on the 1st Downstream component output port.
+        /// </summary>        
+        /// <param name="encodingType">The encoding type this output port will send data in</param>
+        /// <param name="pixelFormat">The pixel format this output port will send data in</param>
+        /// <param name="quality">The quality of our outputted data</param>
+        /// <param name="bitrate">The bitrate we are sending data at</param>
+        public virtual unsafe void ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0)
+        {
+            this.ConfigureOutputPort(0, encodingType, pixelFormat, quality, bitrate);
+        }
+
+        /// <summary>
+        /// Call to configure changes on an Downstream component output port.
         /// </summary>
         /// <param name="outputPort">The output port we are configuring</param>
         /// <param name="encodingType">The encoding type this output port will send data in</param>

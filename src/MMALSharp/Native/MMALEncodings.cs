@@ -6,6 +6,127 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
+    public static class MMALEncodingHelpers
+    {
+        public static List<MMALEncoding> EncodingList => new List<MMALEncoding>
+        {
+            MMALEncoding.MMAL_ENCODING_H264,
+            MMALEncoding.MMAL_ENCODING_MVC,
+            MMALEncoding.MMAL_ENCODING_H263,
+            MMALEncoding.MMAL_ENCODING_MP4V,
+            MMALEncoding.MMAL_ENCODING_MP2V,
+            MMALEncoding.MMAL_ENCODING_MP1V,
+            MMALEncoding.MMAL_ENCODING_WMV3,
+            MMALEncoding.MMAL_ENCODING_WMV2,
+            MMALEncoding.MMAL_ENCODING_WMV1,
+            MMALEncoding.MMAL_ENCODING_WVC1,
+            MMALEncoding.MMAL_ENCODING_VP8,
+            MMALEncoding.MMAL_ENCODING_VP7,
+            MMALEncoding.MMAL_ENCODING_VP6,
+            MMALEncoding.MMAL_ENCODING_THEORA,
+            MMALEncoding.MMAL_ENCODING_SPARK,
+            MMALEncoding.MMAL_ENCODING_MJPEG,
+            MMALEncoding.MMAL_ENCODING_JPEG,
+            MMALEncoding.MMAL_ENCODING_GIF,
+            MMALEncoding.MMAL_ENCODING_PNG,
+            MMALEncoding.MMAL_ENCODING_PPM,
+            MMALEncoding.MMAL_ENCODING_TGA,
+            MMALEncoding.MMAL_ENCODING_BMP,
+            MMALEncoding.MMAL_ENCODING_I420,
+            MMALEncoding.MMAL_ENCODING_I420_SLICE,
+            MMALEncoding.MMAL_ENCODING_YV12,
+            MMALEncoding.MMAL_ENCODING_I422,
+            MMALEncoding.MMAL_ENCODING_I422_SLICE,
+            MMALEncoding.MMAL_ENCODING_YUYV,
+            MMALEncoding.MMAL_ENCODING_YVYU,
+            MMALEncoding.MMAL_ENCODING_UYVY,
+            MMALEncoding.MMAL_ENCODING_VYUY,
+            MMALEncoding.MMAL_ENCODING_NV12,
+            MMALEncoding.MMAL_ENCODING_NV21,
+            MMALEncoding.MMAL_ENCODING_ARGB,
+            MMALEncoding.MMAL_ENCODING_RGBA,
+            MMALEncoding.MMAL_ENCODING_ABGR,
+            MMALEncoding.MMAL_ENCODING_BGRA,
+            MMALEncoding.MMAL_ENCODING_RGB16,
+            MMALEncoding.MMAL_ENCODING_RGB24,
+            MMALEncoding.MMAL_ENCODING_RGB32,
+            MMALEncoding.MMAL_ENCODING_BGR16,
+            MMALEncoding.MMAL_ENCODING_BGR24,
+            MMALEncoding.MMAL_ENCODING_BGR32,
+            MMALEncoding.MMAL_ENCODING_BAYER_SBGGR10P,
+            MMALEncoding.MMAL_ENCODING_BAYER_SBGGR8,
+            MMALEncoding.MMAL_ENCODING_BAYER_SBGGR12P,
+            MMALEncoding.MMAL_ENCODING_BAYER_SBGGR16,
+            MMALEncoding.MMAL_ENCODING_BAYER_SBGGR10DPCM8,
+            MMALEncoding.MMAL_ENCODING_YUVUV128,
+            MMALEncoding.MMAL_ENCODING_OPAQUE,
+            MMALEncoding.MMAL_ENCODING_EGL_IMAGE,
+            MMALEncoding.MMAL_ENCODING_PCM_UNSIGNED_BE,
+            MMALEncoding.MMAL_ENCODING_PCM_UNSIGNED_LE,
+            MMALEncoding.MMAL_ENCODING_PCM_SIGNED_BE,
+            MMALEncoding.MMAL_ENCODING_PCM_SIGNED_LE,
+            MMALEncoding.MMAL_ENCODING_PCM_FLOAT_BE,
+            MMALEncoding.MMAL_ENCODING_PCM_FLOAT_LE,
+            MMALEncoding.MMAL_ENCODING_PCM_UNSIGNED,
+            MMALEncoding.MMAL_ENCODING_PCM_SIGNED,
+            MMALEncoding.MMAL_ENCODING_PCM_FLOAT,
+            MMALEncoding.MMAL_ENCODING_MP4A,
+            MMALEncoding.MMAL_ENCODING_MPGA,
+            MMALEncoding.MMAL_ENCODING_ALAW,
+            MMALEncoding.MMAL_ENCODING_MULAW,
+            MMALEncoding.MMAL_ENCODING_ADPCM_MS,
+            MMALEncoding.MMAL_ENCODING_ADPCM_IMA_MS,
+            MMALEncoding.MMAL_ENCODING_ADPCM_SWF,
+            MMALEncoding.MMAL_ENCODING_WMA1,
+            MMALEncoding.MMAL_ENCODING_WMA2,
+            MMALEncoding.MMAL_ENCODING_WMAP,
+            MMALEncoding.MMAL_ENCODING_WMAL,
+            MMALEncoding.MMAL_ENCODING_WMAV,
+            MMALEncoding.MMAL_ENCODING_AMRNB,
+            MMALEncoding.MMAL_ENCODING_AMRWB,
+            MMALEncoding.MMAL_ENCODING_AMRWBP,
+            MMALEncoding.MMAL_ENCODING_AC3,
+            MMALEncoding.MMAL_ENCODING_EAC3,
+            MMALEncoding.MMAL_ENCODING_DTS,
+            MMALEncoding.MMAL_ENCODING_MLP,
+            MMALEncoding.MMAL_ENCODING_FLAC,
+            MMALEncoding.MMAL_ENCODING_VORBIS,
+            MMALEncoding.MMAL_ENCODING_SPEEX,
+            MMALEncoding.MMAL_ENCODING_ATRAC3,
+            MMALEncoding.MMAL_ENCODING_ATRACX,
+            MMALEncoding.MMAL_ENCODING_ATRACL,
+            MMALEncoding.MMAL_ENCODING_MIDI,
+            MMALEncoding.MMAL_ENCODING_EVRC,
+            MMALEncoding.MMAL_ENCODING_NELLYMOSER,
+            MMALEncoding.MMAL_ENCODING_QCELP,
+            MMALEncoding.MMAL_ENCODING_MP4V_DIVX_DRM,
+            MMALEncoding.MMAL_ENCODING_VARIANT_H264_DEFAULT,
+            MMALEncoding.MMAL_ENCODING_VARIANT_H264_AVC1,
+            MMALEncoding.MMAL_ENCODING_VARIANT_H264_RAW,
+            MMALEncoding.MMAL_ENCODING_VARIANT_MP4A_DEFAULT,
+            MMALEncoding.MMAL_ENCODING_VARIANT_MP4A_ADTS,
+            MMALEncoding.MMAL_COLOR_SPACE_UNKNOWN,
+            MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT601,
+            MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT709,
+            MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF,
+            MMALEncoding.MMAL_COLOR_SPACE_FCC,
+            MMALEncoding.MMAL_COLOR_SPACE_SMPTE240M,
+            MMALEncoding.MMAL_COLOR_SPACE_BT470_2_M,
+            MMALEncoding.MMAL_COLOR_SPACE_BT470_2_BG,
+            MMALEncoding.MMAL_COLOR_SPACE_JFIF_Y16_255
+        };
+        
+        /// <summary>
+        /// Parses an integer encoding value to an MMALEncoding object.
+        /// </summary>
+        /// <param name="encodingType">The encoding type value</param>
+        /// <returns>The MMALEncoding object</returns>
+        public static MMALEncoding ParseEncoding(this int encodingType)
+        {
+            return EncodingList.Where(c => c.EncodingVal == encodingType).FirstOrDefault();            
+        }
+    }
+
     public class MMALEncoding
     {
         public enum EncodingType

@@ -53,7 +53,7 @@ namespace MMALSharp
         /// Managed name given to this object (user defined)
         /// </summary>
         public string ObjName { get; set; }
-
+                
         public MMALEncoding EncodingType { get; set; }
 
         public MMALEncoding PixelFormat { get; set; }
@@ -139,6 +139,10 @@ namespace MMALSharp
         public int CropWidth => this.Ptr->Format->es->video.crop.Width;
 
         public int CropHeight => this.Ptr->Format->es->video.crop.Height;
+
+        public int NativeEncodingType => this.Ptr->Format->encoding;
+
+        public int NativeEncodingSubformat => this.Ptr->Format->encodingVariant;
 
         #endregion
 
