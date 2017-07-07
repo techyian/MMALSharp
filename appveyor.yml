@@ -16,7 +16,9 @@ os: Visual Studio 2017
 
 before_build:
   - dotnet --info
-  - dotnet restore  
+  - dotnet restore src\MMALSharp\MMALSharp.csproj
+  - dotnet restore src\MMALSharp.Common\MMALSharp.Common.csproj
+  - dotnet restore src\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj
 
 build:
   parallel: true                  # enable MSBuild parallel builds
