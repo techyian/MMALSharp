@@ -2,24 +2,21 @@
   <Import Project="..\..\build\common.props" />
   <PropertyGroup>
     <AssemblyTitle>MMALSharp</AssemblyTitle>
-    <TargetFrameworks>net452;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>net452;netcoreapp1.1</TargetFrameworks>
     <AssemblyName>MMALSharp</AssemblyName>
     <PackageId>MMALSharp</PackageId>
     <RootNamespace>MMALSharp</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
+  <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-  </PropertyGroup>  
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp2.0|AnyCPU'">
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-  </PropertyGroup>  
+  </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.3.0" />
 	<PackageReference Include="Nito.AsyncEx" Version="3.0.1" />
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">    
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">    
 	<PackageReference Include="Nito.AsyncEx" Version="5.0.0-pre-02" />    
   </ItemGroup>  
   <ItemGroup>

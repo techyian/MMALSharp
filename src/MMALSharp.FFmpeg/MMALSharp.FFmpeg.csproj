@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">  
   <PropertyGroup>
     <AssemblyTitle>MMALSharp.FFmpeg</AssemblyTitle>
-    <TargetFrameworks>net452;netcoreapp2.0</TargetFrameworks>    
+    <TargetFrameworks>net452;netcoreapp1.1</TargetFrameworks>    
     <AssemblyName>MMALSharp.FFmpeg</AssemblyName>
     <PackageId>MMALSharp.FFmpeg</PackageId>
     <RootNamespace>MMALSharp</RootNamespace>
   </PropertyGroup>  
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
+  <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>  
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">   
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">   
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">   
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
