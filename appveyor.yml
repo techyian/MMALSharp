@@ -1,22 +1,30 @@
 version: '0.3.0.{build}'
-image: Visual Studio 2015
 
-assembly_info:
-  patch: true
-  file: AssemblyInfo.*
-  assembly_version: '0.3.0.{build}'
-  assembly_file_version: '0.3.0.{build}'
-  assembly_informational_version: '0.3.0.{build}'
+#assembly_info:
+#  patch: true
+#  file: AssemblyInfo.*
+#  assembly_version: '0.3.0.{build}'
+#  assembly_file_version: '0.3.0.{build}'
+#  assembly_informational_version: '0.3.0.{build}'
 
 # prevent the double build when a branch has an active PR
 skip_branch_with_pr: true
 
-build_script:
-- cmd: build.cmd
+configuration: Release
+
+os: Visual Studio 2017
+
+before_build:
+  - dotnet --info
+  - dotnet restore  
+
+build:
+  parallel: true                  # enable MSBuild parallel builds
+  project: MMALSharp.sln    # path to Visual Studio solution or project
+
 
 after_build:
   - dotnet pack .\src\MMALSharp\MMALSharp.csproj --configuration Release
-  - dotnet pack .\src\MMALSharp.Common\MMALSharp.Common.csproj --configuration Release
   - dotnet pack .\src\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj --configuration Release
 
 artifacts:
