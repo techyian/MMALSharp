@@ -44,3 +44,5 @@ deploy:
    artifact: /.*\.nupkg/
    on:
      branch: master
+     
+test: off
