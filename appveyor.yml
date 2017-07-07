@@ -19,6 +19,8 @@ before_build:
   - dotnet restore src\MMALSharp\MMALSharp.csproj
   - dotnet restore src\MMALSharp.Common\MMALSharp.Common.csproj
   - dotnet restore src\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj
+  - dotnet restore tests\MMALSharp.Tests\MMALSharp.Tests.csproj
+  - dotnet restore tests\MMALSharp.Tests.FFmpeg\MMALSharp.Tests.FFmpeg.csproj
 
 build:
   parallel: true                  # enable MSBuild parallel builds
