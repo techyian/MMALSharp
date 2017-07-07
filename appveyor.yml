@@ -14,9 +14,14 @@ skip_branch_with_pr: true
 build_script:
 - cmd: build.cmd
 
-artifacts:
-- path: build\**\*.nupkg
+after_build:
+  - dotnet pack .\src\MMALSharp\MMALSharp.csproj --configuration Release
+  - dotnet pack .\src\MMALSharp.Common\MMALSharp.Common.csproj --configuration Release
+  - dotnet pack .\src\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj --configuration Release
 
+artifacts:
+- path: '**\MMALSharp*.nupkg'
+  
 deploy:
     # MyGet Deployment for builds & releases
  - provider: NuGet

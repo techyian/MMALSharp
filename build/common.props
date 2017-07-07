@@ -1,0 +1,48 @@
+<Project>
+  <PropertyGroup>
+    <Product>MMALSharp</Product>
+    <Description>C# API for the Raspberry Pi Camera module</Description>
+    <Copyright>Ian Auty</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Authors>Ian Auty</Authors>
+    <PackageTags>raspberry-pi</PackageTags>    
+    <PackageProjectUrl>https://github.com/techyian/MMALSharp</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/techyian/MMALSharp/blob/dev/LICENSE.txt</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/techyian/MMALSharp</RepositoryUrl>
+
+    <CLSCompliant>true</CLSCompliant>
+    <ComVisible>false</ComVisible>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net452' ">
+    <DefineConstants>$(DefineConstants);CLASSIC</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+    <DefineConstants>$(DefineConstants);CORE</DefineConstants>
+  </PropertyGroup>
+    
+  <PropertyGroup>
+    <Major>0</Major>
+    <Minor>3</Minor>
+    <Revision>0</Revision>
+
+    <BuildNumber Condition=" '$(APPVEYOR_BUILD_NUMBER)' != '' ">$(APPVEYOR_BUILD_NUMBER)</BuildNumber>
+    <BuildNumber Condition=" '$(BUILD_NUMBER)' != '' ">$(BUILD_NUMBER)</BuildNumber>
+    <BuildNumber Condition=" '$(BuildNumber)' == '' ">0</BuildNumber>
+
+    <PrereleaseLabel>-develop</PrereleaseLabel>
+    <PrereleaseLabel Condition=" '$(APPVEYOR_BUILD_NUMBER)' != '' "></PrereleaseLabel>
+    <!-- <PrereleaseLabel></PrereleaseLabel> --> <!-- For release versions only -->
+
+    <PrereleaseLabelConstants></PrereleaseLabelConstants>
+    <PrereleaseLabelConstants Condition=" '$(PrereleaseLabel)' == '-develop' ">PRERELEASE_DEVELOP</PrereleaseLabelConstants>
+    <PrereleaseLabelConstants Condition=" '$(APPVEYOR_BUILD_NUMBER)' != '' ">PRERELEASE_NIGHTLY</PrereleaseLabelConstants>
+    <DefineConstants>$(DefineConstants);$(PrereleaseLabelConstants)</DefineConstants>
+
+    <AssemblyVersion>$(Major).$(Minor).$(Revision).$(BuildNumber)</AssemblyVersion>
+    <AssemblyFileVersion>$(Major).$(Minor).$(Revision).$(BuildNumber)</AssemblyFileVersion>
+    <InformationalVersion>$(Major).$(Minor).$(Revision).$(BuildNumber)$(PrereleaseLabel)</InformationalVersion>
+    <PackageVersion>$(Major).$(Minor).$(Revision).$(BuildNumber)$(PrereleaseLabel)</PackageVersion>
+  </PropertyGroup>
+</Project>
