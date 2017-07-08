@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMALSharp", "src\MMALSharp\MMALSharp.csproj", "{5B03E4B4-13AA-4EC8-8FD3-9DAA176EAA70}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -36,6 +36,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{DB54AD93-6E87-4845-BEF4-00223219E73A}"
 	ProjectSection(SolutionItems) = preProject
 		build\common.props = build\common.props
+		build\FFmpeg.props = build\FFmpeg.props
 	EndProjectSection
 EndProject
 Global

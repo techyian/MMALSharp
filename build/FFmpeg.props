@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
-    <Product>MMALSharp</Product>
-    <Description>C# API for the Raspberry Pi Camera module</Description>
+    <Product>MMALSharp.FFmpeg</Product>
+    <Description>FFmpeg library for MMALSharp</Description>
     <Copyright>Ian Auty</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Ian Auty</Authors>

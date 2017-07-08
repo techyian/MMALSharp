@@ -1,4 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">  
+﻿<Project Sdk="Microsoft.NET.Sdk"> 
+  <Import Project="..\..\build\FFmpeg.props" />
   <PropertyGroup>
     <AssemblyTitle>MMALSharp.FFmpeg</AssemblyTitle>
     <TargetFrameworks>net452;netcoreapp1.1</TargetFrameworks>    
