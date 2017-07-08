@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">  
+  <Import Project="..\..\build\MMALSharp.Common.props" />
   <PropertyGroup>
     <AssemblyTitle>MMALSharp.Common</AssemblyTitle>
     <TargetFrameworks>net452;netcoreapp1.1</TargetFrameworks>    

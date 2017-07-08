@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\..\build\common.props" />
+  <Import Project="..\..\build\MMALSharp.props" />
   <PropertyGroup>
     <AssemblyTitle>MMALSharp</AssemblyTitle>
     <TargetFrameworks>net452;netcoreapp1.1</TargetFrameworks>
@@ -23,6 +23,6 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MMALSharp.Common\MMALSharp.Common.csproj" />
+    <ProjectReference Include="..\MMALSharp.Common\MMALSharp.Common.csproj"/>
   </ItemGroup>  
 </Project>

@@ -1,12 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMALSharp", "src\MMALSharp\MMALSharp.csproj", "{5B03E4B4-13AA-4EC8-8FD3-9DAA176EAA70}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8} = {D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}
-		{8F2E7EDB-4533-4FC5-A8AA-17F11302CC84} = {8F2E7EDB-4533-4FC5-A8AA-17F11302CC84}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMALSharp.FFmpeg", "src\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj", "{8F2E7EDB-4533-4FC5-A8AA-17F11302CC84}"
@@ -20,13 +19,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{46D98B04-9F3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B332E50B-EDCA-477C-BAE7-2E30DBCC9AA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharp.Tests", "tests\MMALSharp.Tests\MMALSharp.Tests.csproj", "{8292FB10-A8DF-4B00-A6F1-F314918770B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMALSharp.Tests", "tests\MMALSharp.Tests\MMALSharp.Tests.csproj", "{8292FB10-A8DF-4B00-A6F1-F314918770B2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5B03E4B4-13AA-4EC8-8FD3-9DAA176EAA70} = {5B03E4B4-13AA-4EC8-8FD3-9DAA176EAA70}
 		{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8} = {D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharp.Tests.FFmpeg", "tests\MMALSharp.Tests.FFmpeg\MMALSharp.Tests.FFmpeg.csproj", "{2FD85F88-F016-428D-BEB9-2E82309BA258}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMALSharp.Tests.FFmpeg", "tests\MMALSharp.Tests.FFmpeg\MMALSharp.Tests.FFmpeg.csproj", "{2FD85F88-F016-428D-BEB9-2E82309BA258}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5B03E4B4-13AA-4EC8-8FD3-9DAA176EAA70} = {5B03E4B4-13AA-4EC8-8FD3-9DAA176EAA70}
 		{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8} = {D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}
@@ -37,6 +36,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{DB54AD93
 	ProjectSection(SolutionItems) = preProject
 		build\common.props = build\common.props
 		build\FFmpeg.props = build\FFmpeg.props
+		build\MMALSharp.Common.props = build\MMALSharp.Common.props
+		build\MMALSharp.FFmpeg.props = build\MMALSharp.FFmpeg.props
+		build\MMALSharp.props = build\MMALSharp.props
 	EndProjectSection
 EndProject
 Global

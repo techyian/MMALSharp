@@ -29,6 +29,7 @@ build:
 
 after_build:
   - dotnet pack .\src\MMALSharp\MMALSharp.csproj --configuration Release
+  - dotnet pack .\src\MMALSharp.Common\MMALSharp.Common.csproj --configuration Release
   - dotnet pack .\src\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj --configuration Release
 
 artifacts:
