@@ -12,9 +12,9 @@ The project is in early stages of development, however progress is good, please 
 - [x] Resizer
 - [x] Splitter
 - [x] Image Encoder
-- [] Image Decoder
+- [ ] Image Decoder
 - [x] Video Encoder
-- [] Video Decoder
+- [ ] Video Decoder
 
 
 MMALSharp supports the following runtimes:
