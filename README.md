@@ -4,12 +4,23 @@
 
 MMALSharp is an unofficial C# API for the Raspberry Pi camera. Under the hood, MMALSharp makes use of the native MMAL interface designed by Broadcom.
 
-The project is in early stages of development, however the ability to take pictures and record video is working as expected (H.264 & MJPEG).
+The project is in early stages of development, however progress is good, please see the status of each component below:
+
+- [x] Camera
+- [x] Camera Info
+- [x] Renderers (Null sink & Video)
+- [x] Resizer
+- [x] Splitter
+- [x] Image Encoder
+- [] Image Decoder
+- [x] Video Encoder
+- [] Video Decoder
+
 
 MMALSharp supports the following runtimes:
 
-1) Mono 4.x 
-2) .NET Core 2.0 (beta) with .NET Standard 1.6.
+1. Mono 4.x 
+2. .NET Core 2.0 (Preview)
 
 ## Documentation
 

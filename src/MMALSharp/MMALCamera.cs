@@ -211,7 +211,69 @@ namespace MMALSharp
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Self-contained method for capturing a continual images from the camera still port for a specified period of time.  
+        /// An MMALImageEncoder component will be created and attached to the still port.
+        /// </summary>                
+        /// <param name="handler">The image capture handler to apply to the encoder component</param>
+        /// <param name="encodingType">The image encoding type e.g. JPEG, BMP</param>
+        /// <param name="pixelFormat">The pixel format to use with the encoder e.g. I420 (YUV420)</param>
+        /// <param name="timeout">The DateTime which capturing should stop</param>
+        /// <param name="burstMode">When enabled, burst mode will increase the rate at which images are taken, at the expense of quality</param>
+        /// <returns>The awaitable Task</returns>
+        public async Task TakePictureTimeout(ImageStreamCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, DateTime timeout, bool burstMode = false)
+        {
+            if (burstMode)
+            {
+                this.Camera.StillPort.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_BURST_CAPTURE, true);
+            }
+
+            while (DateTime.Now.CompareTo(timeout) < 0)
+            {
+                await TakePicture(handler, encodingType, pixelFormat);
+            }
+        }
+
+        /// <summary>
+        /// Self-contained method for capturing timelapse images. 
+        /// An MMALImageEncoder component will be created and attached to the still port.
+        /// </summary>                
+        /// <param name="handler">The image capture handler to apply to the encoder component</param>
+        /// <param name="encodingType">The image encoding type e.g. JPEG, BMP</param>
+        /// <param name="pixelFormat">The pixel format to use with the encoder e.g. I420 (YUV420)</param>
+        /// <param name="timelapse">A Timelapse object which specifies the timeout and rate at which images should be taken</param>
+        /// <returns>The awaitable Task</returns>
+        public async Task TakePictureTimelapse(ImageStreamCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, Timelapse timelapse)
+        {
+            int interval = 0;
+
+            if (timelapse == null)
+            {
+                throw new PiCameraError("Timelapse object null. This must be initialized for Timelapse mode");
+            }
+
+            while (DateTime.Now.CompareTo(timelapse.Timeout) < 0)
+            {
+                switch (timelapse.Mode)
+                {
+                    case TimelapseMode.Millisecond:
+                        interval = timelapse.Value;
+                        break;
+                    case TimelapseMode.Second:
+                        interval = timelapse.Value * 1000;
+                        break;
+                    case TimelapseMode.Minute:
+                        interval = (timelapse.Value * 60) * 1000;
+                        break;
+                }
+
+                await Task.Delay(interval);
+
+                await TakePicture(handler, encodingType, pixelFormat);
+            }
+        }
+
         /// <summary>
         /// Helper method to begin processing image data. Starts the Camera port and awaits until processing is complete.
         /// Cleans up resources upon finish.
