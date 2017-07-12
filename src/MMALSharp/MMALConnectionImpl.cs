@@ -112,10 +112,17 @@ namespace MMALSharp
         /// the connection shall then be destroyed.
         /// </summary>
         internal void Destroy()
-        {
-            Debugger.Print("Destroying connection");
+        {            
+            //Cleaning port pools for sanity.
+            this.UpstreamComponent.CleanPortPools();
+            this.DownstreamComponent.CleanPortPools();
 
             MMALCheck(MMALConnection.mmal_connection_destroy(this.Ptr), "Unable to destroy connection");
+        }
+
+        public override string ToString()
+        {
+            return $"Component connection - Upstream component: {this.UpstreamComponent.Name} on port {this.OutputPort.Name} Downstream component: {this.DownstreamComponent.Name} on port {this.InputPort.Name}";                        
         }
 
         public override void Dispose()

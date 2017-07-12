@@ -296,18 +296,22 @@ namespace MMALSharp
                 
             }
             
+            //We now begin capturing on the camera, processing will commence based on the pipeline configured.
             this.StartCapture(cameraPort);
+
+            List<Task> tasks = new List<Task>();
 
             //Wait until the process is complete.
             foreach (var component in handlerComponents)
             {
                 foreach (var portNum in component.ProcessingPorts)
                 {
-                    await component.Outputs[portNum].Trigger.WaitAsync();
-                }
-                
+                    tasks.Add(component.Outputs[portNum].Trigger.WaitAsync());
+                }                
             }
-            
+
+            await Task.WhenAll(tasks.ToArray());
+
             this.StopCapture(cameraPort);
 
             //Disable the image encoder output port.

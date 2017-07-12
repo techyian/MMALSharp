@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
@@ -81,25 +82,7 @@ namespace MMALSharp
         /// </summary>
         public void PrintProperties()
         {
-            Console.WriteLine("");
-            Console.WriteLine("|------------|");
-            Console.WriteLine(" Buffer debug");
-            Console.WriteLine("|------------|");
-
-            Console.WriteLine("Buffer length: " + this.Length);
-            Console.WriteLine("Presentation timestamp: " + this.Pts);
-
-            Console.WriteLine("Buffer flags: ");
-
-            foreach (MMALBufferProperties prop in this.Properties)
-            {
-                Console.WriteLine(prop.ToString());
-            }
-
-            Console.WriteLine("|------------|");
-            Console.WriteLine(" End buffer debug");
-            Console.WriteLine("|------------|");
-            Console.WriteLine("");
+            Console.WriteLine(this.ToString());            
         }
 
         /// <summary>
@@ -265,6 +248,26 @@ namespace MMALSharp
         {
             MMALBuffer.mmal_buffer_header_reset(this.Ptr);
         }
-                
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(
+                $"\r\n Buffer Header \r\n" +
+                "---------------- \r\n" +
+                $"Length: {this.Length} \r\n" +
+                $"Presentation Timestamp: {this.Pts} \r\n" +
+                $"Flags: \r\n");
+                                              
+            foreach (MMALBufferProperties prop in this.Properties)
+            {
+                sb.Append($"{prop.ToString()} \r\n");                
+            }
+
+            sb.Append("---------------- \r\n");
+
+            return sb.ToString();
+        }
     }
 }

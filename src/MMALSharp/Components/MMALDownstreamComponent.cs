@@ -171,30 +171,18 @@ namespace MMALSharp.Components
         /// </summary>
         private void ClosePipelineConnections()
         {
-            //Find any components this component is connected to, recursively removing these components.
-
-            foreach (MMALPortImpl port in this.Outputs)
-            {
-                var connection = MMALCamera.Instance.Connections.Where(c => c.InputPort == port).FirstOrDefault();
-                if (connection != null)
-                {
-                    //This component has an output port connected to another component.
-                    connection.DownstreamComponent.ClosePipelineConnections();
-
-                    //Destroy the connection
-                    connection.Dispose();
-                }
-            }
-
+            
             //Close any connection held by this component
             var finalConnection = MMALCamera.Instance.Connections.Where(c => c.DownstreamComponent == this).FirstOrDefault();
+
+            Debugger.Print($"Removing {finalConnection.ToString()}");
 
             if (finalConnection != null)
             {
                 finalConnection.Dispose();
                 
                 MMALCamera.Instance.Connections.Remove(finalConnection);
-            }
+            }                        
         }
         
         public override void Dispose()
