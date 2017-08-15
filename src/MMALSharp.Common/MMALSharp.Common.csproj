@@ -2,7 +2,7 @@
   <Import Project="..\..\build\MMALSharp.Common.props" />
   <PropertyGroup>
     <AssemblyTitle>MMALSharp.Common</AssemblyTitle>
-    <TargetFrameworks>net452;netcoreapp1.1</TargetFrameworks>    
+    <TargetFrameworks>net452;netstandard1.3</TargetFrameworks>    
     <AssemblyName>MMALSharp.Common</AssemblyName>
     <PackageId>MMALSharp.Common</PackageId>
     <RootNamespace>MMALSharp</RootNamespace>
@@ -14,7 +14,7 @@
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">  
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

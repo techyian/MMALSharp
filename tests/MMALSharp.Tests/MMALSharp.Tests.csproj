@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyTitle>MMALSharp.Tests</AssemblyTitle>
-    <TargetFrameworks>net452;netcoreapp1.1</TargetFrameworks>
+    <TargetFrameworks>net452;netstandard1.3</TargetFrameworks>
     <AssemblyName>MMALSharp.Tests</AssemblyName>
     <PackageId>MMALSharp.Tests</PackageId>
     <RootNamespace>MMALSharp.Tests</RootNamespace>
@@ -14,7 +14,7 @@
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">    
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">    
 	<PackageReference Include="Nito.AsyncEx" Version="5.0.0-pre-02" />    	
 	<PackageReference Include="xunit" Version="2.2.0" />    
 	<PackageReference Include="xunit.runner.console" Version="2.2.0" />    	   

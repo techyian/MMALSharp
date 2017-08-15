@@ -2,7 +2,7 @@
   <Import Project="..\..\build\MMALSharp.FFmpeg.props" />
   <PropertyGroup>
     <AssemblyTitle>MMALSharp.FFmpeg</AssemblyTitle>
-    <TargetFrameworks>net452;netcoreapp1.1</TargetFrameworks>    
+    <TargetFrameworks>net452;netstandard1.3</TargetFrameworks>    
     <AssemblyName>MMALSharp.FFmpeg</AssemblyName>
     <PackageId>MMALSharp.FFmpeg</PackageId>
     <RootNamespace>MMALSharp</RootNamespace>
@@ -14,8 +14,9 @@
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">   
-  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">    
+	<PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />    
+  </ItemGroup> 
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
