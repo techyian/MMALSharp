@@ -155,7 +155,7 @@ namespace MMALSharp
             try
             {                            
                 var ps = this.Ptr->data + this.Offset;             
-                var buffer = Array.CreateInstance(typeof(byte), this.Ptr->Length) as byte[];
+                var buffer = Array.CreateInstance(typeof(byte), (int)this.Ptr->Length) as byte[];
                 Marshal.Copy((IntPtr)ps, buffer, 0, buffer.Length);                
                 MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
                              

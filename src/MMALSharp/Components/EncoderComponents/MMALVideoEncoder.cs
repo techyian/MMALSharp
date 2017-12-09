@@ -87,6 +87,14 @@ namespace MMALSharp.Components
             this.Timeout = timeout;
         }
 
+        /// <summary>
+        /// Call to configure changes on a Downstream video output port.
+        /// </summary>
+        /// <param name="outputPort">The output port we are configuring</param>
+        /// <param name="encodingType">The encoding type this output port will send data in</param>
+        /// <param name="pixelFormat">The pixel format this output port will send data in</param>
+        /// <param name="quality">Quantisation parameter - quality. When using this setting, set bitrate 0 and set this for variable bitrate</param>
+        /// <param name="bitrate">The bitrate we are sending data at</param>
         public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0)
         {
             base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate);
