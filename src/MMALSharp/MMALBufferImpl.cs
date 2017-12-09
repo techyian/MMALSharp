@@ -153,24 +153,13 @@ namespace MMALSharp
             MMALCheck(MMALBuffer.mmal_buffer_header_mem_lock(this.Ptr), "Unable to lock buffer header.");
                         
             try
-            {                
-                var target = new byte[this.Ptr->Length];
-                                
-                fixed (byte* pTarget = target)
-                {
-                    var pt = pTarget;
-                    var ps = this.Ptr->data + this.Offset;
-                    
-                    for (int i = 0; i < this.Ptr->Length; i++)
-                    {
-                        *pt = *ps;
-                        pt++;
-                        ps++;
-                    }
-                }
-
+            {                            
+                var ps = this.Ptr->data + this.Offset;             
+                var buffer = Array.CreateInstance(typeof(byte), this.Ptr->Length) as byte[];
+                Marshal.Copy((IntPtr)ps, buffer, 0, buffer.Length);                
                 MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
-                return target;                                
+                             
+                return buffer;
             }
             catch
             {
