@@ -144,7 +144,7 @@ namespace MMALSharp
             }
             catch
             {
-                Console.WriteLine($"Unable to get port parameter {t.ParamName}");
+                MMALLog.Logger.Warn($"Unable to get port parameter {t.ParamName}");
                 throw;
             }
         }
@@ -164,7 +164,7 @@ namespace MMALSharp
                 throw new PiCameraError($"Could not find parameter {key}");
             }
 
-            Debugger.Print($"Setting parameter {t.ParamName}");
+            MMALLog.Logger.Debug($"Setting parameter {t.ParamName}");
 
             try
             {
@@ -198,7 +198,7 @@ namespace MMALSharp
             }
             catch
             {
-                Console.WriteLine($"Unable to set port parameter {t.ParamName}");
+                MMALLog.Logger.Warn($"Unable to set port parameter {t.ParamName}");
                 throw;
             }
         }

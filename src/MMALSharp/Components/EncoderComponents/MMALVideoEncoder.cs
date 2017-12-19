@@ -104,7 +104,7 @@ namespace MMALSharp.Components
             this.Quality = quality;
             this.Bitrate = bitrate;
         
-            if (this.Outputs[outputPort].EncodingType == MMALEncoding.MMAL_ENCODING_H264)
+            if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264)
             {
                 this.ConfigureIntraPeriod(outputPort);
 
@@ -162,7 +162,7 @@ namespace MMALSharp.Components
 
         internal void ConfigureBitrate(int outputPort)
         {
-            if (this.Outputs[outputPort].EncodingType == MMALEncoding.MMAL_ENCODING_H264)
+            if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264)
             {
                 List<VideoLevel> levelList = null;
 
@@ -187,11 +187,11 @@ namespace MMALSharp.Components
                 }
 
             }
-            else if (this.Outputs[outputPort].EncodingType == MMALEncoding.MMAL_ENCODING_MJPEG)
+            else if (this.Outputs[outputPort].EncodingType == MMALEncoding.MJPEG)
             {
                 if (this.Bitrate > MaxBitrateMJPEG)
                 {
-                    Helpers.PrintWarning("Bitrate too high: Reducing to 25MBit/s");
+                    MMALLog.Logger.Warn("Bitrate too high: Reducing to 25MBit/s");
                     this.Bitrate = MaxBitrateMJPEG;
                 }
             }
@@ -205,7 +205,7 @@ namespace MMALSharp.Components
 
         internal void ConfigureIntraPeriod(int outputPort)
         {
-            if (this.Outputs[outputPort].EncodingType == MMALEncoding.MMAL_ENCODING_H264 && MMALCameraConfig.IntraPeriod != -1)
+            if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264 && MMALCameraConfig.IntraPeriod != -1)
             {
                 this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_INTRAPERIOD, MMALCameraConfig.IntraPeriod);
             }
@@ -264,7 +264,7 @@ namespace MMALSharp.Components
 
         internal void ConfigureInlineVectorsFlag(int outputPort)
         {
-            if (this.Outputs[outputPort].EncodingType == MMALEncoding.MMAL_ENCODING_H264)
+            if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264)
             {
                 this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INLINE_VECTORS, MMALCameraConfig.InlineMotionVectors);
             }

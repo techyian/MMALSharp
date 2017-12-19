@@ -141,9 +141,9 @@ namespace MMALSharp
          * -----------------------------------------------------------------------------------------------------------
         */
 
-        public static MMALEncoding PreviewEncoding { get; set; } = MMALEncoding.MMAL_ENCODING_OPAQUE;
+        public static MMALEncoding PreviewEncoding { get; set; } = MMALEncoding.OPAQUE;
 
-        public static MMALEncoding PreviewSubformat { get; set; } = MMALEncoding.MMAL_ENCODING_I420;
+        public static MMALEncoding PreviewSubformat { get; set; } = MMALEncoding.I420;
         
         /*
          * -----------------------------------------------------------------------------------------------------------
@@ -151,9 +151,9 @@ namespace MMALSharp
          * -----------------------------------------------------------------------------------------------------------
         */
 
-        public static MMALEncoding VideoEncoding { get; set; } = MMALEncoding.MMAL_ENCODING_OPAQUE;
+        public static MMALEncoding VideoEncoding { get; set; } = MMALEncoding.OPAQUE;
 
-        public static MMALEncoding VideoSubformat { get; set; } = MMALEncoding.MMAL_ENCODING_I420;
+        public static MMALEncoding VideoSubformat { get; set; } = MMALEncoding.I420;
 
         public static Resolution VideoResolution { get; set; } = Resolution.As1080p;
 
@@ -185,9 +185,9 @@ namespace MMALSharp
          * Camera still port specific properties
          * -----------------------------------------------------------------------------------------------------------
         */
-        public static MMALEncoding StillEncoding { get; set; } = MMALEncoding.MMAL_ENCODING_OPAQUE;
+        public static MMALEncoding StillEncoding { get; set; } = MMALEncoding.OPAQUE;
 
-        public static MMALEncoding StillSubFormat { get; set; } = MMALEncoding.MMAL_ENCODING_I420;
+        public static MMALEncoding StillSubFormat { get; set; } = MMALEncoding.I420;
 
         public static Resolution StillResolution { get; set; } = Resolution.As5MPixel;
 

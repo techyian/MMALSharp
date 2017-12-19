@@ -2,7 +2,7 @@
   <Import Project="..\..\build\MMALSharp.FFmpeg.props" />
   <PropertyGroup>
     <AssemblyTitle>MMALSharp.FFmpeg</AssemblyTitle>
-    <TargetFrameworks>net452;netstandard1.3</TargetFrameworks>    
+    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>    
     <AssemblyName>MMALSharp.FFmpeg</AssemblyName>
     <PackageId>MMALSharp.FFmpeg</PackageId>
     <RootNamespace>MMALSharp</RootNamespace>
@@ -14,7 +14,7 @@
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">    
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">    
 	<PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />    
   </ItemGroup> 
   <ItemGroup>

@@ -2,7 +2,7 @@
   <Import Project="..\..\build\MMALSharp.props" />
   <PropertyGroup>
     <AssemblyTitle>MMALSharp</AssemblyTitle>
-    <TargetFrameworks>net452;netstandard1.3</TargetFrameworks>
+    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <AssemblyName>MMALSharp</AssemblyName>
     <PackageId>MMALSharp</PackageId>
     <RootNamespace>MMALSharp</RootNamespace>
@@ -16,15 +16,18 @@
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">    
-	<PackageReference Include="Nito.AsyncEx" Version="5.0.0-pre-02" />    
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">    
+	<PackageReference Include="Nito.AsyncEx" Version="5.0.0-pre-05" />    
 	<PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />    	
 	<PackageReference Include="Microsoft.CSharp" Version="4.3.0" />    		
   </ItemGroup>  
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>  
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="4.5.0-rc03" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MMALSharp.Common\MMALSharp.Common.csproj"/>
+    <ProjectReference Include="..\MMALSharp.Common\MMALSharp.Common.csproj" />
   </ItemGroup>  
 </Project>

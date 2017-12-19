@@ -1,19 +1,11 @@
 ﻿using MMALSharp.Native;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 using System;
 
 namespace MMALSharp
-{
-    public static class Debugger
-    {
-        public static void Print(string msg)
-        {
-            if (MMALCameraConfig.Debug)
-            {
-                Console.WriteLine(msg);
-            }
-        }
-    }
-
+{     
     public class PiCameraError : Exception
     {
         public PiCameraError() : base() { }

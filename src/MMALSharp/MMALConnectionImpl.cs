@@ -127,7 +127,7 @@ namespace MMALSharp
 
         public override void Dispose()
         {
-            Debugger.Print("Disposing connection.");
+            MMALLog.Logger.Debug("Disposing connection.");
             this.Destroy();
             base.Dispose();
         }

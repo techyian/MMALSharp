@@ -82,7 +82,8 @@ namespace MMALSharp
         /// </summary>
         public void PrintProperties()
         {
-            Console.WriteLine(this.ToString());            
+            if(MMALCameraConfig.Debug)
+                MMALLog.Logger.Debug(this.ToString());            
         }
 
         /// <summary>
@@ -165,7 +166,7 @@ namespace MMALSharp
             {
                 //If something goes wrong, unlock the header.
                 MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
-                Debugger.Print("Unable to handle data. Returning null.");
+                MMALLog.Logger.Warn("Unable to handle data. Returning null.");
                 return null;
             }            
         }
@@ -206,7 +207,7 @@ namespace MMALSharp
                 //If something goes wrong, unlock the header.
                 MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
                 Marshal.FreeHGlobal(ptrAlloc);
-                Debugger.Print("Unable to write data to buffer.");
+                MMALLog.Logger.Warn("Unable to write data to buffer.");
             }
             
         }

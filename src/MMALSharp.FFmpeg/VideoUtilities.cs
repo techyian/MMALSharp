@@ -31,8 +31,8 @@ namespace MMALSharp.FFmpeg
                 return;
 
             //Create temporary directory and copy all files in the capture handler to it.
-            var tempDirectory = result.ProcessedFiles.FirstOrDefault().Item1.TrimEnd('/') + "/mmalsharptemp/";
-            var extension = result.ProcessedFiles.FirstOrDefault().Item3;
+            var tempDirectory = result.ProcessedFiles.FirstOrDefault().Directory.TrimEnd('/') + "/mmalsharptemp/";
+            var extension = result.ProcessedFiles.FirstOrDefault().Extension;
             
             try
             {
@@ -40,7 +40,7 @@ namespace MMALSharp.FFmpeg
 
                 foreach (var tuple in result.ProcessedFiles)
                 {
-                    System.IO.File.Copy(tuple.Item1.TrimEnd('/') + "/" + tuple.Item2.TrimEnd('.') + tuple.Item3, tempDirectory + tuple.Item2.TrimEnd('.') + tuple.Item3);
+                    System.IO.File.Copy(tuple.Directory.TrimEnd('/') + "/" + tuple.Filename.TrimEnd('.') + tuple.Extension, tempDirectory + tuple.Filename.TrimEnd('.') + tuple.Extension);
                 }
 
                 targetDirectory.TrimEnd('/');

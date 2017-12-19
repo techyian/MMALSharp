@@ -63,7 +63,7 @@ namespace MMALSharp
 
         public override void Dispose()
         {
-            Debugger.Print("Disposing queue.");            
+            MMALLog.Logger.Debug("Disposing queue.");            
             this.Destroy();
             base.Dispose();
         }

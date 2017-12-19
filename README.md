@@ -16,6 +16,7 @@ The project is in early stages of development, however progress is good, please 
 - [x] Video Encoder
 - [ ] Video Decoder
 
+** Please clone from Master branch if building from source. Dev branch not guaranteed to be stable. **
 
 MMALSharp supports the following runtimes:
 

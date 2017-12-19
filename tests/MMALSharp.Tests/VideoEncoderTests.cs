@@ -154,7 +154,7 @@ namespace MMALSharp.Tests
                 
                 using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, new MMAL_RATIONAL_T(25, 1), DateTime.Now.AddSeconds(20)))
                 {
-                    vidEncoder.ConfigureOutputPort(0, MMALEncoding.MMAL_ENCODING_MJPEG, MMALEncoding.MMAL_ENCODING_I420, 10, 25000000);
+                    vidEncoder.ConfigureOutputPort(0, MMALEncoding.MJPEG, MMALEncoding.I420, 10, 25000000);
 
                     //Create our component pipeline.         
                     fixture.MMALCamera.Camera.VideoPort
@@ -183,7 +183,7 @@ namespace MMALSharp.Tests
 
                 using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, new MMAL_RATIONAL_T(25, 1), DateTime.Now.AddSeconds(20)))
                 {
-                    vidEncoder.ConfigureOutputPort(0, MMALEncoding.MMAL_ENCODING_MJPEG, MMALEncoding.MMAL_ENCODING_I420, 90, 25000000);
+                    vidEncoder.ConfigureOutputPort(0, MMALEncoding.MJPEG, MMALEncoding.I420, 90, 25000000);
 
                     //Create our component pipeline.         
                     fixture.MMALCamera.Camera.VideoPort
