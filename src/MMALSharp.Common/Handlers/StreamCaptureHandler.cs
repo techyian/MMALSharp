@@ -25,9 +25,13 @@ namespace MMALSharp.Handlers
         protected int Processed { get; set; }
 
         /// <summary>
-        /// The directory
+        /// The directory to save to (if applicable)
         /// </summary>
         public string Directory { get; protected set; }
+
+        /// <summary>
+        /// The extension of the file (if applicable)
+        /// </summary>
         public string Extension { get; protected set; }
 
         protected StreamCaptureHandler(string directory, string extension)
@@ -81,7 +85,7 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// Allows us to do any further processing once the capture method has completed.
         /// </summary>
-        public void PostProcess()
+        public virtual void PostProcess()
         {
             try
             {        
