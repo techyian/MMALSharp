@@ -41,11 +41,11 @@ namespace MMALSharp
         {
             BcmHost.bcm_host_init();
 
+            MMALLog.ConfigureLogConfig();
+
             this.Camera = new MMALCameraComponent();
             this.DownstreamComponents = new List<MMALDownstreamComponent>();
-            this.Connections = new List<MMALConnectionImpl>();
-
-            MMALLog.ConfigureLogConfig();
+            this.Connections = new List<MMALConnectionImpl>();            
         }
 
         /// <summary>
@@ -108,18 +108,11 @@ namespace MMALSharp
                 this.Camera.VideoPort.ConnectTo(vidEncoder);
                 this.Camera.PreviewPort.ConnectTo(renderer);
                 this.ConfigureCameraSettings();
-                
-                try
-                {
-                    MMALLog.Logger.Info($"Preparing to take video. Resolution: {vidEncoder.Width} x {vidEncoder.Height}. " +
-                                      $"Encoder: {vidEncoder.Outputs[0].EncodingType.EncodingName}. Pixel Format: {vidEncoder.Outputs[0].PixelFormat.EncodingName}.");
+               
+                MMALLog.Logger.Info($"Preparing to take video. Resolution: {vidEncoder.Width} x {vidEncoder.Height}. " +
+                                    $"Encoder: {vidEncoder.Outputs[0].EncodingType.EncodingName}. Pixel Format: {vidEncoder.Outputs[0].PixelFormat.EncodingName}.");
                                         
-                    await BeginProcessing(this.Camera.VideoPort, vidEncoder);
-                }
-                finally
-                {
-                    vidEncoder.Handler.PostProcess();
-                }
+                await BeginProcessing(this.Camera.VideoPort, vidEncoder);                
             }        
         }
 
@@ -173,8 +166,7 @@ namespace MMALSharp
                 this.Camera.CleanPortPools();
             }
             finally
-            {
-                this.Camera.Handler.PostProcess();
+            {                
                 this.Camera.Handler.Dispose();
             }
         }
@@ -199,18 +191,12 @@ namespace MMALSharp
                 this.Camera.PreviewPort.ConnectTo(renderer);
                 this.ConfigureCameraSettings();
                 
-                //Enable the image encoder output port.            
-                try
-                {
-                    MMALLog.Logger.Info($"Preparing to take picture. Resolution: {imgEncoder.Width} x {imgEncoder.Height}. " +
-                                      $"Encoder: {encodingType.EncodingName}. Pixel Format: {pixelFormat.EncodingName}.");
+                //Enable the image encoder output port.                
+                MMALLog.Logger.Info($"Preparing to take picture. Resolution: {imgEncoder.Width} x {imgEncoder.Height}. " +
+                                    $"Encoder: {encodingType.EncodingName}. Pixel Format: {pixelFormat.EncodingName}.");
 
-                    await BeginProcessing(this.Camera.StillPort, imgEncoder);
-                }
-                finally
-                {
-                    imgEncoder.Handler.PostProcess();
-                }
+                await BeginProcessing(this.Camera.StillPort, imgEncoder);
+               
             }
         }
 
@@ -284,7 +270,7 @@ namespace MMALSharp
         /// <param name="handlerComponents">The handler component(s) we are processing data on</param>
         /// <returns>The awaitable Task</returns>
         public async Task BeginProcessing(MMALPortImpl cameraPort, params MMALDownstreamHandlerComponent[] handlerComponents)
-        {
+        {            
             //Enable all connections associated with these components
             foreach (var component in handlerComponents)
             {
@@ -294,13 +280,12 @@ namespace MMALSharp
                 {
                     component.Start(portNum, new Action<MMALBufferImpl, MMALPortBase>(component.ManagedOutputCallback));
                     component.Outputs[portNum].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-                }
-                
+                }                
             }
             
             //We now begin capturing on the camera, processing will commence based on the pipeline configured.
             this.StartCapture(cameraPort);
-
+            
             List<Task> tasks = new List<Task>();
 
             //Wait until the process is complete.
@@ -311,14 +296,20 @@ namespace MMALSharp
                     tasks.Add(component.Outputs[portNum].Trigger.WaitAsync());
                 }                
             }
-
+                        
             await Task.WhenAll(tasks.ToArray());
-
+                        
             this.StopCapture(cameraPort);
+
+            //If taking raw image, the camera component will hold the handler
+            this.Camera.Handler?.PostProcess();
 
             //Disable the image encoder output port.
             foreach (var component in handlerComponents)
             {
+                //Apply any final processing on each component
+                component.Handler?.PostProcess();
+
                 foreach (var portNum in component.ProcessingPorts)
                 {
                     component.Stop(portNum);
@@ -328,9 +319,9 @@ namespace MMALSharp
                 component.DisableConnections();
 
                 component.CleanPortPools();
-            }
+            }                        
         }
-        
+                        
         /// <summary>
         /// Disables processing on the camera component
         /// </summary>

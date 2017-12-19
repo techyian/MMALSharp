@@ -29,14 +29,14 @@ namespace MMALSharp
 
             // Step 3. Set target properties 
             consoleTarget.Layout = layout;
-            fileTarget.FileName = "mmal-log-${shortdate}.log";
+            fileTarget.FileName = "${basedir}/mmal-log-${shortdate}.log";
             fileTarget.Layout = layout;
 
             // Step 4. Define rules
-            var rule1 = new LoggingRule("DEBUG", LogLevel.Debug, fileTarget);
+            var rule1 = new LoggingRule("*", LogLevel.Debug, fileTarget);
             config.LoggingRules.Add(rule1);
 
-            var rule2 = new LoggingRule("CONSOLE", LogLevel.Info, consoleTarget);
+            var rule2 = new LoggingRule("*", LogLevel.Info, LogLevel.Info, consoleTarget);
             config.LoggingRules.Add(rule2);
 
             // Step 5. Activate the configuration

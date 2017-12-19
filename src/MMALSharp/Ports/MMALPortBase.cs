@@ -310,7 +310,7 @@ namespace MMALSharp
         /// </summary>
         /// <param name="buffer"></param>
         internal void SendBuffer(MMALBufferImpl buffer)
-        {
+        {            
             MMALCheck(MMALPort.mmal_port_send_buffer(this.Ptr, buffer.Ptr), "Unable to send buffer header.");
         }
 
@@ -352,9 +352,7 @@ namespace MMALSharp
                     }
 
                     if (newBuffer != null)
-                    {
-                        MMALLog.Logger.Debug("Got buffer. Sending to port.");
-
+                    {                        
                         this.SendBuffer(newBuffer);
                     }
                     else
@@ -390,9 +388,7 @@ namespace MMALSharp
                     var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
 
                     if (newBuffer != null)
-                    {
-                        MMALLog.Logger.Debug("Got buffer. Sending to port.");
-
+                    {                        
                         this.SendBuffer(newBuffer);
                     }
                     else
