@@ -28,11 +28,11 @@ namespace MMALSharp
                 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
-                Debugger.Print("Enabling port.");
+                MMALLog.Logger.Debug("Enabling port.");
                 
                 if (managedCallback == null)
                 {
-                    Debugger.Print("Callback null");
+                    MMALLog.Logger.Warn("Callback null");
                     
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
                 }
@@ -65,11 +65,11 @@ namespace MMALSharp
                 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
-                Debugger.Print("Enabling port.");
+                MMALLog.Logger.Debug("Enabling port.");
                 
                 if (managedCallback == null)
                 {
-                    Debugger.Print("Callback null");
+                    MMALLog.Logger.Warn("Callback null");
                     
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
                 }
@@ -131,7 +131,7 @@ namespace MMALSharp
                 if (bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END ||
                                                     c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED))
                 {
-                    Debugger.Print("End of stream. Signaling completion...");
+                    MMALLog.Logger.Debug("End of stream. Signaling completion...");
                     
                     if (this.Trigger != null && this.Trigger.CurrentCount > 0)
                     {

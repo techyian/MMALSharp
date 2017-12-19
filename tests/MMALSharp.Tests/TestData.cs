@@ -56,42 +56,42 @@ namespace MMALSharp.Tests
     {        
         public static List<MMALEncoding> PixelFormats = new List<MMALEncoding>
         {
-            MMALEncoding.MMAL_ENCODING_I420,
-            MMALEncoding.MMAL_ENCODING_I420_SLICE,
-            MMALEncoding.MMAL_ENCODING_YV12,
-            MMALEncoding.MMAL_ENCODING_I422,
-            MMALEncoding.MMAL_ENCODING_I422_SLICE,
-            MMALEncoding.MMAL_ENCODING_YUYV,
-            MMALEncoding.MMAL_ENCODING_YVYU,
-            MMALEncoding.MMAL_ENCODING_UYVY,
-            MMALEncoding.MMAL_ENCODING_VYUY,
-            MMALEncoding.MMAL_ENCODING_NV12,
-            MMALEncoding.MMAL_ENCODING_NV21,
-            MMALEncoding.MMAL_ENCODING_ARGB,
-            MMALEncoding.MMAL_ENCODING_RGBA,
-            MMALEncoding.MMAL_ENCODING_ABGR,
-            MMALEncoding.MMAL_ENCODING_BGRA,
-            MMALEncoding.MMAL_ENCODING_RGB16,
-            MMALEncoding.MMAL_ENCODING_RGB24,
-            MMALEncoding.MMAL_ENCODING_RGB32,
-            MMALEncoding.MMAL_ENCODING_BGR16,
-            MMALEncoding.MMAL_ENCODING_BGR24,
-            MMALEncoding.MMAL_ENCODING_BGR32,
-            MMALEncoding.MMAL_ENCODING_BAYER_SBGGR10P,
-            MMALEncoding.MMAL_ENCODING_BAYER_SBGGR8,
-            MMALEncoding.MMAL_ENCODING_BAYER_SBGGR12P,
-            MMALEncoding.MMAL_ENCODING_BAYER_SBGGR8,
-            MMALEncoding.MMAL_ENCODING_BAYER_SBGGR12P,
-            MMALEncoding.MMAL_ENCODING_BAYER_SBGGR16,
-            MMALEncoding.MMAL_ENCODING_BAYER_SBGGR10DPCM8,
-            MMALEncoding.MMAL_ENCODING_YUVUV128,
-            MMALEncoding.MMAL_ENCODING_EGL_IMAGE,
-            MMALEncoding.MMAL_ENCODING_PCM_UNSIGNED_BE,
-            MMALEncoding.MMAL_ENCODING_PCM_UNSIGNED_LE,
-            MMALEncoding.MMAL_ENCODING_PCM_SIGNED_BE,
-            MMALEncoding.MMAL_ENCODING_PCM_SIGNED_LE,
-            MMALEncoding.MMAL_ENCODING_PCM_FLOAT_BE,
-            MMALEncoding.MMAL_ENCODING_PCM_FLOAT_LE,
+            MMALEncoding.I420,
+            MMALEncoding.I420_SLICE,
+            MMALEncoding.YV12,
+            MMALEncoding.I422,
+            MMALEncoding.I422_SLICE,
+            MMALEncoding.YUYV,
+            MMALEncoding.YVYU,
+            MMALEncoding.UYVY,
+            MMALEncoding.VYUY,
+            MMALEncoding.NV12,
+            MMALEncoding.NV21,
+            MMALEncoding.ARGB,
+            MMALEncoding.RGBA,
+            MMALEncoding.ABGR,
+            MMALEncoding.BGRA,
+            MMALEncoding.RGB16,
+            MMALEncoding.RGB24,
+            MMALEncoding.RGB32,
+            MMALEncoding.BGR16,
+            MMALEncoding.BGR24,
+            MMALEncoding.BGR32,
+            MMALEncoding.BAYER_SBGGR10P,
+            MMALEncoding.BAYER_SBGGR8,
+            MMALEncoding.BAYER_SBGGR12P,
+            MMALEncoding.BAYER_SBGGR8,
+            MMALEncoding.BAYER_SBGGR12P,
+            MMALEncoding.BAYER_SBGGR16,
+            MMALEncoding.BAYER_SBGGR10DPCM8,
+            MMALEncoding.YUVUV128,
+            MMALEncoding.EGL_IMAGE,
+            MMALEncoding.PCM_UNSIGNED_BE,
+            MMALEncoding.PCM_UNSIGNED_LE,
+            MMALEncoding.PCM_SIGNED_BE,
+            MMALEncoding.PCM_SIGNED_LE,
+            MMALEncoding.PCM_FLOAT_BE,
+            MMALEncoding.PCM_FLOAT_LE,
             MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT601,
             MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT709,
             MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF,
@@ -109,53 +109,53 @@ namespace MMALSharp.Tests
 
         #region Still image encoders
         
-        public static IEnumerable<object> JpegEncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_JPEG, "jpg");
+        public static IEnumerable<object> JpegEncoderData => GetEncoderData(MMALEncoding.JPEG, "jpg");
         
-        public static IEnumerable<object> GifEncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_GIF, "gif");
+        public static IEnumerable<object> GifEncoderData => GetEncoderData(MMALEncoding.GIF, "gif");
         
-        public static IEnumerable<object> PngEncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_PNG, "png");
+        public static IEnumerable<object> PngEncoderData => GetEncoderData(MMALEncoding.PNG, "png");
         
-        public static IEnumerable<object> PpmEncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_PPM, "ppm");
+        public static IEnumerable<object> PpmEncoderData => GetEncoderData(MMALEncoding.PPM, "ppm");
         
-        public static IEnumerable<object> TgaEncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_TGA, "tga");
+        public static IEnumerable<object> TgaEncoderData => GetEncoderData(MMALEncoding.TGA, "tga");
         
-        public static IEnumerable<object> BmpEncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_BMP, "bmp");
+        public static IEnumerable<object> BmpEncoderData => GetEncoderData(MMALEncoding.BMP, "bmp");
 
         #endregion
 
         #region Video encoders
 
-        public static IEnumerable<object> H264EncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_H264, "avi");
+        public static IEnumerable<object> H264EncoderData => GetEncoderData(MMALEncoding.H264, "avi");
 
-        public static IEnumerable<object> MVCEncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_MVC, "mvc");
+        public static IEnumerable<object> MVCEncoderData => GetEncoderData(MMALEncoding.MVC, "mvc");
 
-        public static IEnumerable<object> H263EncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_H263, "h263");
+        public static IEnumerable<object> H263EncoderData => GetEncoderData(MMALEncoding.H263, "h263");
 
-        public static IEnumerable<object> MP4EncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_MP4V, "mp4");
+        public static IEnumerable<object> MP4EncoderData => GetEncoderData(MMALEncoding.MP4V, "mp4");
 
-        public static IEnumerable<object> MP2EncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_MP2V, "mp2");
+        public static IEnumerable<object> MP2EncoderData => GetEncoderData(MMALEncoding.MP2V, "mp2");
 
-        public static IEnumerable<object> MP1EncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_MP1V, "mp1");
+        public static IEnumerable<object> MP1EncoderData => GetEncoderData(MMALEncoding.MP1V, "mp1");
 
-        public static IEnumerable<object> WMV3EncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_WMV3, "wmv");
+        public static IEnumerable<object> WMV3EncoderData => GetEncoderData(MMALEncoding.WMV3, "wmv");
 
-        public static IEnumerable<object> WMV2EncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_WMV2, "wmv");
+        public static IEnumerable<object> WMV2EncoderData => GetEncoderData(MMALEncoding.WMV2, "wmv");
 
-        public static IEnumerable<object> WMV1EncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_WMV1, "wmv");
+        public static IEnumerable<object> WMV1EncoderData => GetEncoderData(MMALEncoding.WMV1, "wmv");
 
-        public static IEnumerable<object> WVC1EncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_WVC1, "asf");
+        public static IEnumerable<object> WVC1EncoderData => GetEncoderData(MMALEncoding.WVC1, "asf");
 
-        public static IEnumerable<object> VP8EncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_VP8, "webm");
+        public static IEnumerable<object> VP8EncoderData => GetEncoderData(MMALEncoding.VP8, "webm");
 
-        public static IEnumerable<object> VP7EncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_VP7, "webm");
+        public static IEnumerable<object> VP7EncoderData => GetEncoderData(MMALEncoding.VP7, "webm");
 
-        public static IEnumerable<object> VP6EncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_VP6, "webm");
+        public static IEnumerable<object> VP6EncoderData => GetEncoderData(MMALEncoding.VP6, "webm");
 
-        public static IEnumerable<object> TheoraEncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_THEORA, "ogv");
+        public static IEnumerable<object> TheoraEncoderData => GetEncoderData(MMALEncoding.THEORA, "ogv");
 
-        public static IEnumerable<object> SparkEncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_SPARK, "flv");
+        public static IEnumerable<object> SparkEncoderData => GetEncoderData(MMALEncoding.SPARK, "flv");
 
-        public static IEnumerable<object> MJPEGEncoderData => GetEncoderData(MMALEncoding.MMAL_ENCODING_MJPEG, "mjpeg");
+        public static IEnumerable<object> MJPEGEncoderData => GetEncoderData(MMALEncoding.MJPEG, "mjpeg");
         
         #endregion
 

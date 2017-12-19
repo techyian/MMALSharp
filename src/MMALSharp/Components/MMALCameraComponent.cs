@@ -85,7 +85,7 @@ namespace MMALSharp.Components
                                                                 MMALCameraConfig.ClockMode
                                                               );
             
-            Debugger.Print("Camera config set");
+            MMALLog.Logger.Debug("Camera config set");
 
             this.SetCameraConfig(camConfig);
 
@@ -93,7 +93,7 @@ namespace MMALSharp.Components
 
             this.Initialise();
 
-            Debugger.Print("Camera component configured.");
+            MMALLog.Logger.Debug("Camera component configured.");
         }
         
         internal void SetSensorDefaults()
@@ -118,19 +118,19 @@ namespace MMALSharp.Components
                 {
                     var settings = (MMAL_PARAMETER_CAMERA_SETTINGS_T*)data;
 
-                    Console.WriteLine($"Analog gain num {settings->AnalogGain.Num}");
-                    Console.WriteLine($"Analog gain den {settings->AnalogGain.Den}");
-                    Console.WriteLine($"Exposure {settings->Exposure}");
-                    Console.WriteLine($"Focus position {settings->FocusPosition}");                    
+                    MMALLog.Logger.Debug($"Analog gain num {settings->AnalogGain.Num}");
+                    MMALLog.Logger.Debug($"Analog gain den {settings->AnalogGain.Den}");
+                    MMALLog.Logger.Debug($"Exposure {settings->Exposure}");
+                    MMALLog.Logger.Debug($"Focus position {settings->FocusPosition}");                    
                 }
             }
             else if (buffer.Cmd == MMALEvents.MMAL_EVENT_ERROR)
             {
-                Console.WriteLine("No data received from sensor. Check all connections, including the Sunny one on the camera board");
+                MMALLog.Logger.Info("No data received from sensor. Check all connections, including the Sunny one on the camera board");
             }
             else
             {
-                Console.WriteLine("Received unexpected camera control callback event");
+                MMALLog.Logger.Info("Received unexpected camera control callback event");
             }
             
         }
@@ -160,7 +160,7 @@ namespace MMALSharp.Components
             this.PreviewPort.Ptr->Format->encodingVariant = MMALCameraConfig.PreviewSubformat.EncodingVal;
             this.PreviewPort.Ptr->Format->es->video = vFormat;
 
-            Debugger.Print("Commit preview");
+            MMALLog.Logger.Debug("Commit preview");
 
             this.PreviewPort.Commit();
         }
@@ -193,7 +193,7 @@ namespace MMALSharp.Components
             this.VideoPort.Ptr->Format->encodingVariant = MMALCameraConfig.VideoSubformat.EncodingVal;
             this.VideoPort.Ptr->Format->es->video = vFormat;
 
-            Debugger.Print("Commit video");
+            MMALLog.Logger.Debug("Commit video");
 
             this.VideoPort.Commit();
 
@@ -221,11 +221,11 @@ namespace MMALSharp.Components
             
             var vFormat = new MMAL_VIDEO_FORMAT_T();
             
-            if (MMALCameraConfig.StillEncoding == MMALEncoding.MMAL_ENCODING_RGB32 ||
-                MMALCameraConfig.StillEncoding == MMALEncoding.MMAL_ENCODING_RGB24 ||
-                MMALCameraConfig.StillEncoding == MMALEncoding.MMAL_ENCODING_RGB16)
+            if (MMALCameraConfig.StillEncoding == MMALEncoding.RGB32 ||
+                MMALCameraConfig.StillEncoding == MMALEncoding.RGB24 ||
+                MMALCameraConfig.StillEncoding == MMALEncoding.RGB16)
             {
-                Helpers.PrintWarning("Encoding set to RGB. Setting width padding to multiple of 16.");
+                MMALLog.Logger.Warn("Encoding set to RGB. Setting width padding to multiple of 16.");
 
                 vFormat = new MMAL_VIDEO_FORMAT_T(
                     MMALUtil.VCOS_ALIGN_UP(MMALCameraConfig.StillResolution.Width, 16),
@@ -240,14 +240,14 @@ namespace MMALSharp.Components
                 {
                     if (!this.StillPort.RgbOrderFixed())
                     {
-                        Helpers.PrintWarning("Using old firmware. Setting encoding to BGR24");
-                        this.StillPort.Ptr->Format->encoding = MMALEncoding.MMAL_ENCODING_BGR24.EncodingVal;
+                        MMALLog.Logger.Warn("Using old firmware. Setting encoding to BGR24");
+                        this.StillPort.Ptr->Format->encoding = MMALEncoding.BGR24.EncodingVal;
                     }
                 }
                 catch
                 {
-                    Helpers.PrintWarning("Using old firmware. Setting encoding to BGR24");
-                    this.StillPort.Ptr->Format->encoding = MMALEncoding.MMAL_ENCODING_BGR24.EncodingVal;
+                    MMALLog.Logger.Warn("Using old firmware. Setting encoding to BGR24");
+                    this.StillPort.Ptr->Format->encoding = MMALEncoding.BGR24.EncodingVal;
                 }
                 this.StillPort.Ptr->Format->encodingVariant = 0;
             }
@@ -268,7 +268,7 @@ namespace MMALSharp.Components
 
             this.StillPort.Ptr->Format->es->video = vFormat;
 
-            Debugger.Print("Commit still");
+            MMALLog.Logger.Debug("Commit still");
             
             this.StillPort.Commit();
             

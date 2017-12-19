@@ -245,7 +245,7 @@ namespace MMALSharp
             {
                 if (port.BufferPool != null)
                 {
-                    Debugger.Print("Destroying port pool");
+                    MMALLog.Logger.Debug("Destroying port pool");
 
                     if (port.Enabled)
                         port.DisablePort();
@@ -259,7 +259,7 @@ namespace MMALSharp
             {
                 if (port.BufferPool != null)
                 {
-                    Debugger.Print("Destroying port pool");
+                    MMALLog.Logger.Debug("Destroying port pool");
 
                     if (port.Enabled)
                         port.DisablePort();
@@ -312,14 +312,14 @@ namespace MMALSharp
 
         public override void Dispose()
         {
-            Debugger.Print($"Disposing component {this.Name}.");
+            MMALLog.Logger.Debug($"Disposing component {this.Name}.");
             
             //See if any pools need disposing before destroying component.
             foreach (var port in this.Inputs)
             {
                 if (port.BufferPool != null)
                 {
-                    Debugger.Print("Destroying port pool");
+                    MMALLog.Logger.Debug("Destroying port pool");
 
                     port.DestroyPortPool();
                 }
@@ -329,7 +329,7 @@ namespace MMALSharp
             {
                 if (port.BufferPool != null)
                 {
-                    Debugger.Print("Destroying port pool");
+                    MMALLog.Logger.Debug("Destroying port pool");
 
                     port.DestroyPortPool();
                 }                    
@@ -338,7 +338,7 @@ namespace MMALSharp
             this.DisableComponent();
             this.DestroyComponent();
 
-            Debugger.Print("Completed disposal...");
+            MMALLog.Logger.Debug("Completed disposal...");
 
             base.Dispose();
         }

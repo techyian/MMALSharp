@@ -30,11 +30,11 @@ namespace MMALSharp.Ports
 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
-                Debugger.Print("Enabling port.");
+                MMALLog.Logger.Debug("Enabling port.");
 
                 if (managedCallback == null)
                 {
-                    Debugger.Print("Callback null");
+                    MMALLog.Logger.Debug("Callback null");
 
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
                 }
@@ -57,7 +57,7 @@ namespace MMALSharp.Ports
 
             this.ManagedOutputCallback(bufferImpl, this);
 
-            Debugger.Print("Releasing buffer");
+            MMALLog.Logger.Debug("Releasing buffer");
 
             bufferImpl.Release();
         }

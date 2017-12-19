@@ -81,7 +81,7 @@ namespace MMALSharp.Handlers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                MMALLog.Logger.Fatal(e.Message);
                 throw;
             }
         }

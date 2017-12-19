@@ -254,13 +254,13 @@ namespace MMALSharp
         {            
             if (Enabled)
             {
-                Debugger.Print("Disabling port");
+                MMALLog.Logger.Debug("Disabling port");
 
                 var length = this.BufferPool.Queue.QueueLength();
 
                 for (int i = 0; i < length; i++)
                 {
-                    Debugger.Print("Releasing active buffer");
+                    MMALLog.Logger.Debug("Releasing active buffer");
                     var buffer = this.BufferPool.Queue.GetBuffer();
                     buffer.Release();
                 }
@@ -345,7 +345,7 @@ namespace MMALSharp
                 {
                     if (this.Trigger != null && this.Trigger.CurrentCount > 0 && result.EOF)
                     {
-                        Debugger.Print("Received EOF. Releasing.");
+                        MMALLog.Logger.Debug("Received EOF. Releasing.");
 
                         this.Trigger.Signal();
                         newBuffer.Release();
@@ -353,18 +353,18 @@ namespace MMALSharp
 
                     if (newBuffer != null)
                     {
-                        Debugger.Print("Got buffer. Sending to port.");
+                        MMALLog.Logger.Debug("Got buffer. Sending to port.");
 
                         this.SendBuffer(newBuffer);
                     }
                     else
                     {
-                        Debugger.Print("Buffer null. Continuing.");
+                        MMALLog.Logger.Warn("Buffer null. Continuing.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Buffer handling failed. {ex.Message}");
+                    MMALLog.Logger.Warn($"Buffer handling failed. {ex.Message}");
                 }
             }
         }
@@ -377,12 +377,12 @@ namespace MMALSharp
             {
                 if (!this.Enabled)
                 {
-                    Debugger.Print("Port not enabled.");
+                    MMALLog.Logger.Warn("Port not enabled.");
                 }
 
                 if (this.BufferPool == null)
                 {
-                    Debugger.Print("Buffer pool null.");
+                    MMALLog.Logger.Warn("Buffer pool null.");
                 }
 
                 if (this.Enabled && this.BufferPool != null)
@@ -391,19 +391,19 @@ namespace MMALSharp
 
                     if (newBuffer != null)
                     {
-                        Debugger.Print("Got buffer. Sending to port.");
+                        MMALLog.Logger.Debug("Got buffer. Sending to port.");
 
                         this.SendBuffer(newBuffer);
                     }
                     else
                     {
-                        Debugger.Print("Buffer null. Continuing.");
+                        MMALLog.Logger.Warn("Buffer null. Continuing.");
                     }
                 }
             }
             catch (Exception e)
             {
-                Debugger.Print($"Unable to send buffer header. {e.Message}");
+                MMALLog.Logger.Warn($"Unable to send buffer header. {e.Message}");
             }
         }
 
@@ -412,7 +412,7 @@ namespace MMALSharp
             if (MMALCamera.Instance.Connections.Any(c => c.UpstreamComponent == this.ComponentReference &&
                                                          c.DownstreamComponent == destinationComponent))
             {
-                Helpers.PrintWarning("A connection has already been established between these components");
+                MMALLog.Logger.Warn("A connection has already been established between these components");
                 return destinationComponent.Inputs[inputPort];
             }
 

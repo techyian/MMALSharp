@@ -15,9 +15,9 @@ namespace MMALSharp.Handlers
         protected Stream CurrentStream { get; set; }
 
         /// <summary>
-        /// A list of FileStreams that have been processed by this capture handler
+        /// A list of files that have been processed by this capture handler
         /// </summary>
-        public List<Tuple<string, string, string>> ProcessedFiles { get; set; } = new List<Tuple<string, string, string>>();
+        public List<ProcessedFileResult> ProcessedFiles { get; set; } = new List<ProcessedFileResult>();
 
         /// <summary>
         /// The total size of data that has been processed by this capture handler
@@ -87,15 +87,14 @@ namespace MMALSharp.Handlers
             {        
                 if (this.CurrentStream.GetType() == typeof(FileStream))
                 {
-                    this.ProcessedFiles.Add(new Tuple<string, string, string>(this.Directory, this.GetFilename(), this.Extension));
+                    this.ProcessedFiles.Add(new ProcessedFileResult(this.Directory, this.GetFilename(), this.Extension));
                 }
                 
-                Console.WriteLine($"Successfully processed {Helpers.ConvertBytesToMegabytes(this.Processed)}");
+                MMALLog.Logger.Info($"Successfully processed {Helpers.ConvertBytesToMegabytes(this.Processed)}");
             }
             catch(Exception e)
             {
-                Console.WriteLine("Something went wrong while processing stream.");
-                Console.WriteLine(e.Message);
+                MMALLog.Logger.Warn($"Something went wrong while processing stream: {e.Message}");                
             }                   
         }
         

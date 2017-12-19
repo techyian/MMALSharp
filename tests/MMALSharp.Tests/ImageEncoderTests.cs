@@ -297,9 +297,7 @@ namespace MMALSharp.Tests
             
             MMALCameraConfig.ShutterSpeed = shutterSpeed;
             MMALCameraConfig.Reload();
-
-            Console.WriteLine($"GETSHUTTERSPEED: {fixture.MMALCamera.Camera.GetShutterSpeed()}");
-
+            
             Assert.True(fixture.MMALCamera.Camera.GetShutterSpeed() == shutterSpeed);
         }
 
@@ -489,7 +487,7 @@ namespace MMALSharp.Tests
 
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
-                    imgEncoder.ConfigureOutputPort(0, MMALEncoding.MMAL_ENCODING_JPEG, MMALEncoding.MMAL_ENCODING_I420, 90);
+                    imgEncoder.ConfigureOutputPort(0, MMALEncoding.JPEG, MMALEncoding.I420, 90);
 
                     //Create our component pipeline.         
                     fixture.MMALCamera.Camera.StillPort
@@ -516,7 +514,7 @@ namespace MMALSharp.Tests
 
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
-                    imgEncoder.ConfigureOutputPort(0, MMALEncoding.MMAL_ENCODING_BMP, MMALEncoding.MMAL_ENCODING_I420, 90);
+                    imgEncoder.ConfigureOutputPort(0, MMALEncoding.BMP, MMALEncoding.I420, 90);
 
                     //Create our component pipeline.         
                     fixture.MMALCamera.Camera.StillPort

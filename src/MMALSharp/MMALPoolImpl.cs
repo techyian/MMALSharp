@@ -21,7 +21,7 @@ namespace MMALSharp
 
         public MMALPoolImpl(MMALPortBase port)
         {
-            Debugger.Print($"Creating buffer pool with {port.BufferNum} buffers of size {port.BufferSize}");
+            MMALLog.Logger.Debug($"Creating buffer pool with {port.BufferNum} buffers of size {port.BufferSize}");
             
             this.Ptr = MMALUtil.mmal_port_pool_create(port.Ptr, port.BufferNum, port.BufferSize);
             this.Queue = new MMALQueueImpl((*this.Ptr).Queue);            
@@ -47,8 +47,7 @@ namespace MMALSharp
 
         public override void Dispose()
         {
-            if(MMALCameraConfig.Debug)
-                Console.WriteLine("Disposing pool.");
+            MMALLog.Logger.Debug("Disposing pool.");
             this.Destroy();
             base.Dispose();
         }

@@ -72,8 +72,7 @@ namespace MMALSharp.Components
                 catch
                 {
                     //Something went wrong, continue with OV5647 defaults.                    
-                    if(MMALCameraConfig.Debug)
-                        Console.WriteLine("Could not determine firmware version. Continuing with OV5647 defaults");
+                    MMALLog.Logger.Warn("Could not determine firmware version. Continuing with OV5647 defaults");
                 }
             }
         }

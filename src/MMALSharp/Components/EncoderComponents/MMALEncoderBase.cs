@@ -28,7 +28,7 @@ namespace MMALSharp.Components
         {
             if (MMALCameraConfig.Annotate != null)
             {
-                Debugger.Print("Setting annotate");
+                MMALLog.Logger.Debug("Setting annotate");
                                                                
                 var sb = new StringBuilder();
 

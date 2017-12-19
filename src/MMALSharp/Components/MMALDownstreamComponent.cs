@@ -130,12 +130,12 @@ namespace MMALSharp.Components
             catch
             {
                 //If commit fails using new settings, attempt to reset using old temp MMAL_VIDEO_FORMAT_T.
-                Helpers.PrintWarning("Commit of output port failed. Attempting to reset values.");
+                MMALLog.Logger.Warn("Commit of output port failed. Attempting to reset values.");
                 this.Outputs[outputPort].Ptr->Format->es->video = tempVid;
                 this.Outputs[outputPort].Commit();
             }
 
-            if (encodingType == MMALEncoding.MMAL_ENCODING_JPEG)
+            if (encodingType == MMALEncoding.JPEG)
             {
                 this.Outputs[outputPort].SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, quality);
             }
@@ -175,7 +175,7 @@ namespace MMALSharp.Components
             //Close any connection held by this component
             var finalConnection = MMALCamera.Instance.Connections.Where(c => c.DownstreamComponent == this).FirstOrDefault();
 
-            Debugger.Print($"Removing {finalConnection.ToString()}");
+            MMALLog.Logger.Debug($"Removing {finalConnection.ToString()}");
 
             if (finalConnection != null)
             {
@@ -187,7 +187,7 @@ namespace MMALSharp.Components
         
         public override void Dispose()
         {
-            Debugger.Print("Removing downstream component");
+            MMALLog.Logger.Debug("Removing downstream component");
 
             this.ClosePipelineConnections();
 

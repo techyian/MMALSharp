@@ -50,7 +50,7 @@ namespace MMALSharp.Ports
                 if (bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS ||
                                                    c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED))
                 {
-                    Debugger.Print("End of stream. Signaling completion...");
+                    MMALLog.Logger.Debug("End of stream. Signaling completion...");
 
                     if (this.Trigger != null && this.Trigger.CurrentCount > 0)
                     {
