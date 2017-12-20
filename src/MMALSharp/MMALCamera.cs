@@ -270,9 +270,7 @@ namespace MMALSharp
         /// <param name="handlerComponents">The handler component(s) we are processing data on</param>
         /// <returns>The awaitable Task</returns>
         public async Task BeginProcessing(MMALPortImpl cameraPort, params MMALDownstreamHandlerComponent[] handlerComponents)
-        {
-            this.PrintPipeline();
-
+        {            
             //Enable all connections associated with these components
             foreach (var component in handlerComponents)
             {
