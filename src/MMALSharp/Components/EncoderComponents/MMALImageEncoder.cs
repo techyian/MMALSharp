@@ -77,7 +77,7 @@ namespace MMALSharp.Components
         }
 
         public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0)
-        {
+        {            
             base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate);
 
             if (this.RawBayer)
@@ -138,13 +138,17 @@ namespace MMALSharp.Components
                 throw new PiCameraError("EXIF payload greater than allowed max.");
             }
 
+            var arr = new byte[128];
+                        
             var bytes = Encoding.ASCII.GetBytes(formattedExif);
 
-            IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_EXIF_T>() + (bytes.Length - 1));
+            Array.Copy(bytes, arr, bytes.Length);
 
+            IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_EXIF_T>() + (arr.Length - 1));
+            
             var str = new MMAL_PARAMETER_EXIF_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_EXIF,
-                (Marshal.SizeOf<MMAL_PARAMETER_EXIF_T_DUMMY>() + (bytes.Length - 1))
-            ), 0, 0, 0, bytes);
+                (Marshal.SizeOf<MMAL_PARAMETER_EXIF_T_DUMMY>() + (arr.Length - 1))
+            ), 0, 0, 0, arr);
 
             Marshal.StructureToPtr(str, ptr, false);
 
