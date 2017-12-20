@@ -50,19 +50,9 @@ namespace MMALSharp.Components
         }
 
         public override void PrintComponent()
-        {
-            MMALLog.Logger.Info($"Component: Splitter");
-
-            for(var i = 0; i < this.Inputs.Count; i++)
-            {
-                MMALLog.Logger.Info($"Port {i} Input encoding: {this.Inputs[i].EncodingType.EncodingName}.");
-            }
-            for(var i = 0; i < this.Outputs.Count; i++)
-            {
-                MMALLog.Logger.Info($"Port {i} Output encoding: {this.Outputs[i].EncodingType.EncodingName}");
-            }
-                        
-            MMALLog.Logger.Info($"Width: {this.Width}. Height: {this.Height}");
+        {            
+            base.PrintComponent();                        
+            MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
         }
     }
 }

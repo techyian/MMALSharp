@@ -310,7 +310,21 @@ namespace MMALSharp
             }
         }
 
-        public abstract void PrintComponent();
+        public virtual void PrintComponent()
+        {
+            MMALLog.Logger.Info($"Component: {this.Name}");
+
+            for (var i = 0; i < this.Inputs.Count; i++)
+            {
+                if (this.Inputs[i].EncodingType != null)
+                    MMALLog.Logger.Info($"    Port {i} Input encoding: {this.Inputs[i].EncodingType.EncodingName}.");
+            }
+            for (var i = 0; i < this.Outputs.Count; i++)
+            {
+                if(this.Outputs[i].EncodingType != null)
+                    MMALLog.Logger.Info($"    Port {i} Output encoding: {this.Outputs[i].EncodingType.EncodingName}");
+            }
+        }
 
         public override void Dispose()
         {
