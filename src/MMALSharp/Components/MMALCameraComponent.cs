@@ -308,5 +308,11 @@ namespace MMALSharp.Components
             base.Dispose();
         }
 
+        public override void PrintComponent()
+        {
+            MMALLog.Logger.Info($"Component: Camera");
+            MMALLog.Logger.Info($"Input encoding: {this.Inputs[0].EncodingType.EncodingName}. Output encoding: {this.Outputs[0].EncodingType.EncodingName}");
+            MMALLog.Logger.Info($"Width: {this.CameraInfo.MaxWidth}. Height: {this.CameraInfo.MaxHeight}");
+        }
     }
 }

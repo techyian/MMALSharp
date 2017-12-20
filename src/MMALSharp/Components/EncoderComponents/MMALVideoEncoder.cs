@@ -310,6 +310,13 @@ namespace MMALSharp.Components
             }
         }
 
+        public override void PrintComponent()
+        {
+            MMALLog.Logger.Info($"Component: Video encoder");
+            MMALLog.Logger.Info($"Input encoding: {this.Inputs[0].EncodingType.EncodingName}. Output encoding: {this.Outputs[0].EncodingType.EncodingName}");
+            MMALLog.Logger.Info($"Width: {this.Width}. Height: {this.Height}");
+        }
+
         private class H264VideoLevel
         {
             public static List<VideoLevel> GetNormalLevelLimits()

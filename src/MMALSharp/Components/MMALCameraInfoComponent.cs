@@ -76,6 +76,10 @@ namespace MMALSharp.Components
                 }
             }
         }
-        
+
+        public override void PrintComponent()
+        {
+            MMALLog.Logger.Info($"Component: Camera info");            
+        }
     }
 }

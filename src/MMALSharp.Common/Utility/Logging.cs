@@ -15,7 +15,8 @@ namespace MMALSharp
 
         public static void ConfigureLogConfig()
         {
-            var layout = @"${longdate}|${event-properties:item=EventId.Id}|${uppercase:${level}}|${logger}|${message} ${exception}";
+            var debugLayout = @"${longdate}|${event-properties:item=EventId.Id}|${uppercase:${level}}|${logger}|${message} ${exception}";
+            var consoleLayout = @"${message} ${exception}";
 
             // Step 1. Create configuration object 
             var config = new LoggingConfiguration();
@@ -28,9 +29,9 @@ namespace MMALSharp
             config.AddTarget("file", fileTarget);
 
             // Step 3. Set target properties 
-            consoleTarget.Layout = layout;
+            consoleTarget.Layout = consoleLayout;
             fileTarget.FileName = "${basedir}/mmal-log-${shortdate}.log";
-            fileTarget.Layout = layout;
+            fileTarget.Layout = debugLayout;
 
             // Step 4. Define rules
             var rule1 = new LoggingRule("*", LogLevel.Debug, fileTarget);

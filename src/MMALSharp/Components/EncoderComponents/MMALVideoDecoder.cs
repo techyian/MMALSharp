@@ -40,5 +40,12 @@ namespace MMALSharp.Components
         public MMALVideoDecoder(ICaptureHandler handler) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_DECODER, handler)
         {
         }
+
+        public override void PrintComponent()
+        {                  
+            MMALLog.Logger.Info($"Component: Video decoder");
+            MMALLog.Logger.Info($"Input encoding: {this.Inputs[0].EncodingType.EncodingName}. Output encoding: {this.Outputs[0].EncodingType.EncodingName}");
+            MMALLog.Logger.Info($"Width: {this.Width}. Height: {this.Height}");        
+        }
     }
 }

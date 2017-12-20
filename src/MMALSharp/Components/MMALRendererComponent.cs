@@ -55,6 +55,11 @@ namespace MMALSharp.Components
         {
             this.EnableComponent();
         }
+
+        public override void PrintComponent()
+        {
+            MMALLog.Logger.Info($"Component: Null sink renderer");
+        }
     }
 
     /// <summary>
@@ -94,6 +99,11 @@ namespace MMALSharp.Components
         public MMALVideoRenderer() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_RENDERER)
         {
             this.EnableComponent();
+        }
+
+        public override void PrintComponent()
+        {
+            MMALLog.Logger.Info($"Component: Video renderer");            
         }
     }
 }

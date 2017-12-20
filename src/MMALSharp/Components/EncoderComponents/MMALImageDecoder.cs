@@ -49,6 +49,13 @@ namespace MMALSharp.Components
         {
             
         }
+
+        public override void PrintComponent()
+        {
+            MMALLog.Logger.Info($"Component: Image decoder");
+            MMALLog.Logger.Info($"Input encoding: {this.Inputs[0].EncodingType.EncodingName}. Output encoding: {this.Outputs[0].EncodingType.EncodingName}");
+            MMALLog.Logger.Info($"Width: {this.Width}. Height: {this.Height}");
+        }
     }
 
     public class MMALImageDecoderConverter : MMALImageDecoder, IMMALConvert

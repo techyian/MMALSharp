@@ -23,5 +23,12 @@ namespace MMALSharp.Components
             this.Width = width;
             this.Height = height;
         }
+
+        public override void PrintComponent()
+        {
+            MMALLog.Logger.Info($"Component: Resizer");
+            MMALLog.Logger.Info($"Input encoding: {this.Inputs[0].EncodingType.EncodingName}. Output encoding: {this.Outputs[0].EncodingType.EncodingName}");
+            MMALLog.Logger.Info($"Width: {this.Width}. Height: {this.Height}");
+        }
     }
 }

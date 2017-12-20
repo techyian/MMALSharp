@@ -56,7 +56,7 @@ namespace MMALSharp
         /// The handler to process the final data
         /// </summary>
         public ICaptureHandler Handler { get; set; }
-
+                
         protected MMALComponentBase(string name)
         {
             this.Ptr = CreateComponent(name);
@@ -309,6 +309,8 @@ namespace MMALSharp
                 }
             }
         }
+
+        public abstract void PrintComponent();
 
         public override void Dispose()
         {

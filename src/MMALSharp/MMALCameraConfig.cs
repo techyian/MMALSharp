@@ -37,7 +37,7 @@ namespace MMALSharp
         /// <summary>
         /// Configure the exposure compensation of the camera. Doing so will produce a lighter/darker image beyond the recommended exposure.
         /// </summary>
-        public static int ExposureCompensation { get; set; } = 0;
+        public static int ExposureCompensation { get; set; }
 
         /// <summary>
         /// Configure the exposure mode used by the camera       
