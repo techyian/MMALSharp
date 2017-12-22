@@ -21,7 +21,7 @@ The project is in early stages of development, however progress is good, please 
 MMALSharp supports the following runtimes:
 
 1. Mono 4.x 
-2. .NET Core 2.0 (Preview)
+2. .NET Standard 2.0
 
 ## Documentation
 
@@ -66,8 +66,6 @@ Tested image 'still' features:
 
 When using more resource intensive encoders such as MMAL_ENCODING_BMP and the Sony IMX219 module, I've found it necessary to increase the memory split
 to around 200mb or otherwise you'll receive an ENOSPC error due to insufficient resources.
-
-There is an issue with EXIF and Annotation support under the .NET Core build of MMALSharp currently, an issue has been raised for this and will be fixed ASAP.
 
 ## License
 
