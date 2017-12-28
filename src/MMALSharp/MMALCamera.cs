@@ -100,7 +100,10 @@ namespace MMALSharp
                
                 MMALLog.Logger.Info($"Preparing to take video. Resolution: {vidEncoder.Width} x {vidEncoder.Height}. " +
                                     $"Encoder: {vidEncoder.Outputs[0].EncodingType.EncodingName}. Pixel Format: {vidEncoder.Outputs[0].PixelFormat.EncodingName}.");
-                                        
+
+                //Camera warm up time
+                await Task.Delay(2000);
+
                 await BeginProcessing(this.Camera.VideoPort);                
             }        
         }
@@ -130,6 +133,9 @@ namespace MMALSharp
             {
                 MMALLog.Logger.Info($"Preparing to take raw picture - Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}. " +
                                   $"Encoder: {MMALCameraConfig.StillEncoding.EncodingName}. Pixel Format: {MMALCameraConfig.StillSubFormat.EncodingName}.");
+
+                //Camera warm up time
+                await Task.Delay(2000);
 
                 //Enable processing on the camera still port.
                 this.Camera.EnableConnections();
@@ -182,8 +188,10 @@ namespace MMALSharp
                 MMALLog.Logger.Info($"Preparing to take picture. Resolution: {imgEncoder.Width} x {imgEncoder.Height}. " +
                                     $"Encoder: {encodingType.EncodingName}. Pixel Format: {pixelFormat.EncodingName}.");
 
-                await BeginProcessing(this.Camera.StillPort);
-               
+                //Camera warm up time
+                await Task.Delay(2000);
+
+                await BeginProcessing(this.Camera.StillPort);               
             }
         }
 
@@ -363,8 +371,7 @@ namespace MMALSharp
        
         /// <summary>
         /// Helper method to check the Renderer component status. If a Renderer has not been initialized, a warning will
-        /// be shown to the user. If a Renderer has been created but a connection has not been initialized, this will be 
-        /// done automatically for the user.
+        /// be shown to the user.
         /// </summary>
         private void CheckPreviewComponentStatus()
         {
