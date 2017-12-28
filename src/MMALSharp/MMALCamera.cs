@@ -256,16 +256,10 @@ namespace MMALSharp
         /// <param name="cameraPort">The camera port which image data is coming from</param>
         /// <param name="handlerComponents">The handler component(s) we are processing data on</param>
         /// <returns>The awaitable Task</returns>
-        public async Task BeginProcessing(MMALPortImpl cameraPort, int? previewTimeout = null)
-        {
-            if (!previewTimeout.HasValue)
-                previewTimeout = 1000;
-
-            var handlerComponents = this.PopulateProcessingList();
-                                                                     
-            //Wait for period of time to allow sensor to calculate exposure
-            await Task.Delay(previewTimeout.Value);
-            
+        public async Task BeginProcessing(MMALPortImpl cameraPort)
+        {            
+            var handlerComponents = this.PopulateProcessingList();                                                                    
+                        
             //Enable all connections associated with these components
             foreach (var component in handlerComponents)
             {
