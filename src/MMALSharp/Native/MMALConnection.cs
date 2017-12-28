@@ -53,7 +53,16 @@ namespace MMALSharp.Native
         private long timeSetup, timeEnable, timeDisable;
 
         public IntPtr UserData => userData;
-        public IntPtr Callback => callback;
+        public IntPtr Callback {
+            get
+            {
+                return this.callback;
+            }
+            set
+            {
+                this.callback = value;
+            }
+        }
         public uint IsEnabled => isEnabled;
         public uint Flags => flags;
         public MMAL_PORT_T* Input => input;

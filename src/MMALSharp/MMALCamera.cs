@@ -22,17 +22,7 @@ namespace MMALSharp
         /// List of all encoders currently in the pipeline
         /// </summary>
         public List<MMALDownstreamComponent> DownstreamComponents { get; set; }
-
-        /// <summary>
-        /// List of all established connections
-        /// </summary>
-        public List<MMALConnectionImpl> Connections { get; set; }
-
-        /// <summary>
-        /// Reference to the Video splitter component which attaches to the Camera's video output port
-        /// </summary>
-        public MMALSplitterComponent Splitter { get; set; }
-
+                        
         private static readonly Lazy<MMALCamera> lazy = new Lazy<MMALCamera>(() => new MMALCamera());
 
         public static MMALCamera Instance => lazy.Value;
@@ -44,8 +34,7 @@ namespace MMALSharp
             MMALLog.ConfigureLogConfig();
 
             this.Camera = new MMALCameraComponent();
-            this.DownstreamComponents = new List<MMALDownstreamComponent>();
-            this.Connections = new List<MMALConnectionImpl>();            
+            this.DownstreamComponents = new List<MMALDownstreamComponent>();                  
         }
 
         /// <summary>
@@ -112,7 +101,7 @@ namespace MMALSharp
                 MMALLog.Logger.Info($"Preparing to take video. Resolution: {vidEncoder.Width} x {vidEncoder.Height}. " +
                                     $"Encoder: {vidEncoder.Outputs[0].EncodingType.EncodingName}. Pixel Format: {vidEncoder.Outputs[0].PixelFormat.EncodingName}.");
                                         
-                await BeginProcessing(this.Camera.VideoPort, vidEncoder);                
+                await BeginProcessing(this.Camera.VideoPort);                
             }        
         }
 
@@ -121,10 +110,8 @@ namespace MMALSharp
         /// </summary>
         /// <returns>The awaitable Task</returns>
         public async Task TakeRawPicture(ICaptureHandler handler)
-        {
-            var connection = this.Connections.Where(c => c.OutputPort == this.Camera.StillPort).FirstOrDefault();
-            
-            if (connection != null)
+        {                        
+            if (this.Camera.StillPort.ConnectedReference != null)
             {
                 throw new PiCameraError("A connection was found to the Camera still port. No encoder should be connected to the Camera's still port for raw capture.");
             }
@@ -195,7 +182,7 @@ namespace MMALSharp
                 MMALLog.Logger.Info($"Preparing to take picture. Resolution: {imgEncoder.Width} x {imgEncoder.Height}. " +
                                     $"Encoder: {encodingType.EncodingName}. Pixel Format: {pixelFormat.EncodingName}.");
 
-                await BeginProcessing(this.Camera.StillPort, imgEncoder);
+                await BeginProcessing(this.Camera.StillPort);
                
             }
         }
@@ -269,8 +256,16 @@ namespace MMALSharp
         /// <param name="cameraPort">The camera port which image data is coming from</param>
         /// <param name="handlerComponents">The handler component(s) we are processing data on</param>
         /// <returns>The awaitable Task</returns>
-        public async Task BeginProcessing(MMALPortImpl cameraPort, params MMALDownstreamHandlerComponent[] handlerComponents)
-        {            
+        public async Task BeginProcessing(MMALPortImpl cameraPort, int? previewTimeout = null)
+        {
+            if (!previewTimeout.HasValue)
+                previewTimeout = 1000;
+
+            var handlerComponents = this.PopulateProcessingList();
+                                                                     
+            //Wait for period of time to allow sensor to calculate exposure
+            await Task.Delay(previewTimeout.Value);
+            
             //Enable all connections associated with these components
             foreach (var component in handlerComponents)
             {
@@ -282,12 +277,12 @@ namespace MMALSharp
                     component.Outputs[portNum].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
                 }                
             }
-            
+
             //We now begin capturing on the camera, processing will commence based on the pipeline configured.
             this.StartCapture(cameraPort);
-            
-            List<Task> tasks = new List<Task>();
 
+            List<Task> tasks = new List<Task>();
+            
             //Wait until the process is complete.
             foreach (var component in handlerComponents)
             {
@@ -296,7 +291,7 @@ namespace MMALSharp
                     tasks.Add(component.Outputs[portNum].Trigger.WaitAsync());
                 }                
             }
-                        
+                                                
             await Task.WhenAll(tasks.ToArray());
                         
             this.StopCapture(cameraPort);
@@ -342,8 +337,7 @@ namespace MMALSharp
         /// Disables processing on the camera component
         /// </summary>
         public void DisableCamera()
-        {
-            this.DownstreamComponents.ForEach(c => c.DisableComponent());
+        {            
             this.Camera.DisableComponent();
         }
 
@@ -351,68 +345,10 @@ namespace MMALSharp
         /// Enables processing on the camera component
         /// </summary>
         public void EnableCamera()
-        {
-            this.DownstreamComponents.ForEach(c => c.EnableComponent());
+        {            
             this.Camera.EnableComponent();
         }
-
-        /// <summary>
-        /// Reconfigures the Camera's still port. This should be called when you change the Still port resolution or encoding/pixel format types.
-        /// </summary>
-        /// <returns>The camera instance</returns>
-        public MMALCamera ReconfigureStill()
-        {
-            this.DisableCamera();
-
-            this.Connections.Where(c => c.OutputPort == this.Camera.StillPort).ToList()?.ForEach(c => c.Disable());
-
-            this.Camera.InitialiseStill();
-
-            this.Connections.Where(c => c.OutputPort == this.Camera.StillPort).ToList()?.ForEach(c => c.Enable());
-
-            this.EnableCamera();
-
-            return this;
-        }
-
-        /// <summary>
-        /// Reconfigures the Camera's video port. This should be called when you change the Video port resolution or encoding/pixel format types.
-        /// </summary>
-        /// <returns>The camera instance</returns>
-        public MMALCamera ReconfigureVideo()
-        {
-            this.DisableCamera();
-
-            this.Connections.Where(c => c.OutputPort == this.Camera.VideoPort).ToList()?.ForEach(c => c.Disable());
-
-            this.Camera.InitialiseVideo();
-
-            this.Connections.Where(c => c.OutputPort == this.Camera.VideoPort).ToList()?.ForEach(c => c.Enable());
-
-            this.EnableCamera();
-
-            return this;
-        }
-
-        /// <summary>
-        /// Reconfigures the Camera's preview port. This should be called when you change the Video port resolution 
-        /// </summary>
-        /// <returns>The camera instance</returns>
-        public MMALCamera ReconfigurePreview()
-        {
-            this.DisableCamera();
-
-            this.Connections.Where(c => c.OutputPort == this.Camera.PreviewPort).ToList()?.ForEach(c => c.Disable());
-         
-            this.Camera.InitialisePreview();
-          
-            this.Connections.Where(c => c.OutputPort == this.Camera.PreviewPort).ToList()?.ForEach(c => c.Enable());
-
-            this.EnableCamera();
-
-            return this;
-        }
-
+        
         /// <summary>
         /// This applies the configuration settings against the camera such as Saturation, Contrast etc.
         /// </summary>
@@ -422,7 +358,10 @@ namespace MMALSharp
             MMALLog.Logger.Debug("Configuring camera parameters.");
 
             this.DisableCamera();
-            this.Camera.SetCameraParameters();            
+            this.Camera.SetCameraParameters();
+            this.Camera.InitialiseStill();
+            this.Camera.InitialiseVideo();
+            this.Camera.InitialisePreview();
             this.EnableCamera();
 
             return this;
@@ -436,9 +375,54 @@ namespace MMALSharp
         private void CheckPreviewComponentStatus()
         {
             //Create connections
-            if (!this.Connections.Any(c => c.OutputPort == this.Camera.PreviewPort))
+            if (this.Camera.PreviewPort.ConnectedReference == null)
             {
                 MMALLog.Logger.Warn("Preview port does not have a Render component configured. Resulting image will be affected.");
+            }
+        }
+
+        private List<MMALDownstreamComponent> PopulateProcessingList()
+        {
+            var list = new List<MMALDownstreamComponent>();
+            var initialStillDownstream = this.Camera.StillPort.ConnectedReference?.DownstreamComponent;
+            var initialVideoDownstream = this.Camera.VideoPort.ConnectedReference?.DownstreamComponent;
+            var initialPreviewDownstream = this.Camera.PreviewPort.ConnectedReference?.DownstreamComponent;
+
+            if(initialStillDownstream != null)
+            {
+                this.FindComponents(initialStillDownstream, list);
+            }
+            if (initialVideoDownstream != null)
+            {
+                this.FindComponents(initialVideoDownstream, list);
+            }
+            if (initialPreviewDownstream != null)
+            {
+                this.FindComponents(initialPreviewDownstream, list);
+            }
+
+            return list;
+        }
+
+        private void FindComponents(MMALDownstreamComponent downstream, List<MMALDownstreamComponent> list)
+        {
+            if (downstream.Outputs.Count == 0)
+                return;
+            if(downstream.Outputs.Count == 1 && downstream.Outputs[0].ConnectedReference == null)
+            {
+                list.Add(downstream);
+                return;
+            }
+            foreach (var output in downstream.Outputs)
+            {
+                if(output.ConnectedReference != null)
+                {
+                    this.FindComponents(output.ConnectedReference.DownstreamComponent, list);
+                }
+                else if(output.ComponentReference.GetType() == typeof(MMALDownstreamHandlerComponent))
+                {
+                    list.Add((MMALDownstreamHandlerComponent)output.ComponentReference);
+                }
             }
         }
 

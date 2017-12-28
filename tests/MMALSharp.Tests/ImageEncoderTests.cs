@@ -351,7 +351,7 @@ namespace MMALSharp.Tests
 
                     fixture.MMALCamera.ConfigureCameraSettings();
 
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort, imgEncoder);
+                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
                 }
 
                 if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
@@ -388,7 +388,7 @@ namespace MMALSharp.Tests
 
                     fixture.MMALCamera.ConfigureCameraSettings();
 
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort, imgEncoder);
+                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
                 }
 
                 if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
@@ -439,7 +439,7 @@ namespace MMALSharp.Tests
                         await Task.Delay(interval);
 
 
-                        await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort, imgEncoder);
+                        await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
                     }
                 }
             });
@@ -470,7 +470,7 @@ namespace MMALSharp.Tests
 
                     while (DateTime.Now.CompareTo(timeout) < 0)
                     {
-                        await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort, imgEncoder);
+                        await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
                     }}
                 
             });
@@ -497,7 +497,7 @@ namespace MMALSharp.Tests
 
                     fixture.MMALCamera.ConfigureCameraSettings();
 
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort, imgEncoder);
+                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
                 }
 
                 if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
@@ -522,7 +522,7 @@ namespace MMALSharp.Tests
                     fixture.MMALCamera.Camera.PreviewPort
                         .ConnectTo(new MMALNullSinkComponent());
 
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort, imgEncoder);
+                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
                 }
 
                 if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))

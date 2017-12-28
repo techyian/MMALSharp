@@ -171,18 +171,30 @@ namespace MMALSharp.Components
         /// </summary>
         private void ClosePipelineConnections()
         {
-            
             //Close any connection held by this component
-            var finalConnection = MMALCamera.Instance.Connections.Where(c => c.DownstreamComponent == this).FirstOrDefault();
-
-            MMALLog.Logger.Debug($"Removing {finalConnection.ToString()}");
-
-            if (finalConnection != null)
+            foreach (var input in this.Inputs)
             {
-                finalConnection.Dispose();
-                
-                MMALCamera.Instance.Connections.Remove(finalConnection);
-            }                        
+                if (input.ConnectedReference != null)
+                {
+                    MMALLog.Logger.Debug($"Removing {input.ConnectedReference.ToString()}");
+
+                    input.ConnectedReference.OutputPort.ConnectedReference?.Dispose();
+                    input.ConnectedReference.OutputPort.ConnectedReference = null;
+
+                    input.ConnectedReference.Dispose();
+                    input.ConnectedReference = null;
+                }
+            }
+            foreach (var output in this.Outputs)
+            {
+                if(output.ConnectedReference != null)
+                {
+                    MMALLog.Logger.Debug($"Removing {output.ConnectedReference.ToString()}");
+
+                    output.ConnectedReference.Dispose();
+                    output.ConnectedReference = null;
+                }
+            }            
         }
         
         public override void Dispose()

@@ -91,7 +91,7 @@ namespace MMALSharp.Tests
                     fixture.MMALCamera.ConfigureCameraSettings();
 
                     //Record video for 20 seconds
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort, vidEncoder);
+                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort);
                     
                     if (System.IO.File.Exists(vidCaptureHandler.GetFilepath()))
                     {
@@ -133,7 +133,7 @@ namespace MMALSharp.Tests
                     fixture.MMALCamera.ConfigureCameraSettings();
 
                     //2 files should be created from this test. 
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort, vidEncoder);
+                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort);
                     
                     Assert.True(Directory.GetFiles("/home/pi/videos/tests/split_test").Length == 2);
 
@@ -165,7 +165,7 @@ namespace MMALSharp.Tests
                     fixture.MMALCamera.ConfigureCameraSettings();
 
                     //Record video for 20 seconds
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort, vidEncoder);
+                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort);
 
                     if (System.IO.File.Exists(vidCaptureHandler.GetFilepath()))
                     {
@@ -194,7 +194,7 @@ namespace MMALSharp.Tests
                     fixture.MMALCamera.ConfigureCameraSettings();
 
                     //Record video for 20 seconds
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort, vidEncoder);
+                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort);
 
                     if (System.IO.File.Exists(vidCaptureHandler.GetFilepath()))
                     {

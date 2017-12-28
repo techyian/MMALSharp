@@ -163,6 +163,12 @@ namespace MMALSharp.Components
             MMALLog.Logger.Debug("Commit preview");
 
             this.PreviewPort.Commit();
+
+            this.PreviewPort.Ptr->BufferNum = Math.Max(this.PreviewPort.BufferNumRecommended,
+                this.PreviewPort.BufferNumMin);
+
+            this.PreviewPort.Ptr->BufferSize = Math.Max(this.PreviewPort.BufferSizeRecommended,
+                this.PreviewPort.BufferSizeMin);
         }
 
         /// <summary>

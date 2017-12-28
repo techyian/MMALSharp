@@ -157,7 +157,7 @@ namespace MMALSharp.Components
 
         internal override void InitialiseOutputPort(int outputPort)
         {
-            this.Outputs[outputPort] = new MMALVideoPort(&(*this.Ptr->Output[outputPort]), this, PortType.Output);
+            this.Outputs[outputPort] = new MMALVideoPort(this.Outputs[outputPort]);
         }
 
         internal void ConfigureBitrate(int outputPort)

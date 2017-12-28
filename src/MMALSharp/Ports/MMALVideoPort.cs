@@ -8,7 +8,7 @@ using MMALSharp.Native;
 namespace MMALSharp.Ports
 {
     /// <summary>
-    /// Represents a video port
+    /// Represents a video encode/decode port
     /// </summary>
     public unsafe class MMALVideoPort : MMALPortImpl
     {
@@ -19,6 +19,7 @@ namespace MMALSharp.Ports
         public DateTime? Timeout { get; set; }
 
         public MMALVideoPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type) : base(ptr, comp, type) { }
+        public MMALVideoPort(MMALPortImpl copyFrom) : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType) { }
 
         /// <summary>
         /// The native callback MMAL passes buffer headers to
@@ -50,7 +51,7 @@ namespace MMALSharp.Ports
                     {
                         this.Trigger.Signal();
                     }
-                }                                
+                }
             }
         }
 

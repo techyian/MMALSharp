@@ -58,7 +58,7 @@ namespace MMALSharp
         public ICaptureHandler Handler { get; set; }
                 
         protected MMALComponentBase(string name)
-        {
+        {         
             this.Ptr = CreateComponent(name);
             
             Inputs = new List<MMALPortImpl>();
@@ -86,7 +86,7 @@ namespace MMALSharp
             for (int i = 0; i < this.Ptr->PortNum; i++)
             {                    
                 Ports.Add(new MMALPortImpl(&(*this.Ptr->Port[i]), this, PortType.Unknown));
-            }
+            }            
         }
 
         /// <summary>
@@ -277,15 +277,14 @@ namespace MMALSharp
         public void EnableConnections()
         {
             foreach (MMALPortImpl port in this.Outputs)
-            {
-                var connection = MMALCamera.Instance.Connections.Where(c => c.OutputPort == port).FirstOrDefault();
-                if (connection != null)
+            {                
+                if (port.ConnectedReference != null)
                 {
                     //This component has an output port connected to another component.
-                    connection.DownstreamComponent.EnableConnections();
+                    port.ConnectedReference.DownstreamComponent.EnableConnections();
 
                     //Enable the connection
-                    connection.Enable();
+                    port.ConnectedReference.Enable();
                 }
             }
         }
@@ -297,15 +296,14 @@ namespace MMALSharp
         public void DisableConnections()
         {
             foreach (MMALPortImpl port in this.Outputs)
-            {
-                var connection = MMALCamera.Instance.Connections.Where(c => c.OutputPort == port).FirstOrDefault();
-                if (connection != null)
+            {                                
+                if (port.ConnectedReference != null)
                 {
                     //This component has an output port connected to another component.
-                    connection.DownstreamComponent.DisableConnections();
+                    port.ConnectedReference.DownstreamComponent.DisableConnections();
 
                     //Disable the connection
-                    connection.Disable();
+                    port.ConnectedReference.Disable();
                 }
             }
         }

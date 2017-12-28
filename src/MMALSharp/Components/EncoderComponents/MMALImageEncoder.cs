@@ -73,7 +73,7 @@ namespace MMALSharp.Components
 
         internal override void InitialiseOutputPort(int outputPort)
         {
-            this.Outputs[outputPort] = new MMALStillPort(&(*this.Ptr->Output[outputPort]), this, PortType.Output);
+            this.Outputs[outputPort] = new MMALStillPort(this.Outputs[outputPort]);
         }
 
         public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0)
