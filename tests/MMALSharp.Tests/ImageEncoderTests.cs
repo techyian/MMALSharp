@@ -53,13 +53,13 @@ namespace MMALSharp.Tests
             
             if (brightness >= 0 && brightness <= 100)
             {
-                MMALCameraConfig.Reload();
-                
+                fixture.MMALCamera.ConfigureCameraSettings();
+                                
                 Assert.True(fixture.MMALCamera.Camera.GetBrightness() == brightness / 100);
             }
             else
             {
-                Assert.ThrowsAny<Exception>(() => MMALCameraConfig.Reload());
+                Assert.ThrowsAny<Exception>(() => fixture.MMALCamera.ConfigureCameraSettings());
             }
         }
 
@@ -74,13 +74,13 @@ namespace MMALSharp.Tests
 
             if (sharpness >= -100 && sharpness <= 100)
             {
-                MMALCameraConfig.Reload();
+                fixture.MMALCamera.ConfigureCameraSettings();
                 
                 Assert.True(fixture.MMALCamera.Camera.GetSharpness() == sharpness / 100);
             }
             else
             {
-                Assert.ThrowsAny<Exception>(() => MMALCameraConfig.Reload());
+                Assert.ThrowsAny<Exception>(() => fixture.MMALCamera.ConfigureCameraSettings());
             }
         }
 
@@ -95,13 +95,13 @@ namespace MMALSharp.Tests
             
             if (contrast >= -100 && contrast <= 100)
             {
-                MMALCameraConfig.Reload();
+                fixture.MMALCamera.ConfigureCameraSettings();
                 
                 Assert.True(fixture.MMALCamera.Camera.GetContrast() == contrast / 100);
             }
             else
             {
-                Assert.ThrowsAny<Exception>(() => MMALCameraConfig.Reload());
+                Assert.ThrowsAny<Exception>(() => fixture.MMALCamera.ConfigureCameraSettings());
             }
         }
 
@@ -114,7 +114,7 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.Saturation = saturation;
-            MMALCameraConfig.Reload();
+            fixture.MMALCamera.ConfigureCameraSettings();
             
             Assert.True(fixture.MMALCamera.Camera.GetSaturation() == saturation / 100);
         }
@@ -130,13 +130,13 @@ namespace MMALSharp.Tests
 
             if ((iso >= 100 && iso <= 800) || iso == 0)
             {
-                MMALCameraConfig.Reload();
+                fixture.MMALCamera.ConfigureCameraSettings();
                 
                 Assert.True(fixture.MMALCamera.Camera.GetISO() == iso);
             }
             else
             {
-                Assert.ThrowsAny<Exception>(() => MMALCameraConfig.Reload());
+                Assert.ThrowsAny<Exception>(() => fixture.MMALCamera.ConfigureCameraSettings());
             }
         }
 
@@ -151,12 +151,12 @@ namespace MMALSharp.Tests
 
             if (expCompensation >= -10 && expCompensation <= 10)
             {
-                MMALCameraConfig.Reload();
+                fixture.MMALCamera.ConfigureCameraSettings();
                 Assert.True(fixture.MMALCamera.Camera.GetExposureCompensation() == expCompensation);
             }
             else
             {
-                Assert.ThrowsAny<Exception>(() => MMALCameraConfig.Reload());
+                Assert.ThrowsAny<Exception>(() => fixture.MMALCamera.ConfigureCameraSettings());
             }
         }
 
@@ -169,7 +169,7 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.ExposureMode = expMode;
-            MMALCameraConfig.Reload();
+            fixture.MMALCamera.ConfigureCameraSettings();
 
             Assert.True(fixture.MMALCamera.Camera.GetExposureMode() == expMode);
         }
@@ -183,7 +183,7 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.ExposureMeterMode = expMetMode;
-            MMALCameraConfig.Reload();
+            fixture.MMALCamera.ConfigureCameraSettings();
 
             Assert.True(fixture.MMALCamera.Camera.GetExposureMeteringMode() == expMetMode);
         }
@@ -197,7 +197,7 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
             
             MMALCameraConfig.AwbMode = awbMode;
-            MMALCameraConfig.Reload();
+            fixture.MMALCamera.ConfigureCameraSettings();
 
             Assert.True(fixture.MMALCamera.Camera.GetAwbMode() == awbMode);
         }
@@ -211,7 +211,7 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.ImageFx = imgFx;
-            MMALCameraConfig.Reload();
+            fixture.MMALCamera.ConfigureCameraSettings();
             Assert.True(fixture.MMALCamera.Camera.GetImageFx() == imgFx);
         }
 
@@ -225,7 +225,7 @@ namespace MMALSharp.Tests
 
             var colFx = new ColourEffects { Enable = enable, U = u, V = v };
             MMALCameraConfig.ColourFx = colFx;
-            MMALCameraConfig.Reload();
+            fixture.MMALCamera.ConfigureCameraSettings();
             Assert.True(fixture.MMALCamera.Camera.GetColourFx().Enable == enable && 
                         fixture.MMALCamera.Camera.GetColourFx().U == u &&
                         fixture.MMALCamera.Camera.GetColourFx().V == v);
@@ -242,7 +242,7 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
             
             MMALCameraConfig.Rotation = rotation;
-            MMALCameraConfig.Reload();
+            fixture.MMALCamera.ConfigureCameraSettings();
             
             Assert.True(fixture.MMALCamera.Camera.GetRotation() == expectedResult);
         }
@@ -257,7 +257,7 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.Flips = flips;
-            MMALCameraConfig.Reload();
+            fixture.MMALCamera.ConfigureCameraSettings();
             Assert.True(fixture.MMALCamera.Camera.GetFlips() == flips);
         }
 
@@ -275,7 +275,7 @@ namespace MMALSharp.Tests
 
             if (x <= 1.0 && y <= 1.0 && height <= 1.0 && width <= 1.0)
             {
-                MMALCameraConfig.Reload();
+                fixture.MMALCamera.ConfigureCameraSettings();
                 
                 Assert.True(fixture.MMALCamera.Camera.GetZoom().Height == Convert.ToInt32(height * 65536) &&
                             fixture.MMALCamera.Camera.GetZoom().Width == Convert.ToInt32(width * 65536) &&
@@ -285,7 +285,7 @@ namespace MMALSharp.Tests
             }
             else
             {
-                Assert.ThrowsAny<Exception>(() => MMALCameraConfig.Reload());
+                Assert.ThrowsAny<Exception>(() => fixture.MMALCamera.ConfigureCameraSettings());
             }
         }
 
@@ -296,7 +296,7 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
             
             MMALCameraConfig.ShutterSpeed = shutterSpeed;
-            MMALCameraConfig.Reload();
+            fixture.MMALCamera.ConfigureCameraSettings();
             
             Assert.True(fixture.MMALCamera.Camera.GetShutterSpeed() == shutterSpeed);
         }
@@ -310,7 +310,7 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.DrcLevel = drc;
-            MMALCameraConfig.Reload();
+            fixture.MMALCamera.ConfigureCameraSettings();
             Assert.True(fixture.MMALCamera.Camera.GetDRC() == drc);
         }
 
@@ -322,7 +322,7 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.StatsPass = statsPass;
-            MMALCameraConfig.Reload();
+            fixture.MMALCamera.ConfigureCameraSettings();
             Assert.True(fixture.MMALCamera.Camera.GetStatsPass() == statsPass);
         }
         
@@ -341,6 +341,8 @@ namespace MMALSharp.Tests
 
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
+                    fixture.MMALCamera.ConfigureCameraSettings();
+
                     imgEncoder.ConfigureOutputPort(0, encodingType, pixelFormat, 90);
 
                     //Create our component pipeline.         
@@ -348,8 +350,9 @@ namespace MMALSharp.Tests
                         .ConnectTo(imgEncoder);
                     fixture.MMALCamera.Camera.PreviewPort
                         .ConnectTo(new MMALNullSinkComponent());
-
-                    fixture.MMALCamera.ConfigureCameraSettings();
+                                        
+                    //Camera warm up time
+                    await Task.Delay(2000);
 
                     await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
                 }
@@ -378,6 +381,8 @@ namespace MMALSharp.Tests
 
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler, true))
                 {
+                    fixture.MMALCamera.ConfigureCameraSettings();
+
                     imgEncoder.ConfigureOutputPort(0, encodingType, pixelFormat, 90);
 
                     //Create our component pipeline.         
@@ -385,8 +390,9 @@ namespace MMALSharp.Tests
                         .ConnectTo(imgEncoder);
                     fixture.MMALCamera.Camera.PreviewPort
                         .ConnectTo(new MMALNullSinkComponent());
-
-                    fixture.MMALCamera.ConfigureCameraSettings();
+                                        
+                    //Camera warm up time
+                    await Task.Delay(2000);
 
                     await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
                 }
@@ -415,6 +421,8 @@ namespace MMALSharp.Tests
 
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
+                    fixture.MMALCamera.ConfigureCameraSettings();
+
                     imgEncoder.ConfigureOutputPort(0, encodingType, pixelFormat, 90);
 
                     //Create our component pipeline.         
@@ -422,9 +430,7 @@ namespace MMALSharp.Tests
                         .ConnectTo(imgEncoder);
                     fixture.MMALCamera.Camera.PreviewPort
                         .ConnectTo(new MMALNullSinkComponent());
-
-                    fixture.MMALCamera.ConfigureCameraSettings();
-
+                                        
                     Timelapse tl = new Timelapse
                     {
                         Mode = TimelapseMode.Second,
@@ -438,6 +444,8 @@ namespace MMALSharp.Tests
                         
                         await Task.Delay(interval);
 
+                        //Camera warm up time
+                        await Task.Delay(2000);
 
                         await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
                     }
@@ -456,6 +464,8 @@ namespace MMALSharp.Tests
                 
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
+                    fixture.MMALCamera.ConfigureCameraSettings();
+
                     imgEncoder.ConfigureOutputPort(0, encodingType, pixelFormat, 90);
 
                     //Create our component pipeline.         
@@ -463,10 +473,11 @@ namespace MMALSharp.Tests
                         .ConnectTo(imgEncoder);
                     fixture.MMALCamera.Camera.PreviewPort
                         .ConnectTo(new MMALNullSinkComponent());
-
-                    fixture.MMALCamera.ConfigureCameraSettings();
-
+                                        
                     var timeout = DateTime.Now.AddSeconds(30);
+
+                    //Camera warm up time
+                    await Task.Delay(2000);
 
                     while (DateTime.Now.CompareTo(timeout) < 0)
                     {
@@ -487,6 +498,8 @@ namespace MMALSharp.Tests
 
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
+                    fixture.MMALCamera.ConfigureCameraSettings();
+
                     imgEncoder.ConfigureOutputPort(0, MMALEncoding.JPEG, MMALEncoding.I420, 90);
 
                     //Create our component pipeline.         
@@ -494,8 +507,9 @@ namespace MMALSharp.Tests
                         .ConnectTo(imgEncoder);
                     fixture.MMALCamera.Camera.PreviewPort
                         .ConnectTo(new MMALNullSinkComponent());
-
-                    fixture.MMALCamera.ConfigureCameraSettings();
+                                        
+                    //Camera warm up time
+                    await Task.Delay(2000);
 
                     await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
                 }
@@ -521,6 +535,9 @@ namespace MMALSharp.Tests
                         .ConnectTo(imgEncoder);
                     fixture.MMALCamera.Camera.PreviewPort
                         .ConnectTo(new MMALNullSinkComponent());
+
+                    //Camera warm up time
+                    await Task.Delay(2000);
 
                     await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
                 }

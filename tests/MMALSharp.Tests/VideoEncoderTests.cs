@@ -61,7 +61,7 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.VideoStabilisation = vstab;
-            MMALCameraConfig.Reload();
+            fixture.MMALCamera.ConfigureCameraSettings();
             Assert.True(fixture.MMALCamera.Camera.GetVideoStabilisation() == vstab);
         }
 
@@ -80,6 +80,8 @@ namespace MMALSharp.Tests
 
                 using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, new MMAL_RATIONAL_T(25, 1), DateTime.Now.AddSeconds(20)))
                 {
+                    fixture.MMALCamera.ConfigureCameraSettings();
+
                     vidEncoder.ConfigureOutputPort(0, encodingType, pixelFormat, 10, 25000000);
 
                     //Create our component pipeline.         
@@ -88,7 +90,8 @@ namespace MMALSharp.Tests
                     fixture.MMALCamera.Camera.PreviewPort
                         .ConnectTo(new MMALVideoRenderer());
 
-                    fixture.MMALCamera.ConfigureCameraSettings();
+                    //Camera warm up time
+                    await Task.Delay(2000);
 
                     //Record video for 20 seconds
                     await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort);
@@ -122,6 +125,8 @@ namespace MMALSharp.Tests
                 using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, new MMAL_RATIONAL_T(25, 1), 
                         DateTime.Now.AddSeconds(30), new Split { Mode = TimelapseMode.Second, Value = 15 }))
                 {
+                    fixture.MMALCamera.ConfigureCameraSettings();
+
                     vidEncoder.ConfigureOutputPort(0, encodingType, pixelFormat, 10, 25000000);
 
                     //Create our component pipeline.         
@@ -130,7 +135,8 @@ namespace MMALSharp.Tests
                     fixture.MMALCamera.Camera.PreviewPort
                         .ConnectTo(new MMALVideoRenderer());
 
-                    fixture.MMALCamera.ConfigureCameraSettings();
+                    //Camera warm up time
+                    await Task.Delay(2000);
 
                     //2 files should be created from this test. 
                     await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort);
@@ -154,6 +160,8 @@ namespace MMALSharp.Tests
                 
                 using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, new MMAL_RATIONAL_T(25, 1), DateTime.Now.AddSeconds(20)))
                 {
+                    fixture.MMALCamera.ConfigureCameraSettings();
+
                     vidEncoder.ConfigureOutputPort(0, MMALEncoding.MJPEG, MMALEncoding.I420, 10, 25000000);
 
                     //Create our component pipeline.         
@@ -162,7 +170,8 @@ namespace MMALSharp.Tests
                     fixture.MMALCamera.Camera.PreviewPort
                         .ConnectTo(new MMALVideoRenderer());
 
-                    fixture.MMALCamera.ConfigureCameraSettings();
+                    //Camera warm up time
+                    await Task.Delay(2000);
 
                     //Record video for 20 seconds
                     await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort);
@@ -183,6 +192,8 @@ namespace MMALSharp.Tests
 
                 using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, new MMAL_RATIONAL_T(25, 1), DateTime.Now.AddSeconds(20)))
                 {
+                    fixture.MMALCamera.ConfigureCameraSettings();
+
                     vidEncoder.ConfigureOutputPort(0, MMALEncoding.MJPEG, MMALEncoding.I420, 90, 25000000);
 
                     //Create our component pipeline.         
@@ -191,7 +202,8 @@ namespace MMALSharp.Tests
                     fixture.MMALCamera.Camera.PreviewPort
                         .ConnectTo(new MMALVideoRenderer());
 
-                    fixture.MMALCamera.ConfigureCameraSettings();
+                    //Camera warm up time
+                    await Task.Delay(2000);
 
                     //Record video for 20 seconds
                     await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort);

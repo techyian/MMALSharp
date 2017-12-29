@@ -191,17 +191,7 @@ namespace MMALSharp
 
         public static Resolution StillResolution { get; set; } = Resolution.As5MPixel;
 
-        public static MMAL_RATIONAL_T StillFramerate { get; set; } = new MMAL_RATIONAL_T(0, 1);
-               
-
-        /// <summary>
-        /// Reloads Camera configuration settings
-        /// </summary>
-        public static void Reload()
-        {
-            MMALCamera.Instance.Camera.SetCameraParameters();
-        }
-
+        public static MMAL_RATIONAL_T StillFramerate { get; set; } = new MMAL_RATIONAL_T(0, 1);        
     }
     
     public class ColourEffects

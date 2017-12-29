@@ -266,18 +266,21 @@ namespace MMALSharp
         /// <returns>The awaitable Task</returns>
         public async Task BeginProcessing(MMALPortImpl cameraPort)
         {            
-            var handlerComponents = this.PopulateProcessingList();                                                                    
-                        
+            var handlerComponents = this.PopulateProcessingList();
+                                    
             //Enable all connections associated with these components
             foreach (var component in handlerComponents)
             {
                 component.EnableConnections();
-
+                                
                 foreach (var portNum in component.ProcessingPorts)
                 {
-                    component.Start(portNum, new Action<MMALBufferImpl, MMALPortBase>(component.ManagedOutputCallback));
-                    component.Outputs[portNum].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-                }                
+                    if(component.Outputs[portNum].ConnectedReference == null)
+                    {
+                        component.Start(portNum, new Action<MMALBufferImpl, MMALPortBase>(component.ManagedOutputCallback));
+                        component.Outputs[portNum].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+                    }                       
+                }                                          
             }
 
             //We now begin capturing on the camera, processing will commence based on the pipeline configured.
@@ -290,7 +293,10 @@ namespace MMALSharp
             {
                 foreach (var portNum in component.ProcessingPorts)
                 {
-                    tasks.Add(component.Outputs[portNum].Trigger.WaitAsync());
+                    if (component.Outputs[portNum].ConnectedReference == null)
+                    {
+                        tasks.Add(component.Outputs[portNum].Trigger.WaitAsync());
+                    }                        
                 }                
             }
                                                 
@@ -306,10 +312,13 @@ namespace MMALSharp
             {
                 //Apply any final processing on each component
                 component.Handler?.PostProcess();
-
+                                
                 foreach (var portNum in component.ProcessingPorts)
                 {
-                    component.Stop(portNum);
+                    if(component.Outputs[portNum].ConnectedReference == null)
+                    {
+                        component.Stop(portNum);
+                    }                        
                 }
                 
                 //Close open connections.
@@ -407,23 +416,22 @@ namespace MMALSharp
 
         private void FindComponents(MMALDownstreamComponent downstream, List<MMALDownstreamComponent> list)
         {
-            if (downstream.Outputs.Count == 0)
+            if (downstream.Outputs.Count == 0)                           
                 return;
+                            
             if(downstream.Outputs.Count == 1 && downstream.Outputs[0].ConnectedReference == null)
-            {
+            {               
                 list.Add(downstream);
                 return;
             }
+
+            if (downstream.GetType().BaseType == typeof(MMALDownstreamHandlerComponent))                           
+                list.Add((MMALDownstreamHandlerComponent)downstream);
+            
             foreach (var output in downstream.Outputs)
             {
-                if(output.ConnectedReference != null)
-                {
-                    this.FindComponents(output.ConnectedReference.DownstreamComponent, list);
-                }
-                else if(output.ComponentReference.GetType() == typeof(MMALDownstreamHandlerComponent))
-                {
-                    list.Add((MMALDownstreamHandlerComponent)output.ComponentReference);
-                }
+                if(output.ConnectedReference != null)                                                                            
+                    this.FindComponents(output.ConnectedReference.DownstreamComponent, list);                
             }
         }
 

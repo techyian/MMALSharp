@@ -30,8 +30,7 @@ namespace MMALSharp.Tests
             MMALCameraConfig.ImageFx = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NONE;
             MMALCameraConfig.Rotation = 0;
             MMALCameraConfig.DrcLevel = MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_OFF;
-            MMALCameraConfig.ShutterSpeed = 0;
-            MMALCameraConfig.Reload();
+            MMALCameraConfig.ShutterSpeed = 0;            
         }
 
         public static void CleanDirectory(string directory)
