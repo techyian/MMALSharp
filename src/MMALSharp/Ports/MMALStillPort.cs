@@ -39,7 +39,7 @@ namespace MMALSharp.Ports
                     bufferImpl.PrintProperties();
                 }
 
-                if (bufferImpl.Length > 0)
+                if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero && bufferImpl.Length > 0)
                 {
                     this.ManagedOutputCallback(bufferImpl, this);
                 }

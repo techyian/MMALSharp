@@ -91,58 +91,59 @@ namespace MMALSharp
         /// </summary>
         private void InitialiseProperties()
         {
-            List<MMALBufferProperties> properties = new List<MMALBufferProperties>();
+            this.Properties = new List<MMALBufferProperties>();
 
+            if (this.Ptr == null || (IntPtr)this.Ptr == IntPtr.Zero)            
+                return;
+                                                    
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS)
             {
-                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
+                this.Properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_START) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_START)
             {
-                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_START);
+                this.Properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_START);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END)
             {
-                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END);
+                this.Properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END);
             }
             if (((int)this.Flags & ((int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_START | (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END)) == ((int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_START & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END))
             {
-                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_COMPLETEFRAME);
+                this.Properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_COMPLETEFRAME);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_KEYFRAME) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_KEYFRAME)
             {
-                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_KEYFRAME);
+                this.Properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_KEYFRAME);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_DISCONTINUITY) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_DISCONTINUITY)
             {
-                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_DISCONTINUITY);
+                this.Properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_DISCONTINUITY);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG)
             {
-                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG);
+                this.Properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_ENCRYPTED) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_ENCRYPTED)
             {
-                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_ENCRYPTED);
+                this.Properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_ENCRYPTED);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CODECSIDEINFO) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CODECSIDEINFO)
             {
-                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CODECSIDEINFO);
+                this.Properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CODECSIDEINFO);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAGS_SNAPSHOT) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAGS_SNAPSHOT)
             {
-                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAGS_SNAPSHOT);
+                this.Properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAGS_SNAPSHOT);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CORRUPTED) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CORRUPTED)
             {
-                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CORRUPTED);
+                this.Properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CORRUPTED);
             }
             if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED)
             {
-                properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
-            }
-
-            this.Properties = properties;             
+                this.Properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
+            }                        
         }
 
         /// <summary>
@@ -218,7 +219,8 @@ namespace MMALSharp
         /// </summary>
         internal void Acquire()
         {
-            MMALBuffer.mmal_buffer_header_acquire(this.Ptr);
+            if (this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero)
+                MMALBuffer.mmal_buffer_header_acquire(this.Ptr);
         }
 
         /// <summary>
@@ -227,7 +229,8 @@ namespace MMALSharp
         /// </summary>
         internal void Release()
         {
-            MMALBuffer.mmal_buffer_header_release(this.Ptr);
+            if (this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero)
+                MMALBuffer.mmal_buffer_header_release(this.Ptr);
             this.Dispose();
         }
 
@@ -236,7 +239,8 @@ namespace MMALSharp
         /// </summary>
         internal void Reset()
         {
-            MMALBuffer.mmal_buffer_header_reset(this.Ptr);
+            if (this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero)
+                MMALBuffer.mmal_buffer_header_reset(this.Ptr);
         }
 
         public override string ToString()
