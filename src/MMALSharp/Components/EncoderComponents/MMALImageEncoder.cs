@@ -170,6 +170,16 @@ namespace MMALSharp.Components
         {
         }
 
+        internal override unsafe void InitialiseInputPort(int inputPort)
+        {
+            this.Inputs[inputPort] = new MMALStillConvertPort(&(*this.Ptr->Input[inputPort]), this, PortType.Input);
+        }
+
+        internal override unsafe void InitialiseOutputPort(int outputPort)
+        {
+            this.Outputs[outputPort] = new MMALStillConvertPort(&(*this.Ptr->Output[outputPort]), this, PortType.Output);
+        }
+
         /// <summary>
         /// Encodes/decodes user provided image data
         /// </summary>
@@ -184,8 +194,8 @@ namespace MMALSharp.Components
             this.EnableComponent();
 
             //Wait until the process is complete.
-            this.Outputs[outputPort].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            await this.Outputs[outputPort].Trigger.WaitAsync();
+            this.Inputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+            await this.Inputs[0].Trigger.WaitAsync();
 
             this.DisableComponent();
 

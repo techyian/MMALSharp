@@ -35,7 +35,8 @@ namespace MMALSharp.Components
         {
             this.InitialiseInputPort(0);
 
-            copyPort.ShallowCopy(this.Inputs[0]);
+            if(copyPort != null)
+                copyPort.ShallowCopy(this.Inputs[0]);
 
             if(encodingType != null)
             {
@@ -56,17 +57,21 @@ namespace MMALSharp.Components
         /// <param name="encodingType">The encoding type the input port will expect data in</param>
         /// <param name="width">The width of the incoming frame</param>
         /// <param name="height">The height of the incoming frame</param>
-        public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, int width, int height)
+        public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, uint bufferSize)
         {
             this.InitialiseInputPort(0);
-            
-            if(encodingType != null)
+
+            if (encodingType != null)
             {
                 this.Inputs[0].Ptr->Format->encoding = encodingType.EncodingVal;
             }
-            
-            this.Inputs[0].Ptr->Format->es->video.height = MMALUtil.VCOS_ALIGN_UP(height, 32);
-            this.Inputs[0].Ptr->Format->es->video.width = MMALUtil.VCOS_ALIGN_UP(width, 32);
+            if (pixelFormat != null)
+            {
+                this.Inputs[0].Ptr->Format->encodingVariant = pixelFormat.EncodingVal;
+            }
+
+            this.Inputs[0].Ptr->Format->es->video.height = height;
+            this.Inputs[0].Ptr->Format->es->video.width = width;
             this.Inputs[0].Ptr->Format->es->video.crop = new MMAL_RECT_T(0, 0, width, height);
             
             this.Inputs[0].Commit();
@@ -77,7 +82,7 @@ namespace MMALSharp.Components
             }
 
             this.Inputs[0].Ptr->BufferNum = Math.Max(this.Inputs[0].Ptr->BufferNumRecommended, this.Inputs[0].Ptr->BufferNumMin);
-            this.Inputs[0].Ptr->BufferSize = Math.Max(this.Inputs[0].Ptr->BufferSizeRecommended, this.Inputs[0].Ptr->BufferSizeMin);
+            this.Inputs[0].Ptr->BufferSize = Math.Max(bufferSize, this.Inputs[0].Ptr->BufferSizeMin);
 
             this.Inputs[0].EncodingType = encodingType;
         }

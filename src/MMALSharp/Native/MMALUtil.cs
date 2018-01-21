@@ -123,7 +123,7 @@ namespace MMALSharp.Native
         public static unsafe extern void mmal_buffer_header_copy_header(MMAL_BUFFER_HEADER_T* dest, MMAL_BUFFER_HEADER_T* src);
                 
         [DllImport("libmmal.so", EntryPoint = "mmal_port_pool_create", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMAL_POOL_T* mmal_port_pool_create(MMAL_PORT_T* port, int headers, int payload_size);
+        public static unsafe extern MMAL_POOL_T* mmal_port_pool_create(MMAL_PORT_T* port, int headers, uint payload_size);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_port_pool_destroy", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern void mmal_port_pool_destroy(MMAL_PORT_T* port, MMAL_POOL_T* pool);

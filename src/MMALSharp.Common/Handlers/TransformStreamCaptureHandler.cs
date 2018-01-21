@@ -12,8 +12,7 @@ namespace MMALSharp.Common.Handlers
     {
         public Stream InputStream { get; set; }
         public int BufferSize { get; set; }
-        public int Offset { get; set; }
-
+       
         public TransformStreamCaptureHandler(Stream inputStream, string outputDirectory, string outputExtension) : base(outputDirectory, outputExtension)
         {
             this.InputStream = inputStream;
@@ -24,10 +23,9 @@ namespace MMALSharp.Common.Handlers
             var buffer = new byte[this.BufferSize];
 
             var read = this.InputStream.Read(buffer, 0, this.BufferSize);
-            this.Offset += read;
-            
-            if (read == 0)
-            {
+       
+            if (read < this.BufferSize)
+            {       
                 return new ProcessResult { Success = true, BufferFeed = buffer, EOF = true };
             }
             

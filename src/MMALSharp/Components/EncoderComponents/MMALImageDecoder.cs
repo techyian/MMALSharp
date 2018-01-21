@@ -73,6 +73,75 @@ namespace MMALSharp.Components
             this.Outputs[outputPort] = new MMALStillConvertPort(&(*this.Ptr->Output[outputPort]), this, PortType.Output);
         }
 
+        public override unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, uint bufferSize)
+        {
+            this.InitialiseInputPort(0);
+
+            if (encodingType != null)
+            {
+                this.Inputs[0].Ptr->Format->encoding = encodingType.EncodingVal;
+            }
+            if (pixelFormat != null)
+            {
+                this.Inputs[0].Ptr->Format->encodingVariant = pixelFormat.EncodingVal;
+            }
+            
+            MMALLog.Logger.Info($"Input encoding {MMALEncodingHelpers.ParseEncoding(this.Inputs[0].Ptr->Format->encoding).EncodingName}");
+
+            this.Inputs[0].Commit();
+
+            if (this.Outputs[0].Ptr->Format->type == MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_UNKNOWN)
+            {
+                throw new PiCameraError("Unable to determine settings for output port.");
+            }
+
+            this.Inputs[0].Ptr->BufferNum = Math.Max(this.Inputs[0].Ptr->BufferNumRecommended, this.Inputs[0].Ptr->BufferNumMin);
+            this.Inputs[0].Ptr->BufferSize = Math.Max(bufferSize, this.Inputs[0].Ptr->BufferSizeMin);
+
+            this.Inputs[0].EncodingType = encodingType;
+        }
+
+        public override unsafe void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0)
+        {
+            this.InitialiseOutputPort(outputPort);
+            this.ProcessingPorts.Add(outputPort);
+
+            this.Inputs[0].ShallowCopy(this.Outputs[outputPort]);
+
+            if (encodingType != null)
+            {
+                this.Outputs[outputPort].Ptr->Format->encoding = encodingType.EncodingVal;
+            }
+
+            //Don't do anything with pixelFormat param in this override.
+
+            MMAL_VIDEO_FORMAT_T tempVid = this.Outputs[outputPort].Ptr->Format->es->video;
+            
+            try
+            {
+                this.Outputs[outputPort].Commit();
+            }
+            catch
+            {
+                //If commit fails using new settings, attempt to reset using old temp MMAL_VIDEO_FORMAT_T.
+                MMALLog.Logger.Warn("Commit of output port failed. Attempting to reset values.");
+                this.Outputs[outputPort].Ptr->Format->es->video = tempVid;
+                this.Outputs[outputPort].Commit();
+            }
+            
+            this.Outputs[outputPort].EncodingType = encodingType;
+            this.Outputs[outputPort].PixelFormat = pixelFormat;
+
+            this.Outputs[outputPort].Ptr->Format->es->video.height = 0;
+            this.Outputs[outputPort].Ptr->Format->es->video.width = 0;
+            this.Outputs[outputPort].Ptr->Format->es->video.crop = new MMAL_RECT_T(0, 0, 0, 0);
+
+            this.Outputs[outputPort].Ptr->BufferNum = 1;
+           
+            //It is important to re-commit changes to width and height.
+            this.Outputs[outputPort].Commit();
+        }
+
         /// <summary>
         /// Encodes/decodes user provided image data
         /// </summary>
@@ -87,8 +156,8 @@ namespace MMALSharp.Components
             this.EnableComponent();
 
             //Wait until the process is complete.
-            this.Outputs[outputPort].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            await this.Outputs[outputPort].Trigger.WaitAsync();
+            this.Inputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+            await this.Inputs[0].Trigger.WaitAsync();
 
             this.DisableComponent();
 

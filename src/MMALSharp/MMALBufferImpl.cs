@@ -182,7 +182,7 @@ namespace MMALSharp
 
             if (eof)
             {
-                this.Ptr->flags = (uint)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
+                this.Ptr->flags += (uint)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
             }
             
             try

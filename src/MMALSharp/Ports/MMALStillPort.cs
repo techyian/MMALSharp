@@ -32,6 +32,7 @@ namespace MMALSharp.Ports
         {
             lock (MMALPortBase.OutputLock)
             {
+                MMALLog.Logger.Debug("In native output callback");
                 var bufferImpl = new MMALBufferImpl(buffer);
 
                 if (MMALCameraConfig.Debug)

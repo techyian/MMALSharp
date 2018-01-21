@@ -226,15 +226,22 @@ namespace MMALSharp
             MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &stereo.hdr), "Unable to set Stereo mode");
         }
 
-        internal static unsafe int[] GetSupportedEncodings(this MMALPortImpl port)
+        public static unsafe int[] GetSupportedEncodings(this MMALPortImpl port)
         {
-            MMAL_PARAMETER_ENCODING_T encodings =
-                new MMAL_PARAMETER_ENCODING_T(
-                    new MMAL_PARAMETER_HEADER_T(MMALParametersCommon.MMAL_PARAMETER_SUPPORTED_ENCODINGS,
-                        Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>()), new[]{0});
+            IntPtr ptr1 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>() + 20);
+            var str1 = (MMAL_PARAMETER_HEADER_T*)ptr1;
 
-            MMALCheck(MMALPort.mmal_port_parameter_get(port.Ptr, &encodings.hdr), "Unable to get supported encodings");
+            str1->Id = MMALParametersCommon.MMAL_PARAMETER_SUPPORTED_ENCODINGS;
+            //Deliberately undersize to check if running on older firmware.      
+            str1->Size = Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>() + 20;
 
+            MMAL_PARAMETER_ENCODING_T encodings;
+
+            MMALCheck(MMALPort.mmal_port_parameter_get(port.Ptr, str1), "Unable to get supported encodings");
+
+            encodings = (MMAL_PARAMETER_ENCODING_T)Marshal.PtrToStructure(ptr1, typeof(MMAL_PARAMETER_ENCODING_T));
+            Marshal.FreeHGlobal(ptr1);
+                        
             return encodings.Value;
         }
 

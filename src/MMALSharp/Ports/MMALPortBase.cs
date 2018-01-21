@@ -85,7 +85,7 @@ namespace MMALSharp
         /// <summary>
         /// Specifies minimum size of buffer headers required for this port
         /// </summary>
-        public int BufferSizeMin => this.Ptr->BufferSizeMin;
+        public uint BufferSizeMin => this.Ptr->BufferSizeMin;
 
         /// <summary>
         /// Specifies minimum alignment value for buffer headers required for this port
@@ -100,7 +100,7 @@ namespace MMALSharp
         /// <summary>
         /// Specifies recommended size of buffer headers for this port
         /// </summary>
-        public int BufferSizeRecommended => this.Ptr->BufferSizeRecommended;
+        public uint BufferSizeRecommended => this.Ptr->BufferSizeRecommended;
 
         /// <summary>
         /// Indicates the currently set number of buffer headers for this port
@@ -120,7 +120,7 @@ namespace MMALSharp
         /// <summary>
         /// Indicates the currently set size of buffer headers for this port
         /// </summary>
-        public int BufferSize
+        public uint BufferSize
         {
             get
             {
@@ -159,12 +159,12 @@ namespace MMALSharp
         /// <summary>
         /// Monitor lock for input port callback method
         /// </summary>
-        protected static Object InputLock = new object();
+        protected static object InputLock = new object();
 
         /// <summary>
         /// Monitor lock for output port callback method
         /// </summary>
-        protected static Object OutputLock = new object();
+        protected static object OutputLock = new object();
 
         /// <summary>
         /// Delegate for native port callback
@@ -204,7 +204,7 @@ namespace MMALSharp
         internal virtual void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer) { }
 
         /// <summary>
-        /// Represents the native callback method for an output port that's called by MMAL
+        /// Represents the native callback method for a control port that's called by MMAL
         /// </summary>
         /// <param name="port"></param>
         /// <param name="buffer"></param>
@@ -264,6 +264,8 @@ namespace MMALSharp
                 if(this.BufferPool != null)
                 {
                     var length = this.BufferPool.Queue.QueueLength();
+
+                    MMALLog.Logger.Debug($"Releasing {length} buffers from queue.");
 
                     for (int i = 0; i < length; i++)
                     {
@@ -352,8 +354,11 @@ namespace MMALSharp
 
         internal void ReleaseInputBuffer(MMALBufferImpl bufferImpl)
         {
+            MMALLog.Logger.Debug("Releasing input buffer.");
+                        
             bufferImpl.Release();
-
+            bufferImpl.Dispose();
+            
             if (this.Enabled && this.BufferPool != null)
             {
                 var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
@@ -370,6 +375,8 @@ namespace MMALSharp
 
                         this.Trigger.Signal();
                         newBuffer.Release();
+                        newBuffer.Dispose();
+                        newBuffer = null;
                     }
 
                     if (newBuffer != null)
