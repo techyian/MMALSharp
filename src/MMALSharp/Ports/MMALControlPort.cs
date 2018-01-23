@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using MMALSharp.Native;
 using static MMALSharp.MMALCallerHelper;
 
@@ -14,7 +10,10 @@ namespace MMALSharp.Ports
     /// </summary>
     public unsafe class MMALControlPort : MMALPortBase
     {
-        public MMALControlPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type) : base(ptr, comp, type) { }
+        public MMALControlPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
+            : base(ptr, comp, type)
+        {
+        }
 
         /// <summary>
         /// Enable processing on a port
@@ -24,13 +23,13 @@ namespace MMALSharp.Ports
         {
             if (!this.Enabled)
             {
-                this.ManagedOutputCallback = managedCallback;
+                this.ManagedControlCallback = managedCallback;
 
-                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativeControlPortCallback);
+                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeControlPortCallback);
 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
-                MMALLog.Logger.Debug("Enabling port.");
+                MMALLog.Logger.Debug("Enabling control port.");
 
                 if (managedCallback == null)
                 {
@@ -42,7 +41,6 @@ namespace MMALSharp.Ports
                 {
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
                 }
-
             }
         }
 
@@ -53,14 +51,26 @@ namespace MMALSharp.Ports
         /// <param name="buffer">The buffer header</param>
         internal override void NativeControlPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
-            var bufferImpl = new MMALBufferImpl(buffer);
+            lock (MMALPortBase.ControlLock)
+            {
+                MMALLog.Logger.Debug("In native control callback");
 
-            this.ManagedOutputCallback(bufferImpl, this);
+                var bufferImpl = new MMALBufferImpl(buffer);
 
-            MMALLog.Logger.Debug("Releasing buffer");
+                if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero)
+                {
+                    if (MMALCameraConfig.Debug)
+                    {
+                        bufferImpl.ParseEvents();
+                    }
 
-            bufferImpl.Release();
+                    this.ManagedControlCallback(bufferImpl, this);
+
+                    MMALLog.Logger.Debug("Releasing buffer");
+
+                    bufferImpl.Release();
+                }
+            }
         }
-
     }
 }

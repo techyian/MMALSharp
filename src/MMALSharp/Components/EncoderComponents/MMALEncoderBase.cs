@@ -1,13 +1,8 @@
 ﻿using MMALSharp.Handlers;
 using MMALSharp.Native;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
-using MMALSharp.Common.Handlers;
-using MMALSharp.Components.EncoderComponents;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp.Components

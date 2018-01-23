@@ -1,11 +1,9 @@
 ﻿using MMALSharp.Native;
 using Nito.AsyncEx;
 using System;
-using System.Linq;
 using System.Runtime.InteropServices;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
-using MMALSharp.Ports;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
@@ -51,21 +49,17 @@ namespace MMALSharp
 
         /// <summary>
         /// Managed reference to the pool of buffer headers associated with this port
-        /// </summary>                                
+        /// </summary>
         public MMALPoolImpl BufferPool { get; set; }
 
         /// <summary>
         /// Managed name given to this object (user defined)
         /// </summary>
         public string ObjName { get; set; }
-                
+
         public MMALEncoding EncodingType { get; set; }
 
         public MMALEncoding PixelFormat { get; set; }
-
-
-        
-        #region Port struct wrapper properties
 
         /// <summary>
         /// Native name of port
@@ -148,9 +142,7 @@ namespace MMALSharp
         public int NativeEncodingType => this.Ptr->Format->encoding;
 
         public int NativeEncodingSubformat => this.Ptr->Format->encodingVariant;
-
-        #endregion
-
+        
         /// <summary>
         /// Asynchronous trigger which is set when processing has completed on this port.
         /// </summary>
@@ -167,6 +159,11 @@ namespace MMALSharp
         protected static object OutputLock = new object();
 
         /// <summary>
+        /// Monitor lock for control port callback method
+        /// </summary>
+        protected static object ControlLock = new object();
+
+        /// <summary>
         /// Delegate for native port callback
         /// </summary>
         internal MMALSharp.Native.MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
@@ -180,7 +177,12 @@ namespace MMALSharp
         /// Delegate we use to do further processing on buffer headers when they're received by the native callback delegate
         /// </summary>
         public Action<MMALBufferImpl, MMALPortBase> ManagedOutputCallback { get; set; }
-        
+
+        /// <summary>
+        /// Managed Control port callback delegate
+        /// </summary>
+        public Action<MMALBufferImpl, MMALPortBase> ManagedControlCallback { get; set; }
+
         protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
         {
             this.Ptr = ptr;
@@ -216,10 +218,10 @@ namespace MMALSharp
         /// <param name="managedCallback"></param>        
         internal virtual void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback)
         {
-            if(managedCallback != null)
+            if (managedCallback != null)
             {
                 this.SendAllBuffers();
-            }                        
+            }
         }
 
         /// <summary>
@@ -228,8 +230,8 @@ namespace MMALSharp
         /// <param name="managedCallback"></param>        
         internal virtual void EnablePort(Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback)
         {
-            //We populate the input buffers with user provided data.
-            if(managedCallback != null)
+            // We populate the input buffers with user provided data.
+            if (managedCallback != null)
             {
                 this.BufferPool = new MMALPoolImpl(this);
 
@@ -245,10 +247,8 @@ namespace MMALSharp
 
                     this.SendBuffer(buffer);
                 }
-            }            
+            }
         }
-
-        
 
         /// <summary>
         /// Disable processing on a port. Disabling a port will stop all processing on this port and return all (non-processed) 
@@ -256,12 +256,12 @@ namespace MMALSharp
         /// Any buffer pool shall be released.
         /// </summary>
         internal void DisablePort()
-        {            
-            if (Enabled)
+        {
+            if (this.Enabled)
             {
                 MMALLog.Logger.Debug("Disabling port");
 
-                if(this.BufferPool != null)
+                if (this.BufferPool != null)
                 {
                     var length = this.BufferPool.Queue.QueueLength();
 
@@ -274,20 +274,19 @@ namespace MMALSharp
                         buffer.Release();
                     }
                 }
-                                
+
                 MMALCheck(MMALPort.mmal_port_disable(this.Ptr), "Unable to disable port.");
             }
-                
         }
 
         /// <summary>
-        /// Commit format changes on this port.        
+        /// Commit format changes on this port.
         /// </summary>
         internal void Commit()
         {
             MMALCheck(MMALPort.mmal_port_format_commit(this.Ptr), "Unable to commit port changes.");
         }
-        
+
         /// <summary>
         /// Shallow copy a format structure. It is worth noting that the extradata buffer will not be copied in the new format.
         /// </summary>
@@ -320,7 +319,7 @@ namespace MMALSharp
         /// </summary>
         /// <param name="buffer"></param>
         internal void SendBuffer(MMALBufferImpl buffer)
-        {            
+        {
             MMALCheck(MMALPort.mmal_port_send_buffer(this.Ptr, buffer.Ptr), "Unable to send buffer header.");
         }
 
@@ -416,7 +415,7 @@ namespace MMALSharp
                     var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
 
                     if (newBuffer != null)
-                    {                        
+                    {
                         this.SendBuffer(newBuffer);
                     }
                     else

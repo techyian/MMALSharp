@@ -8,91 +8,6 @@ using static MMALSharp.Native.MMALParametersCamera;
 
 namespace MMALSharp
 {
-    public class Parameter
-    {
-        public int ParamValue { get; set; }
-        public Type ParamType { get; set; }
-        public string ParamName { get; set; }
-
-        public Parameter(int paramVal, Type paramType, string paramName)
-        {
-            this.ParamValue = paramVal;
-            this.ParamType = paramType;
-            this.ParamName = paramName;
-        }
-    }
-
-    internal static class MMALParameterHelpers
-    {
-        public static List<Parameter> ParameterHelper = new List<Parameter>
-        {
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_ANTISHAKE, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_ANTISHAKE"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_BRIGHTNESS, typeof(MMAL_PARAMETER_RATIONAL_T), "MMAL_PARAMETER_BRIGHTNESS"),
-            new Parameter(MMALParametersCommon.MMAL_PARAMETER_BUFFER_FLAG_FILTER, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_BUFFER_FLAG_FILTER"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_BURST_CAPTURE, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_CAMERA_BURST_CAPTURE"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_CUSTOM_SENSOR_CONFIG, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_CAMERA_CUSTOM_SENSOR_CONFIG"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_MIN_ISO, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_CAMERA_MIN_ISO"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_NUM, typeof(MMAL_PARAMETER_INT32_T), "MMAL_PARAMETER_CAMERA_NUM"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_CAPTURE_EXPOSURE_COMP, typeof(MMAL_PARAMETER_INT32_T), "MMAL_PARAMETER_CAPTURE_EXPOSURE_COMP"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_CAPTURE, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_CAPTURE"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_CAPTURE_STATS_PASS, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_CAPTURE_STATS_PASS"),
-            new Parameter(MMALParametersClock.MMAL_PARAMETER_CLOCK_ACTIVE, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_CLOCK_ACTIVE"),
-            new Parameter(MMALParametersClock.MMAL_PARAMETER_CLOCK_ENABLE_BUFFER_INFO, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_CLOCK_ENABLE_BUFFER_INFO"),
-            new Parameter(MMALParametersClock.MMAL_PARAMETER_CLOCK_FRAME_RATE, typeof(MMAL_PARAMETER_RATIONAL_T), "MMAL_PARAMETER_CLOCK_FRAME_RATE"),
-            new Parameter(MMALParametersClock.MMAL_PARAMETER_CLOCK_SCALE, typeof(MMAL_PARAMETER_RATIONAL_T), "MMAL_PARAMETER_CLOCK_SCALE"),
-            new Parameter(MMALParametersClock.MMAL_PARAMETER_CLOCK_TIME, typeof(MMAL_PARAMETER_INT64_T), "MMAL_PARAMETER_CLOCK_TIME"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_CONTRAST, typeof(MMAL_PARAMETER_RATIONAL_T), "MMAL_PARAMETER_CONTRAST"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_DPF_CONFIG, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_DPF_CONFIG"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_ENABLE_RAW_CAPTURE, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_ENABLE_RAW_CAPTURE"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_EXIF_DISABLE, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_EXIF_DISABLE"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_EXPOSURE_COMP, typeof(MMAL_PARAMETER_INT32_T), "MMAL_PARAMETER_EXPOSURE_COMP"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_EXTRA_BUFFERS, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_EXTRA_BUFFERS"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_FLASH_REQUIRED, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_FLASH_REQUIRED"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_FRAME_RATE, typeof(MMAL_PARAMETER_RATIONAL_T), "MMAL_PARAMETER_FRAME_RATE"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_INTRAPERIOD, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_INTRAPERIOD"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_ISO, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_ISO"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_ATTACH_LOG, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_JPEG_ATTACH_LOG"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_JPEG_Q_FACTOR"),
-            new Parameter(MMALParametersCommon.MMAL_PARAMETER_LOCKSTEP_ENABLE, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_LOCKSTEP_ENABLE"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_MB_ROWS_PER_SLICE, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_MB_ROWS_PER_SLICE"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_MINIMISE_FRAGMENTATION, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_MINIMISE_FRAGMENTATION"),
-            new Parameter(MMALParametersCommon.MMAL_PARAMETER_NO_IMAGE_PADDING, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_NO_IMAGE_PADDING"),
-            new Parameter(MMALParametersCommon.MMAL_PARAMETER_POWERMON_ENABLE, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_POWERMON_ENABLE"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_ROTATION, typeof(MMAL_PARAMETER_INT32_T), "MMAL_PARAMETER_ROTATION"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_SATURATION, typeof(MMAL_PARAMETER_RATIONAL_T), "MMAL_PARAMETER_SATURATION"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_SHARPNESS, typeof(MMAL_PARAMETER_RATIONAL_T), "MMAL_PARAMETER_SHARPNESS"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_SHUTTER_SPEED, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_SHUTTER_SPEED"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_STILLS_DENOISE, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_STILLS_DENOISE"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_SW_SATURATION_DISABLE, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_SW_SATURATION_DISABLE"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_SW_SHARPEN_DISABLE, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_SW_SHARPEN_DISABLE"),
-            new Parameter(MMALParametersCommon.MMAL_PARAMETER_SYSTEM_TIME, typeof(MMAL_PARAMETER_UINT64_T), "MMAL_PARAMETER_SYSTEM_TIME"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ALIGN_HORIZ, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_VIDEO_ALIGN_HORIZ"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ALIGN_VERT, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_VIDEO_ALIGN_VERT"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_BIT_RATE, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_VIDEO_BIT_RATE"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_VIDEO_DENOISE, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_VIDEO_DENOISE"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_DROPPABLE_PFRAMES, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_VIDEO_DROPPABLE_PFRAMES"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_FRAME_LIMIT_BITS, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_VIDEO_ENCODE_FRAME_LIMIT_BITS"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INITIAL_QUANT, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_VIDEO_ENCODE_INITIAL_QUANT"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INLINE_HEADER, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_VIDEO_ENCODE_INLINE_HEADER"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INLINE_VECTORS, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_VIDEO_ENCODE_INLINE_VECTORS"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_MAX_QUANT, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_VIDEO_ENCODE_MAX_QUANT"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_MIN_QUANT, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_VIDEO_ENCODE_MIN_QUANT"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_PEAK_RATE, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_VIDEO_ENCODE_PEAK_RATE"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_QP_P, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_VIDEO_ENCODE_QP_P"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_RC_SLICE_DQUANT, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_VIDEO_ENCODE_RC_SLICE_DQUANT"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_SEI_ENABLE, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_VIDEO_ENCODE_SEI_ENABLE"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_SPS_TIMINGS, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_VIDEO_ENCODE_SPS_TIMINGS"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_FRAME_RATE, typeof(MMAL_PARAMETER_RATIONAL_T), "MMAL_PARAMETER_VIDEO_FRAME_RATE"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_IMMUTABLE_INPUT, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_VIDEO_IMMUTABLE_INPUT"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_INTERPOLATE_TIMESTAMPS, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_VIDEO_INTERPOLATE_TIMESTAMPS"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_MAX_NUM_CALLBACKS, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_VIDEO_MAX_NUM_CALLBACKS"),
-            new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_REQUEST_I_FRAME, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_VIDEO_REQUEST_I_FRAME"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_VIDEO_STABILISATION, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_VIDEO_STABILISATION"),
-            new Parameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_ZERO_COPY"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_RESTART_INTERVAL, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_JPEG_RESTART_INTERVAL")
-        };
-    }
-
     public static class MMALPortExtensions
     {
         /// <summary>
@@ -100,7 +15,7 @@ namespace MMALSharp
         /// </summary>
         /// <param name="port">The port to get the parameter from</param>
         /// <param name="key">The unique key for the parameter</param>
-        /// <returns></returns>
+        /// <returns>Dynamic parameter based on key parameter</returns>
         public static unsafe dynamic GetParameter(this MMALPortBase port, int key)
         {
             var t = MMALParameterHelpers.ParameterHelper.Where(c => c.ParamValue == key).FirstOrDefault();
@@ -135,7 +50,7 @@ namespace MMALSharp
                         MMALCheck(MMALUtil.mmal_port_parameter_get_int32(port.Ptr, (uint)key, ref intVal), "Unable to get int value");
                         return intVal;
                     case "MMAL_PARAMETER_RATIONAL_T":
-                        MMAL_RATIONAL_T ratVal = new MMAL_RATIONAL_T();
+                        MMAL_RATIONAL_T ratVal = default(MMAL_RATIONAL_T);
                         MMALCheck(MMALUtil.mmal_port_parameter_get_rational(port.Ptr, (uint)key, ref ratVal), "Unable to get rational value");
                         return (double)ratVal.Num / ratVal.Den;
                     default:
@@ -203,14 +118,33 @@ namespace MMALSharp
             }
         }
 
-        internal static void SetImageCapture(this MMALPortImpl port, bool enable)
-        {
-            port.SetParameter(MMAL_PARAMETER_CAPTURE, enable);
-        }
-
         public static bool GetRawCapture(this MMALPortImpl port)
         {
             return port.GetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE);
+        }
+
+        public static unsafe int[] GetSupportedEncodings(this MMALPortImpl port)
+        {
+            IntPtr ptr1 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>() + 20);
+            var str1 = (MMAL_PARAMETER_HEADER_T*)ptr1;
+
+            str1->Id = MMALParametersCommon.MMAL_PARAMETER_SUPPORTED_ENCODINGS;
+            // Deliberately undersize to check if running on older firmware.
+            str1->Size = Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>() + 20;
+
+            MMAL_PARAMETER_ENCODING_T encodings;
+
+            MMALCheck(MMALPort.mmal_port_parameter_get(port.Ptr, str1), "Unable to get supported encodings");
+
+            encodings = (MMAL_PARAMETER_ENCODING_T)Marshal.PtrToStructure(ptr1, typeof(MMAL_PARAMETER_ENCODING_T));
+            Marshal.FreeHGlobal(ptr1);
+
+            return encodings.Value;
+        }
+
+        internal static void SetImageCapture(this MMALPortImpl port, bool enable)
+        {
+            port.SetParameter(MMAL_PARAMETER_CAPTURE, enable);
         }
 
         internal static void SetRawCapture(this MMALPortImpl port, bool raw)
@@ -220,29 +154,13 @@ namespace MMALSharp
 
         internal static unsafe void SetStereoMode(this MMALPortImpl port, StereoMode mode)
         {
-            MMAL_PARAMETER_STEREOSCOPIC_MODE_T stereo = new MMAL_PARAMETER_STEREOSCOPIC_MODE_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_STEREOSCOPIC_MODE, Marshal.SizeOf<MMAL_PARAMETER_STEREOSCOPIC_MODE_T>()),
-                mode.Mode, mode.Decimate, mode.SwapEyes);
+            MMAL_PARAMETER_STEREOSCOPIC_MODE_T stereo = new MMAL_PARAMETER_STEREOSCOPIC_MODE_T(
+                new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_STEREOSCOPIC_MODE, Marshal.SizeOf<MMAL_PARAMETER_STEREOSCOPIC_MODE_T>()),
+                mode.Mode,
+                mode.Decimate,
+                mode.SwapEyes);
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &stereo.hdr), "Unable to set Stereo mode");
-        }
-
-        public static unsafe int[] GetSupportedEncodings(this MMALPortImpl port)
-        {
-            IntPtr ptr1 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>() + 20);
-            var str1 = (MMAL_PARAMETER_HEADER_T*)ptr1;
-
-            str1->Id = MMALParametersCommon.MMAL_PARAMETER_SUPPORTED_ENCODINGS;
-            //Deliberately undersize to check if running on older firmware.      
-            str1->Size = Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>() + 20;
-
-            MMAL_PARAMETER_ENCODING_T encodings;
-
-            MMALCheck(MMALPort.mmal_port_parameter_get(port.Ptr, str1), "Unable to get supported encodings");
-
-            encodings = (MMAL_PARAMETER_ENCODING_T)Marshal.PtrToStructure(ptr1, typeof(MMAL_PARAMETER_ENCODING_T));
-            Marshal.FreeHGlobal(ptr1);
-                        
-            return encodings.Value;
+            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &stereo.Hdr), "Unable to set Stereo mode");
         }
 
         internal static void CheckSupportedEncoding(this MMALPortImpl port, MMALEncoding encoding)
@@ -251,7 +169,7 @@ namespace MMALSharp
 
             if (!encodings.Any(c => c == encoding.EncodingVal))
             {
-                throw new PiCameraError("Unsupported encoding type for this port");    
+                throw new PiCameraError("Unsupported encoding type for this port");
             }
         }
 

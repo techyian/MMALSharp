@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using MMALSharp.Common.Handlers;
-using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
@@ -77,17 +75,19 @@ namespace MMALSharp.Components
         }
 
         public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0)
-        {            
+        {
             base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate);
 
             if (this.RawBayer)
             {
                 MMALCamera.Instance.Camera.StillPort.SetRawCapture(true);
             }
+
             if (this.UseExif)
             {
                 this.AddExifTags(this.ExifTags);
             }
+
             if (MMALCameraConfig.EnableAnnotate)
             {
                 this.AnnotateImage();
@@ -96,11 +96,11 @@ namespace MMALSharp.Components
 
         /// <summary>
         /// Adds EXIF tags to the resulting image
-        /// </summary>        
-        /// <param name="exifTags">A list of user defined EXIF tags</param>                     
+        /// </summary>
+        /// <param name="exifTags">A list of user defined EXIF tags</param>
         internal void AddExifTags(params ExifTag[] exifTags)
         {
-            //Add the same defaults as per Raspistill.c
+            // Add the same defaults as per Raspistill.c
             List<ExifTag> defaultTags = new List<ExifTag>
             {
                 new ExifTag { Key = "IFD0.Model", Value = "RP_" + MMALCamera.Instance.Camera.CameraInfo.SensorName },
@@ -117,7 +117,7 @@ namespace MMALSharp.Components
                 throw new PiCameraError("Maximum number of EXIF tags exceeded.");
             }
 
-            //Add user defined tags.                 
+            // Add user defined tags.
             foreach (ExifTag tag in exifTags)
             {
                 this.AddExifTag(tag);
@@ -139,16 +139,17 @@ namespace MMALSharp.Components
             }
 
             var arr = new byte[128];
-                        
+
             var bytes = Encoding.ASCII.GetBytes(formattedExif);
 
             Array.Copy(bytes, arr, bytes.Length);
 
             IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_EXIF_T>() + (arr.Length - 1));
-            
-            var str = new MMAL_PARAMETER_EXIF_T(new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_EXIF,
-                (Marshal.SizeOf<MMAL_PARAMETER_EXIF_T_DUMMY>() + (arr.Length - 1))
-            ), 0, 0, 0, arr);
+
+            var str = new MMAL_PARAMETER_EXIF_T(
+                new MMAL_PARAMETER_HEADER_T(
+                    MMALParametersCamera.MMAL_PARAMETER_EXIF,
+                Marshal.SizeOf<MMAL_PARAMETER_EXIF_T_DUMMY>() + (arr.Length - 1)), 0, 0, 0, arr);
 
             Marshal.StructureToPtr(str, ptr, false);
 
@@ -162,47 +163,5 @@ namespace MMALSharp.Components
             base.PrintComponent();
             MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
         }
-    }
-
-    public class MMALImageEncoderConverter : MMALImageEncoder, IMMALConvert
-    {
-        public unsafe MMALImageEncoderConverter(TransformStreamCaptureHandler handler) : base(handler)
-        {
-        }
-
-        internal override unsafe void InitialiseInputPort(int inputPort)
-        {
-            this.Inputs[inputPort] = new MMALStillConvertPort(&(*this.Ptr->Input[inputPort]), this, PortType.Input);
-        }
-
-        internal override unsafe void InitialiseOutputPort(int outputPort)
-        {
-            this.Outputs[outputPort] = new MMALStillConvertPort(&(*this.Ptr->Output[outputPort]), this, PortType.Output);
-        }
-
-        /// <summary>
-        /// Encodes/decodes user provided image data
-        /// </summary>
-        /// <param name="outputPort">The output port to begin processing on. Usually will be 0.</param>
-        /// <returns>An awaitable task</returns>
-        public virtual async Task Convert(int outputPort = 0)
-        {
-            //Enable both input and output ports. Ports should have been pre-configured by user prior to this point.
-            this.Start(this.Inputs[0], this.ManagedInputCallback);
-            this.Start(this.Outputs[outputPort], new Action<MMALBufferImpl, MMALPortBase>(this.ManagedOutputCallback));
-
-            this.EnableComponent();
-
-            //Wait until the process is complete.
-            this.Inputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            await this.Inputs[0].Trigger.WaitAsync();
-
-            this.DisableComponent();
-
-            this.CleanPortPools();
-        }
-
-
-    }
-    
+    }        
 }

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MMALSharp.Common.Handlers;
+﻿// <copyright file="IMMALConvert.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
 
-namespace MMALSharp.Components.EncoderComponents
+using System.Threading.Tasks;
+
+namespace MMALSharp.Components
 {
     public interface IMMALConvert
     {

@@ -1,4 +1,9 @@
-﻿using MMALSharp.Handlers;
+﻿// <copyright file="MMALDownstreamComponent.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using MMALSharp.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,16 +19,19 @@ namespace MMALSharp.Components
     /// </summary>
     public abstract class MMALDownstreamComponent : MMALComponentBase
     {
-        public abstract int Width { get; set; }
-        public abstract int Height { get; set; }
-        public List<int> ProcessingPorts { get; set; }
-
-        protected MMALDownstreamComponent(string name) : base(name)
+        protected MMALDownstreamComponent(string name)
+            : base(name)
         {
             MMALCamera.Instance.DownstreamComponents.Add(this);
             this.ProcessingPorts = new List<int>();
         }
-        
+
+        public abstract int Width { get; set; }
+
+        public abstract int Height { get; set; }
+
+        public List<int> ProcessingPorts { get; set; }
+
         /// <summary>
         /// Configures a specific input port on a downstream component. This method will perform a shallow copy of the output
         /// port it is to be connected to.
@@ -35,18 +43,21 @@ namespace MMALSharp.Components
         {
             this.InitialiseInputPort(0);
 
-            if(copyPort != null)
+            if (copyPort != null)
+            {
                 copyPort.ShallowCopy(this.Inputs[0]);
+            }
 
-            if(encodingType != null)
+            if (encodingType != null)
             {
                 this.Inputs[0].Ptr->Format->encoding = encodingType.EncodingVal;
             }
-            if(pixelFormat != null)
+
+            if (pixelFormat != null)
             {
                 this.Inputs[0].Ptr->Format->encodingVariant = pixelFormat.EncodingVal;
             }
-            
+
             this.Inputs[0].Commit();
         }
 
@@ -55,9 +66,10 @@ namespace MMALSharp.Components
         /// to the component.
         /// </summary>
         /// <param name="encodingType">The encoding type the input port will expect data in</param>
+        /// <param name="pixelFormat">The pixel format the input port will expect data in</param>
         /// <param name="width">The width of the incoming frame</param>
-        /// <param name="height">The height of the incoming frame</param>
-        public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, uint bufferSize)
+        /// <param name="height">The height of the incoming frame</param>        
+        public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height)
         {
             this.InitialiseInputPort(0);
 
@@ -65,31 +77,30 @@ namespace MMALSharp.Components
             {
                 this.Inputs[0].Ptr->Format->encoding = encodingType.EncodingVal;
             }
+
             if (pixelFormat != null)
             {
                 this.Inputs[0].Ptr->Format->encodingVariant = pixelFormat.EncodingVal;
             }
 
-            this.Inputs[0].Ptr->Format->es->video.height = height;
-            this.Inputs[0].Ptr->Format->es->video.width = width;
-            this.Inputs[0].Ptr->Format->es->video.crop = new MMAL_RECT_T(0, 0, width, height);
-            
             this.Inputs[0].Commit();
-            
+
             if (this.Outputs[0].Ptr->Format->type == MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_UNKNOWN)
             {
                 throw new PiCameraError("Unable to determine settings for output port.");
             }
 
             this.Inputs[0].Ptr->BufferNum = Math.Max(this.Inputs[0].Ptr->BufferNumRecommended, this.Inputs[0].Ptr->BufferNumMin);
-            this.Inputs[0].Ptr->BufferSize = Math.Max(bufferSize, this.Inputs[0].Ptr->BufferSizeMin);
+            this.Inputs[0].Ptr->BufferSize = Math.Max(this.Inputs[0].Ptr->BufferSizeRecommended, this.Inputs[0].Ptr->BufferSizeMin);
 
             this.Inputs[0].EncodingType = encodingType;
+
+            this.Inputs[0].Commit();
         }
 
         /// <summary>
         /// Call to configure changes on the 1st Downstream component output port.
-        /// </summary>        
+        /// </summary>
         /// <param name="encodingType">The encoding type this output port will send data in</param>
         /// <param name="pixelFormat">The pixel format this output port will send data in</param>
         /// <param name="quality">The quality of our outputted data</param>
@@ -111,22 +122,20 @@ namespace MMALSharp.Components
         {
             this.InitialiseOutputPort(outputPort);
             this.ProcessingPorts.Add(outputPort);
-            
+
             this.Inputs[0].ShallowCopy(this.Outputs[outputPort]);
 
             if (encodingType != null)
             {
                 this.Outputs[outputPort].Ptr->Format->encoding = encodingType.EncodingVal;
             }
+
             if (pixelFormat != null)
             {
                 this.Outputs[outputPort].Ptr->Format->encodingVariant = pixelFormat.EncodingVal;
             }
-            
-            MMAL_VIDEO_FORMAT_T tempVid = this.Outputs[outputPort].Ptr->Format->es->video;
 
-            //this.OutputPort.Ptr->Format->es->video.frameRate = new MMAL_RATIONAL_T(0, 1);
-            //this.OutputPort.Ptr->Format->bitrate = bitrate;
+            MMAL_VIDEO_FORMAT_T tempVid = this.Outputs[outputPort].Ptr->Format->es->video;
 
             try
             {
@@ -134,7 +143,7 @@ namespace MMALSharp.Components
             }
             catch
             {
-                //If commit fails using new settings, attempt to reset using old temp MMAL_VIDEO_FORMAT_T.
+                // If commit fails using new settings, attempt to reset using old temp MMAL_VIDEO_FORMAT_T.
                 MMALLog.Logger.Warn("Commit of output port failed. Attempting to reset values.");
                 this.Outputs[outputPort].Ptr->Format->es->video = tempVid;
                 this.Outputs[outputPort].Commit();
@@ -154,29 +163,47 @@ namespace MMALSharp.Components
 
             this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
             this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
-            
-            //It is important to re-commit changes to width and height.
+
+            // It is important to re-commit changes to width and height.
             this.Outputs[outputPort].Commit();
+        }
+
+        public override void Dispose()
+        {
+            MMALLog.Logger.Debug("Removing downstream component");
+
+            this.ClosePipelineConnections();
+
+            // Remove any unmanaged resources held by the capture handler.
+            this.Handler?.Dispose();
+
+            MMALCamera.Instance.DownstreamComponents.Remove(this);
+
+            base.Dispose();
         }
 
         /// <summary>
         /// Initialises the input port specified by constructing the correct port type to be used by the component.
         /// </summary>
         /// <param name="inputPort">The input port to initialise</param>
-        internal virtual unsafe void InitialiseInputPort(int inputPort) { }
+        internal virtual unsafe void InitialiseInputPort(int inputPort)
+        {
+        }
 
         /// <summary>
         /// Initialises the output port specified by constructing the correct port type to be used by the component.
         /// </summary>
         /// <param name="outputPort">The output port to initialise</param>
-        internal virtual unsafe void InitialiseOutputPort(int outputPort) { }
+        internal virtual unsafe void InitialiseOutputPort(int outputPort)
+        {
+        }
 
         /// <summary>
-        /// Responsible for closing and destroying any connections associated with this component prior to disposing. 
+        /// Responsible for closing and destroying any connections associated with this component prior to disposing.
         /// </summary>
         private void ClosePipelineConnections()
         {
-            //Close any connection held by this component
+            // Close any connection held by this component
             foreach (var input in this.Inputs)
             {
                 if (input.ConnectedReference != null)
@@ -190,31 +217,17 @@ namespace MMALSharp.Components
                     input.ConnectedReference = null;
                 }
             }
+
             foreach (var output in this.Outputs)
             {
-                if(output.ConnectedReference != null)
+                if (output.ConnectedReference != null)
                 {
                     MMALLog.Logger.Debug($"Removing {output.ConnectedReference.ToString()}");
 
                     output.ConnectedReference.Dispose();
                     output.ConnectedReference = null;
                 }
-            }            
+            }
         }
-        
-        public override void Dispose()
-        {
-            MMALLog.Logger.Debug("Removing downstream component");
-
-            this.ClosePipelineConnections();
-
-            //Remove any unmanaged resources held by the capture handler.
-            this.Handler?.Dispose();
-
-            MMALCamera.Instance.DownstreamComponents.Remove(this);
-
-            base.Dispose();
-        }
-
     }
 }

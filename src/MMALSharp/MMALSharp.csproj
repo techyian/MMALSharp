@@ -26,6 +26,7 @@
   </ItemGroup>  
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.5.0-rc03" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MMALSharp.Common\MMALSharp.Common.csproj" />

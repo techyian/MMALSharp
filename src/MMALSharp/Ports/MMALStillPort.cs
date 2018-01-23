@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MMALSharp.Native;
 
 namespace MMALSharp.Ports
@@ -12,8 +9,13 @@ namespace MMALSharp.Ports
     /// </summary>
     public unsafe class MMALStillPort : MMALPortImpl
     {
-        public MMALStillPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type) : base(ptr, comp, type) { }
-        public MMALStillPort(MMALPortImpl copyFrom) : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType) { }
+        public MMALStillPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
+            : base(ptr, comp, type)
+        {
+        }
+
+        public MMALStillPort(MMALPortImpl copyFrom)
+            : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType) { }
     }
 
     /// <summary>
@@ -21,7 +23,10 @@ namespace MMALSharp.Ports
     /// </summary>
     public unsafe class MMALStillConvertPort : MMALStillPort
     {
-        public MMALStillConvertPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type) : base(ptr, comp, type) { }
+        public MMALStillConvertPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
+            : base(ptr, comp, type)
+        {
+        }
 
         /// <summary>
         /// The native callback MMAL passes buffer headers to
@@ -35,30 +40,33 @@ namespace MMALSharp.Ports
                 MMALLog.Logger.Debug("In native output callback");
                 var bufferImpl = new MMALBufferImpl(buffer);
 
-                if (MMALCameraConfig.Debug)
+                if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero)
                 {
-                    bufferImpl.PrintProperties();
-                }
-
-                if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero && bufferImpl.Length > 0)
-                {
-                    this.ManagedOutputCallback(bufferImpl, this);
-                }
-
-                //Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
-                this.ReleaseOutputBuffer(bufferImpl);
-
-                //If this buffer signals the end of data stream, allow waiting thread to continue.
-                if (bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS ||
-                                                   c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED))
-                {
-                    MMALLog.Logger.Debug("End of stream. Signaling completion...");
-
-                    if (this.Trigger != null && this.Trigger.CurrentCount > 0)
+                    if (MMALCameraConfig.Debug)
                     {
-                        this.Trigger.Signal();
+                        bufferImpl.PrintProperties();
                     }
-                }                
+
+                    if (bufferImpl.Length > 0)
+                    {
+                        this.ManagedOutputCallback(bufferImpl, this);
+                    }
+
+                    // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
+                    this.ReleaseOutputBuffer(bufferImpl);
+
+                    // If this buffer signals the end of data stream, allow waiting thread to continue.
+                    if (bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS ||
+                                                       c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED))
+                    {
+                        MMALLog.Logger.Debug("End of stream. Signaling completion...");
+
+                        if (this.Trigger != null && this.Trigger.CurrentCount > 0)
+                        {
+                            this.Trigger.Signal();
+                        }
+                    }
+                }
             }
         }
     }

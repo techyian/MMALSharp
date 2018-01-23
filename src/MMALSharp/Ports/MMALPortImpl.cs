@@ -12,7 +12,10 @@ namespace MMALSharp
     /// </summary>
     public unsafe class MMALPortImpl : MMALPortBase
     {
-        public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type) : base(ptr, comp, type) { }
+        public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
+            : base(ptr, comp, type)
+        {
+        }
 
         /// <summary>
         /// Enable processing on an input port
@@ -23,17 +26,17 @@ namespace MMALSharp
             if (!this.Enabled)
             {
                 this.ManagedInputCallback = managedCallback;
-                
-                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativeInputPortCallback);
-                
+
+                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeInputPortCallback);
+
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
                 MMALLog.Logger.Debug("Enabling port.");
-                
+
                 if (managedCallback == null)
                 {
                     MMALLog.Logger.Warn("Callback null");
-                    
+
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
                 }
                 else
@@ -48,7 +51,6 @@ namespace MMALSharp
             {
                 throw new PiCameraError("Unknown error occurred whilst enabling port");
             }
-
         }
 
         /// <summary>
@@ -60,17 +62,17 @@ namespace MMALSharp
             if (!this.Enabled)
             {
                 this.ManagedOutputCallback = managedCallback;
-                
-                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(NativeOutputPortCallback);
-                
+
+                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeOutputPortCallback);
+
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
                 MMALLog.Logger.Debug("Enabling port.");
-                
+
                 if (managedCallback == null)
                 {
                     MMALLog.Logger.Warn("Callback null");
-                    
+
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
                 }
                 else
@@ -85,13 +87,13 @@ namespace MMALSharp
             {
                 throw new PiCameraError("Unknown error occurred whilst enabling port");
             }
-                
         }
 
         internal override void NativeInputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             lock (MMALPortBase.InputLock)
             {
+                MMALLog.Logger.Debug("In native input callback");
                 var bufferImpl = new MMALBufferImpl(buffer);
 
                 if (MMALCameraConfig.Debug)
@@ -112,33 +114,35 @@ namespace MMALSharp
         {
             lock (MMALPortBase.OutputLock)
             {
+                MMALLog.Logger.Debug("In native output callback");
+
                 var bufferImpl = new MMALBufferImpl(buffer);
 
                 if (MMALCameraConfig.Debug)
                 {
                     bufferImpl.PrintProperties();
                 }
-                
+
                 if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero && bufferImpl.Length > 0)
                 {
                     this.ManagedOutputCallback(bufferImpl, this);
                 }
 
-                //Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
+                // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
                 this.ReleaseOutputBuffer(bufferImpl);
 
-                //If this buffer signals the end of data stream, allow waiting thread to continue.
+                // If this buffer signals the end of data stream, allow waiting thread to continue.
                 if (bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END ||
                                                     c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED))
                 {
                     MMALLog.Logger.Debug("End of stream. Signaling completion...");
-                    
+
                     if (this.Trigger != null && this.Trigger.CurrentCount > 0)
                     {
                         this.Trigger.Signal();
-                    }                        
-                }                                                             
+                    }
+                }
             }
         }
-    }    
+    }
 }
