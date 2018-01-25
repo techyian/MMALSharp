@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
@@ -27,6 +23,12 @@ namespace MMALSharp.Native
 
         [DllImport("libmmal.so", EntryPoint = "mmal_component_disable", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_component_disable(MMAL_COMPONENT_T* comp);
+
+        [DllImport("libmmal.so", EntryPoint = "mmal_wrapper_create", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_wrapper_create(IntPtr* wrapper, string name);
+
+        [DllImport("libmmal.so", EntryPoint = "mmal_wrapper_destroy", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_wrapper_destroy(IntPtr* wrapper);
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -51,24 +53,49 @@ namespace MMALSharp.Native
         private MMAL_PORT_T** port;
         private uint id;
 
-        public IntPtr Priv => priv;
-        public IntPtr UserData => userData;
-        public char* Name => name;
-        public uint IsEnabled => isEnabled;
-        public MMAL_PORT_T* Control => control;
-        public uint InputNum => inputNum;
-        public MMAL_PORT_T** Input => input;
-        public uint OutputNum => outputNum;
-        public MMAL_PORT_T** Output => output;
-        public uint ClockNum => clockNum;
-        public MMAL_PORT_T** Clock => clock;
-        public uint PortNum => portNum;
-        public MMAL_PORT_T** Port => port;
-        public uint Id => id;
+        public IntPtr Priv => this.priv;
 
-        public MMAL_COMPONENT_T(IntPtr priv, IntPtr userData, char* name, uint isEnabled, MMAL_PORT_T* control, uint inputNum,
-                                MMAL_PORT_T** input, uint outputNum, MMAL_PORT_T** output, uint clockNum, MMAL_PORT_T** clock,
-                                uint portNum, MMAL_PORT_T** port, uint id)
+        public IntPtr UserData => this.userData;
+
+        public char* Name => this.name;
+
+        public uint IsEnabled => this.isEnabled;
+
+        public MMAL_PORT_T* Control => this.control;
+
+        public uint InputNum => this.inputNum;
+
+        public MMAL_PORT_T** Input => this.input;
+
+        public uint OutputNum => this.outputNum;
+
+        public MMAL_PORT_T** Output => this.output;
+
+        public uint ClockNum => this.clockNum;
+
+        public MMAL_PORT_T** Clock => this.clock;
+
+        public uint PortNum => this.portNum;
+
+        public MMAL_PORT_T** Port => this.port;
+
+        public uint Id => this.id;
+
+        public MMAL_COMPONENT_T(
+                                IntPtr priv,
+                                IntPtr userData,
+                                char* name,
+                                uint isEnabled,
+                                MMAL_PORT_T* control,
+                                uint inputNum,
+                                MMAL_PORT_T** input,
+                                uint outputNum,
+                                MMAL_PORT_T** output,
+                                uint clockNum,
+                                MMAL_PORT_T** clock,
+                                uint portNum,
+                                MMAL_PORT_T** port,
+                                uint id)
         {
             this.priv = priv;
             this.userData = userData;
@@ -83,12 +110,86 @@ namespace MMALSharp.Native
             this.clock = clock;
             this.portNum = portNum;
             this.port = port;
-            this.id = id;            
+            this.id = id;
         }
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct MMAL_WRAPPER_T
+    {
+        private IntPtr userData, callback;
+        private MMAL_COMPONENT_T* component;
+        private MMALUtil.MMAL_STATUS_T status;
+        private MMAL_PORT_T* control;
+        private uint inputNum;
+        private MMAL_PORT_T** input;
+        private MMAL_POOL_T** inputPool;
+        private uint outputNum;
+        private MMAL_PORT_T** output;
+        private MMAL_POOL_T** outputPool;
+        private MMAL_QUEUE_T** outputQueue;
+        private long timeSetup, timeEnable, timeDisable;
 
+        public IntPtr UserData => this.userData;
 
+        public IntPtr Callback => this.callback;
 
+        public MMALUtil.MMAL_STATUS_T Status => this.status;
 
+        public MMAL_PORT_T* Control => this.control;
+
+        public uint InputNum => this.inputNum;
+
+        public MMAL_PORT_T** Input => this.input;
+
+        public MMAL_POOL_T** InputPool => this.inputPool;
+
+        public uint OutputNum => this.outputNum;
+
+        public MMAL_PORT_T** Output => this.output;
+
+        public MMAL_POOL_T** OutputPool => this.outputPool;
+
+        public MMAL_QUEUE_T** OutputQueue => this.outputQueue;
+
+        public long TimeSetup => this.timeSetup;
+
+        public long TimeEnable => this.timeEnable;
+
+        public long TimeDisable => this.timeDisable;
+
+        public MMAL_WRAPPER_T (
+                               IntPtr userData,
+                               IntPtr callback,
+                               MMAL_COMPONENT_T* component,
+                               MMALUtil.MMAL_STATUS_T status,
+                               MMAL_PORT_T* control,
+                               uint inputNum,
+                               MMAL_PORT_T** input,
+                               MMAL_POOL_T** inputPool,
+                               uint outputNum,
+                               MMAL_PORT_T** output,
+                               MMAL_POOL_T** outputPool,
+                               MMAL_QUEUE_T** outputQueue,
+                               long timeSetup,
+                               long timeEnable,
+                               long timeDisable)
+        {
+            this.userData = userData;
+            this.callback = callback;
+            this.component = component;
+            this.status = status;
+            this.control = control;
+            this.inputNum = inputNum;
+            this.input = input;
+            this.inputPool = inputPool;
+            this.outputNum = outputNum;
+            this.output = output;
+            this.outputPool = outputPool;
+            this.outputQueue = outputQueue;
+            this.timeSetup = timeSetup;
+            this.timeEnable = timeEnable;
+            this.timeDisable = timeDisable;
+        }
+    }
 }

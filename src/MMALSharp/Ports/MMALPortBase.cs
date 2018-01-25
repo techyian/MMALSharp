@@ -243,9 +243,20 @@ namespace MMALSharp
 
                     ProcessResult result = managedCallback(buffer, this);
 
-                    buffer.ReadIntoBuffer(result.BufferFeed, result.EOF);
+                    buffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
 
-                    this.SendBuffer(buffer);
+                    MMALLog.Logger.Debug($"Sending buffer to input port: Length {buffer.Length}");
+
+                    if (result.DataLength > 0)
+                    {
+                        this.SendBuffer(buffer);
+                    }
+                    else
+                    {
+                        MMALLog.Logger.Debug("Data length is empty. Releasing buffer.");
+                        buffer.Release();
+                        buffer.Dispose();
+                    }
                 }
             }
         }
@@ -332,6 +343,9 @@ namespace MMALSharp
             for (int i = 0; i < length; i++)
             {
                 var buffer = this.BufferPool.Queue.GetBuffer();
+
+                MMALLog.Logger.Debug($"Sending buffer to output port: Length {buffer.Length}");
+
                 this.SendBuffer(buffer);
             }
         }
@@ -345,8 +359,10 @@ namespace MMALSharp
             if (this.BufferPool != null)
             {
                 if (this.Enabled)
+                {
                     this.DisablePort();
-                
+                }
+
                 MMALUtil.mmal_port_pool_destroy(this.Ptr, this.BufferPool.Ptr);
             }
         }
@@ -354,17 +370,17 @@ namespace MMALSharp
         internal void ReleaseInputBuffer(MMALBufferImpl bufferImpl)
         {
             MMALLog.Logger.Debug("Releasing input buffer.");
-                        
+
             bufferImpl.Release();
             bufferImpl.Dispose();
-            
+
             if (this.Enabled && this.BufferPool != null)
             {
                 var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
-                                
-                //Populate the new input buffer with user provided image data.
+
+                // Populate the new input buffer with user provided image data.
                 var result = this.ManagedInputCallback(newBuffer, this);
-                bufferImpl.ReadIntoBuffer(result.BufferFeed, result.EOF);
+                bufferImpl.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
 
                 try
                 {
@@ -379,7 +395,7 @@ namespace MMALSharp
                     }
 
                     if (newBuffer != null)
-                    {                        
+                    {
                         this.SendBuffer(newBuffer);
                     }
                     else
@@ -390,6 +406,7 @@ namespace MMALSharp
                 catch (Exception ex)
                 {
                     MMALLog.Logger.Warn($"Buffer handling failed. {ex.Message}");
+                    throw;
                 }
             }
         }
@@ -427,6 +444,7 @@ namespace MMALSharp
             catch (Exception e)
             {
                 MMALLog.Logger.Warn($"Unable to send buffer header. {e.Message}");
+                throw;
             }
         }
 
@@ -441,7 +459,7 @@ namespace MMALSharp
             var connection = MMALConnectionImpl.CreateConnection(this, destinationComponent.Inputs[inputPort], destinationComponent, useCallback);
             this.ConnectedReference = connection;
             destinationComponent.Inputs[inputPort].ConnectedReference = connection;
-            
+
             return destinationComponent.Inputs[inputPort];
         }
 
@@ -451,6 +469,5 @@ namespace MMALSharp
             callback();
             return destinationComponent.Inputs[inputPort];
         }
-        
     }
 }

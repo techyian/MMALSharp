@@ -7,5 +7,6 @@ namespace MMALSharp.Handlers
         public string Message { get; set; }
         public bool EOF { get; set; }
         public byte[] BufferFeed { get; set; }
+        public int DataLength { get; set; }
     }
 }

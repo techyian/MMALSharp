@@ -25,6 +25,12 @@ namespace MMALSharp
         internal MMALBufferImpl GetBuffer()
         {
             var ptr = MMALQueue.mmal_queue_get(this.Ptr);
+
+            if (ptr == null || (IntPtr)ptr == IntPtr.Zero)
+            {
+                throw new MMALException(MMALUtil.MMAL_STATUS_T.MMAL_EAGAIN, "Buffer retrieved from queue was invalid");
+            }
+
             return new MMALBufferImpl(ptr);
         }
 

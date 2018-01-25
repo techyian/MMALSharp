@@ -28,6 +28,13 @@ namespace MMALSharp.Components
             // Don't do anything with pixelFormat param in this override.
             MMAL_VIDEO_FORMAT_T tempVid = this.Outputs[outputPort].Ptr->Format->es->video;
 
+            this.Outputs[outputPort].EncodingType = encodingType;
+            this.Outputs[outputPort].PixelFormat = pixelFormat;
+
+            this.Outputs[outputPort].Ptr->Format->es->video.height = 0;
+            this.Outputs[outputPort].Ptr->Format->es->video.width = 0;
+            this.Outputs[outputPort].Ptr->Format->es->video.crop = new MMAL_RECT_T(0, 0, 0, 0);
+
             try
             {
                 this.Outputs[outputPort].Commit();
@@ -40,17 +47,7 @@ namespace MMALSharp.Components
                 this.Outputs[outputPort].Commit();
             }
 
-            this.Outputs[outputPort].EncodingType = encodingType;
-            this.Outputs[outputPort].PixelFormat = pixelFormat;
-
-            this.Outputs[outputPort].Ptr->Format->es->video.height = 0;
-            this.Outputs[outputPort].Ptr->Format->es->video.width = 0;
-            this.Outputs[outputPort].Ptr->Format->es->video.crop = new MMAL_RECT_T(0, 0, 0, 0);
-
             this.Outputs[outputPort].Ptr->BufferNum = 1;
-
-            // It is important to re-commit changes to width and height.
-            this.Outputs[outputPort].Commit();
         }
 
         /// <summary>

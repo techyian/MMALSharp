@@ -234,7 +234,7 @@ namespace MMALSharp
             }
         }
 
-        internal void ReadIntoBuffer(byte[] source, bool eof)
+        internal void ReadIntoBuffer(byte[] source, int length, bool eof)
         {
             MMALLog.Logger.Debug("Reading data into buffer");
 
@@ -242,7 +242,7 @@ namespace MMALSharp
             var ptrAlloc = Marshal.AllocHGlobal(source.Length);
             this.Ptr->data = (byte*)ptrAlloc;
             this.Ptr->allocSize = (uint)source.Length;
-            this.Ptr->length = (uint)source.Length;
+            this.Ptr->length = (uint)length;
 
             if (eof)
             {

@@ -83,19 +83,17 @@ namespace MMALSharp.Components
                 this.Inputs[0].Ptr->Format->encodingVariant = pixelFormat.EncodingVal;
             }
 
+            this.Inputs[0].Ptr->BufferNum = this.Inputs[0].Ptr->BufferNumMin;
+            this.Inputs[0].Ptr->BufferSize = this.Inputs[0].Ptr->BufferSizeMin;
+
+            this.Inputs[0].EncodingType = encodingType;
+
             this.Inputs[0].Commit();
 
             if (this.Outputs[0].Ptr->Format->type == MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_UNKNOWN)
             {
                 throw new PiCameraError("Unable to determine settings for output port.");
             }
-
-            this.Inputs[0].Ptr->BufferNum = Math.Max(this.Inputs[0].Ptr->BufferNumRecommended, this.Inputs[0].Ptr->BufferNumMin);
-            this.Inputs[0].Ptr->BufferSize = Math.Max(this.Inputs[0].Ptr->BufferSizeRecommended, this.Inputs[0].Ptr->BufferSizeMin);
-
-            this.Inputs[0].EncodingType = encodingType;
-
-            this.Inputs[0].Commit();
         }
 
         /// <summary>

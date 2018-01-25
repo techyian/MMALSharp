@@ -26,10 +26,10 @@ namespace MMALSharp.Common.Handlers
        
             if (read < this.BufferSize)
             {       
-                return new ProcessResult { Success = true, BufferFeed = buffer, EOF = true };
+                return new ProcessResult { Success = true, BufferFeed = buffer, EOF = true, DataLength = read };
             }
             
-            return new ProcessResult { Success = true, BufferFeed = buffer };
+            return new ProcessResult { Success = true, BufferFeed = buffer, DataLength = read };
         }
 
         public override void Process(byte[] data)

@@ -36,9 +36,15 @@ namespace MMALSharp.Native
         [DllImport("libmmal.so", EntryPoint = "mmal_port_enable", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_port_enable(MMAL_PORT_T* port, IntPtr cb);
 
+        [DllImport("libmmal.so", EntryPoint = "mmal_wrapper_port_enable", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_wrapper_port_enable(MMAL_PORT_T* port, uint flags);
+        
         //MMAL_PORT_T* port -> Returns MMAL_STATUS_T
         [DllImport("libmmal.so", EntryPoint = "mmal_port_disable", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_port_disable(MMAL_PORT_T* port);
+
+        [DllImport("libmmal.so", EntryPoint = "mmal_wrapper_port_disable", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_wrapper_port_disable(MMAL_PORT_T* port);
 
         //MMAL_PORT_T* port -> Returns MMAL_STATUS_T
         [DllImport("libmmal.so", EntryPoint = "mmal_port_flush", CallingConvention = CallingConvention.Cdecl)]
