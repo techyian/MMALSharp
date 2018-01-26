@@ -1,10 +1,15 @@
-﻿using MMALSharp.Native;
-using Nito.AsyncEx;
+﻿// <copyright file="MMALPortBase.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using System;
 using System.Runtime.InteropServices;
+using MMALSharp.Native;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using static MMALSharp.MMALCallerHelper;
+using Nito.AsyncEx;
 
 namespace MMALSharp
 {
@@ -192,30 +197,63 @@ namespace MMALSharp
         }
 
         /// <summary>
+        /// Connects two components together by their input and output ports
+        /// </summary>
+        /// <param name="destinationComponent">The component we want to connect to</param>
+        /// <param name="inputPort">The input port of the component we want to connect to</param>
+        /// <param name="useCallback">Flag to use connection callback (adversely affects performance)</param>
+        /// <returns>The input port of the component we're connecting to - allows chain calling of this method</returns>
+        public MMALPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort = 0, bool useCallback = false)
+        {
+            if (this.ConnectedReference != null)
+            {
+                MMALLog.Logger.Warn("A connection has already been established on this port");
+                return destinationComponent.Inputs[inputPort];
+            }
+
+            var connection = MMALConnectionImpl.CreateConnection(this, destinationComponent.Inputs[inputPort], destinationComponent, useCallback);
+            this.ConnectedReference = connection;
+            destinationComponent.Inputs[inputPort].ConnectedReference = connection;
+
+            return destinationComponent.Inputs[inputPort];
+        }
+
+        public MMALPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort, Func<MMALPortBase> callback)
+        {
+            this.ConnectTo(destinationComponent, inputPort);
+            callback();
+            return destinationComponent.Inputs[inputPort];
+        }
+
+        /// <summary>
         /// Represents the native callback method for an input port that's called by MMAL
         /// </summary>
-        /// <param name="port"></param>
-        /// <param name="buffer"></param>
-        internal virtual void NativeInputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer) { }
+        /// <param name="port">Native port struct pointer</param>
+        /// <param name="buffer">Native buffer header pointer</param>
+        internal virtual void NativeInputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        {
+        }
 
         /// <summary>
         /// Represents the native callback method for an output port that's called by MMAL
         /// </summary>
-        /// <param name="port"></param>
-        /// <param name="buffer"></param>
-        internal virtual void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer) { }
+        /// <param name="port">Native port struct pointer</param>
+        /// <param name="buffer">Native buffer header pointer</param>
+        internal virtual void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        {
+        }
 
         /// <summary>
         /// Represents the native callback method for a control port that's called by MMAL
         /// </summary>
-        /// <param name="port"></param>
-        /// <param name="buffer"></param>
+        /// <param name="port">Native port struct pointer</param>
+        /// <param name="buffer">Native buffer header pointer</param>
         internal virtual void NativeControlPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer) { }
 
         /// <summary>
         /// Provides functionality to enable processing on an output port.
         /// </summary>
-        /// <param name="managedCallback"></param>        
+        /// <param name="managedCallback">Delegate for managed output port callback</param>
         internal virtual void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback)
         {
             if (managedCallback != null)
@@ -227,7 +265,7 @@ namespace MMALSharp
         /// <summary>
         /// Provides functionality to enable processing on an input port.
         /// </summary>
-        /// <param name="managedCallback"></param>        
+        /// <param name="managedCallback">Delegate for managed input port callback</param>
         internal virtual void EnablePort(Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback)
         {
             // We populate the input buffers with user provided data.
@@ -262,7 +300,7 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Disable processing on a port. Disabling a port will stop all processing on this port and return all (non-processed) 
+        /// Disable processing on a port. Disabling a port will stop all processing on this port and return all (non-processed)
         /// buffer headers to the client. If this is a connected output port, the input port to which it is connected shall also be disabled.
         /// Any buffer pool shall be released.
         /// </summary>
@@ -317,7 +355,7 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Ask a port to release all the buffer headers it currently has. This is an asynchronous operation and the 
+        /// Ask a port to release all the buffer headers it currently has. This is an asynchronous operation and the
         /// flush call will return before all the buffer headers are returned to the client.
         /// </summary>
         internal void Flush()
@@ -328,7 +366,7 @@ namespace MMALSharp
         /// <summary>
         /// Send a buffer header to a port.
         /// </summary>
-        /// <param name="buffer"></param>
+        /// <param name="buffer">A managed buffer object</param>
         internal void SendBuffer(MMALBufferImpl buffer)
         {
             MMALCheck(MMALPort.mmal_port_send_buffer(this.Ptr, buffer.Ptr), "Unable to send buffer header.");
@@ -351,7 +389,7 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Destroy a pool of MMAL_BUFFER_HEADER_T associated with a specific port. This will also deallocate all of the memory 
+        /// Destroy a pool of MMAL_BUFFER_HEADER_T associated with a specific port. This will also deallocate all of the memory
         /// which was allocated when creating or resizing the pool.
         /// </summary>
         internal void DestroyPortPool()
@@ -367,6 +405,10 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Releases an input port buffer and reads further data from user provided image data if not reached end of file
+        /// </summary>
+        /// <param name="bufferImpl">A managed buffer object</param>
         internal void ReleaseInputBuffer(MMALBufferImpl bufferImpl)
         {
             MMALLog.Logger.Debug("Releasing input buffer.");
@@ -411,6 +453,10 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Release an output port buffer, get a new one from the queue and send it for processing
+        /// </summary>
+        /// <param name="bufferImpl">A managed buffer object</param>
         internal void ReleaseOutputBuffer(MMALBufferImpl bufferImpl)
         {
             bufferImpl.Release();
@@ -446,28 +492,6 @@ namespace MMALSharp
                 MMALLog.Logger.Warn($"Unable to send buffer header. {e.Message}");
                 throw;
             }
-        }
-
-        public MMALPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort = 0, bool useCallback = false)
-        {
-            if (this.ConnectedReference != null)
-            {
-                MMALLog.Logger.Warn("A connection has already been established on this port");
-                return destinationComponent.Inputs[inputPort];
-            }
-
-            var connection = MMALConnectionImpl.CreateConnection(this, destinationComponent.Inputs[inputPort], destinationComponent, useCallback);
-            this.ConnectedReference = connection;
-            destinationComponent.Inputs[inputPort].ConnectedReference = connection;
-
-            return destinationComponent.Inputs[inputPort];
-        }
-
-        public MMALPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort, Func<MMALPortBase> callback)
-        {
-            this.ConnectTo(destinationComponent, inputPort);
-            callback();
-            return destinationComponent.Inputs[inputPort];
-        }
+        }                
     }
 }

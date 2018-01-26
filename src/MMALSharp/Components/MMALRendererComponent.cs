@@ -1,4 +1,9 @@
-﻿using MMALSharp.Native;
+﻿// <copyright file="MMALRendererComponent.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using MMALSharp.Native;
 
 namespace MMALSharp.Components
 {
@@ -7,7 +12,8 @@ namespace MMALSharp.Components
     /// </summary>
     public abstract class MMALRendererBase : MMALDownstreamComponent
     {
-        protected MMALRendererBase(string name) : base(name)
+        protected MMALRendererBase(string name)
+            : base(name)
         {
         }
     }
@@ -46,7 +52,8 @@ namespace MMALSharp.Components
             set { _height = value; }
         }
 
-        public MMALNullSinkComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_NULL_SINK)
+        public MMALNullSinkComponent()
+            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_NULL_SINK)
         {
             this.EnableComponent();
         }
@@ -91,14 +98,15 @@ namespace MMALSharp.Components
             set { _height = value; }
         }
 
-        public MMALVideoRenderer() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_RENDERER)
+        public MMALVideoRenderer()
+            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_RENDERER)
         {
             this.EnableComponent();
         }
 
         public override void PrintComponent()
         {
-            MMALLog.Logger.Info($"Component: Video renderer");            
+            MMALLog.Logger.Info($"Component: Video renderer");
         }
     }
 }

@@ -1,9 +1,14 @@
-﻿using MMALSharp.Native;
+﻿// <copyright file="MMALPortImpl.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using MMALSharp.Handlers;
 using static MMALSharp.MMALCallerHelper;
+using MMALSharp.Native;
 
 namespace MMALSharp
 {
@@ -93,7 +98,11 @@ namespace MMALSharp
         {
             lock (MMALPortBase.InputLock)
             {
-                MMALLog.Logger.Debug("In native input callback");
+                if (MMALCameraConfig.Debug)
+                {
+                    MMALLog.Logger.Debug("In native input callback");
+                }
+
                 var bufferImpl = new MMALBufferImpl(buffer);
 
                 if (MMALCameraConfig.Debug)
@@ -114,7 +123,10 @@ namespace MMALSharp
         {
             lock (MMALPortBase.OutputLock)
             {
-                MMALLog.Logger.Debug("In native output callback");
+                if (MMALCameraConfig.Debug)
+                {
+                    MMALLog.Logger.Debug("In native output callback");
+                }
 
                 var bufferImpl = new MMALBufferImpl(buffer);
 

@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="Helpers.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using System.Linq.Expressions;
 
 namespace MMALSharp

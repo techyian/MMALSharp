@@ -1,9 +1,14 @@
-﻿using MMALSharp.Handlers;
-using MMALSharp.Native;
+﻿// <copyright file="MMALComponentBase.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using MMALSharp.Handlers;
+using MMALSharp.Native;
 using MMALSharp.Ports;
 using static MMALSharp.MMALCallerHelper;
 
@@ -89,10 +94,131 @@ namespace MMALSharp
         }
 
         /// <summary>
+        /// Delegate to process the buffer header containing image data
+        /// </summary>
+        /// <param name="buffer">The current buffer header being processed</param>
+        /// <param name="port">The port we're currently processing on</param>
+        /// <returns>A process result containing user fed image data</returns>
+        public virtual ProcessResult ManagedInputCallback(MMALBufferImpl buffer, MMALPortBase port)
+        {
+            MMALLog.Logger.Debug("In managed input callback");
+            return this.Handler?.Process();
+        }
+
+        /// <summary>
+        /// Delegate to process the buffer header containing image data
+        /// </summary>
+        /// <param name="buffer">The current buffer header being processed</param>
+        /// <param name="port">The port we're currently processing on</param>
+        public virtual void ManagedOutputCallback(MMALBufferImpl buffer, MMALPortBase port)
+        {
+            MMALLog.Logger.Debug("In managed output callback");
+            var data = buffer.GetBufferData();
+            this.Handler?.Process(data);
+        }
+
+        public virtual void ManagedControlCallback(MMALBufferImpl buffer, MMALPortBase port)
+        {
+            MMALLog.Logger.Debug("In managed control callback");
+        }
+
+        /// <summary>
+        /// Enables any connections associated with this component, traversing down the pipeline to enable those connections
+        /// also.
+        /// </summary>
+        public void EnableConnections()
+        {
+            foreach (MMALPortImpl port in this.Outputs)
+            {
+                if (port.ConnectedReference != null)
+                {
+                    // This component has an output port connected to another component.
+                    port.ConnectedReference.DownstreamComponent.EnableConnections();
+
+                    // Enable the connection
+                    port.ConnectedReference.Enable();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Disables any connections associated with this component, traversing down the pipeline to disable those connections
+        /// also.
+        /// </summary>
+        public void DisableConnections()
+        {
+            foreach (MMALPortImpl port in this.Outputs)
+            {
+                if (port.ConnectedReference != null)
+                {
+                    // This component has an output port connected to another component.
+                    port.ConnectedReference.DownstreamComponent.DisableConnections();
+
+                    // Disable the connection
+                    port.ConnectedReference.Disable();
+                }
+            }
+        }
+
+        public virtual void PrintComponent()
+        {
+            MMALLog.Logger.Info($"Component: {this.Name}");
+
+            for (var i = 0; i < this.Inputs.Count; i++)
+            {
+                if (this.Inputs[i].EncodingType != null)
+                {
+                    MMALLog.Logger.Info($"    Port {i} Input encoding: {this.Inputs[i].EncodingType.EncodingName}.");
+                }
+            }
+
+            for (var i = 0; i < this.Outputs.Count; i++)
+            {
+                if (this.Outputs[i].EncodingType != null)
+                {
+                    MMALLog.Logger.Info($"    Port {i} Output encoding: {this.Outputs[i].EncodingType.EncodingName}");
+                }
+            }
+        }
+
+        public override void Dispose()
+        {
+            MMALLog.Logger.Debug($"Disposing component {this.Name}.");
+
+            // See if any pools need disposing before destroying component.
+            foreach (var port in this.Inputs)
+            {
+                if (port.BufferPool != null)
+                {
+                    MMALLog.Logger.Debug("Destroying port pool");
+
+                    port.DestroyPortPool();
+                }
+            }
+
+            foreach (var port in this.Outputs)
+            {
+                if (port.BufferPool != null)
+                {
+                    MMALLog.Logger.Debug("Destroying port pool");
+
+                    port.DestroyPortPool();
+                }
+            }
+
+            this.DisableComponent();
+            this.DestroyComponent();
+
+            MMALLog.Logger.Debug("Completed disposal...");
+
+            base.Dispose();
+        }
+
+        /// <summary>
         /// Provides a facility to create a component with a given name
         /// </summary>
         /// <param name="name">The name of the component to create</param>
-        /// <returns></returns>
+        /// <returns>A pointer to the new component struct</returns>
         private static MMAL_COMPONENT_T* CreateComponent(string name)
         {
             IntPtr ptr = IntPtr.Zero;
@@ -151,34 +277,6 @@ namespace MMALSharp
             {
                 MMALCheck(MMALComponent.mmal_component_disable(this.Ptr), "Unable to disable component");
             }
-        }
-
-        /// <summary>
-        /// Delegate to process the buffer header containing image data
-        /// </summary>
-        /// <param name="buffer">The current buffer header being processed</param>
-        /// <param name="port">The port we're currently processing on</param>
-        public virtual ProcessResult ManagedInputCallback(MMALBufferImpl buffer, MMALPortBase port)
-        {
-            MMALLog.Logger.Debug("In managed input callback");
-            return this.Handler?.Process();
-        }
-
-        /// <summary>
-        /// Delegate to process the buffer header containing image data
-        /// </summary>
-        /// <param name="buffer">The current buffer header being processed</param>
-        /// <param name="port">The port we're currently processing on</param>
-        public virtual void ManagedOutputCallback(MMALBufferImpl buffer, MMALPortBase port)
-        {
-            MMALLog.Logger.Debug("In managed output callback");
-            var data = buffer.GetBufferData();
-            this.Handler?.Process(data);
-        }
-
-        public virtual void ManagedControlCallback(MMALBufferImpl buffer, MMALPortBase port)
-        {
-            MMALLog.Logger.Debug("In managed control callback");
         }
 
         /// <summary>
@@ -281,98 +379,6 @@ namespace MMALSharp
                     port.BufferPool = null;
                 }
             }
-        }
-
-        /// <summary>
-        /// Enables any connections associated with this component, traversing down the pipeline to enable those connections
-        /// also.
-        /// </summary>
-        public void EnableConnections()
-        {
-            foreach (MMALPortImpl port in this.Outputs)
-            {
-                if (port.ConnectedReference != null)
-                {
-                    // This component has an output port connected to another component.
-                    port.ConnectedReference.DownstreamComponent.EnableConnections();
-
-                    // Enable the connection
-                    port.ConnectedReference.Enable();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Disables any connections associated with this component, traversing down the pipeline to disable those connections
-        /// also.
-        /// </summary>
-        public void DisableConnections()
-        {
-            foreach (MMALPortImpl port in this.Outputs)
-            {
-                if (port.ConnectedReference != null)
-                {
-                    // This component has an output port connected to another component.
-                    port.ConnectedReference.DownstreamComponent.DisableConnections();
-
-                    // Disable the connection
-                    port.ConnectedReference.Disable();
-                }
-            }
-        }
-
-        public virtual void PrintComponent()
-        {
-            MMALLog.Logger.Info($"Component: {this.Name}");
-
-            for (var i = 0; i < this.Inputs.Count; i++)
-            {
-                if (this.Inputs[i].EncodingType != null)
-                {
-                    MMALLog.Logger.Info($"    Port {i} Input encoding: {this.Inputs[i].EncodingType.EncodingName}.");
-                }
-            }
-
-            for (var i = 0; i < this.Outputs.Count; i++)
-            {
-                if (this.Outputs[i].EncodingType != null)
-                {
-                    MMALLog.Logger.Info($"    Port {i} Output encoding: {this.Outputs[i].EncodingType.EncodingName}");
-                }
-            }
-        }
-
-        public override void Dispose()
-        {
-            MMALLog.Logger.Debug($"Disposing component {this.Name}.");
-
-            // See if any pools need disposing before destroying component.
-            foreach (var port in this.Inputs)
-            {
-                if (port.BufferPool != null)
-                {
-                    MMALLog.Logger.Debug("Destroying port pool");
-
-                    port.DestroyPortPool();
-                }
-            }
-
-            foreach (var port in this.Outputs)
-            {
-                if (port.BufferPool != null)
-                {
-                    MMALLog.Logger.Debug("Destroying port pool");
-
-                    port.DestroyPortPool();
-                }
-            }
-
-            this.DisableComponent();
-            this.DestroyComponent();
-
-            MMALLog.Logger.Debug("Completed disposal...");
-
-            base.Dispose();
         }
     }
 }

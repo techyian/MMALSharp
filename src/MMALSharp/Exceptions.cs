@@ -1,4 +1,9 @@
-﻿using MMALSharp.Native;
+﻿// <copyright file="Exceptions.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using MMALSharp.Native;
 using NLog;
 using NLog.Config;
 using NLog.Targets;

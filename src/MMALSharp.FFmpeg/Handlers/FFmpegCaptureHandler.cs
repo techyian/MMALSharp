@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// <copyright file="FFmpegCaptureHandler.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace MMALSharp.Handlers

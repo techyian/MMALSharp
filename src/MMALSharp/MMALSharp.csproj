@@ -20,6 +20,12 @@
 	<PackageReference Include="Nito.AsyncEx" Version="5.0.0-pre-05" />    
 	<PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />    	
 	<PackageReference Include="Microsoft.CSharp" Version="4.3.0" />    		
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="stylecop.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>  
   <ItemGroup>
     <Folder Include="Properties\" />

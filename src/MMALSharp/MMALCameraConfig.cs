@@ -1,12 +1,15 @@
-﻿using MMALSharp.Native;
+﻿// <copyright file="MMALCameraConfig.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using System;
-using static MMALSharp.Native.MMALParameters;
+using MMALSharp.Native;
 
 namespace MMALSharp
 {
-    
     public static class MMALCameraConfig
-    {        
+    {
         public static bool Debug { get; set; }
 
         /// <summary>

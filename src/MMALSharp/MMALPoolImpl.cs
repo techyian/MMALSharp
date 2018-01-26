@@ -1,5 +1,9 @@
-﻿using MMALSharp.Native;
-using System;
+﻿// <copyright file="MMALPoolImpl.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using MMALSharp.Native;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
@@ -13,18 +17,25 @@ namespace MMALSharp
         /// Native pointer that represents this buffer header pool
         /// </summary>
         internal MMAL_POOL_T* Ptr { get; set; }
-        
+
         /// <summary>
         /// Accessor to the queue of buffer headers this pool has
-        /// </summary>                                
+        /// </summary>
         public MMALQueueImpl Queue { get; set; }
 
         public MMALPoolImpl(MMALPortBase port)
         {
             MMALLog.Logger.Debug($"Creating buffer pool with {port.BufferNum} buffers of size {port.BufferSize}");
-            
+
             this.Ptr = MMALUtil.mmal_port_pool_create(port.Ptr, port.BufferNum, port.BufferSize);
-            this.Queue = new MMALQueueImpl((*this.Ptr).Queue);            
+            this.Queue = new MMALQueueImpl((*this.Ptr).Queue);
+        }
+
+        public override void Dispose()
+        {
+            MMALLog.Logger.Debug("Disposing pool.");
+            this.Destroy();
+            base.Dispose();
         }
 
         /// <summary>
@@ -43,13 +54,6 @@ namespace MMALSharp
         internal void Resize(uint numHeaders, uint size)
         {
             MMALCheck(MMALPool.mmal_pool_resize(this.Ptr, numHeaders, size), "Unable to resize pool");
-        }
-
-        public override void Dispose()
-        {
-            MMALLog.Logger.Debug("Disposing pool.");
-            this.Destroy();
-            base.Dispose();
         }
     }
 }

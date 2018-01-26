@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿// <copyright file="MMALClock.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
@@ -20,8 +20,7 @@ namespace MMALSharp.Native
         public static int MMAL_CLOCK_EVENT_INPUT_BUFFER_INFO = MMALUtil.MMAL_FOURCC("CIBI");
         public static int MMAL_CLOCK_EVENT_OUTPUT_BUFFER_INFO = MMALUtil.MMAL_FOURCC("COBI");
         public static int MMAL_CLOCK_EVENT_LATENCY = MMALUtil.MMAL_FOURCC("CLAT");
-        public static int MMAL_CLOCK_EVENT_INVALID = 0;
-                
+        public static int MMAL_CLOCK_EVENT_INVALID = 0;                
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -29,8 +28,9 @@ namespace MMALSharp.Native
     {
         private long thresholdLower, thresholdUpper;
 
-        public long ThresholdLower => thresholdLower;
-        public long ThresholdUpper => thresholdUpper;
+        public long ThresholdLower => this.thresholdLower;
+
+        public long ThresholdUpper => this.thresholdUpper;
 
         public MMAL_CLOCK_UPDATE_THRESHOLD_T(long thresholdLower, long thresholdUpper)
         {
@@ -44,8 +44,9 @@ namespace MMALSharp.Native
     {
         private long threshold, duration;
 
-        public long Threshold => threshold;
-        public long Duration => duration;
+        public long Threshold => this.threshold;
+
+        public long Duration => this.duration;
 
         public MMAL_CLOCK_DISCONT_THRESHOLD_T(long threshold, long duration)
         {

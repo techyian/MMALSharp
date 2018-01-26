@@ -1,8 +1,10 @@
-﻿using System;
+﻿// <copyright file="MMALEncodings.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
@@ -115,7 +117,7 @@ namespace MMALSharp.Native
             MMALEncoding.MMAL_COLOR_SPACE_BT470_2_BG,
             MMALEncoding.MMAL_COLOR_SPACE_JFIF_Y16_255
         };
-        
+
         /// <summary>
         /// Parses an integer encoding value to an MMALEncoding object.
         /// </summary>
@@ -123,7 +125,7 @@ namespace MMALSharp.Native
         /// <returns>The MMALEncoding object</returns>
         public static MMALEncoding ParseEncoding(this int encodingType)
         {
-            return EncodingList.Where(c => c.EncodingVal == encodingType).FirstOrDefault();            
+            return EncodingList.Where(c => c.EncodingVal == encodingType).FirstOrDefault();
         }
     }
 
@@ -139,7 +141,9 @@ namespace MMALSharp.Native
         }
 
         public int EncodingVal { get; set; }
+
         public string EncodingName { get; set; }
+
         public EncodingType EncType { get; set; }
 
         public MMALEncoding(string s, EncodingType type)

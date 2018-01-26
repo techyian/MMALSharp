@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="MMALControlPort.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using System.Runtime.InteropServices;
 using MMALSharp.Native;
 using static MMALSharp.MMALCallerHelper;
@@ -53,7 +58,10 @@ namespace MMALSharp.Ports
         {
             lock (MMALPortBase.ControlLock)
             {
-                MMALLog.Logger.Debug("In native control callback");
+                if (MMALCameraConfig.Debug)
+                {
+                    MMALLog.Logger.Debug("In native control callback");
+                }
 
                 var bufferImpl = new MMALBufferImpl(buffer);
 
@@ -66,7 +74,10 @@ namespace MMALSharp.Ports
 
                     this.ManagedControlCallback(bufferImpl, this);
 
-                    MMALLog.Logger.Debug("Releasing buffer");
+                    if (MMALCameraConfig.Debug)
+                    {
+                        MMALLog.Logger.Debug("Releasing buffer");
+                    }
 
                     bufferImpl.Release();
                 }

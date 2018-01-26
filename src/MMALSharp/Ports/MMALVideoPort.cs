@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="MMALVideoPort.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using MMALSharp.Native;
 
 namespace MMALSharp.Ports
@@ -18,8 +19,15 @@ namespace MMALSharp.Ports
         /// </summary>
         public DateTime? Timeout { get; set; }
 
-        public MMALVideoPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type) : base(ptr, comp, type) { }
-        public MMALVideoPort(MMALPortImpl copyFrom) : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType) { }
+        public MMALVideoPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
+            : base(ptr, comp, type)
+        {
+        }
+
+        public MMALVideoPort(MMALPortImpl copyFrom)
+            : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType)
+        {
+        }
 
         /// <summary>
         /// The native callback MMAL passes buffer headers to
@@ -30,6 +38,11 @@ namespace MMALSharp.Ports
         {
             lock (MMALPortBase.OutputLock)
             {
+                if (MMALCameraConfig.Debug)
+                {
+                    MMALLog.Logger.Debug("In native output callback");
+                }
+
                 var bufferImpl = new MMALBufferImpl(buffer);
 
                 if (MMALCameraConfig.Debug)
@@ -42,7 +55,7 @@ namespace MMALSharp.Ports
                     this.ManagedOutputCallback(bufferImpl, this);
                 }
 
-                //Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
+                // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
                 this.ReleaseOutputBuffer(bufferImpl);
 
                 if (this.Timeout.HasValue && DateTime.Now.CompareTo(this.Timeout.Value) > 0)
@@ -54,6 +67,5 @@ namespace MMALSharp.Ports
                 }
             }
         }
-
     }
 }

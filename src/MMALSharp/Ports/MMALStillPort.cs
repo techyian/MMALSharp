@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="MMALStillPort.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using System.Linq;
 using MMALSharp.Native;
 
@@ -15,7 +20,9 @@ namespace MMALSharp.Ports
         }
 
         public MMALStillPort(MMALPortImpl copyFrom)
-            : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType) { }
+            : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType)
+        {
+        }
     }
 
     /// <summary>
@@ -37,7 +44,11 @@ namespace MMALSharp.Ports
         {
             lock (MMALPortBase.OutputLock)
             {
-                MMALLog.Logger.Debug("In native output callback");
+                if (MMALCameraConfig.Debug)
+                {
+                    MMALLog.Logger.Debug("In native output callback");
+                }
+
                 var bufferImpl = new MMALBufferImpl(buffer);
 
                 if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero)

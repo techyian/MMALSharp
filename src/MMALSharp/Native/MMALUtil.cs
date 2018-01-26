@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿// <copyright file="MMALUtil.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
@@ -20,7 +21,7 @@ namespace MMALSharp.Native
             int b1 = s[1];
             int c1 = s[2];
             int d1 = s[3];
-            return ((a1) | (b1 << 8) | (c1 << 16) | (d1 << 24));
+            return a1 | (b1 << 8) | (c1 << 16) | (d1 << 24);
         }
 
         public enum MMAL_STATUS_T

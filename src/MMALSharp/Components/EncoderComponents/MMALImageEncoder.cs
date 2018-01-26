@@ -1,9 +1,12 @@
-﻿using System;
+﻿// <copyright file="MMALImageEncoder.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
-using MMALSharp.Common.Handlers;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;

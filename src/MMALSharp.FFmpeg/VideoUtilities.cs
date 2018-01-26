@@ -1,4 +1,9 @@
-﻿using MMALSharp.Handlers;
+﻿// <copyright file="VideoUtilities.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using MMALSharp.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

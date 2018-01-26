@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="MMALResizerComponent.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using MMALSharp.Handlers;
-using MMALSharp.Native;
 using static MMALSharp.Native.MMALParameters;
 
 namespace MMALSharp.Components
@@ -16,9 +15,11 @@ namespace MMALSharp.Components
     public sealed class MMALResizerComponent : MMALDownstreamHandlerComponent
     {
         public override int Width { get; set; }
+
         public override int Height { get; set; }
 
-        public MMALResizerComponent(int width, int height, ICaptureHandler handler) : base(MMAL_COMPONENT_DEFAULT_RESIZER, handler)
+        public MMALResizerComponent(int width, int height, ICaptureHandler handler)
+            : base(MMAL_COMPONENT_DEFAULT_RESIZER, handler)
         {
             this.Width = width;
             this.Height = height;

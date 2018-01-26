@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="MMALEvents.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -13,10 +18,9 @@ namespace MMALSharp.Native
         public static int MMAL_EVENT_EOS = MMALUtil.MMAL_FOURCC("EEOS");
         public static int MMAL_EVENT_FORMAT_CHANGED = MMALUtil.MMAL_FOURCC("EFCH");
         public static int MMAL_EVENT_PARAMETER_CHANGED = MMALUtil.MMAL_FOURCC("EPCH");
-                
+
         [DllImport("libmmal.so", EntryPoint = "mmal_event_format_changed_get", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern MMAL_EVENT_FORMAT_CHANGED_T* mmal_event_format_changed_get(MMAL_BUFFER_HEADER_T* buffer);
-
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -26,6 +30,7 @@ namespace MMALSharp.Native
         private uint portIndex;
 
         public MMALPort.MMAL_PORT_TYPE_T PortType => portType;
+
         public uint PortIndex => portIndex;
 
         public MMAL_EVENT_END_OF_STREAM_T(MMALPort.MMAL_PORT_TYPE_T portType, uint portIndex)
@@ -42,9 +47,13 @@ namespace MMALSharp.Native
         private MMAL_ES_FORMAT_T* format;
 
         public uint BufferSizeMin => bufferSizeMin;
+
         public uint BufferNumMin => bufferNumMin;
+
         public uint BufferSizeRecommended => bufferSizeRecommended;
+
         public uint BufferNumRecommended => bufferNumRecommended;
+
         public MMAL_ES_FORMAT_T* Format => format;
 
         public MMAL_EVENT_FORMAT_CHANGED_T(uint bufferSizeMin, uint bufferNumMin, uint bufferSizeRecommended, uint bufferNumRecommended,

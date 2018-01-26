@@ -1,8 +1,12 @@
-﻿using MMALSharp.Native;
+﻿// <copyright file="MMALPortExtensions.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using MMALSharp.Native;
 using static MMALSharp.MMALCallerHelper;
 using static MMALSharp.Native.MMALParametersCamera;
 
@@ -129,6 +133,7 @@ namespace MMALSharp
             var str1 = (MMAL_PARAMETER_HEADER_T*)ptr1;
 
             str1->Id = MMALParametersCommon.MMAL_PARAMETER_SUPPORTED_ENCODINGS;
+
             // Deliberately undersize to check if running on older firmware.
             str1->Size = Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>() + 20;
 
@@ -184,6 +189,7 @@ namespace MMALSharp
                 {
                     break;
                 }
+
                 if (enc == MMALUtil.MMAL_FOURCC("RGB3"))
                 {
                     newFirmware = 1;

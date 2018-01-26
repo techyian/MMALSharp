@@ -1,6 +1,11 @@
-﻿using MMALSharp.Native;
+﻿// <copyright file="MMALCameraInfoComponent.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using System;
 using System.Runtime.InteropServices;
+using MMALSharp.Native;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp.Components
@@ -25,7 +30,8 @@ namespace MMALSharp.Components
         /// </summary>
         public int MaxHeight { get; set; }
 
-        public MMALCameraInfoComponent() : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA_INFO)
+        public MMALCameraInfoComponent()
+            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA_INFO)
         {
             this.SensorName = "OV5647";
             this.MaxWidth = 2592;
@@ -34,26 +40,27 @@ namespace MMALSharp.Components
             IntPtr ptr1 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_T>());
             var str1 = (MMAL_PARAMETER_HEADER_T*)ptr1;
 
-            str1->Id = MMALParametersCamera.MMAL_PARAMETER_CAMERA_INFO;      
-            //Deliberately undersize to check if running on older firmware.      
+            str1->Id = MMALParametersCamera.MMAL_PARAMETER_CAMERA_INFO;
+
+            // Deliberately undersize to check if running on older firmware.
             str1->Size = Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_T>();
-                                    
+
             try
             {
-                //If succeeds, keep OV5647 defaults.
-                MMALCheck(MMALPort.mmal_port_parameter_get(this.Control.Ptr, str1), "");
+                // If succeeds, keep OV5647 defaults.
+                MMALCheck(MMALPort.mmal_port_parameter_get(this.Control.Ptr, str1), string.Empty);
             }
             catch
             {
                 Marshal.FreeHGlobal(ptr1);
 
-                //Running on newer firmware - default to first camera found.
+                // Running on newer firmware - default to first camera found.
                 IntPtr ptr2 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_V2_T>());
                 var str2 = (MMAL_PARAMETER_HEADER_T*)ptr2;
 
                 str2->Id = MMALParametersCamera.MMAL_PARAMETER_CAMERA_INFO;
                 str2->Size = Marshal.SizeOf<MMAL_PARAMETER_CAMERA_INFO_V2_T>();
-                                
+
                 try
                 {
                     MMALCheck(MMALPort.mmal_port_parameter_get(this.Control.Ptr, str2), "Unable to get camera info for newer firmware.");
@@ -71,7 +78,7 @@ namespace MMALSharp.Components
                 }
                 catch
                 {
-                    //Something went wrong, continue with OV5647 defaults.                    
+                    // Something went wrong, continue with OV5647 defaults.
                     MMALLog.Logger.Warn("Could not determine firmware version. Continuing with OV5647 defaults");
                 }
             }

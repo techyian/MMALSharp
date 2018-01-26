@@ -1,8 +1,13 @@
-﻿using MMALSharp.Native;
+﻿// <copyright file="MMALBufferImpl.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using MMALSharp.Native;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
@@ -89,6 +94,9 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Writes events associated with the buffer header to log
+        /// </summary>
         public void ParseEvents()
         {
             if (this.Cmd == MMALEvents.MMAL_EVENT_EOS)
@@ -209,10 +217,13 @@ namespace MMALSharp
         /// <summary>
         /// Gathers all data in this payload and returns as a byte array
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A byte array containing the image frame</returns>
         internal byte[] GetBufferData()
         {
-            MMALLog.Logger.Debug("Getting data from buffer");
+            if (MMALCameraConfig.Debug)
+            {
+                MMALLog.Logger.Debug("Getting data from buffer");
+            }
 
             MMALCheck(MMALBuffer.mmal_buffer_header_mem_lock(this.Ptr), "Unable to lock buffer header.");
 
@@ -234,9 +245,18 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Writes user provided image data into a buffer header
+        /// </summary>
+        /// <param name="source">The array of image data to write to buffer header</param>
+        /// <param name="length">The length of the data being written</param>
+        /// <param name="eof">Signal that we've reached the end of the input file</param>
         internal void ReadIntoBuffer(byte[] source, int length, bool eof)
         {
-            MMALLog.Logger.Debug("Reading data into buffer");
+            if (MMALCameraConfig.Debug)
+            {
+                MMALLog.Logger.Debug("Reading data into buffer");
+            }
 
             MMALCheck(MMALBuffer.mmal_buffer_header_mem_lock(this.Ptr), "Unable to lock buffer header.");
             var ptrAlloc = Marshal.AllocHGlobal(source.Length);
@@ -311,6 +331,6 @@ namespace MMALSharp
             {
                 MMALBuffer.mmal_buffer_header_reset(this.Ptr);
             }
-        }        
+        }
     }
 }

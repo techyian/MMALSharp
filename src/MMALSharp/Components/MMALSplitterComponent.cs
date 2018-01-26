@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="MMALSplitterComponent.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 
@@ -44,14 +44,14 @@ namespace MMALSharp.Components
             set { _height = value; }
         }
 
-        public MMALSplitterComponent(ICaptureHandler handler) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER, handler)
-        {     
-                
+        public MMALSplitterComponent(ICaptureHandler handler)
+            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER, handler)
+        {
         }
 
         public override void PrintComponent()
-        {            
-            base.PrintComponent();                        
+        {
+            base.PrintComponent();
             MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
         }
     }

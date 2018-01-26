@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// <copyright file="TransformStreamCaptureHandler.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MMALSharp.Handlers;
 
 namespace MMALSharp.Common.Handlers

@@ -1,7 +1,12 @@
-﻿using MMALSharp.Native;
+﻿// <copyright file="MMALConnectionImpl.cs" company="Techyian">
+// Copyright (c) Techyian. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using System;
 using System.Runtime.InteropServices;
 using MMALSharp.Components;
+using MMALSharp.Native;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
@@ -17,6 +22,7 @@ namespace MMALSharp
         internal MMAL_CONNECTION_T* Ptr { get; set; }
 
         public MMALDownstreamComponent DownstreamComponent { get; set; }
+
         public MMALComponentBase UpstreamComponent { get; set; }
 
         /// <summary>
@@ -28,15 +34,15 @@ namespace MMALSharp
         /// The output port of this connection
         /// </summary>
         public MMALPortBase OutputPort { get; set; }
-                
+
         internal MMALConnection.MMAL_CONNECTION_CALLBACK_T NativeCallback;
-                
+
         public MMALPoolImpl ConnectionPool { get; set; }
 
         /// <summary>
         /// Monitor lock for connection callback method
         /// </summary>
-        protected static Object ConnectionLock = new object();
+        protected static object ConnectionLock = new object();
 
         #region Connection struct wrapper properties
 
@@ -44,32 +50,32 @@ namespace MMALSharp
         /// Name of this connection
         /// </summary>
         public string Name => Marshal.PtrToStringAnsi((IntPtr)(*this.Ptr).Name);
-        
+
         /// <summary>
         /// Indicates whether this connection is enabled
         /// </summary>
         public bool Enabled => (*this.Ptr).IsEnabled == 1;
-        
+
         /// <summary>
         /// Flags passed during the create call (Read Only). A bitwise combination of Connection flags values.
         /// </summary>
         public uint Flags => (*this.Ptr).Flags;
-        
+
         /// <summary>
         /// Time in microseconds taken to setup the connection.
         /// </summary>                          
         public long TimeSetup => (*this.Ptr).TimeSetup;
-        
+
         /// <summary>
         /// Time in microseconds taken to enable the connection.
         /// </summary>
         public long TimeEnable => (*this.Ptr).TimeEnable;
-        
+
         /// <summary>
         /// Time in microseconds taken to disable the connection.
         /// </summary>
         public long TimeDisable => (*this.Ptr).TimeDisable;
-        
+
         #endregion
         
         protected MMALConnectionImpl(MMAL_CONNECTION_T* ptr, MMALPortBase output, MMALPortBase input, MMALDownstreamComponent inputComponent, MMALComponentBase outputComponent, bool useCallback)

@@ -3,13 +3,9 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using MMALSharp.Handlers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using MMALSharp.Native;
-using MMALSharp.Ports;
 
 namespace MMALSharp.Components
 {
@@ -68,7 +64,7 @@ namespace MMALSharp.Components
         /// <param name="encodingType">The encoding type the input port will expect data in</param>
         /// <param name="pixelFormat">The pixel format the input port will expect data in</param>
         /// <param name="width">The width of the incoming frame</param>
-        /// <param name="height">The height of the incoming frame</param>        
+        /// <param name="height">The height of the incoming frame</param>
         public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height)
         {
             this.InitialiseInputPort(0);
