@@ -3,8 +3,10 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using System;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Components
 {
@@ -42,14 +44,29 @@ namespace MMALSharp.Components
             set { _height = value; }
         }
 
-        public MMALVideoDecoder(ICaptureHandler handler) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_DECODER, handler)
+        public DateTime? Timeout { get; set; }
+
+        public MMALVideoDecoder(ICaptureHandler handler, DateTime? timeout = null)
+            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_DECODER, handler)
         {
+            this.Timeout = timeout;
+        }
+
+        public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0)
+        {
+            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate);
+            ((MMALVideoPort)this.Outputs[outputPort]).Timeout = this.Timeout;
         }
 
         public override void PrintComponent()
         {
             base.PrintComponent();
-            MMALLog.Logger.Info($"Width: {this.Width}. Height: {this.Height}");        
+            MMALLog.Logger.Info($"Width: {this.Width}. Height: {this.Height}");
+        }
+
+        internal override void InitialiseOutputPort(int outputPort)
+        {
+            this.Outputs[outputPort] = new MMALVideoPort(this.Outputs[outputPort]);
         }
     }
 }

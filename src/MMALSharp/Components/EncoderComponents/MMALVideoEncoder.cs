@@ -82,8 +82,9 @@ namespace MMALSharp.Components
         }
 
         public DateTime? Timeout { get; set; }
-        
-        public MMALVideoEncoder(ICaptureHandler handler, MMAL_RATIONAL_T framerate, DateTime? timeout = null, Split split = null) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, handler)
+
+        public MMALVideoEncoder(ICaptureHandler handler, MMAL_RATIONAL_T framerate, DateTime? timeout = null, Split split = null)
+            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, handler)
         {
             this.Framerate = framerate.Num / framerate.Den;
             this.Split = split;
@@ -106,7 +107,7 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].Ptr->BufferSize = 512 * 1024;
             this.Quality = quality;
             this.Bitrate = bitrate;
-        
+
             if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264)
             {
                 this.ConfigureIntraPeriod(outputPort);

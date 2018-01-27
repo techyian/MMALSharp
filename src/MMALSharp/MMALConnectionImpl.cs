@@ -77,24 +77,23 @@ namespace MMALSharp
         public long TimeDisable => (*this.Ptr).TimeDisable;
 
         #endregion
-        
+
         protected MMALConnectionImpl(MMAL_CONNECTION_T* ptr, MMALPortBase output, MMALPortBase input, MMALDownstreamComponent inputComponent, MMALComponentBase outputComponent, bool useCallback)
-        {            
-            this.Ptr = ptr;            
+        {
+            this.Ptr = ptr;
             this.OutputPort = output;
             this.InputPort = input;
             this.DownstreamComponent = inputComponent;
             this.UpstreamComponent = outputComponent;
-            
-            
+
             if (useCallback)
             {
-                this.ConfigureConnectionCallback(output, input);          
+                this.ConfigureConnectionCallback(output, input);
             }
 
             this.Enable();
 
-            if(useCallback)
+            if (useCallback)
             {
                 this.OutputPort.SendAllBuffers();
             }
@@ -105,12 +104,14 @@ namespace MMALSharp
         /// </summary>
         /// <param name="output">The output port of the connection</param>
         /// <param name="input">The input port of the connection</param>
-        /// <returns></returns>
+        /// <param name="inputComponent">The managed instance of the component we are connecting to</param>
+        /// <param name="useCallback">When set to true, enable the connection callback delegate (adversely affects performance)</param>
+        /// <returns>A new managed connection object</returns>
         internal static MMALConnectionImpl CreateConnection(MMALPortBase output, MMALPortBase input, MMALDownstreamComponent inputComponent, bool useCallback)
         {
             IntPtr ptr = IntPtr.Zero;
 
-            if(useCallback)
+            if (useCallback)
             {
                 MMALCheck(MMALConnection.mmal_connection_create(&ptr, output.Ptr, input.Ptr, MMALConnection.MMAL_CONNECTION_FLAG_ALLOCATION_ON_INPUT), "Unable to create connection");
             }
@@ -118,7 +119,7 @@ namespace MMALSharp
             {
                 MMALCheck(MMALConnection.mmal_connection_create(&ptr, output.Ptr, input.Ptr, MMALConnection.MMAL_CONNECTION_FLAG_TUNNELLING | MMALConnection.MMAL_CONNECTION_FLAG_ALLOCATION_ON_INPUT), "Unable to create connection");
             }
-            
+
             return new MMALConnectionImpl((MMAL_CONNECTION_T*)ptr, output, input, inputComponent, output.ComponentReference, useCallback);
         }
 
@@ -129,7 +130,9 @@ namespace MMALSharp
         internal void Enable()
         {
             if (!this.Enabled)
+            {
                 MMALCheck(MMALConnection.mmal_connection_enable(this.Ptr), "Unable to enable connection");
+            }
         }
 
         /// <summary>
@@ -138,7 +141,9 @@ namespace MMALSharp
         internal void Disable()
         {
             if (this.Enabled)
+            {
                 MMALCheck(MMALConnection.mmal_connection_disable(this.Ptr), "Unable to disable connection");
+            }
         }
 
         /// <summary>
@@ -147,8 +152,8 @@ namespace MMALSharp
         /// the connection shall then be destroyed.
         /// </summary>
         internal void Destroy()
-        {            
-            //Cleaning port pools for sanity.
+        {
+            // Cleaning port pools for sanity.
             this.UpstreamComponent.CleanPortPools();
             this.DownstreamComponent.CleanPortPools();
 
@@ -158,17 +163,17 @@ namespace MMALSharp
         /// <summary>
         /// Represents the native callback method for a connection between two ports
         /// </summary>
-        /// <param name="connection">The native pointer to a MMAL_CONNECTION_T struct</param>        
+        /// <param name="connection">The native pointer to a MMAL_CONNECTION_T struct</param>
         internal virtual int NativeConnectionCallback(MMAL_CONNECTION_T* connection)
         {
             lock (MMALConnectionImpl.ConnectionLock)
             {
                 MMALLog.Logger.Debug("Inside native connection callback");
 
-                var queue = new MMALQueueImpl(connection->Queue);                
+                var queue = new MMALQueueImpl(connection->Queue);
                 var bufferImpl = queue.GetBuffer();
 
-                if(bufferImpl != null)
+                if (bufferImpl != null)
                 {
                     if (MMALCameraConfig.Debug)
                     {
@@ -205,31 +210,15 @@ namespace MMALSharp
                     {
                         MMALLog.Logger.Debug("Buffer could not be obtained by connection callback");
                     }
-                }                
+                }
             }
-            
+
             return (int)connection->Flags;
         }
 
         public virtual void ManagedConnectionCallback(MMALBufferImpl buffer)
         {
             MMALLog.Logger.Debug("Inside Managed connection callback");
-        }
-
-        private void ConfigureConnectionCallback(MMALPortBase output, MMALPortBase input)
-        {
-            output.SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
-            input.SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
-
-            this.NativeCallback = new MMALConnection.MMAL_CONNECTION_CALLBACK_T(NativeConnectionCallback);
-            IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
-
-            this.Ptr->Callback = ptrCallback;            
-
-            if(output.BufferPool == null)
-            {
-                output.BufferPool = new MMALPoolImpl(output);
-            }
         }
 
         public override string ToString()
@@ -242,6 +231,22 @@ namespace MMALSharp
             MMALLog.Logger.Debug("Disposing connection.");
             this.Destroy();
             base.Dispose();
+        }
+
+        private void ConfigureConnectionCallback(MMALPortBase output, MMALPortBase input)
+        {
+            output.SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
+            input.SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
+
+            this.NativeCallback = new MMALConnection.MMAL_CONNECTION_CALLBACK_T(this.NativeConnectionCallback);
+            IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
+
+            this.Ptr->Callback = ptrCallback;
+
+            if (output.BufferPool == null)
+            {
+                output.BufferPool = new MMALPoolImpl(output);
+            }
         }
     }
 }
