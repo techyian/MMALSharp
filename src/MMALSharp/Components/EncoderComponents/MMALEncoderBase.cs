@@ -137,10 +137,5 @@ namespace MMALSharp.Components
                 Marshal.FreeHGlobal(ptr);
             }
         }
-
-        internal void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, int quality, int bitrate)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
