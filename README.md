@@ -12,9 +12,9 @@ The project is in early stages of development, however progress is good, please 
 - [x] Resizer
 - [x] Splitter
 - [x] Image Encoder
-- [ ] Image Decoder
+- [x] Image Decoder (Partial - see known issues)
 - [x] Video Encoder
-- [ ] Video Decoder
+- [x] Video Decoder (Partial - see known issues)
 
 ** Please clone from Master branch if building from source. Dev branch not guaranteed to be stable. **
 
@@ -66,6 +66,14 @@ Tested image 'still' features:
 
 When using more resource intensive encoders such as MMAL_ENCODING_BMP and the Sony IMX219 module, I've found it necessary to increase the memory split
 to around 200mb or otherwise you'll receive an ENOSPC error due to insufficient resources.
+
+Image decoder issue - there is an issue currently when decoding larger images. Small JPEGs work fine, but larger images (tested on 2.4MB JPEG) causes ENOMEM when sending buffer
+headers. Issue has been raised with RPi devs.
+
+Video decoder issue - I've tested a working pipeline as follows:
+
+H264 YUV420 encode -> YUV420 decode -> MJPEG YUV420 encode does work, however the bitrate appears to be extremely low and the resulting video is very pixelated. I'm going to do 
+some more investigating and see whether it's an issue with MMALSharp specifically or the native framework.
 
 ## License
 
