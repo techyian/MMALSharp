@@ -4,7 +4,7 @@
 
 MMALSharp is an unofficial C# API for the Raspberry Pi camera. Under the hood, MMALSharp makes use of the native MMAL interface designed by Broadcom.
 
-The project is in early stages of development, however progress is good, please see the status of each component below:
+Please see the status of each component below:
 
 - [x] Camera
 - [x] Camera Info
@@ -12,11 +12,11 @@ The project is in early stages of development, however progress is good, please 
 - [x] Resizer
 - [x] Splitter
 - [x] Image Encoder
-- [x] Image Decoder (Partial - see known issues)
+- [x] Image Encoder (from FileStream)
+- [x] Image Decoder
+- [x] Image Decoder (from FileStream)
 - [x] Video Encoder
 - [x] Video Decoder (Partial - see known issues)
-
-** Please clone from Master branch if building from source. Dev branch not guaranteed to be stable. **
 
 MMALSharp supports the following runtimes:
 
@@ -66,9 +66,6 @@ Tested image 'still' features:
 
 When using more resource intensive encoders such as MMAL_ENCODING_BMP and the Sony IMX219 module, I've found it necessary to increase the memory split
 to around 200mb or otherwise you'll receive an ENOSPC error due to insufficient resources.
-
-Image decoder issue - there is an issue currently when decoding larger images. Small JPEGs work fine, but larger images (tested on 2.4MB JPEG) causes ENOMEM when sending buffer
-headers. Issue has been raised with RPi devs.
 
 Video decoder issue - I've tested a working pipeline as follows:
 

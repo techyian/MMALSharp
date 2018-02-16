@@ -23,8 +23,10 @@ namespace MMALSharp
         /// </summary>
         public MMALQueueImpl Queue { get; set; }
 
+        public uint HeadersNum => this.Ptr->HeadersNum;
+
         public MMALPoolImpl(MMALPortBase port)
-        {
+        {            
             MMALLog.Logger.Debug($"Creating buffer pool with {port.BufferNum} buffers of size {port.BufferSize}");
 
             this.Ptr = MMALUtil.mmal_port_pool_create(port.Ptr, port.BufferNum, port.BufferSize);

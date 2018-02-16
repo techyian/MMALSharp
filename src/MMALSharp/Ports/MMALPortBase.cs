@@ -66,6 +66,10 @@ namespace MMALSharp
 
         public MMALEncoding PixelFormat { get; set; }
 
+        public bool ZeroCopy { get; set; }
+
+        #region Native properties
+
         /// <summary>
         /// Native name of port
         /// </summary>
@@ -147,7 +151,9 @@ namespace MMALSharp
         public int NativeEncodingType => this.Ptr->Format->encoding;
 
         public int NativeEncodingSubformat => this.Ptr->Format->encodingVariant;
-        
+
+        #endregion
+
         /// <summary>
         /// Asynchronous trigger which is set when processing has completed on this port.
         /// </summary>
@@ -156,17 +162,17 @@ namespace MMALSharp
         /// <summary>
         /// Monitor lock for input port callback method
         /// </summary>
-        protected static object InputLock = new object();
+        internal static object InputLock = new object();
 
         /// <summary>
         /// Monitor lock for output port callback method
         /// </summary>
-        protected static object OutputLock = new object();
-
+        internal static object OutputLock = new object();
+                
         /// <summary>
-        /// Monitor lock for control port callback method
+        /// Native pointer to the native callback function
         /// </summary>
-        protected static object ControlLock = new object();
+        internal IntPtr PtrCallback { get; set; }
 
         /// <summary>
         /// Delegate for native port callback
@@ -182,12 +188,7 @@ namespace MMALSharp
         /// Delegate we use to do further processing on buffer headers when they're received by the native callback delegate
         /// </summary>
         public Action<MMALBufferImpl, MMALPortBase> ManagedOutputCallback { get; set; }
-
-        /// <summary>
-        /// Managed Control port callback delegate
-        /// </summary>
-        public Action<MMALBufferImpl, MMALPortBase> ManagedControlCallback { get; set; }
-
+        
         protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
         {
             this.Ptr = ptr;
@@ -248,17 +249,19 @@ namespace MMALSharp
         /// </summary>
         /// <param name="port">Native port struct pointer</param>
         /// <param name="buffer">Native buffer header pointer</param>
-        internal virtual void NativeControlPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer) { }
+        internal virtual void NativeControlPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        {
+        }
 
         /// <summary>
         /// Provides functionality to enable processing on an output port.
         /// </summary>
         /// <param name="managedCallback">Delegate for managed output port callback</param>
-        internal virtual void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback)
+        internal virtual void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, bool sendBuffers = true)
         {
             if (managedCallback != null)
             {
-                this.SendAllBuffers();
+                this.SendAllBuffers(sendBuffers);
             }
         }
 
@@ -267,35 +270,33 @@ namespace MMALSharp
         /// </summary>
         /// <param name="managedCallback">Delegate for managed input port callback</param>
         internal virtual void EnablePort(Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback)
-        {
-            // We populate the input buffers with user provided data.
-            if (managedCallback != null)
+        {            
+            if (!this.Enabled)
             {
-                this.BufferPool = new MMALPoolImpl(this);
+                this.ManagedInputCallback = managedCallback;
 
-                var length = this.BufferPool.Queue.QueueLength();
+                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeInputPortCallback);
 
-                for (int i = 0; i < length; i++)
+                IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
+
+                MMALLog.Logger.Debug("Enabling input port.");
+
+                if (managedCallback == null)
                 {
-                    MMALBufferImpl buffer = this.BufferPool.Queue.GetBuffer();
+                    MMALLog.Logger.Warn("Callback null");
 
-                    ProcessResult result = managedCallback(buffer, this);
-
-                    buffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
-
-                    MMALLog.Logger.Debug($"Sending buffer to input port: Length {buffer.Length}");
-
-                    if (result.DataLength > 0)
-                    {
-                        this.SendBuffer(buffer);
-                    }
-                    else
-                    {
-                        MMALLog.Logger.Debug("Data length is empty. Releasing buffer.");
-                        buffer.Release();
-                        buffer.Dispose();
-                    }
+                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
                 }
+                else
+                {
+                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
+                }
+                this.BufferPool = new MMALPoolImpl(this);
+            }
+
+            if (!this.Enabled)
+            {
+                throw new PiCameraError("Unknown error occurred whilst enabling port");
             }
         }
 
@@ -312,15 +313,23 @@ namespace MMALSharp
 
                 if (this.BufferPool != null)
                 {
-                    var length = this.BufferPool.Queue.QueueLength();
+                    var length = this.BufferPool.HeadersNum;
 
                     MMALLog.Logger.Debug($"Releasing {length} buffers from queue.");
-
+                                        
                     for (int i = 0; i < length; i++)
                     {
                         MMALLog.Logger.Debug("Releasing active buffer");
                         var buffer = this.BufferPool.Queue.GetBuffer();
-                        buffer.Release();
+
+                        if (buffer != null)
+                        {
+                            buffer.Release();
+                        }              
+                        else
+                        {
+                            MMALLog.Logger.Warn("Retrieved buffer invalid.");
+                        }
                     }
                 }
 
@@ -333,6 +342,7 @@ namespace MMALSharp
         /// </summary>
         internal void Commit()
         {
+            MMALLog.Logger.Debug("Committing port format changes");
             MMALCheck(MMALPort.mmal_port_format_commit(this.Ptr), "Unable to commit port changes.");
         }
 
@@ -342,7 +352,18 @@ namespace MMALSharp
         /// <param name="destination">The destination port we're copying to</param>
         internal void ShallowCopy(MMALPortBase destination)
         {
+            MMALLog.Logger.Debug("Shallow copy port format");
             MMALFormat.mmal_format_copy(destination.Ptr->Format, this.Ptr->Format);
+        }
+
+        /// <summary>
+        /// Shallow copy a format structure. It is worth noting that the extradata buffer will not be copied in the new format.
+        /// </summary>
+        /// <param name="eventFormatSource">The source event format we're copying from</param>
+        internal void ShallowCopy(MMALEventFormat eventFormatSource)
+        {
+            MMALLog.Logger.Debug("Shallow copy event format");
+            MMALFormat.mmal_format_copy(this.Ptr->Format, eventFormatSource.Ptr);
         }
 
         /// <summary>
@@ -351,7 +372,18 @@ namespace MMALSharp
         /// <param name="destination">The destination port we're copying to</param>
         internal void FullCopy(MMALPortBase destination)
         {
+            MMALLog.Logger.Debug("Full copy port format");
             MMALFormat.mmal_format_full_copy(destination.Ptr->Format, this.Ptr->Format);
+        }
+
+        /// <summary>
+        /// Fully copy a format structure, including the extradata buffer.
+        /// </summary>
+        /// <param name="eventFormatSource">The source event format we're copying from</param>
+        internal void FullCopy(MMALEventFormat eventFormatSource)
+        {
+            MMALLog.Logger.Debug("Full copy event format");
+            MMALFormat.mmal_format_full_copy(this.Ptr->Format, eventFormatSource.Ptr);
         }
 
         /// <summary>
@@ -359,7 +391,8 @@ namespace MMALSharp
         /// flush call will return before all the buffer headers are returned to the client.
         /// </summary>
         internal void Flush()
-        {
+        {            
+            MMALLog.Logger.Debug("Flushing port buffers");
             MMALCheck(MMALPort.mmal_port_flush(this.Ptr), "Unable to flush port.");
         }
 
@@ -369,23 +402,31 @@ namespace MMALSharp
         /// <param name="buffer">A managed buffer object</param>
         internal void SendBuffer(MMALBufferImpl buffer)
         {
+            if (MMALCameraConfig.Debug)
+            {
+                MMALLog.Logger.Debug("Sending buffer");
+            }
+
             MMALCheck(MMALPort.mmal_port_send_buffer(this.Ptr, buffer.Ptr), "Unable to send buffer header.");
         }
 
-        internal void SendAllBuffers()
+        internal void SendAllBuffers(bool sendBuffers = true)
         {
             this.BufferPool = new MMALPoolImpl(this);
 
-            var length = this.BufferPool.Queue.QueueLength();
-
-            for (int i = 0; i < length; i++)
+            if (sendBuffers)
             {
-                var buffer = this.BufferPool.Queue.GetBuffer();
+                var length = this.BufferPool.Queue.QueueLength();
 
-                MMALLog.Logger.Debug($"Sending buffer to output port: Length {buffer.Length}");
+                for (int i = 0; i < length; i++)
+                {
+                    var buffer = this.BufferPool.Queue.GetBuffer();
 
-                this.SendBuffer(buffer);
-            }
+                    MMALLog.Logger.Debug($"Sending buffer to output port: Length {buffer.Length}");
+
+                    this.SendBuffer(buffer);
+                }
+            }            
         }
 
         /// <summary>
@@ -410,19 +451,25 @@ namespace MMALSharp
         /// </summary>
         /// <param name="bufferImpl">A managed buffer object</param>
         internal void ReleaseInputBuffer(MMALBufferImpl bufferImpl)
-        {
-            MMALLog.Logger.Debug("Releasing input buffer.");
-
+        {            
             bufferImpl.Release();
-            bufferImpl.Dispose();
-
+            
             if (this.Enabled && this.BufferPool != null)
             {
-                var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
+                MMALBufferImpl newBuffer;
+                while (true)
+                {
+                    newBuffer = this.BufferPool.Queue.GetBuffer();
+                    if (newBuffer != null)
+                    {
+                        break;
+                    }
 
+                }
+                
                 // Populate the new input buffer with user provided image data.
                 var result = this.ManagedInputCallback(newBuffer, this);
-                bufferImpl.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
+                newBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
 
                 try
                 {
@@ -431,8 +478,7 @@ namespace MMALSharp
                         MMALLog.Logger.Debug("Received EOF. Releasing.");
 
                         this.Trigger.Signal();
-                        newBuffer.Release();
-                        newBuffer.Dispose();
+                        newBuffer.Release();                        
                         newBuffer = null;
                     }
 

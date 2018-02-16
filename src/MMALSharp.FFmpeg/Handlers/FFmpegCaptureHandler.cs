@@ -100,7 +100,7 @@ namespace MMALSharp.Handlers
 
         public void PostProcess() { }
 
-        public ProcessResult Process()
+        public ProcessResult Process(uint allocSize)
         {
             throw new NotImplementedException();
         }

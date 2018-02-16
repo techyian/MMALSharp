@@ -21,58 +21,31 @@ namespace MMALSharp
             : base(ptr, comp, type)
         {
         }
-
-        /// <summary>
-        /// Enable processing on an input port
-        /// </summary>
-        /// <param name="managedCallback">A managed callback method we can do further processing on</param>
-        internal override void EnablePort(Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback)
-        {
-            if (!this.Enabled)
-            {
-                this.ManagedInputCallback = managedCallback;
-
-                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeInputPortCallback);
-
-                IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
-
-                MMALLog.Logger.Debug("Enabling port.");
-
-                if (managedCallback == null)
-                {
-                    MMALLog.Logger.Warn("Callback null");
-
-                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
-                }
-                else
-                {
-                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
-                }
-
-                base.EnablePort(managedCallback);
-            }
-
-            if (!this.Enabled)
-            {
-                throw new PiCameraError("Unknown error occurred whilst enabling port");
-            }
-        }
-
+        
         /// <summary>
         /// Enable processing on an output port
         /// </summary>
         /// <param name="managedCallback">A managed callback method we can do further processing on</param>
-        internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback)
-        {
+        internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, bool sendBuffers = true)
+        {            
             if (!this.Enabled)
             {
                 this.ManagedOutputCallback = managedCallback;
 
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeOutputPortCallback);
-
-                IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
-
-                MMALLog.Logger.Debug("Enabling port.");
+                
+                IntPtr ptrCallback = IntPtr.Zero;
+                if (sendBuffers)
+                {
+                    ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
+                    this.PtrCallback = ptrCallback;
+                }
+                else
+                {
+                    ptrCallback = this.PtrCallback;
+                }
+                
+                MMALLog.Logger.Debug("Enabling output port.");
 
                 if (managedCallback == null)
                 {
@@ -84,8 +57,8 @@ namespace MMALSharp
                 {
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
                 }
-
-                base.EnablePort(managedCallback);
+                                
+                base.EnablePort(managedCallback, sendBuffers);                
             }
 
             if (!this.Enabled)

@@ -11,7 +11,7 @@ namespace MMALSharp
     /// <summary>
     /// Represents a queue of buffer headers.
     /// </summary>
-    public unsafe class MMALQueueImpl : MMALObject
+    public unsafe class MMALQueueImpl : MMALObject, IMMALStatus
     {
         /// <summary>
         /// Native pointer to the buffer header queue this object represents
@@ -23,17 +23,23 @@ namespace MMALSharp
             this.Ptr = ptr;
         }
 
+        internal static MMALQueueImpl Create()
+        {
+            var ptr = MMALQueue.mmal_queue_create();
+            return new MMALQueueImpl(ptr);
+        }
+
         /// <summary>
         /// Get a MMAL_BUFFER_HEADER_T from a queue
         /// </summary>
         /// <returns>A new managed buffer header object</returns>
         internal MMALBufferImpl GetBuffer()
-        {
+        {           
             var ptr = MMALQueue.mmal_queue_get(this.Ptr);
 
             if (ptr == null || (IntPtr)ptr == IntPtr.Zero)
             {
-                throw new MMALException(MMALUtil.MMAL_STATUS_T.MMAL_EAGAIN, "Buffer retrieved from queue was invalid");
+                return null;                
             }
 
             return new MMALBufferImpl(ptr);
@@ -48,9 +54,11 @@ namespace MMALSharp
         {
             var bufPtr = MMALQueue.mmal_queue_get(ptr);
 
-            if((IntPtr)bufPtr == IntPtr.Zero)
+            if(bufPtr == null || (IntPtr)bufPtr == IntPtr.Zero)
+            {
                 return null;
-
+            }
+                
             return new MMALBufferImpl(bufPtr);
         }
 
@@ -62,6 +70,16 @@ namespace MMALSharp
         {
             var length = MMALQueue.mmal_queue_length(this.Ptr);
             return length;
+        }
+
+        internal MMALBufferImpl Wait()
+        {
+            return new MMALBufferImpl(MMALQueue.mmal_queue_wait(this.Ptr));
+        }
+
+        internal void Put(MMALBufferImpl buffer)
+        {
+            MMALQueue.mmal_queue_put(this.Ptr, buffer.Ptr);
         }
 
         /// <summary>
@@ -77,6 +95,11 @@ namespace MMALSharp
             MMALLog.Logger.Debug("Disposing queue.");
             this.Destroy();
             base.Dispose();
+        }
+
+        public bool CheckState()
+        {
+            return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;
         }
     }
 }

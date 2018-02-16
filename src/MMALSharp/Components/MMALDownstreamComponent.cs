@@ -35,7 +35,8 @@ namespace MMALSharp.Components
         /// <param name="encodingType">The encoding type the input port shall be expecting.</param>
         /// <param name="pixelFormat">The pixel format the input port shall be expecting</param>
         /// <param name="copyPort">The output port we are copying format data from</param>
-        public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, MMALPortImpl copyPort)
+        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
+        public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, MMALPortImpl copyPort, bool zeroCopy = false)
         {
             this.InitialiseInputPort(0);
 
@@ -55,6 +56,24 @@ namespace MMALSharp.Components
             }
 
             this.Inputs[0].Commit();
+
+            if (zeroCopy)
+            {
+                this.Inputs[0].ZeroCopy = true;
+                this.Inputs[0].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
+            }
+        }
+
+        /// <summary>
+        /// Call to configure changes on an Image Encoder input port. Used when providing an image file directly
+        /// to the component.
+        /// </summary>
+        /// <param name="encodingType">The encoding type the input port will expect data in</param>
+        /// <param name="pixelFormat">The pixel format the input port will expect data in</param>
+        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
+        public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, bool zeroCopy = false)
+        {
+            this.ConfigureInputPort(encodingType, pixelFormat, 0, 0, zeroCopy);
         }
 
         /// <summary>
@@ -65,7 +84,8 @@ namespace MMALSharp.Components
         /// <param name="pixelFormat">The pixel format the input port will expect data in</param>
         /// <param name="width">The width of the incoming frame</param>
         /// <param name="height">The height of the incoming frame</param>
-        public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height)
+        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
+        public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, bool zeroCopy = false)
         {
             this.InitialiseInputPort(0);
 
@@ -90,6 +110,12 @@ namespace MMALSharp.Components
             {
                 throw new PiCameraError("Unable to determine settings for output port.");
             }
+
+            if (zeroCopy)
+            {
+                this.Inputs[0].ZeroCopy = true;
+                this.Inputs[0].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
+            }
         }
 
         /// <summary>
@@ -99,9 +125,10 @@ namespace MMALSharp.Components
         /// <param name="pixelFormat">The pixel format this output port will send data in</param>
         /// <param name="quality">The quality of our outputted data</param>
         /// <param name="bitrate">The bitrate we are sending data at</param>
-        public virtual unsafe void ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0)
+        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
+        public virtual unsafe void ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
-            this.ConfigureOutputPort(0, encodingType, pixelFormat, quality, bitrate);
+            this.ConfigureOutputPort(0, encodingType, pixelFormat, quality, bitrate, zeroCopy);
         }
 
         /// <summary>
@@ -112,7 +139,8 @@ namespace MMALSharp.Components
         /// <param name="pixelFormat">The pixel format this output port will send data in</param>
         /// <param name="quality">The quality of our outputted data</param>
         /// <param name="bitrate">The bitrate we are sending data at</param>
-        public virtual unsafe void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0)
+        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
+        public virtual unsafe void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
             this.InitialiseOutputPort(outputPort);
             this.ProcessingPorts.Add(outputPort);
@@ -146,6 +174,12 @@ namespace MMALSharp.Components
             if (encodingType == MMALEncoding.JPEG)
             {
                 this.Outputs[outputPort].SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, quality);
+            }
+
+            if (zeroCopy)
+            {
+                this.Outputs[outputPort].ZeroCopy = true;
+                this.Outputs[outputPort].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
             }
 
             this.Outputs[outputPort].EncodingType = encodingType;

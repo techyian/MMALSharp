@@ -102,7 +102,7 @@ namespace MMALSharp
         public virtual ProcessResult ManagedInputCallback(MMALBufferImpl buffer, MMALPortBase port)
         {
             MMALLog.Logger.Debug("In managed input callback");
-            return this.Handler?.Process();
+            return this.Handler?.Process(buffer.AllocSize);
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace MMALSharp
 
         public virtual void ManagedControlCallback(MMALBufferImpl buffer, MMALPortBase port)
         {
-            MMALLog.Logger.Debug("In managed control callback");
+            MMALLog.Logger.Debug("In managed control callback");                        
         }
 
         /// <summary>

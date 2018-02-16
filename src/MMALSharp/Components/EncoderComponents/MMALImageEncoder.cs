@@ -77,9 +77,9 @@ namespace MMALSharp.Components
             this.Outputs[outputPort] = new MMALStillPort(this.Outputs[outputPort]);
         }
 
-        public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0)
+        public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
-            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate);
+            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate, false);
 
             if (this.RawBayer)
             {

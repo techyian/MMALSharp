@@ -13,7 +13,7 @@ namespace MMALSharp.Handlers
         /// Used to return user provided image data
         /// </summary>
         /// <returns>A ProcessResult object containing the user provided image data</returns>
-        ProcessResult Process();
+        ProcessResult Process(uint allocSize);
         /// <summary>
         /// Used to process the byte array containing our image data from an output port
         /// </summary>

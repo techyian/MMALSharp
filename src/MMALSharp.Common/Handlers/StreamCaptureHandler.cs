@@ -68,7 +68,7 @@ namespace MMALSharp.Handlers
             this.CurrentStream = File.Create(filename);
         }
 
-        public virtual ProcessResult Process()
+        public virtual ProcessResult Process(uint allocSize)
         {
             return new ProcessResult();
         }

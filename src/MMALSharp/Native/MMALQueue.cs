@@ -14,7 +14,7 @@ namespace MMALSharp.Native
         public static unsafe extern MMAL_QUEUE_T* mmal_queue_create();
 
         [DllImport("libmmal.so", EntryPoint = "mmal_queue_put", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_queue_put(MMAL_QUEUE_T* ptr, MMAL_QUEUE_T* ptr2);
+        public static unsafe extern void mmal_queue_put(MMAL_QUEUE_T* ptr, MMAL_BUFFER_HEADER_T* header);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_queue_put_back", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern void mmal_queue_put_back(MMAL_QUEUE_T* ptr, MMAL_BUFFER_HEADER_T* header);

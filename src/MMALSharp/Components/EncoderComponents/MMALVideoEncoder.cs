@@ -99,9 +99,10 @@ namespace MMALSharp.Components
         /// <param name="pixelFormat">The pixel format this output port will send data in</param>
         /// <param name="quality">Quantisation parameter - quality. When using this setting, set bitrate 0 and set this for variable bitrate</param>
         /// <param name="bitrate">The bitrate we are sending data at</param>
-        public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0)
+        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
+        public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
-            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate);
+            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate, zeroCopy);
 
             ((MMALVideoPort)this.Outputs[outputPort]).Timeout = this.Timeout;
             this.Outputs[outputPort].Ptr->BufferSize = 512 * 1024;
@@ -122,7 +123,7 @@ namespace MMALSharp.Components
 
                 this.ConfigureQuantisationParameter(outputPort);
             }
-            
+
             this.ConfigureImmutableInput(outputPort);
             this.ConfigureBitrate(outputPort);
         }
@@ -141,7 +142,7 @@ namespace MMALSharp.Components
                 this.PrepareSplit = false;
             }
 
-            //Ensure that if we need to split then this is done before processing the buffer data.
+            // Ensure that if we need to split then this is done before processing the buffer data.
             if (this.Split != null)
             {
                 if (!this.LastSplit.HasValue)
@@ -189,7 +190,6 @@ namespace MMALSharp.Components
                 {
                     throw new PiCameraError("Bitrate requested exceeds maximum for selected Video Level and Profile");
                 }
-
             }
             else if (this.Outputs[outputPort].EncodingType == MMALEncoding.MJPEG)
             {
@@ -217,9 +217,9 @@ namespace MMALSharp.Components
 
         internal void ConfigureQuantisationParameter(int outputPort)
         {
-            this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INITIAL_QUANT, Quality);
-            this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_MIN_QUANT, Quality);
-            this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_MAX_QUANT, Quality);
+            this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INITIAL_QUANT, this.Quality);
+            this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_MIN_QUANT, this.Quality);
+            this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_MAX_QUANT, this.Quality);
         }
 
         internal void ConfigureVideoProfile(int outputPort)
@@ -295,7 +295,6 @@ namespace MMALSharp.Components
             param = new MMAL_PARAMETER_VIDEO_INTRA_REFRESH_T(new MMAL_PARAMETER_HEADER_T(MMALParametersVideo.MMAL_PARAMETER_VIDEO_INTRA_REFRESH, Marshal.SizeOf<MMAL_PARAMETER_VIDEO_INTRA_REFRESH_T>()), MMALCameraConfig.IntraRefresh, airMbs, airRef, cirMbs, pirMbs);
 
             MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs[outputPort].Ptr, param.HdrPtr), "Unable to set video intra refresh.");
-
         }
 
         private DateTime CalculateSplit()
@@ -365,7 +364,6 @@ namespace MMALSharp.Components
                     new VideoLevel(MMALParametersVideo.MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_42, 522240, 8704, 62500000)
                 };
 
-
                 return videoLevels;
             }
 
@@ -396,8 +394,11 @@ namespace MMALSharp.Components
         private class VideoLevel
         {
             public MMALParametersVideo.MMAL_VIDEO_LEVEL_T Level { get; set; }
+
             public int MacroblocksPerSecLimit { get; set; }
+
             public int MacroblocksLimit { get; set; }
+
             public int Maxbitrate { get; set; }
 
             public VideoLevel(MMALParametersVideo.MMAL_VIDEO_LEVEL_T level, int mcbps, int mcb, int bitrate)

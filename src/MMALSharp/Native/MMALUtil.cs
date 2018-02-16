@@ -10,6 +10,11 @@ namespace MMALSharp.Native
 {
     public static class MMALUtil
     {
+        /* Special Unknown Time Value
+           Timestamps in MMAL are defined as signed 64 bits integer values representing microseconds.
+           However a pre-defined special value is used to signal that a timestamp is not known. */        
+        public static long MMAL_TIME_UNKNOWN => 1 << 63;
+
         public static int VCOS_ALIGN_UP(int value, int roundTo)
         {
             return (int)(Math.Ceiling(value / Convert.ToDouble(roundTo)) * roundTo);

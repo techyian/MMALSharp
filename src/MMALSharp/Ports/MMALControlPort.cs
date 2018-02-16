@@ -13,7 +13,7 @@ namespace MMALSharp.Ports
     /// <summary>
     /// Represents a control port
     /// </summary>
-    public unsafe class MMALControlPort : MMALPortBase
+    public unsafe class MMALControlPort : MMALPortImpl
     {
         public MMALControlPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
             : base(ptr, comp, type)
@@ -21,10 +21,20 @@ namespace MMALSharp.Ports
         }
 
         /// <summary>
+        /// Managed Control port callback delegate
+        /// </summary>
+        public Action<MMALBufferImpl, MMALPortBase> ManagedControlCallback { get; set; }
+
+        /// <summary>
+        /// Monitor lock for control port callback method
+        /// </summary>
+        internal static object ControlLock = new object();
+
+        /// <summary>
         /// Enable processing on a port
         /// </summary>
         /// <param name="managedCallback">A managed callback method we can do further processing on</param>
-        internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback)
+        internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, bool sendBuffers = true)
         {
             if (!this.Enabled)
             {
@@ -65,7 +75,7 @@ namespace MMALSharp.Ports
 
                 var bufferImpl = new MMALBufferImpl(buffer);
 
-                if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero)
+                if (bufferImpl.CheckState())
                 {
                     if (MMALCameraConfig.Debug)
                     {

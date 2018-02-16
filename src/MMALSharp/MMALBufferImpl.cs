@@ -15,7 +15,7 @@ namespace MMALSharp
     /// <summary>
     /// Represents a buffer header object
     /// </summary>
-    public unsafe class MMALBufferImpl : MMALObject
+    public unsafe class MMALBufferImpl : MMALObject, IMMALStatus
     {
         public MMALBufferImpl(MMAL_BUFFER_HEADER_T* ptr)
         {
@@ -148,7 +148,7 @@ namespace MMALSharp
         {
             this.Properties = new List<MMALBufferProperties>();
 
-            if (this.Ptr == null || (IntPtr)this.Ptr == IntPtr.Zero)
+            if (!this.CheckState())
             {
                 return;
             }
@@ -257,43 +257,17 @@ namespace MMALSharp
             {
                 MMALLog.Logger.Debug("Reading data into buffer");
             }
-
-            MMALCheck(MMALBuffer.mmal_buffer_header_mem_lock(this.Ptr), "Unable to lock buffer header.");
-            var ptrAlloc = Marshal.AllocHGlobal(source.Length);
-            this.Ptr->data = (byte*)ptrAlloc;
-            this.Ptr->allocSize = (uint)source.Length;
-            this.Ptr->length = (uint)length;
+            
+            this.Ptr->length = (uint)length;                        
+            this.Ptr->dts = this.Ptr->pts = MMALUtil.MMAL_TIME_UNKNOWN;                        
+            this.Ptr->offset = 0;
 
             if (eof)
             {
-                this.Ptr->flags += (uint)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
+                this.Ptr->flags = (uint)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
             }
 
-            try
-            {
-                fixed (byte* pSource = source)
-                {
-                    var ps = pSource;
-
-                    byte* pt = (byte*)ptrAlloc;
-
-                    for (int i = 0; i < source.Length; i++)
-                    {
-                        *pt = *ps;
-                        pt++;
-                        ps++;
-                    }
-                }
-
-                MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
-            }
-            catch
-            {
-                // If something goes wrong, unlock the header.
-                MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
-                Marshal.FreeHGlobal(ptrAlloc);
-                MMALLog.Logger.Warn("Unable to write data to buffer.");
-            }
+            Marshal.Copy(source, 0, (IntPtr)this.Ptr->data, length);
         }
 
         /// <summary>
@@ -302,7 +276,7 @@ namespace MMALSharp
         /// </summary>
         internal void Acquire()
         {
-            if (this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero)
+            if (this.CheckState())
             {
                 MMALBuffer.mmal_buffer_header_acquire(this.Ptr);
             }
@@ -314,9 +288,14 @@ namespace MMALSharp
         /// </summary>
         internal void Release()
         {
-            if (this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero)
+            if (this.CheckState())
             {
+                MMALLog.Logger.Debug("Releasing buffer.");
                 MMALBuffer.mmal_buffer_header_release(this.Ptr);
+            }
+            else
+            {
+                MMALLog.Logger.Warn("Input buffer null, could not release.");
             }
 
             this.Dispose();
@@ -327,10 +306,15 @@ namespace MMALSharp
         /// </summary>
         internal void Reset()
         {
-            if (this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero)
+            if (this.CheckState())
             {
                 MMALBuffer.mmal_buffer_header_reset(this.Ptr);
             }
+        }
+
+        public bool CheckState()
+        {
+            return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;
         }
     }
 }

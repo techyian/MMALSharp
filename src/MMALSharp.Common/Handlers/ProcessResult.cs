@@ -12,5 +12,6 @@ namespace MMALSharp.Handlers
         public bool EOF { get; set; }
         public byte[] BufferFeed { get; set; }
         public int DataLength { get; set; }
+        public int AllocSize { get; set; }
     }
 }

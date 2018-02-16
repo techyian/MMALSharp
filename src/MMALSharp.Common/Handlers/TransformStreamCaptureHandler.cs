@@ -11,20 +11,19 @@ namespace MMALSharp.Common.Handlers
     public class TransformStreamCaptureHandler : StreamCaptureHandler
     {
         public Stream InputStream { get; set; }
-        public int BufferSize { get; set; }
-       
+               
         public TransformStreamCaptureHandler(Stream inputStream, string outputDirectory, string outputExtension) : base(outputDirectory, outputExtension)
         {
             this.InputStream = inputStream;
         }
 
-        public override ProcessResult Process()
+        public override ProcessResult Process(uint allocSize)
         {
-            var buffer = new byte[this.BufferSize];
+            var buffer = new byte[allocSize - 128];
 
-            var read = this.InputStream.Read(buffer, 0, this.BufferSize);
+            var read = this.InputStream.Read(buffer, 0, (int)allocSize - 128);
        
-            if (read < this.BufferSize)
+            if (read < allocSize - 128)
             {       
                 return new ProcessResult { Success = true, BufferFeed = buffer, EOF = true, DataLength = read };
             }
@@ -40,11 +39,6 @@ namespace MMALSharp.Common.Handlers
                 this.CurrentStream.Write(data, 0, data.Length);
             else
                 throw new IOException("Stream not writable.");
-        }
-
-        public void ConfigureBufferSize(int bufferSize)
-        {
-            this.BufferSize = bufferSize;
-        }
+        }        
     }
 }
