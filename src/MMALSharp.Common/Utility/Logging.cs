@@ -11,6 +11,8 @@ namespace MMALSharp
 {
     public static class MMALLog
     {
+        public static string LogLocation { get; set; }
+
         public static Logger Logger { get; set; }
 
         public static void ConfigureLogConfig()
@@ -30,7 +32,16 @@ namespace MMALSharp
 
             // Step 3. Set target properties 
             consoleTarget.Layout = consoleLayout;
-            fileTarget.FileName = "${basedir}/mmal-log-${shortdate}.log";
+                        
+            if (!string.IsNullOrEmpty(MMALLog.LogLocation))
+            {
+                fileTarget.FileName = MMALLog.LogLocation;
+            }
+            else
+            {
+                fileTarget.FileName = "${basedir}/mmal-log-${shortdate}.log";
+            }
+            
             fileTarget.Layout = debugLayout;
 
             // Step 4. Define rules
