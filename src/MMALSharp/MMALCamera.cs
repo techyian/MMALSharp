@@ -95,13 +95,14 @@ namespace MMALSharp
             using (var vidEncoder = new MMALVideoEncoder(handler, new MMAL_RATIONAL_T(30, 1), timeout, split))
             using (var renderer = new MMALVideoRenderer())
             {
-                vidEncoder.ConfigureOutputPort(0, MMALEncoding.H264, MMALEncoding.I420, 10, 25000000);
+                this.ConfigureCameraSettings();
+
+                vidEncoder.ConfigureOutputPort(0, MMALEncoding.H264, MMALEncoding.I420, 0, MMALVideoEncoder.MaxBitrateLevel4);
 
                 // Create our component pipeline.
                 this.Camera.VideoPort.ConnectTo(vidEncoder);
                 this.Camera.PreviewPort.ConnectTo(renderer);
-                this.ConfigureCameraSettings();
-
+                
                 MMALLog.Logger.Info($"Preparing to take video. Resolution: {vidEncoder.Width} x {vidEncoder.Height}. " +
                                     $"Encoder: {vidEncoder.Outputs[0].EncodingType.EncodingName}. Pixel Format: {vidEncoder.Outputs[0].PixelFormat.EncodingName}.");
 
@@ -131,42 +132,47 @@ namespace MMALSharp
 
             this.Camera.Handler = handler;
 
-            this.CheckPreviewComponentStatus();
-
-            // Enable the image encoder output port.
-            try
+            using (var renderer = new MMALNullSinkComponent())
             {
-                MMALLog.Logger.Info($"Preparing to take raw picture - Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}. " +
-                                  $"Encoder: {MMALCameraConfig.StillEncoding.EncodingName}. Pixel Format: {MMALCameraConfig.StillSubFormat.EncodingName}.");
+                this.ConfigureCameraSettings();
+                this.Camera.StillPort.SetRawCapture(true);
 
-                // Camera warm up time
-                await Task.Delay(2000);
+                this.Camera.PreviewPort.ConnectTo(renderer);
+                
+                // Enable the image encoder output port.
+                try
+                {
+                    MMALLog.Logger.Info($"Preparing to take raw picture - Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}. " +
+                                      $"Encoder: {MMALCameraConfig.StillEncoding.EncodingName}. Pixel Format: {MMALCameraConfig.StillSubFormat.EncodingName}.");
 
-                // Enable processing on the camera still port.
-                this.Camera.EnableConnections();
+                    // Camera warm up time
+                    await Task.Delay(2000);
+                    
+                    this.Camera.Start(this.Camera.StillPort, new Action<MMALBufferImpl, MMALPortBase>(this.Camera.ManagedOutputCallback));
+                    this.Camera.StillPort.Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
 
-                this.Camera.Start(this.Camera.StillPort, new Action<MMALBufferImpl, MMALPortBase>(this.Camera.ManagedOutputCallback));
-                this.Camera.StillPort.Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+                    this.StartCapture(this.Camera.StillPort);
 
-                this.StartCapture(this.Camera.StillPort);
+                    // Wait until the process is complete.
+                    await this.Camera.StillPort.Trigger.WaitAsync();
 
-                // Wait until the process is complete.
-                await this.Camera.StillPort.Trigger.WaitAsync();
+                    // Stop capturing on the camera still port.
+                    this.StopCapture(this.Camera.StillPort);
 
-                // Stop capturing on the camera still port.
-                this.StopCapture(this.Camera.StillPort);
+                    this.Camera.Stop(MMALCameraComponent.MMALCameraStillPort);
 
-                this.Camera.Stop(MMALCameraComponent.MMALCameraStillPort);
+                    // Close open connections and clean port pools.
+                    this.Camera.DisableConnections();
 
-                // Close open connections and clean port pools.
-                this.Camera.DisableConnections();
+                    this.Camera.CleanPortPools();
 
-                this.Camera.CleanPortPools();
-            }
-            finally
-            {
-                this.Camera.Handler.Dispose();
-            }
+                    this.Camera.StillPort.SetRawCapture(false);
+                }
+                finally
+                {
+                    this.Camera.Handler.Dispose();
+                }
+            }            
         }
 
         /// <summary>
@@ -182,13 +188,14 @@ namespace MMALSharp
             using (var imgEncoder = new MMALImageEncoder(handler))
             using (var renderer = new MMALNullSinkComponent())
             {
+                this.ConfigureCameraSettings();
+
                 imgEncoder.ConfigureOutputPort(0, encodingType, pixelFormat, 90);
 
                 // Create our component pipeline.
                 this.Camera.StillPort.ConnectTo(imgEncoder);
                 this.Camera.PreviewPort.ConnectTo(renderer);
-                this.ConfigureCameraSettings();
-
+                
                 // Enable the image encoder output port.
                 MMALLog.Logger.Info($"Preparing to take picture. Resolution: {imgEncoder.Width} x {imgEncoder.Height}. " +
                                     $"Encoder: {encodingType.EncodingName}. Pixel Format: {pixelFormat.EncodingName}.");
