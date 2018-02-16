@@ -66,7 +66,7 @@ namespace MMALSharp.Ports
         /// <param name="buffer">The buffer header</param>
         internal override void NativeControlPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
-            lock (MMALPortBase.ControlLock)
+            lock (MMALControlPort.ControlLock)
             {
                 if (MMALCameraConfig.Debug)
                 {
