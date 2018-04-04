@@ -10,6 +10,12 @@
   <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
+    <DocumentationFile>bin\Release\net452\MMALSharp.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\MMALSharp.xml</DocumentationFile>
+  </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.3.0" />
 	<PackageReference Include="Nito.AsyncEx" Version="3.0.1" />
