@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
+#pragma warning disable 1591
+
     // mmal_parameters_common.h
 
     public static class MMALParametersCommon

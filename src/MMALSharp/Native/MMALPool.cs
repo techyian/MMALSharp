@@ -8,6 +8,8 @@ using System.Runtime.InteropServices;
 
 namespace MMALSharp.Native
 {
+#pragma warning disable 1591
+
     public static class MMALPool
     {
         public delegate void mmal_pool_allocator_alloc_t(IntPtr ptr, uint value);

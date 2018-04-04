@@ -14,6 +14,8 @@ namespace MMALSharp.Native
 {
     public static class BcmHost
     {
+#pragma warning disable 1591
+
         [DllImport("libbcm_host.so", EntryPoint = "bcm_host_init", CallingConvention = CallingConvention.Cdecl)]
         public static extern void bcm_host_init();
 

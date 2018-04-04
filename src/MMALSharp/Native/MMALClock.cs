@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace MMALSharp.Native
 {
+#pragma warning disable 1591
     public static class MMALClock
     {
         public static int MMAL_CLOCK_EVENT_MAGIC = MMALUtil.MMAL_FOURCC("CKLM");

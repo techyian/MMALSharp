@@ -6,7 +6,9 @@
 using System.Runtime.InteropServices;
 
 namespace MMALSharp.Native
-{   
+{
+#pragma warning disable 1591
+
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_CORE_STATISTICS_T
     {

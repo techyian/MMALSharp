@@ -8,6 +8,8 @@ using System.Linq;
 
 namespace MMALSharp.Native
 {
+#pragma warning disable 1591
+
     public static class MMALEncodingHelpers
     {
         public static List<MMALEncoding> EncodingList => new List<MMALEncoding>

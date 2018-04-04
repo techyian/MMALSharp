@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
+#pragma warning disable 1591
+
     public static class MMALConnection
     {
         public const uint MMAL_CONNECTION_FLAG_TUNNELLING = 0x1u;

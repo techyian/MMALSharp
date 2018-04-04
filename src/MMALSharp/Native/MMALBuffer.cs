@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace MMALSharp.Native
 {
+#pragma warning disable 1591
     public enum MMALBufferProperties
     {
         MMAL_BUFFER_HEADER_FLAG_EOS = 1 << 0,

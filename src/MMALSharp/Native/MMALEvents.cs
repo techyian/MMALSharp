@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
+#pragma warning disable 1591
+
     public static class MMALEvents
     {
         public static int MMAL_EVENT_ERROR = MMALUtil.MMAL_FOURCC("ERRO");

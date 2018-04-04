@@ -8,6 +8,8 @@ using System.Runtime.InteropServices;
 
 namespace MMALSharp.Native
 {
+#pragma warning disable 1591
+
     public static class MMALUtil
     {
         /* Special Unknown Time Value
