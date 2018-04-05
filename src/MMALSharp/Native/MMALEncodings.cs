@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace MMALSharp.Native
 {
-#pragma warning disable 1591
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
     public static class MMALEncodingHelpers
     {

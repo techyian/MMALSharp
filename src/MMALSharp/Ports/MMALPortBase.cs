@@ -189,6 +189,12 @@ namespace MMALSharp
         /// </summary>
         public Action<MMALBufferImpl, MMALPortBase> ManagedOutputCallback { get; set; }
         
+        /// <summary>
+        /// Initialized a new instance of the MMALPortBase class.
+        /// </summary>
+        /// <param name="ptr">Native pointer that represents this port.</param>
+        /// <param name="comp">Reference to the component this port is associated with.</param>
+        /// <param name="type">The port type.</param>
         protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
         {
             this.Ptr = ptr;
@@ -219,6 +225,13 @@ namespace MMALSharp
             return destinationComponent.Inputs[inputPort];
         }
 
+        /// <summary>
+        /// Connects two components together by their input and output ports
+        /// </summary>
+        /// <param name="destinationComponent">The component we want to connect to</param>
+        /// <param name="inputPort">The input port of the component we want to connect to</param>
+        /// <param name="callback">Callback that will be executed after connecting</param>
+        /// <returns>The input port of the component we're connecting to - allows chain calling of this method</returns>
         public MMALPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort, Func<MMALPortBase> callback)
         {
             this.ConnectTo(destinationComponent, inputPort);

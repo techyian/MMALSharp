@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
-#pragma warning disable 1591
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
     public static class MMALEvents
     {
@@ -21,8 +21,10 @@ namespace MMALSharp.Native
         public static int MMAL_EVENT_FORMAT_CHANGED = MMALUtil.MMAL_FOURCC("EFCH");
         public static int MMAL_EVENT_PARAMETER_CHANGED = MMALUtil.MMAL_FOURCC("EPCH");
 
+#pragma warning disable IDE1006 // Naming Styles
         [DllImport("libmmal.so", EntryPoint = "mmal_event_format_changed_get", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern MMAL_EVENT_FORMAT_CHANGED_T* mmal_event_format_changed_get(MMAL_BUFFER_HEADER_T* buffer);
+#pragma warning restore IDE1006 // Naming Styles
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -81,7 +83,4 @@ namespace MMALSharp.Native
             this.hdr = hdr;
         }
     }
-
-
-
 }
