@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Threading;
 using MMALSharp.Native;
 
 namespace MMALSharp
@@ -159,7 +160,7 @@ namespace MMALSharp
         public static MMALEncoding VideoSubformat { get; set; } = MMALEncoding.I420;
 
         public static Resolution VideoResolution { get; set; } = Resolution.As1080p;
-
+        
         /// <summary>
         /// Enable video stabilisation
         /// </summary> 
@@ -193,7 +194,7 @@ namespace MMALSharp
         public static MMALEncoding StillSubFormat { get; set; } = MMALEncoding.I420;
 
         public static Resolution StillResolution { get; set; } = Resolution.As5MPixel;
-
+        
         public static MMAL_RATIONAL_T StillFramerate { get; set; } = new MMAL_RATIONAL_T(0, 1);        
     }
     
@@ -213,6 +214,9 @@ namespace MMALSharp
         public double Height { get; set; }
     }
 
+    /// <summary>
+    /// The Stereoscopic mode code has mainly been added for completeness. It requires a Raspberry Pi Compute Module with two cameras connected. This functionality has not been tested.
+    /// </summary>
     public class StereoMode
     {
         public MMAL_STEREOSCOPIC_MODE_T Mode { get; set; } = MMAL_STEREOSCOPIC_MODE_T.MMAL_STEREOSCOPIC_MODE_NONE;
@@ -225,14 +229,14 @@ namespace MMALSharp
         public string Key { get; set; }
         public string Value { get; set; }
     }
-
+    
     public class Timelapse
     {
         public TimelapseMode Mode { get; set; }
-        public DateTime Timeout { get; set; }
+        public CancellationToken CancellationToken { get; set; }
         public int Value { get; set; }
     }
-
+    
     public class AnnotateImage
     {
         public string CustomText { get; set; }

@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using MMALSharp.Native;
 using MMALSharp.Components;
@@ -62,10 +63,21 @@ namespace MMALSharp
         /// </summary>
         public string ObjName { get; set; }
 
+        /// <summary>
+        /// The MMALEncoding encoding type that this port will process data in. Helpful for retrieving encoding name/FourCC value
+        /// </summary>
         public MMALEncoding EncodingType { get; set; }
 
+        /// <summary>
+        /// The MMALEncoding pixel format that this port will process data in. Helpful for retrieving encoding name/FourCC value
+        /// </summary>
         public MMALEncoding PixelFormat { get; set; }
 
+        /// <summary>
+        /// Indicates whether ZeroCopy mode should be enabled on this port. When enabled, data is not copied to the ARM processor and is handled directly by the GPU. Useful when
+        /// transferring large amounts of data or raw capture.
+        /// See: https://www.raspberrypi.org/forums/viewtopic.php?t=170024
+        /// </summary>
         public bool ZeroCopy { get; set; }
 
         #region Native properties
@@ -110,14 +122,8 @@ namespace MMALSharp
         /// </summary>
         public int BufferNum
         {
-            get
-            {
-                return this.Ptr->BufferNum;
-            }
-            set
-            {
-                this.Ptr->BufferNum = value;
-            }
+            get => this.Ptr->BufferNum;
+            set => this.Ptr->BufferNum = value;
         }
 
         /// <summary>
@@ -125,14 +131,8 @@ namespace MMALSharp
         /// </summary>
         public uint BufferSize
         {
-            get
-            {
-                return this.Ptr->BufferSize;
-            }
-            set
-            {
-                this.Ptr->BufferSize = value;
-            }
+            get => this.Ptr->BufferSize;
+            set => this.Ptr->BufferSize = value;
         }
 
         /// <summary>
@@ -140,17 +140,64 @@ namespace MMALSharp
         /// </summary>
         public MMAL_ES_FORMAT_T Format => *this.Ptr->Format;
 
-        public int Width => this.Ptr->Format->es->video.width;
+        /// <summary>
+        /// The Width/Height that this port will process data in
+        /// </summary>
+        public Resolution Resolution
+        {
+            get => new Resolution(this.Ptr->Format->es->video.width, this.Ptr->Format->es->video.height);
+            internal set
+            {
+                this.Ptr->Format->es->video.width = value.Width;
+                this.Ptr->Format->es->video.height = value.Height;
+            }
+        }
 
-        public int Height => this.Ptr->Format->es->video.height;
+        /// <summary>
+        /// The region of interest that this port will process data in.
+        /// </summary>
+        public Rectangle Crop
+        {
+            get => new Rectangle(this.Ptr->Format->es->video.crop.X, this.Ptr->Format->es->video.crop.Y, this.Ptr->Format->es->video.crop.Width, this.Ptr->Format->es->video.crop.Height);
+            internal set => this.Ptr->Format->es->video.crop = new MMAL_RECT_T(value.X, value.Y, value.Width, value.Height);
+        }
 
+        /// <summary>
+        /// The framerate we are processing data in
+        /// </summary>
+        public MMAL_RATIONAL_T FrameRate
+        {
+            get => this.Ptr->Format->es->video.frameRate;
+            internal set => this.Ptr->Format->es->video.frameRate = new MMAL_RATIONAL_T(value.Num, value.Den);
+        }
+        
+        /// <summary>
+        /// The Region of Interest width that this port will process data in
+        /// </summary>
         public int CropWidth => this.Ptr->Format->es->video.crop.Width;
 
+        /// <summary>
+        /// The Region of Interest height that this port will process data in
+        /// </summary>
         public int CropHeight => this.Ptr->Format->es->video.crop.Height;
 
-        public int NativeEncodingType => this.Ptr->Format->encoding;
+        /// <summary>
+        /// The encoding type that this port will process data in
+        /// </summary>
+        public int NativeEncodingType
+        {
+            get => this.Ptr->Format->encoding;
+            internal set => this.Ptr->Format->encoding = value;
+        }
 
-        public int NativeEncodingSubformat => this.Ptr->Format->encodingVariant;
+        /// <summary>
+        /// The pixel format that this port will process data in
+        /// </summary>
+        public int NativeEncodingSubformat
+        {
+            get => this.Ptr->Format->encodingVariant;
+            internal set => this.Ptr->Format->encodingVariant = value;
+        } 
 
         #endregion
 
@@ -190,11 +237,11 @@ namespace MMALSharp
         public Action<MMALBufferImpl, MMALPortBase> ManagedOutputCallback { get; set; }
         
         /// <summary>
-        /// Initialized a new instance of the MMALPortBase class.
+        /// Creates a new Managed reference to a MMAL Component Port.
         /// </summary>
-        /// <param name="ptr">Native pointer that represents this port.</param>
-        /// <param name="comp">Reference to the component this port is associated with.</param>
-        /// <param name="type">The port type.</param>
+        /// <param name="ptr">The native pointer to the component port</param>
+        /// <param name="comp">The component this port is associated with</param>
+        /// <param name="type">The type of port this is</param>
         protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
         {
             this.Ptr = ptr;
@@ -230,7 +277,7 @@ namespace MMALSharp
         /// </summary>
         /// <param name="destinationComponent">The component we want to connect to</param>
         /// <param name="inputPort">The input port of the component we want to connect to</param>
-        /// <param name="callback">Callback that will be executed after connecting</param>
+        /// <param name="callback">An operation we would like to carry out after connecting these components together</param>
         /// <returns>The input port of the component we're connecting to - allows chain calling of this method</returns>
         public MMALPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort, Func<MMALPortBase> callback)
         {
@@ -270,6 +317,7 @@ namespace MMALSharp
         /// Provides functionality to enable processing on an output port.
         /// </summary>
         /// <param name="managedCallback">Delegate for managed output port callback</param>
+        /// <param name="sendBuffers">Indicates whether we want to send all the buffers in the port pool or simply create the pool</param>
         internal virtual void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, bool sendBuffers = true)
         {
             if (managedCallback != null)

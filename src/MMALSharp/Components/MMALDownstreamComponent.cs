@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using MMALSharp.Native;
 
 namespace MMALSharp.Components
@@ -15,6 +16,10 @@ namespace MMALSharp.Components
     /// </summary>
     public abstract class MMALDownstreamComponent : MMALComponentBase
     {
+        /// <summary>
+        /// Creates a new instance of a Downstream component
+        /// </summary>
+        /// <param name="name">The name of the component</param>
         protected MMALDownstreamComponent(string name)
             : base(name)
         {
@@ -47,12 +52,12 @@ namespace MMALSharp.Components
 
             if (encodingType != null)
             {
-                this.Inputs[0].Ptr->Format->encoding = encodingType.EncodingVal;
+                this.Inputs[0].NativeEncodingType = encodingType.EncodingVal;
             }
 
             if (pixelFormat != null)
             {
-                this.Inputs[0].Ptr->Format->encodingVariant = pixelFormat.EncodingVal;
+                this.Inputs[0].NativeEncodingSubformat = pixelFormat.EncodingVal;
             }
 
             this.Inputs[0].Commit();
@@ -91,16 +96,16 @@ namespace MMALSharp.Components
 
             if (encodingType != null)
             {
-                this.Inputs[0].Ptr->Format->encoding = encodingType.EncodingVal;
+                this.Inputs[0].NativeEncodingType = encodingType.EncodingVal;
             }
 
             if (pixelFormat != null)
             {
-                this.Inputs[0].Ptr->Format->encodingVariant = pixelFormat.EncodingVal;
+                this.Inputs[0].NativeEncodingSubformat = pixelFormat.EncodingVal;
             }
 
-            this.Inputs[0].Ptr->BufferNum = this.Inputs[0].Ptr->BufferNumMin;
-            this.Inputs[0].Ptr->BufferSize = this.Inputs[0].Ptr->BufferSizeMin;
+            this.Inputs[0].BufferNum = this.Inputs[0].Ptr->BufferNumMin;
+            this.Inputs[0].BufferSize = this.Inputs[0].Ptr->BufferSizeMin;
 
             this.Inputs[0].EncodingType = encodingType;
 
@@ -149,12 +154,12 @@ namespace MMALSharp.Components
 
             if (encodingType != null)
             {
-                this.Outputs[outputPort].Ptr->Format->encoding = encodingType.EncodingVal;
+                this.Outputs[outputPort].NativeEncodingType = encodingType.EncodingVal;
             }
 
             if (pixelFormat != null)
             {
-                this.Outputs[outputPort].Ptr->Format->encodingVariant = pixelFormat.EncodingVal;
+                this.Outputs[outputPort].NativeEncodingSubformat = pixelFormat.EncodingVal;
             }
 
             MMAL_VIDEO_FORMAT_T tempVid = this.Outputs[outputPort].Ptr->Format->es->video;
@@ -185,12 +190,11 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].EncodingType = encodingType;
             this.Outputs[outputPort].PixelFormat = pixelFormat;
 
-            this.Outputs[outputPort].Ptr->Format->es->video.height = MMALUtil.VCOS_ALIGN_UP(this.Height, 32);
-            this.Outputs[outputPort].Ptr->Format->es->video.width = MMALUtil.VCOS_ALIGN_UP(this.Width, 32);
-            this.Outputs[outputPort].Ptr->Format->es->video.crop = new MMAL_RECT_T(0, 0, this.Width, this.Height);
-
-            this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
-            this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
+            this.Outputs[outputPort].Resolution = new Resolution(MMALUtil.VCOS_ALIGN_UP(this.Width, 32), MMALUtil.VCOS_ALIGN_UP(this.Height, 32));
+            this.Outputs[outputPort].Crop = new Rectangle(0, 0, this.Width, this.Height);
+            
+            this.Outputs[outputPort].BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
+            this.Outputs[outputPort].BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
 
             // It is important to re-commit changes to width and height.
             this.Outputs[outputPort].Commit();
