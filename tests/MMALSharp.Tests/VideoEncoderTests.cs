@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
@@ -78,7 +79,9 @@ namespace MMALSharp.Tests
 
                 TestHelper.CleanDirectory("/home/pi/videos/tests");
 
-                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, new MMAL_RATIONAL_T(25, 1), DateTime.Now.AddSeconds(20)))
+                CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+
+                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler))
                 {
                     fixture.MMALCamera.ConfigureCameraSettings();
 
@@ -94,7 +97,7 @@ namespace MMALSharp.Tests
                     await Task.Delay(2000);
 
                     //Record video for 20 seconds
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort);
+                    await fixture.MMALCamera.ProcessAsync(fixture.MMALCamera.Camera.VideoPort, cts.Token);
                     
                     if (System.IO.File.Exists(vidCaptureHandler.GetFilepath()))
                     {
@@ -121,9 +124,10 @@ namespace MMALSharp.Tests
                 var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests/split_test", extension);
 
                 TestHelper.CleanDirectory("/home/pi/videos/tests/split_test");
-                
-                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, new MMAL_RATIONAL_T(25, 1), 
-                        DateTime.Now.AddSeconds(30), new Split { Mode = TimelapseMode.Second, Value = 15 }))
+
+                CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, null, new Split { Mode = TimelapseMode.Second, Value = 15 }))
                 {
                     fixture.MMALCamera.ConfigureCameraSettings();
 
@@ -139,10 +143,9 @@ namespace MMALSharp.Tests
                     await Task.Delay(2000);
 
                     //2 files should be created from this test. 
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort);
+                    await fixture.MMALCamera.ProcessAsync(fixture.MMALCamera.Camera.VideoPort, cts.Token);
                     
                     Assert.True(Directory.GetFiles("/home/pi/videos/tests/split_test").Length == 2);
-
                 }
             });
         }
@@ -157,8 +160,10 @@ namespace MMALSharp.Tests
                 var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "avi");
 
                 TestHelper.CleanDirectory("/home/pi/videos/tests");
-                
-                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, new MMAL_RATIONAL_T(25, 1), DateTime.Now.AddSeconds(20)))
+
+                CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+
+                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler))
                 {
                     fixture.MMALCamera.ConfigureCameraSettings();
 
@@ -174,7 +179,7 @@ namespace MMALSharp.Tests
                     await Task.Delay(2000);
 
                     //Record video for 20 seconds
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort);
+                    await fixture.MMALCamera.ProcessAsync(fixture.MMALCamera.Camera.VideoPort, cts.Token);
 
                     if (System.IO.File.Exists(vidCaptureHandler.GetFilepath()))
                     {
@@ -190,7 +195,9 @@ namespace MMALSharp.Tests
 
                 vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "mjpeg");
 
-                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, new MMAL_RATIONAL_T(25, 1), DateTime.Now.AddSeconds(20)))
+                cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+
+                using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler))
                 {
                     fixture.MMALCamera.ConfigureCameraSettings();
 
@@ -206,7 +213,7 @@ namespace MMALSharp.Tests
                     await Task.Delay(2000);
 
                     //Record video for 20 seconds
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.VideoPort);
+                    await fixture.MMALCamera.ProcessAsync(fixture.MMALCamera.Camera.VideoPort, cts.Token);
 
                     if (System.IO.File.Exists(vidCaptureHandler.GetFilepath()))
                     {

@@ -5,10 +5,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Utility;
 
 namespace MMALSharp
 {
@@ -81,10 +83,10 @@ namespace MMALSharp
         /// Self-contained method for recording H.264 video for a specified amount of time. Records at 30fps, 25Mb/s at the highest quality.
         /// </summary>
         /// <param name="handler">The video capture handler to apply to the encoder.</param>
-        /// <param name="timeout">A timeout to stop the video capture</param>
+        /// <param name="cancellationToken">A cancellationToken to signal when to stop video capture</param>
         /// <param name="split">Used for Segmented video mode</param>
         /// <returns>The awaitable Task</returns>
-        public async Task TakeVideo(VideoStreamCaptureHandler handler, DateTime? timeout = null, Split split = null)
+        public async Task TakeVideo(VideoStreamCaptureHandler handler, CancellationToken cancellationToken, Split split = null)
         {
             if (split != null && !MMALCameraConfig.InlineHeaders)
             {
@@ -92,7 +94,7 @@ namespace MMALSharp
                 split = null;
             }
 
-            using (var vidEncoder = new MMALVideoEncoder(handler, new MMAL_RATIONAL_T(30, 1), timeout, split))
+            using (var vidEncoder = new MMALVideoEncoder(handler, null, split))
             using (var renderer = new MMALVideoRenderer())
             {
                 this.ConfigureCameraSettings();
@@ -102,24 +104,28 @@ namespace MMALSharp
                 // Create our component pipeline.
                 this.Camera.VideoPort.ConnectTo(vidEncoder);
                 this.Camera.PreviewPort.ConnectTo(renderer);
-                
+
                 MMALLog.Logger.Info($"Preparing to take video. Resolution: {vidEncoder.Width} x {vidEncoder.Height}. " +
                                     $"Encoder: {vidEncoder.Outputs[0].EncodingType.EncodingName}. Pixel Format: {vidEncoder.Outputs[0].PixelFormat.EncodingName}.");
 
                 // Camera warm up time
                 await Task.Delay(2000);
 
-                await this.BeginProcessing(this.Camera.VideoPort);
+                await this.ProcessAsync(this.Camera.VideoPort, cancellationToken);
             }
         }
-
+        
         /// <summary>
         /// Self-contained method to capture raw image data directly from the Camera component - this method does not use an Image encoder.
+        /// Note: We cannot use the OPAQUE encoding format with this helper method, the capture will not fail, but will not produce valid data. For reference, RaspiStillYUV uses YUV420.
         /// </summary>
         /// <param name="handler">The image capture handler to use to save image.</param>
         /// <returns>The awaitable Task</returns>
         public async Task TakeRawPicture(ICaptureHandler handler)
         {
+            var currentStillEncoder = MMALCameraConfig.StillEncoding;
+            var currentStillSubEncoder = MMALCameraConfig.StillSubFormat;
+
             if (this.Camera.StillPort.ConnectedReference != null)
             {
                 throw new PiCameraError("A connection was found to the Camera still port. No encoder should be connected to the Camera's still port for raw capture.");
@@ -134,6 +140,9 @@ namespace MMALSharp
 
             using (var renderer = new MMALNullSinkComponent())
             {
+                MMALCameraConfig.StillEncoding = MMALEncoding.I420;
+                MMALCameraConfig.StillSubFormat = MMALEncoding.I420;
+
                 this.ConfigureCameraSettings();
                 this.Camera.StillPort.SetRawCapture(true);
 
@@ -170,6 +179,9 @@ namespace MMALSharp
                 }
                 finally
                 {
+                    MMALCameraConfig.StillEncoding = currentStillEncoder;
+                    MMALCameraConfig.StillSubFormat = currentStillSubEncoder;
+
                     this.Camera.Handler.Dispose();
                 }
             }            
@@ -203,7 +215,7 @@ namespace MMALSharp
                 // Camera warm up time
                 await Task.Delay(2000);
 
-                await this.BeginProcessing(this.Camera.StillPort);
+                await this.ProcessAsync(this.Camera.StillPort);
             }
         }
 
@@ -214,22 +226,22 @@ namespace MMALSharp
         /// <param name="handler">The image capture handler to apply to the encoder component</param>
         /// <param name="encodingType">The image encoding type e.g. JPEG, BMP</param>
         /// <param name="pixelFormat">The pixel format to use with the encoder e.g. I420 (YUV420)</param>
-        /// <param name="timeout">The DateTime which capturing should stop</param>
+        /// <param name="cancellationToken">A cancellationToken to trigger stop capturing</param>
         /// <param name="burstMode">When enabled, burst mode will increase the rate at which images are taken, at the expense of quality</param>
         /// <returns>The awaitable Task</returns>
-        public async Task TakePictureTimeout(ImageStreamCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, DateTime timeout, bool burstMode = false)
+        public async Task TakePictureTimeout(ImageStreamCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, CancellationToken cancellationToken, bool burstMode = false)
         {
             if (burstMode)
             {
                 this.Camera.StillPort.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_BURST_CAPTURE, true);
             }
 
-            while (DateTime.Now.CompareTo(timeout) < 0)
+            while (!cancellationToken.IsCancellationRequested)
             {
                 await this.TakePicture(handler, encodingType, pixelFormat);
             }
         }
-
+        
         /// <summary>
         /// Self-contained method for capturing timelapse images.
         /// An MMALImageEncoder component will be created and attached to the still port.
@@ -248,7 +260,7 @@ namespace MMALSharp
                 throw new PiCameraError("Timelapse object null. This must be initialized for Timelapse mode");
             }
 
-            while (DateTime.Now.CompareTo(timelapse.Timeout) < 0)
+            while (!timelapse.CancellationToken.IsCancellationRequested)
             {
                 switch (timelapse.Mode)
                 {
@@ -275,7 +287,19 @@ namespace MMALSharp
         /// </summary>
         /// <param name="cameraPort">The camera port which image data is coming from</param>
         /// <returns>The awaitable Task</returns>
-        public async Task BeginProcessing(MMALPortImpl cameraPort)
+        public async Task ProcessAsync(MMALPortImpl cameraPort)
+        {
+            await this.ProcessAsync(cameraPort, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Helper method to begin processing image data. Starts the Camera port and awaits until processing is complete.
+        /// Cleans up resources upon finish.
+        /// </summary>
+        /// <param name="cameraPort">The camera port which image data is coming from</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for a task to complete.</param>
+        /// <returns>The awaitable Task</returns>
+        public async Task ProcessAsync(MMALPortImpl cameraPort, CancellationToken cancellationToken)
         {
             var handlerComponents = this.PopulateProcessingList();
 
@@ -311,8 +335,16 @@ namespace MMALSharp
                 }
             }
 
-            await Task.WhenAll(tasks.ToArray());
-
+            if (cancellationToken == CancellationToken.None)
+            {
+                await Task.WhenAll(tasks.ToArray());
+            }
+            else
+            {
+                tasks.Add(cancellationToken.AsTask());
+                await Task.WhenAny(tasks.ToArray());
+            }
+            
             this.StopCapture(cameraPort);
 
             // If taking raw image, the camera component will hold the handler

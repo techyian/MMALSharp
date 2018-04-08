@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -354,7 +355,7 @@ namespace MMALSharp.Tests
                     //Camera warm up time
                     await Task.Delay(2000);
 
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
+                    await fixture.MMALCamera.ProcessAsync(fixture.MMALCamera.Camera.StillPort);
                 }
 
                 if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
@@ -394,7 +395,7 @@ namespace MMALSharp.Tests
                     //Camera warm up time
                     await Task.Delay(2000);
 
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
+                    await fixture.MMALCamera.ProcessAsync(fixture.MMALCamera.Camera.StillPort);
                 }
 
                 if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
@@ -431,14 +432,15 @@ namespace MMALSharp.Tests
                     fixture.MMALCamera.Camera.PreviewPort
                         .ConnectTo(new MMALNullSinkComponent());
                                         
+                    CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
                     Timelapse tl = new Timelapse
                     {
                         Mode = TimelapseMode.Second,
-                        Timeout = DateTime.Now.AddSeconds(30),
+                        CancellationToken = cts.Token,
                         Value = 5
                     };
 
-                    while (DateTime.Now.CompareTo(tl.Timeout) < 0)
+                    while (!tl.CancellationToken.IsCancellationRequested)
                     {
                         int interval = tl.Value * 1000;
                         
@@ -447,7 +449,7 @@ namespace MMALSharp.Tests
                         //Camera warm up time
                         await Task.Delay(2000);
 
-                        await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
+                        await fixture.MMALCamera.ProcessAsync(fixture.MMALCamera.Camera.StillPort);
                     }
                 }
             });
@@ -481,7 +483,7 @@ namespace MMALSharp.Tests
 
                     while (DateTime.Now.CompareTo(timeout) < 0)
                     {
-                        await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
+                        await fixture.MMALCamera.ProcessAsync(fixture.MMALCamera.Camera.StillPort);
                     }}
                 
             });
@@ -511,7 +513,7 @@ namespace MMALSharp.Tests
                     //Camera warm up time
                     await Task.Delay(2000);
 
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
+                    await fixture.MMALCamera.ProcessAsync(fixture.MMALCamera.Camera.StillPort);
                 }
 
                 if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
@@ -539,7 +541,7 @@ namespace MMALSharp.Tests
                     //Camera warm up time
                     await Task.Delay(2000);
 
-                    await fixture.MMALCamera.BeginProcessing(fixture.MMALCamera.Camera.StillPort);
+                    await fixture.MMALCamera.ProcessAsync(fixture.MMALCamera.Camera.StillPort);
                 }
 
                 if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))

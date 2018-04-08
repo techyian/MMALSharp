@@ -20,9 +20,7 @@ namespace MMALSharp.Components
     public sealed unsafe class MMALVideoEncoder : MMALEncoderBase
     {
         public int Bitrate { get; set; }
-
-        public int Framerate { get; set; }
-
+        
         public int Level { get; set; } = (int)MMALParametersVideo.MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4;
 
         /// <summary>
@@ -83,14 +81,13 @@ namespace MMALSharp.Components
 
         public DateTime? Timeout { get; set; }
 
-        public MMALVideoEncoder(ICaptureHandler handler, MMAL_RATIONAL_T framerate, DateTime? timeout = null, Split split = null)
+        public MMALVideoEncoder(ICaptureHandler handler, DateTime? timeout = null, Split split = null)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, handler)
         {
-            this.Framerate = framerate.Num / framerate.Den;
             this.Split = split;
             this.Timeout = timeout;
         }
-
+        
         /// <summary>
         /// Call to configure changes on a Downstream video output port.
         /// </summary>
@@ -225,7 +222,7 @@ namespace MMALSharp.Components
         internal void ConfigureVideoProfile(int outputPort)
         {
             var macroblocks = (MMALCameraConfig.VideoResolution.Width >> 4) * (MMALCameraConfig.VideoResolution.Height >> 4);
-            var macroblocksPSec = macroblocks * this.Framerate;
+            var macroblocksPSec = macroblocks * (MMALCameraConfig.VideoFramerate.Num / MMALCameraConfig.VideoFramerate.Den);
 
             List<VideoLevel> videoLevels = H264VideoLevel.GetNormalLevelLimits();
 

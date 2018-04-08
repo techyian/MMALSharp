@@ -168,7 +168,7 @@ namespace MMALSharp.Native
             this.width = width;
         }
     }
-
+    
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_FLOAT_RECT_T
     {
@@ -187,9 +187,7 @@ namespace MMALSharp.Native
             this.height = height;
         }
     }
-
-
-
+    
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_RATIONAL_T
     {

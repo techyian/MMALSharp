@@ -12,6 +12,10 @@ namespace MMALSharp.Components
     /// </summary>
     public abstract class MMALRendererBase : MMALDownstreamComponent
     {
+        /// <summary>
+        /// Create a new instance of a renderer component
+        /// </summary>
+        /// <param name="name">The name of the component</param>
         protected MMALRendererBase(string name)
             : base(name)
         {
@@ -52,6 +56,10 @@ namespace MMALSharp.Components
             set { _height = value; }
         }
 
+        /// <summary>
+        /// Creates a new instance of a Null Sink renderer component. This component is intended to be connected to the Camera's preview port
+        /// and is used to measure exposure. No video preview is available with this renderer.
+        /// </summary>
         public MMALNullSinkComponent()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_NULL_SINK)
         {
@@ -98,6 +106,10 @@ namespace MMALSharp.Components
             set { _height = value; }
         }
 
+        /// <summary>
+        /// Creates a new instance of a Null Sink renderer component. This component is intended to be connected to the Camera's preview port
+        /// and is used to measure exposure. It also produces real-time video to the Pi's HDMI output from the camera.
+        /// </summary>
         public MMALVideoRenderer()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_RENDERER)
         {

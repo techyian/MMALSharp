@@ -14,6 +14,9 @@ using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
+    /// <summary>
+    /// Base class for all components
+    /// </summary>
     public abstract unsafe class MMALComponentBase : MMALObject
     {
         /// <summary>
@@ -61,6 +64,10 @@ namespace MMALSharp
         /// </summary>
         public ICaptureHandler Handler { get; set; }
 
+        /// <summary>
+        /// Creates the MMAL Component by the given name.
+        /// </summary>
+        /// <param name="name"></param>
         protected MMALComponentBase(string name)
         {
             this.Ptr = CreateComponent(name);
@@ -117,6 +124,11 @@ namespace MMALSharp
             this.Handler?.Process(data);
         }
 
+        /// <summary>
+        /// Delegate to process any information sent to the component's control port
+        /// </summary>
+        /// <param name="buffer">The current buffer header being processed</param>
+        /// <param name="port">The port we're currently processing on</param>
         public virtual void ManagedControlCallback(MMALBufferImpl buffer, MMALPortBase port)
         {
             MMALLog.Logger.Debug("In managed control callback");                        
@@ -160,6 +172,9 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Prints a summary of the ports associated with this component to the console.
+        /// </summary>
         public virtual void PrintComponent()
         {
             MMALLog.Logger.Info($"Component: {this.Name}");
@@ -181,6 +196,9 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Disposes of the current component, and frees any native resources still in use by it.
+        /// </summary>
         public override void Dispose()
         {
             MMALLog.Logger.Debug($"Disposing component {this.Name}.");
