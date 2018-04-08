@@ -19,6 +19,9 @@ namespace MMALSharp.Components
     /// </summary>
     public unsafe class MMALImageEncoder : MMALEncoderBase
     {
+        /// <summary>
+        /// Represents the maximum length of a formatted EXIF tag. This includes the tag's key, an equals sign, the tag's value and a null char.
+        /// </summary>
         public const int MaxExifPayloadLength = 128;
 
         private int _width;

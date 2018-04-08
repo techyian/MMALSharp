@@ -100,7 +100,7 @@ namespace MMALSharp.Components
                     enableTextBackground = 1;
                 }
 
-                textSize = System.Convert.ToByte(MMALCameraConfig.Annotate.TextSize);
+                textSize = Convert.ToByte(MMALCameraConfig.Annotate.TextSize);
 
                 if (MMALCameraConfig.Annotate.TextColour != -1)
                 {

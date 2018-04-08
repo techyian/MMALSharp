@@ -39,6 +39,11 @@ namespace MMALSharp.Handlers
         /// </summary>
         public string Extension { get; protected set; }
 
+        /// <summary>
+        /// Creates a new instance of the StreamCaptureHandler class with the specified directory and filename extension.
+        /// </summary>
+        /// <param name="directory">The directory to save captured data.</param>
+        /// <param name="extension">The filename extension for saving files.</param>
         protected StreamCaptureHandler(string directory, string extension)
         {            
             this.Directory = directory.TrimEnd('/');
@@ -121,6 +126,10 @@ namespace MMALSharp.Handlers
             throw new NotSupportedException("Cannot get filename from non FileStream object");
         }
 
+        /// <summary>
+        /// Gets the filepath that a FileStream points to
+        /// </summary>
+        /// <returns></returns>
         public string GetFilepath()
         {
             if (this.CurrentStream.GetType() == typeof(FileStream))
@@ -131,6 +140,9 @@ namespace MMALSharp.Handlers
             throw new NotSupportedException("Cannot get path from non FileStream object");
         }
 
+        /// <summary>
+        /// Releases the underlying stream.
+        /// </summary>
         public void Dispose()
         {
             CurrentStream?.Dispose();

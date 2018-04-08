@@ -20,7 +20,7 @@ namespace MMALSharp
         private WeakReference<MMALObject> reference;
 
         /// <summary>
-        /// Initializes a new instance of the MMALObject class and adds this instance to the Objects list.
+        /// Creates a new instance of the MMALObject class and adds this instance to the Objects list.
         /// </summary>
         public MMALObject()
         {

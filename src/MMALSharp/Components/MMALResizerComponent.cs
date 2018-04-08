@@ -9,7 +9,7 @@ using static MMALSharp.Native.MMALParameters;
 namespace MMALSharp.Components
 {
     /// <summary>
-    /// Represents the resizer component. This component has the ability to change the encoding type & pixel format, as well
+    /// Represents the resizer component. This component has the ability to change the encoding type &amp; pixel format, as well
     /// as the width/height of resulting frames.
     /// </summary>
     public sealed class MMALResizerComponent : MMALDownstreamHandlerComponent
