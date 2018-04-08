@@ -13,7 +13,7 @@ using static MMALSharp.MMALCallerHelper;
 namespace MMALSharp.Components
 {
     /// <summary>
-    /// Represents a base class for all encoder components
+    /// Represents a base class for all encoder components.
     /// </summary>
     public abstract class MMALEncoderBase : MMALDownstreamHandlerComponent
     {

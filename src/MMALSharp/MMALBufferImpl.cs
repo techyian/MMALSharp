@@ -13,7 +13,7 @@ using static MMALSharp.MMALCallerHelper;
 namespace MMALSharp
 {
     /// <summary>
-    /// Represents a buffer header object
+    /// Represents a buffer header object.
     /// </summary>
     public unsafe class MMALBufferImpl : MMALObject, IMMALStatus
     {
@@ -24,37 +24,37 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Native pointer that represents this buffer header
+        /// Native pointer that represents this buffer header.
         /// </summary>
         internal MMAL_BUFFER_HEADER_T* Ptr { get; set; }
 
         /// <summary>
-        /// Pointer to the data associated with this buffer header
+        /// Pointer to the data associated with this buffer header.
         /// </summary>
         public byte* Data => this.Ptr->data;
 
         /// <summary>
-        /// Defines what the buffer header contains. This is a FourCC with 0 as a special value meaning stream data
+        /// Defines what the buffer header contains. This is a FourCC with 0 as a special value meaning stream data.
         /// </summary>
         public uint Cmd => this.Ptr->Cmd;
 
         /// <summary>
-        /// Allocated size in bytes of payload buffer
+        /// Allocated size in bytes of payload buffer.
         /// </summary>
         public uint AllocSize => this.Ptr->AllocSize;
 
         /// <summary>
-        /// Number of bytes currently used in the payload buffer (starting from offset)
+        /// Number of bytes currently used in the payload buffer (starting from offset).
         /// </summary>
         public uint Length => this.Ptr->Length;
 
         /// <summary>
-        /// Offset in bytes to the start of valid data in the payload buffer
+        /// Offset in bytes to the start of valid data in the payload buffer.
         /// </summary>
         public uint Offset => this.Ptr->Offset;
 
         /// <summary>
-        /// Flags describing properties of a buffer header
+        /// Flags describing properties of a buffer header.
         /// </summary>
         public uint Flags => this.Ptr->Flags;
 
@@ -69,7 +69,7 @@ namespace MMALSharp
         public long Dts => this.Ptr->Dts;
 
         /// <summary>
-        /// Accessor to the specific type this buffer header represents
+        /// Accessor to the specific type this buffer header represents.
         /// </summary>
         public MMAL_BUFFER_HEADER_TYPE_SPECIFIC_T Type => Marshal.PtrToStructure<MMAL_BUFFER_HEADER_TYPE_SPECIFIC_T>(this.Ptr->Type);
 
@@ -79,12 +79,12 @@ namespace MMALSharp
         public List<MMALBufferProperties> Properties { get; set; }
 
         /// <summary>
-        /// List of events associated with this buffer header
+        /// List of events associated with this buffer header.
         /// </summary>
         public List<int> Events { get; set; }
 
         /// <summary>
-        /// Print the properties associated with this buffer header to console
+        /// Print the properties associated with this buffer header to console.
         /// </summary>
         public void PrintProperties()
         {
@@ -95,7 +95,7 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Writes events associated with the buffer header to log
+        /// Writes events associated with the buffer header to log.
         /// </summary>
         public void ParseEvents()
         {
@@ -142,7 +142,7 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Adds all properties associated with this buffer header to 'this.Properties'
+        /// Adds all properties associated with this buffer header to <see cref="Properties"/>.
         /// </summary>
         private void InitialiseProperties()
         {
@@ -215,9 +215,9 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Gathers all data in this payload and returns as a byte array
+        /// Gathers all data in this payload and returns as a byte array.
         /// </summary>
-        /// <returns>A byte array containing the image frame</returns>
+        /// <returns>A byte array containing the image frame.</returns>
         internal byte[] GetBufferData()
         {
             if (MMALCameraConfig.Debug)
@@ -246,11 +246,11 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Writes user provided image data into a buffer header
+        /// Writes user provided image data into a buffer header.
         /// </summary>
-        /// <param name="source">The array of image data to write to buffer header</param>
-        /// <param name="length">The length of the data being written</param>
-        /// <param name="eof">Signal that we've reached the end of the input file</param>
+        /// <param name="source">The array of image data to write to buffer header.</param>
+        /// <param name="length">The length of the data being written.</param>
+        /// <param name="eof">Signal that we've reached the end of the input file.</param>
         internal void ReadIntoBuffer(byte[] source, int length, bool eof)
         {
             if (MMALCameraConfig.Debug)

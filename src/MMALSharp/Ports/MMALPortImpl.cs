@@ -13,7 +13,7 @@ using MMALSharp.Native;
 namespace MMALSharp
 {
     /// <summary>
-    /// Represents a generic port
+    /// Represents a generic port.
     /// </summary>
     public unsafe class MMALPortImpl : MMALPortBase
     {
@@ -23,9 +23,9 @@ namespace MMALSharp
         }
         
         /// <summary>
-        /// Enable processing on an output port
+        /// Enable processing on an output port.
         /// </summary>
-        /// <param name="managedCallback">A managed callback method we can do further processing on</param>
+        /// <param name="managedCallback">A managed callback method we can do further processing on.</param>
         internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, bool sendBuffers = true)
         {            
             if (!this.Enabled)
@@ -88,10 +88,10 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// The native callback MMAL passes buffer headers to
+        /// The native callback MMAL passes buffer headers to.
         /// </summary>
-        /// <param name="port">The port the buffer is sent to</param>
-        /// <param name="buffer">The buffer header</param>
+        /// <param name="port">The port the buffer is sent to.</param>
+        /// <param name="buffer">The buffer header.</param>
         internal override void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             lock (MMALPortBase.OutputLock)

@@ -10,7 +10,7 @@ using MMALSharp.Native;
 namespace MMALSharp.Ports
 {
     /// <summary>
-    /// A custom port definition used specifically when using encoder conversion functionality
+    /// A custom port definition used specifically when using encoder conversion functionality.
     /// </summary>
     public unsafe class MMALStillDecodeConvertPort : MMALStillPort
     {
@@ -39,10 +39,10 @@ namespace MMALSharp.Ports
         }
 
         /// <summary>
-        /// The native callback MMAL passes buffer headers to
+        /// The native callback MMAL passes buffer headers to.
         /// </summary>
-        /// <param name="port">The port the buffer is sent to</param>
-        /// <param name="buffer">The buffer header</param>
+        /// <param name="port">The port the buffer is sent to.</param>
+        /// <param name="buffer">The buffer header.</param>
         internal override void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             lock (MMALPortBase.OutputLock)

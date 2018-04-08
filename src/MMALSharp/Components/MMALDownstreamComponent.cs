@@ -17,9 +17,9 @@ namespace MMALSharp.Components
     public abstract class MMALDownstreamComponent : MMALComponentBase
     {
         /// <summary>
-        /// Creates a new instance of a Downstream component
+        /// Creates a new instance of a Downstream component.
         /// </summary>
-        /// <param name="name">The name of the component</param>
+        /// <param name="name">The name of the component.</param>
         protected MMALDownstreamComponent(string name)
             : base(name)
         {
@@ -38,8 +38,8 @@ namespace MMALSharp.Components
         /// port it is to be connected to.
         /// </summary>
         /// <param name="encodingType">The encoding type the input port shall be expecting.</param>
-        /// <param name="pixelFormat">The pixel format the input port shall be expecting</param>
-        /// <param name="copyPort">The output port we are copying format data from</param>
+        /// <param name="pixelFormat">The pixel format the input port shall be expecting.</param>
+        /// <param name="copyPort">The output port we are copying format data from.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
         public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, MMALPortImpl copyPort, bool zeroCopy = false)
         {
@@ -73,8 +73,8 @@ namespace MMALSharp.Components
         /// Call to configure changes on an Image Encoder input port. Used when providing an image file directly
         /// to the component.
         /// </summary>
-        /// <param name="encodingType">The encoding type the input port will expect data in</param>
-        /// <param name="pixelFormat">The pixel format the input port will expect data in</param>
+        /// <param name="encodingType">The encoding type the input port will expect data in.</param>
+        /// <param name="pixelFormat">The pixel format the input port will expect data in.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
         public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, bool zeroCopy = false)
         {
@@ -85,10 +85,10 @@ namespace MMALSharp.Components
         /// Call to configure changes on an Image Encoder input port. Used when providing an image file directly
         /// to the component.
         /// </summary>
-        /// <param name="encodingType">The encoding type the input port will expect data in</param>
-        /// <param name="pixelFormat">The pixel format the input port will expect data in</param>
-        /// <param name="width">The width of the incoming frame</param>
-        /// <param name="height">The height of the incoming frame</param>
+        /// <param name="encodingType">The encoding type the input port will expect data in.</param>
+        /// <param name="pixelFormat">The pixel format the input port will expect data in.</param>
+        /// <param name="width">The width of the incoming frame.</param>
+        /// <param name="height">The height of the incoming frame.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
         public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, bool zeroCopy = false)
         {
@@ -126,10 +126,10 @@ namespace MMALSharp.Components
         /// <summary>
         /// Call to configure changes on the 1st Downstream component output port.
         /// </summary>
-        /// <param name="encodingType">The encoding type this output port will send data in</param>
-        /// <param name="pixelFormat">The pixel format this output port will send data in</param>
-        /// <param name="quality">The quality of our outputted data</param>
-        /// <param name="bitrate">The bitrate we are sending data at</param>
+        /// <param name="encodingType">The encoding type this output port will send data in.</param>
+        /// <param name="pixelFormat">The pixel format this output port will send data in.</param>
+        /// <param name="quality">The quality of our outputted data.</param>
+        /// <param name="bitrate">The bitrate we are sending data at.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
         public virtual unsafe void ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
@@ -139,11 +139,11 @@ namespace MMALSharp.Components
         /// <summary>
         /// Call to configure changes on an Downstream component output port.
         /// </summary>
-        /// <param name="outputPort">The output port we are configuring</param>
-        /// <param name="encodingType">The encoding type this output port will send data in</param>
-        /// <param name="pixelFormat">The pixel format this output port will send data in</param>
-        /// <param name="quality">The quality of our outputted data</param>
-        /// <param name="bitrate">The bitrate we are sending data at</param>
+        /// <param name="outputPort">The output port we are configuring.</param>
+        /// <param name="encodingType">The encoding type this output port will send data in.</param>
+        /// <param name="pixelFormat">The pixel format this output port will send data in.</param>
+        /// <param name="quality">The quality of our outputted data.</param>
+        /// <param name="bitrate">The bitrate we are sending data at.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
         public virtual unsafe void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
@@ -217,7 +217,7 @@ namespace MMALSharp.Components
         /// <summary>
         /// Initialises the input port specified by constructing the correct port type to be used by the component.
         /// </summary>
-        /// <param name="inputPort">The input port to initialise</param>
+        /// <param name="inputPort">The input port to initialise.</param>
         internal virtual unsafe void InitialiseInputPort(int inputPort)
         {
         }
@@ -225,7 +225,7 @@ namespace MMALSharp.Components
         /// <summary>
         /// Initialises the output port specified by constructing the correct port type to be used by the component.
         /// </summary>
-        /// <param name="outputPort">The output port to initialise</param>
+        /// <param name="outputPort">The output port to initialise.</param>
         internal virtual unsafe void InitialiseOutputPort(int outputPort)
         {
         }

@@ -15,11 +15,11 @@ namespace MMALSharp
     public static class MMALPortExtensions
     {
         /// <summary>
-        /// Provides a facility to get data from the port using the native helper functions
+        /// Provides a facility to get data from the port using the native helper functions.
         /// </summary>
-        /// <param name="port">The port to get the parameter from</param>
-        /// <param name="key">The unique key for the parameter</param>
-        /// <returns>Dynamic parameter based on key parameter</returns>
+        /// <param name="port">The port to get the parameter from.</param>
+        /// <param name="key">The unique key for the parameter.</param>
+        /// <returns>Dynamic parameter based on key parameter.</returns>
         public static unsafe dynamic GetParameter(this MMALPortBase port, int key)
         {
             var t = MMALParameterHelpers.ParameterHelper.Where(c => c.ParamValue == key).FirstOrDefault();
@@ -69,11 +69,11 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Provides a facility to set data on the port using the native helper functions
+        /// Provides a facility to set data on the port using the native helper functions.
         /// </summary>
-        /// <param name="port">The port we want to set the parameter on</param>
-        /// <param name="key">The unique key of the parameter</param>
-        /// <param name="value">The value of the parameter</param>
+        /// <param name="port">The port we want to set the parameter on.</param>
+        /// <param name="key">The unique key of the parameter.</param>
+        /// <param name="value">The value of the parameter.</param>
         public static unsafe void SetParameter(this MMALPortBase port, int key, dynamic value)
         {
             var t = MMALParameterHelpers.ParameterHelper.Where(c => c.ParamValue == key).FirstOrDefault();
@@ -127,6 +127,11 @@ namespace MMALSharp
             return port.GetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE);
         }
 
+        /// <summary>
+        /// Retrieves an array of FourCC integer codes that this port is compatible with.
+        /// </summary>
+        /// <param name="port">The port we are getting supported encodings for.</param>
+        /// <returns>An array of FourCC integers.</returns>
         public static unsafe int[] GetSupportedEncodings(this MMALPortImpl port)
         {
             IntPtr ptr1 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>() + 20);

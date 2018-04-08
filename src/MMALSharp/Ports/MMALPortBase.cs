@@ -24,52 +24,52 @@ namespace MMALSharp
     }
 
     /// <summary>
-    /// Base class for port objects
+    /// Base class for port objects.
     /// </summary>
     public abstract unsafe class MMALPortBase : MMALObject
     {
         /// <summary>
-        /// Native pointer that represents this port
+        /// Native pointer that represents this port.
         /// </summary>
         internal MMAL_PORT_T* Ptr { get; set; }
 
         /// <summary>
-        /// Native pointer that represents the component this port is associated with
+        /// Native pointer that represents the component this port is associated with.
         /// </summary>
         internal MMAL_COMPONENT_T* Comp { get; set; }
 
         /// <summary>
-        /// Specifies the type of port this is
+        /// Specifies the type of port this is.
         /// </summary>
         public PortType PortType { get; set; }
 
         /// <summary>
-        /// Managed reference to the component this port is associated with
+        /// Managed reference to the component this port is associated with.
         /// </summary>
         public MMALComponentBase ComponentReference { get; set; }
 
         /// <summary>
-        /// Managed reference to the downstream component this port is connected to
+        /// Managed reference to the downstream component this port is connected to.
         /// </summary>
         public MMALConnectionImpl ConnectedReference { get; set; }
 
         /// <summary>
-        /// Managed reference to the pool of buffer headers associated with this port
+        /// Managed reference to the pool of buffer headers associated with this port.
         /// </summary>
         public MMALPoolImpl BufferPool { get; set; }
 
         /// <summary>
-        /// Managed name given to this object (user defined)
+        /// Managed name given to this object (user defined).
         /// </summary>
         public string ObjName { get; set; }
 
         /// <summary>
-        /// The MMALEncoding encoding type that this port will process data in. Helpful for retrieving encoding name/FourCC value
+        /// The MMALEncoding encoding type that this port will process data in. Helpful for retrieving encoding name/FourCC value.
         /// </summary>
         public MMALEncoding EncodingType { get; set; }
 
         /// <summary>
-        /// The MMALEncoding pixel format that this port will process data in. Helpful for retrieving encoding name/FourCC value
+        /// The MMALEncoding pixel format that this port will process data in. Helpful for retrieving encoding name/FourCC value.
         /// </summary>
         public MMALEncoding PixelFormat { get; set; }
 
@@ -83,42 +83,42 @@ namespace MMALSharp
         #region Native properties
 
         /// <summary>
-        /// Native name of port
+        /// Native name of port.
         /// </summary>
         public string Name => Marshal.PtrToStringAnsi((IntPtr)(this.Ptr->Name));
 
         /// <summary>
-        /// Indicates whether this port is enabled
+        /// Indicates whether this port is enabled.
         /// </summary>
         public bool Enabled => this.Ptr->IsEnabled == 1;
 
         /// <summary>
-        /// Specifies minimum number of buffer headers required for this port 
+        /// Specifies minimum number of buffer headers required for this port.
         /// </summary>
         public int BufferNumMin => this.Ptr->BufferNumMin;
         
         /// <summary>
-        /// Specifies minimum size of buffer headers required for this port
+        /// Specifies minimum size of buffer headers required for this port.
         /// </summary>
         public uint BufferSizeMin => this.Ptr->BufferSizeMin;
 
         /// <summary>
-        /// Specifies minimum alignment value for buffer headers required for this port
+        /// Specifies minimum alignment value for buffer headers required for this port.
         /// </summary>
         public int BufferAlignmentMin => this.Ptr->BufferAlignmentMin;
 
         /// <summary>
-        /// Specifies recommended number of buffer headers for this port
+        /// Specifies recommended number of buffer headers for this port.
         /// </summary>
         public int BufferNumRecommended => this.Ptr->BufferNumRecommended;
 
         /// <summary>
-        /// Specifies recommended size of buffer headers for this port
+        /// Specifies recommended size of buffer headers for this port.
         /// </summary>
         public uint BufferSizeRecommended => this.Ptr->BufferSizeRecommended;
 
         /// <summary>
-        /// Indicates the currently set number of buffer headers for this port
+        /// Indicates the currently set number of buffer headers for this port.
         /// </summary>
         public int BufferNum
         {
@@ -127,7 +127,7 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Indicates the currently set size of buffer headers for this port
+        /// Indicates the currently set size of buffer headers for this port.
         /// </summary>
         public uint BufferSize
         {
@@ -136,12 +136,12 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Accessor for the elementary stream
+        /// Accessor for the elementary stream.
         /// </summary>
         public MMAL_ES_FORMAT_T Format => *this.Ptr->Format;
 
         /// <summary>
-        /// The Width/Height that this port will process data in
+        /// The Width/Height that this port will process data in.
         /// </summary>
         public Resolution Resolution
         {
@@ -163,7 +163,7 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// The framerate we are processing data in
+        /// The framerate we are processing data in.
         /// </summary>
         public MMAL_RATIONAL_T FrameRate
         {
@@ -172,17 +172,17 @@ namespace MMALSharp
         }
         
         /// <summary>
-        /// The Region of Interest width that this port will process data in
+        /// The Region of Interest width that this port will process data in.
         /// </summary>
         public int CropWidth => this.Ptr->Format->es->video.crop.Width;
 
         /// <summary>
-        /// The Region of Interest height that this port will process data in
+        /// The Region of Interest height that this port will process data in.
         /// </summary>
         public int CropHeight => this.Ptr->Format->es->video.crop.Height;
 
         /// <summary>
-        /// The encoding type that this port will process data in
+        /// The encoding type that this port will process data in.
         /// </summary>
         public int NativeEncodingType
         {
@@ -191,7 +191,7 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// The pixel format that this port will process data in
+        /// The pixel format that this port will process data in.
         /// </summary>
         public int NativeEncodingSubformat
         {
@@ -207,41 +207,41 @@ namespace MMALSharp
         public AsyncCountdownEvent Trigger { get; set; }
 
         /// <summary>
-        /// Monitor lock for input port callback method
+        /// Monitor lock for input port callback method.
         /// </summary>
         internal static object InputLock = new object();
 
         /// <summary>
-        /// Monitor lock for output port callback method
+        /// Monitor lock for output port callback method.
         /// </summary>
         internal static object OutputLock = new object();
                 
         /// <summary>
-        /// Native pointer to the native callback function
+        /// Native pointer to the native callback function.
         /// </summary>
         internal IntPtr PtrCallback { get; set; }
 
         /// <summary>
-        /// Delegate for native port callback
+        /// Delegate for native port callback.
         /// </summary>
         internal MMALSharp.Native.MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
 
         /// <summary>
-        /// Delegate to populate native buffer header with user provided image data
+        /// Delegate to populate native buffer header with user provided image data.
         /// </summary>
         public Func<MMALBufferImpl, MMALPortBase, ProcessResult> ManagedInputCallback { get; set; }
 
         /// <summary>
-        /// Delegate we use to do further processing on buffer headers when they're received by the native callback delegate
+        /// Delegate we use to do further processing on buffer headers when they're received by the native callback delegate.
         /// </summary>
         public Action<MMALBufferImpl, MMALPortBase> ManagedOutputCallback { get; set; }
         
         /// <summary>
         /// Creates a new Managed reference to a MMAL Component Port.
         /// </summary>
-        /// <param name="ptr">The native pointer to the component port</param>
-        /// <param name="comp">The component this port is associated with</param>
-        /// <param name="type">The type of port this is</param>
+        /// <param name="ptr">The native pointer to the component port.</param>
+        /// <param name="comp">The component this port is associated with.</param>
+        /// <param name="type">The type of port this is.</param>
         protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
         {
             this.Ptr = ptr;
@@ -251,12 +251,12 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Connects two components together by their input and output ports
+        /// Connects two components together by their input and output ports.
         /// </summary>
-        /// <param name="destinationComponent">The component we want to connect to</param>
-        /// <param name="inputPort">The input port of the component we want to connect to</param>
-        /// <param name="useCallback">Flag to use connection callback (adversely affects performance)</param>
-        /// <returns>The input port of the component we're connecting to - allows chain calling of this method</returns>
+        /// <param name="destinationComponent">The component we want to connect to.</param>
+        /// <param name="inputPort">The input port of the component we want to connect to.</param>
+        /// <param name="useCallback">Flag to use connection callback (adversely affects performance).</param>
+        /// <returns>The input port of the component we're connecting to - allows chain calling of this method.</returns>
         public MMALPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort = 0, bool useCallback = false)
         {
             if (this.ConnectedReference != null)
@@ -273,12 +273,12 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Connects two components together by their input and output ports
+        /// Connects two components together by their input and output ports.
         /// </summary>
-        /// <param name="destinationComponent">The component we want to connect to</param>
-        /// <param name="inputPort">The input port of the component we want to connect to</param>
-        /// <param name="callback">An operation we would like to carry out after connecting these components together</param>
-        /// <returns>The input port of the component we're connecting to - allows chain calling of this method</returns>
+        /// <param name="destinationComponent">The component we want to connect to.</param>
+        /// <param name="inputPort">The input port of the component we want to connect to.</param>
+        /// <param name="callback">An operation we would like to carry out after connecting these components together.</param>
+        /// <returns>The input port of the component we're connecting to - allows chain calling of this method.</returns>
         public MMALPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort, Func<MMALPortBase> callback)
         {
             this.ConnectTo(destinationComponent, inputPort);
@@ -287,28 +287,28 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Represents the native callback method for an input port that's called by MMAL
+        /// Represents the native callback method for an input port that's called by MMAL.
         /// </summary>
-        /// <param name="port">Native port struct pointer</param>
-        /// <param name="buffer">Native buffer header pointer</param>
+        /// <param name="port">Native port struct pointer.</param>
+        /// <param name="buffer">Native buffer header pointer.</param>
         internal virtual void NativeInputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
         }
 
         /// <summary>
-        /// Represents the native callback method for an output port that's called by MMAL
+        /// Represents the native callback method for an output port that's called by MMAL.
         /// </summary>
-        /// <param name="port">Native port struct pointer</param>
-        /// <param name="buffer">Native buffer header pointer</param>
+        /// <param name="port">Native port struct pointer.</param>
+        /// <param name="buffer">Native buffer header pointer.</param>
         internal virtual void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
         }
 
         /// <summary>
-        /// Represents the native callback method for a control port that's called by MMAL
+        /// Represents the native callback method for a control port that's called by MMAL.
         /// </summary>
-        /// <param name="port">Native port struct pointer</param>
-        /// <param name="buffer">Native buffer header pointer</param>
+        /// <param name="port">Native port struct pointer.</param>
+        /// <param name="buffer">Native buffer header pointer.</param>
         internal virtual void NativeControlPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
         }
@@ -316,8 +316,8 @@ namespace MMALSharp
         /// <summary>
         /// Provides functionality to enable processing on an output port.
         /// </summary>
-        /// <param name="managedCallback">Delegate for managed output port callback</param>
-        /// <param name="sendBuffers">Indicates whether we want to send all the buffers in the port pool or simply create the pool</param>
+        /// <param name="managedCallback">Delegate for managed output port callback.</param>
+        /// <param name="sendBuffers">Indicates whether we want to send all the buffers in the port pool or simply create the pool.</param>
         internal virtual void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, bool sendBuffers = true)
         {
             if (managedCallback != null)
@@ -329,7 +329,7 @@ namespace MMALSharp
         /// <summary>
         /// Provides functionality to enable processing on an input port.
         /// </summary>
-        /// <param name="managedCallback">Delegate for managed input port callback</param>
+        /// <param name="managedCallback">Delegate for managed input port callback.</param>
         internal virtual void EnablePort(Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback)
         {            
             if (!this.Enabled)
@@ -410,7 +410,7 @@ namespace MMALSharp
         /// <summary>
         /// Shallow copy a format structure. It is worth noting that the extradata buffer will not be copied in the new format.
         /// </summary>
-        /// <param name="destination">The destination port we're copying to</param>
+        /// <param name="destination">The destination port we're copying to.</param>
         internal void ShallowCopy(MMALPortBase destination)
         {
             MMALLog.Logger.Debug("Shallow copy port format");
@@ -420,7 +420,7 @@ namespace MMALSharp
         /// <summary>
         /// Shallow copy a format structure. It is worth noting that the extradata buffer will not be copied in the new format.
         /// </summary>
-        /// <param name="eventFormatSource">The source event format we're copying from</param>
+        /// <param name="eventFormatSource">The source event format we're copying from.</param>
         internal void ShallowCopy(MMALEventFormat eventFormatSource)
         {
             MMALLog.Logger.Debug("Shallow copy event format");
@@ -430,7 +430,7 @@ namespace MMALSharp
         /// <summary>
         /// Fully copy a format structure, including the extradata buffer.
         /// </summary>
-        /// <param name="destination">The destination port we're copying to</param>
+        /// <param name="destination">The destination port we're copying to.</param>
         internal void FullCopy(MMALPortBase destination)
         {
             MMALLog.Logger.Debug("Full copy port format");
@@ -440,7 +440,7 @@ namespace MMALSharp
         /// <summary>
         /// Fully copy a format structure, including the extradata buffer.
         /// </summary>
-        /// <param name="eventFormatSource">The source event format we're copying from</param>
+        /// <param name="eventFormatSource">The source event format we're copying from.</param>
         internal void FullCopy(MMALEventFormat eventFormatSource)
         {
             MMALLog.Logger.Debug("Full copy event format");
@@ -460,7 +460,7 @@ namespace MMALSharp
         /// <summary>
         /// Send a buffer header to a port.
         /// </summary>
-        /// <param name="buffer">A managed buffer object</param>
+        /// <param name="buffer">A managed buffer object.</param>
         internal void SendBuffer(MMALBufferImpl buffer)
         {
             if (MMALCameraConfig.Debug)
@@ -508,9 +508,9 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Releases an input port buffer and reads further data from user provided image data if not reached end of file
+        /// Releases an input port buffer and reads further data from user provided image data if not reached end of file.
         /// </summary>
-        /// <param name="bufferImpl">A managed buffer object</param>
+        /// <param name="bufferImpl">A managed buffer object.</param>
         internal void ReleaseInputBuffer(MMALBufferImpl bufferImpl)
         {            
             bufferImpl.Release();
@@ -561,9 +561,9 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Release an output port buffer, get a new one from the queue and send it for processing
+        /// Release an output port buffer, get a new one from the queue and send it for processing.
         /// </summary>
-        /// <param name="bufferImpl">A managed buffer object</param>
+        /// <param name="bufferImpl">A managed buffer object.</param>
         internal void ReleaseOutputBuffer(MMALBufferImpl bufferImpl)
         {
             bufferImpl.Release();

@@ -8,7 +8,7 @@ using MMALSharp.Native;
 namespace MMALSharp.Ports
 {
     /// <summary>
-    /// Represents a still image encoder/decoder port
+    /// Represents a still image encoder/decoder port.
     /// </summary>
     public unsafe class MMALStillPort : MMALPortImpl
     {

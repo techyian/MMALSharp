@@ -10,7 +10,7 @@ using System.Text;
 namespace MMALSharp.Handlers
 {
     /// <summary>
-    /// Currently experimental. Not working fully.
+    /// Experimental FFmpeg specific capture handler.
     /// </summary>
     public class FFmpegCaptureHandler : ICaptureHandler
     {
@@ -19,7 +19,7 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// Streams video from the standard output stream via FFmpeg to an RTMP server.
         /// </summary>
-        /// <param name="streamName">The meta name of the stream</param>
+        /// <param name="streamName">The meta name of the stream.</param>
         /// <param name="streamUrl">The url of your RTMP server - the url to stream to.</param>
         /// <returns></returns>
         public static FFmpegCaptureHandler RTMPStreamer(string streamName, string streamUrl)
@@ -30,8 +30,8 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// Records video from the standard output stream via FFmpeg, forcing it into an avi container that can be opened by media players without explicit command line flags.  
         /// </summary>
-        /// <param name="directory">The directory to store the output video file</param>
-        /// <param name="filename">The name of the video file</param>
+        /// <param name="directory">The directory to store the output video file.</param>
+        /// <param name="filename">The name of the video file.</param>
         /// <returns></returns>
         public static FFmpegCaptureHandler RawVideoToAvi(string directory, string filename)
         {            

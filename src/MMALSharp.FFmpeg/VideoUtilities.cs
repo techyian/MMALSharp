@@ -16,10 +16,10 @@ namespace MMALSharp.FFmpeg
     public static class VideoUtilities
     {
         /// <summary>
-        /// Useful for Timelapse captures. Enables you to convert a list of images associated with an ImageStreamCaptureHandler to a video
+        /// Useful for Timelapse captures. Enables you to convert a list of images associated with an ImageStreamCaptureHandler to a video.
         /// </summary>
-        /// <param name="result"></param>
-        /// <param name="targetDirectory"></param>
+        /// <param name="result">The list of images we wish to process.</param>
+        /// <param name="targetDirectory">The target directory we want to save the video to.</param>
         public static void ImagesToVideo(this ImageStreamCaptureHandler result, string targetDirectory, int fps)
         {
             var process = new Process

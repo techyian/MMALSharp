@@ -8,14 +8,14 @@ using MMALSharp.Native;
 namespace MMALSharp.Components
 {
     /// <summary>
-    /// Represents a base class for all renderer components
+    /// Represents a base class for all renderer components.
     /// </summary>
     public abstract class MMALRendererBase : MMALDownstreamComponent
     {
         /// <summary>
-        /// Create a new instance of a renderer component
+        /// Create a new instance of a renderer component.
         /// </summary>
-        /// <param name="name">The name of the component</param>
+        /// <param name="name">The name of the component.</param>
         protected MMALRendererBase(string name)
             : base(name)
         {
@@ -73,7 +73,7 @@ namespace MMALSharp.Components
     }
 
     /// <summary>
-    /// Represents a Video Renderer component
+    /// Represents a Video Renderer component.
     /// </summary>
     public class MMALVideoRenderer : MMALRendererBase
     {

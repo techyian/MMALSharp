@@ -11,7 +11,7 @@ using MMALSharp.Ports;
 namespace MMALSharp.Components
 {
     /// <summary>
-    /// Represents a video decoder component
+    /// Represents a video decoder component.
     /// </summary>
     public class MMALVideoDecoder : MMALEncoderBase
     {
@@ -45,7 +45,7 @@ namespace MMALSharp.Components
         }
 
         public DateTime? Timeout { get; set; }
-
+        
         public MMALVideoDecoder(ICaptureHandler handler, DateTime? timeout = null)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_DECODER, handler)
         {

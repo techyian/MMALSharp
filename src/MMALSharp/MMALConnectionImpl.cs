@@ -12,12 +12,12 @@ using static MMALSharp.MMALCallerHelper;
 namespace MMALSharp
 {
     /// <summary>
-    /// Represents a connection between two ports
+    /// Represents a connection between two ports.
     /// </summary>
     public unsafe class MMALConnectionImpl : MMALObject
     {
         /// <summary>
-        /// Native pointer to the connection that this object represents
+        /// Native pointer to the connection that this object represents.
         /// </summary>
         internal MMAL_CONNECTION_T* Ptr { get; set; }
 
@@ -26,12 +26,12 @@ namespace MMALSharp
         public MMALComponentBase UpstreamComponent { get; set; }
 
         /// <summary>
-        /// The input port of this connection
+        /// The input port of this connection.
         /// </summary>
         public MMALPortBase InputPort { get; set; }
 
         /// <summary>
-        /// The output port of this connection
+        /// The output port of this connection.
         /// </summary>
         public MMALPortBase OutputPort { get; set; }
 
@@ -40,19 +40,19 @@ namespace MMALSharp
         public MMALPoolImpl ConnectionPool { get; set; }
 
         /// <summary>
-        /// Monitor lock for connection callback method
+        /// Monitor lock for connection callback method.
         /// </summary>
         protected static object ConnectionLock = new object();
 
         #region Connection struct wrapper properties
 
         /// <summary>
-        /// Name of this connection
+        /// Name of this connection.
         /// </summary>
         public string Name => Marshal.PtrToStringAnsi((IntPtr)(*this.Ptr).Name);
 
         /// <summary>
-        /// Indicates whether this connection is enabled
+        /// Indicates whether this connection is enabled.
         /// </summary>
         public bool Enabled => (*this.Ptr).IsEnabled == 1;
 
@@ -100,13 +100,13 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Facility to create a connection between two port objects
+        /// Facility to create a connection between two port objects.
         /// </summary>
-        /// <param name="output">The output port of the connection</param>
-        /// <param name="input">The input port of the connection</param>
-        /// <param name="inputComponent">The managed instance of the component we are connecting to</param>
-        /// <param name="useCallback">When set to true, enable the connection callback delegate (adversely affects performance)</param>
-        /// <returns>A new managed connection object</returns>
+        /// <param name="output">The output port of the connection.</param>
+        /// <param name="input">The input port of the connection.</param>
+        /// <param name="inputComponent">The managed instance of the component we are connecting to.</param>
+        /// <param name="useCallback">When set to true, enable the connection callback delegate (adversely affects performance).</param>
+        /// <returns>A new managed connection object.</returns>
         internal static MMALConnectionImpl CreateConnection(MMALPortBase output, MMALPortBase input, MMALDownstreamComponent inputComponent, bool useCallback)
         {
             IntPtr ptr = IntPtr.Zero;
@@ -161,9 +161,9 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Represents the native callback method for a connection between two ports
+        /// Represents the native callback method for a connection between two ports.
         /// </summary>
-        /// <param name="connection">The native pointer to a MMAL_CONNECTION_T struct</param>
+        /// <param name="connection">The native pointer to a MMAL_CONNECTION_T struct.</param>
         internal virtual int NativeConnectionCallback(MMAL_CONNECTION_T* connection)
         {
             lock (MMALConnectionImpl.ConnectionLock)

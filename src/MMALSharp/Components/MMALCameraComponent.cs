@@ -20,27 +20,27 @@ namespace MMALSharp.Components
         public const int MMALCameraStillPort = 2;
 
         /// <summary>
-        /// Managed reference to the Preview port of the camera
+        /// Managed reference to the Preview port of the camera.
         /// </summary>
         public MMALPortImpl PreviewPort { get; set; }
 
         /// <summary>
-        /// Managed reference to the Video port of the camera
+        /// Managed reference to the Video port of the camera.
         /// </summary>
         public MMALPortImpl VideoPort { get; set; }
 
         /// <summary>
-        /// Managed reference to the Still port of the camera
+        /// Managed reference to the Still port of the camera.
         /// </summary>
         public MMALPortImpl StillPort { get; set; }
 
         /// <summary>
-        /// Camera Info component. This is used to provide detailed info about the camera itself
+        /// Camera Info component. This is used to provide detailed info about the camera itself.
         /// </summary>
         public MMALCameraInfoComponent CameraInfo { get; set; }
 
         /// <summary>
-        /// Initialises a new MMALCameraComponent
+        /// Initialises a new MMALCameraComponent.
         /// </summary>
         public MMALCameraComponent()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA)
@@ -133,8 +133,8 @@ namespace MMALSharp.Components
         /// MMALCameraConfig.SetChangeEventRequest is set to true.
         /// </summary>
         /// <seealso cref="MMALCameraConfig.SetChangeEventRequest" />
-        /// <param name="buffer">The buffer header being sent from MMAL</param>
-        /// <param name="port">The managed control port instance</param>
+        /// <param name="buffer">The buffer header being sent from MMAL.</param>
+        /// <param name="port">The managed control port instance.</param>
         internal unsafe void CameraControlCallback(MMALBufferImpl buffer, MMALPortBase port)
         {
             if (buffer.Cmd == MMALEvents.MMAL_EVENT_PARAMETER_CHANGED)
@@ -169,7 +169,7 @@ namespace MMALSharp.Components
         }
 
         /// <summary>
-        /// Initialises the camera's preview component using the user defined width/height for the video port
+        /// Initialises the camera's preview component using the user defined width/height for the video port.
         /// </summary>
         internal void InitialisePreview()
         {
@@ -193,7 +193,7 @@ namespace MMALSharp.Components
         }
 
         /// <summary>
-        /// Initialises the camera's video port using the width, height and encoding as specified by the user
+        /// Initialises the camera's video port using the width, height and encoding as specified by the user.
         /// </summary>
         internal void InitialiseVideo()
         {
@@ -226,7 +226,7 @@ namespace MMALSharp.Components
         }
 
         /// <summary>
-        /// Initialises the camera's still port using the width, height and encoding as specified by the user
+        /// Initialises the camera's still port using the width, height and encoding as specified by the user.
         /// </summary>
         internal void InitialiseStill()
         {

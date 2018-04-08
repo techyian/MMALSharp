@@ -20,12 +20,12 @@ namespace MMALSharp
     public sealed class MMALCamera
     {
         /// <summary>
-        /// Reference to the camera component
+        /// Reference to the camera component.
         /// </summary>
         public MMALCameraComponent Camera { get; set; }
 
         /// <summary>
-        /// List of all encoders currently in the pipeline
+        /// List of all encoders currently in the pipeline.
         /// </summary>
         public List<MMALDownstreamComponent> DownstreamComponents { get; set; }
 
@@ -46,7 +46,7 @@ namespace MMALSharp
         /// <summary>
         /// Begin capture on one of the camera's output ports.
         /// </summary>
-        /// <param name="port">An output port of the camera component</param>
+        /// <param name="port">An output port of the camera component.</param>
         public void StartCapture(MMALPortImpl port)
         {
             if (port == this.Camera.StillPort || port == this.Camera.VideoPort)
@@ -56,9 +56,9 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Stop capture on one of the camera's output ports
+        /// Stop capture on one of the camera's output ports.
         /// </summary>
-        /// <param name="port">An output port of the camera component</param>
+        /// <param name="port">An output port of the camera component.</param>
         public void StopCapture(MMALPortImpl port)
         {
             if (port == this.Camera.StillPort || port == this.Camera.VideoPort)
@@ -68,9 +68,9 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Force capture to stop on a port (Still or Video)
+        /// Force capture to stop on a port (Still or Video).
         /// </summary>
-        /// <param name="port">The capture port</param>
+        /// <param name="port">The capture port.</param>
         public void ForceStop(MMALPortImpl port)
         {
             if (port.Trigger.CurrentCount > 0)
@@ -83,9 +83,9 @@ namespace MMALSharp
         /// Self-contained method for recording H.264 video for a specified amount of time. Records at 30fps, 25Mb/s at the highest quality.
         /// </summary>
         /// <param name="handler">The video capture handler to apply to the encoder.</param>
-        /// <param name="cancellationToken">A cancellationToken to signal when to stop video capture</param>
-        /// <param name="split">Used for Segmented video mode</param>
-        /// <returns>The awaitable Task</returns>
+        /// <param name="cancellationToken">A cancellationToken to signal when to stop video capture.</param>
+        /// <param name="split">Used for Segmented video mode.</param>
+        /// <returns>The awaitable Task.</returns>
         public async Task TakeVideo(VideoStreamCaptureHandler handler, CancellationToken cancellationToken, Split split = null)
         {
             if (split != null && !MMALCameraConfig.InlineHeaders)
@@ -120,7 +120,7 @@ namespace MMALSharp
         /// Note: We cannot use the OPAQUE encoding format with this helper method, the capture will not fail, but will not produce valid data. For reference, RaspiStillYUV uses YUV420.
         /// </summary>
         /// <param name="handler">The image capture handler to use to save image.</param>
-        /// <returns>The awaitable Task</returns>
+        /// <returns>The awaitable Task.</returns>
         public async Task TakeRawPicture(ICaptureHandler handler)
         {
             var currentStillEncoder = MMALCameraConfig.StillEncoding;
@@ -191,10 +191,10 @@ namespace MMALSharp
         /// Self-contained method for capturing a single image from the camera still port.
         /// An MMALImageEncoder component will be created and attached to the still port.
         /// </summary>
-        /// <param name="handler">The image capture handler to apply to the encoder component</param>
-        /// <param name="encodingType">The image encoding type e.g. JPEG, BMP</param>
-        /// <param name="pixelFormat">The pixel format to use with the encoder e.g. I420 (YUV420)</param>
-        /// <returns>The awaitable Task</returns>
+        /// <param name="handler">The image capture handler to apply to the encoder component.</param>
+        /// <param name="encodingType">The image encoding type e.g. JPEG, BMP.</param>
+        /// <param name="pixelFormat">The pixel format to use with the encoder e.g. I420 (YUV420).</param>
+        /// <returns>The awaitable Task.</returns>
         public async Task TakePicture(ImageStreamCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat)
         {
             using (var imgEncoder = new MMALImageEncoder(handler))
@@ -223,12 +223,12 @@ namespace MMALSharp
         /// Self-contained method for capturing a continual images from the camera still port for a specified period of time.
         /// An MMALImageEncoder component will be created and attached to the still port.
         /// </summary>
-        /// <param name="handler">The image capture handler to apply to the encoder component</param>
-        /// <param name="encodingType">The image encoding type e.g. JPEG, BMP</param>
-        /// <param name="pixelFormat">The pixel format to use with the encoder e.g. I420 (YUV420)</param>
-        /// <param name="cancellationToken">A cancellationToken to trigger stop capturing</param>
-        /// <param name="burstMode">When enabled, burst mode will increase the rate at which images are taken, at the expense of quality</param>
-        /// <returns>The awaitable Task</returns>
+        /// <param name="handler">The image capture handler to apply to the encoder component.</param>
+        /// <param name="encodingType">The image encoding type e.g. JPEG, BMP.</param>
+        /// <param name="pixelFormat">The pixel format to use with the encoder e.g. I420 (YUV420).</param>
+        /// <param name="cancellationToken">A cancellationToken to trigger stop capturing.</param>
+        /// <param name="burstMode">When enabled, burst mode will increase the rate at which images are taken, at the expense of quality.</param>
+        /// <returns>The awaitable Task.</returns>
         public async Task TakePictureTimeout(ImageStreamCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, CancellationToken cancellationToken, bool burstMode = false)
         {
             if (burstMode)
@@ -246,11 +246,11 @@ namespace MMALSharp
         /// Self-contained method for capturing timelapse images.
         /// An MMALImageEncoder component will be created and attached to the still port.
         /// </summary>
-        /// <param name="handler">The image capture handler to apply to the encoder component</param>
-        /// <param name="encodingType">The image encoding type e.g. JPEG, BMP</param>
-        /// <param name="pixelFormat">The pixel format to use with the encoder e.g. I420 (YUV420)</param>
-        /// <param name="timelapse">A Timelapse object which specifies the timeout and rate at which images should be taken</param>
-        /// <returns>The awaitable Task</returns>
+        /// <param name="handler">The image capture handler to apply to the encoder component.</param>
+        /// <param name="encodingType">The image encoding type e.g. JPEG, BMP.</param>
+        /// <param name="pixelFormat">The pixel format to use with the encoder e.g. I420 (YUV420).</param>
+        /// <param name="timelapse">A Timelapse object which specifies the timeout and rate at which images should be taken.</param>
+        /// <returns>The awaitable Task.</returns>
         public async Task TakePictureTimelapse(ImageStreamCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, Timelapse timelapse)
         {
             int interval = 0;
@@ -285,8 +285,8 @@ namespace MMALSharp
         /// Helper method to begin processing image data. Starts the Camera port and awaits until processing is complete.
         /// Cleans up resources upon finish.
         /// </summary>
-        /// <param name="cameraPort">The camera port which image data is coming from</param>
-        /// <returns>The awaitable Task</returns>
+        /// <param name="cameraPort">The camera port which image data is coming from.</param>
+        /// <returns>The awaitable Task.</returns>
         public async Task ProcessAsync(MMALPortImpl cameraPort)
         {
             await this.ProcessAsync(cameraPort, CancellationToken.None);
@@ -296,9 +296,9 @@ namespace MMALSharp
         /// Helper method to begin processing image data. Starts the Camera port and awaits until processing is complete.
         /// Cleans up resources upon finish.
         /// </summary>
-        /// <param name="cameraPort">The camera port which image data is coming from</param>
+        /// <param name="cameraPort">The camera port which image data is coming from.</param>
         /// <param name="cancellationToken">A CancellationToken to observe while waiting for a task to complete.</param>
-        /// <returns>The awaitable Task</returns>
+        /// <returns>The awaitable Task.</returns>
         public async Task ProcessAsync(MMALPortImpl cameraPort, CancellationToken cancellationToken)
         {
             var handlerComponents = this.PopulateProcessingList();
@@ -388,7 +388,7 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Disables processing on the camera component
+        /// Disables processing on the camera component.
         /// </summary>
         public void DisableCamera()
         {
@@ -406,7 +406,7 @@ namespace MMALSharp
         /// <summary>
         /// This applies the configuration settings against the camera such as Saturation, Contrast etc.
         /// </summary>
-        /// <returns>The camera instance</returns>
+        /// <returns>The camera instance.</returns>
         public MMALCamera ConfigureCameraSettings()
         {
             MMALLog.Logger.Debug("Configuring camera parameters.");

@@ -15,27 +15,27 @@ namespace MMALSharp.Handlers
     public abstract class StreamCaptureHandler : ICaptureHandler
     {
         /// <summary>
-        /// A Stream instance that we can process image data to
+        /// A Stream instance that we can process image data to.
         /// </summary>
         protected Stream CurrentStream { get; set; }
 
         /// <summary>
-        /// A list of files that have been processed by this capture handler
+        /// A list of files that have been processed by this capture handler.
         /// </summary>
         public List<ProcessedFileResult> ProcessedFiles { get; set; } = new List<ProcessedFileResult>();
 
         /// <summary>
-        /// The total size of data that has been processed by this capture handler
+        /// The total size of data that has been processed by this capture handler.
         /// </summary>
         protected int Processed { get; set; }
 
         /// <summary>
-        /// The directory to save to (if applicable)
+        /// The directory to save to (if applicable).
         /// </summary>
         public string Directory { get; protected set; }
 
         /// <summary>
-        /// The extension of the file (if applicable)
+        /// The extension of the file (if applicable).
         /// </summary>
         public string Extension { get; protected set; }
 
@@ -76,7 +76,7 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// Processes the data passed into this method to this class' Stream instance.
         /// </summary>
-        /// <param name="data">The image data</param>
+        /// <param name="data">The image data.</param>
         public virtual void Process(byte[] data)
         {
             this.Processed += data.Length;
@@ -108,9 +108,9 @@ namespace MMALSharp.Handlers
         }
         
         /// <summary>
-        /// Gets the filename that a FileStream points to
+        /// Gets the filename that a FileStream points to.
         /// </summary>
-        /// <returns>The filename</returns>
+        /// <returns>The filename.</returns>
         public string GetFilename()
         {
             if (this.CurrentStream.GetType() == typeof(FileStream))

@@ -14,27 +14,27 @@ namespace MMALSharp
         public static bool Debug { get; set; }
 
         /// <summary>
-        /// Configure the sharpness of the image
+        /// Configure the sharpness of the image.
         /// </summary>
         public static double Sharpness { get; set; }
 
         /// <summary>
-        /// Configure the contrast of the image
+        /// Configure the contrast of the image.
         /// </summary>  
         public static double Contrast { get; set; }
 
         /// <summary>
-        /// Configure the brightness of the image
+        /// Configure the brightness of the image.
         /// </summary>
         public static double Brightness { get; set; } = 50;
 
         /// <summary>
-        /// Configure the saturation of the image
+        /// Configure the saturation of the image.
         /// </summary>  
         public static double Saturation { get; set; }
 
         /// <summary>
-        /// Configure the light sensitivity of the sensor
+        /// Configure the light sensitivity of the sensor.
         /// </summary> 
         public static int ISO { get; set; }
         
@@ -44,7 +44,7 @@ namespace MMALSharp
         public static int ExposureCompensation { get; set; }
 
         /// <summary>
-        /// Configure the exposure mode used by the camera       
+        /// Configure the exposure mode used by the camera. 
         /// </summary>  
         public static MMAL_PARAM_EXPOSUREMODE_T ExposureMode { get; set; } = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
 
@@ -54,7 +54,7 @@ namespace MMALSharp
         public static MMAL_PARAM_EXPOSUREMETERINGMODE_T ExposureMeterMode { get; set; } = MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE;
 
         /// <summary>
-        /// Configure the Auto White Balance to be used by the camera        
+        /// Configure the Auto White Balance to be used by the camera.
         /// </summary>
         public static MMAL_PARAM_AWBMODE_T AwbMode { get; set; } = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_AUTO;
 
@@ -69,12 +69,12 @@ namespace MMALSharp
         public static ColourEffects ColourFx { get; set; } = new ColourEffects();
 
         /// <summary>
-        /// Specify the rotation of the image, possible values are 0, 90, 180, 270
+        /// Specify the rotation of the image, possible values are 0, 90, 180, 270.
         /// </summary>   
         public static int Rotation { get; set; }
 
         /// <summary>
-        /// Specify whether the image should be flipped
+        /// Specify whether the image should be flipped.
         /// </summary>                       
         public static MMAL_PARAM_MIRROR_T Flips { get; set; } = MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE;
 
@@ -86,23 +86,23 @@ namespace MMALSharp
         /// <summary>
         /// Changing the shutter speed alters how long the sensor is exposed to light (in microseconds).
         /// 
-        /// There's currently an upper limit of approximately 6000000us (6000ms, 6s), past which operation is undefined.
+        /// There's currently an upper limit of approximately 6000000us (6000ms, 6s), past which operation is undefined. 8MP Sony sensor supports 8s max shutter speed.
         /// 
         /// </summary>
         public static int ShutterSpeed { get; set; }
 
         /// <summary>
-        /// Adjust auto white balance 'red' gains
+        /// Adjust auto white balance 'red' gains.
         /// </summary>
         public static double AwbGainsR { get; set; }
 
         /// <summary>
-        /// Adjust auto white balance 'blue' gains
+        /// Adjust auto white balance 'blue' gains.
         /// </summary>
         public static double AwbGainsB { get; set; }
 
         /// <summary>
-        /// Adjust dynamic range compression
+        /// Adjust dynamic range compression.
         /// 
         /// DRC changes the images by increasing the range of dark areas, and decreasing the brighter areas. This can improve the image in low light areas.        
         /// </summary>
@@ -114,22 +114,22 @@ namespace MMALSharp
         public static bool StatsPass { get; set; }
 
         /// <summary>
-        /// Enable annotation of captured images
+        /// Enable annotation of captured images.
         /// </summary>
         public static bool EnableAnnotate { get; set; }    
         
         /// <summary>
-        /// Allows fine tuning of annotation options
+        /// Allows fine tuning of annotation options.
         /// </summary>
         public static AnnotateImage Annotate { get; set; }
 
         /// <summary>
-        /// Adjust Stereoscopic mode - only supported with Raspberry Pi Compute module
+        /// Adjust Stereoscopic mode - only supported with Raspberry Pi Compute module.
         /// </summary>
         public static StereoMode StereoMode { get; set; } = new StereoMode();
 
         /// <summary>
-        /// Enable to receive event request callbacks
+        /// Enable to receive event request callbacks.
         /// </summary>
         public static bool SetChangeEventRequest { get; set; }
 
@@ -141,7 +141,7 @@ namespace MMALSharp
 
         /*
          * -----------------------------------------------------------------------------------------------------------
-         * Camera preview port specific properties
+         * Camera preview port specific properties.
          * -----------------------------------------------------------------------------------------------------------
         */
 
@@ -151,7 +151,7 @@ namespace MMALSharp
         
         /*
          * -----------------------------------------------------------------------------------------------------------
-         * Camera video port specific properties
+         * Camera video port specific properties.
          * -----------------------------------------------------------------------------------------------------------
         */
 
@@ -162,7 +162,7 @@ namespace MMALSharp
         public static Resolution VideoResolution { get; set; } = Resolution.As1080p;
         
         /// <summary>
-        /// Enable video stabilisation
+        /// Enable video stabilisation.
         /// </summary> 
         public static bool VideoStabilisation { get; set; } = true;
 
@@ -186,7 +186,7 @@ namespace MMALSharp
 
         /*
          * -----------------------------------------------------------------------------------------------------------
-         * Camera still port specific properties
+         * Camera still port specific properties.
          * -----------------------------------------------------------------------------------------------------------
         */
         public static MMALEncoding StillEncoding { get; set; } = MMALEncoding.OPAQUE;

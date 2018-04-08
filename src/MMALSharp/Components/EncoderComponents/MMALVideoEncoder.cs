@@ -25,8 +25,8 @@ namespace MMALSharp.Components
 
         /// <summary>
         /// Quality of the encoder output. Valid property for both H264 and MJPEG encoders.
-        /// H264 encoding - High: 10 Low: 40 Average: 20-25
-        /// MJPEG encoding - Uses same quality scale as JPEG encoder (Lowest: 1  Highest: 100)
+        /// H264 encoding - High: 10 Low: 40 Average: 20-25.
+        /// MJPEG encoding - Uses same quality scale as JPEG encoder (Lowest: 1  Highest: 100).
         /// </summary>
         public int Quality { get; set; }
 
@@ -91,11 +91,11 @@ namespace MMALSharp.Components
         /// <summary>
         /// Call to configure changes on a Downstream video output port.
         /// </summary>
-        /// <param name="outputPort">The output port we are configuring</param>
-        /// <param name="encodingType">The encoding type this output port will send data in</param>
-        /// <param name="pixelFormat">The pixel format this output port will send data in</param>
-        /// <param name="quality">Quantisation parameter - quality. When using this setting, set bitrate 0 and set this for variable bitrate</param>
-        /// <param name="bitrate">The bitrate we are sending data at</param>
+        /// <param name="outputPort">The output port we are configuring.</param>
+        /// <param name="encodingType">The encoding type this output port will send data in.</param>
+        /// <param name="pixelFormat">The pixel format this output port will send data in.</param>
+        /// <param name="quality">Quantisation parameter - quality. When using this setting, set bitrate 0 and set this for variable bitrate.</param>
+        /// <param name="bitrate">The bitrate we are sending data at.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
         public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
@@ -126,10 +126,10 @@ namespace MMALSharp.Components
         }
 
         /// <summary>
-        /// Delegate to process the buffer header containing image data
+        /// Delegate to process the buffer header containing image data.
         /// </summary>
-        /// <param name="buffer">The buffer header we're currently processing</param>
-        /// <param name="port">The port we're currently processing on</param>
+        /// <param name="buffer">The buffer header we're currently processing.</param>
+        /// <param name="port">The port we're currently processing on.</param>
         public override void ManagedOutputCallback(MMALBufferImpl buffer, MMALPortBase port)
         {
             if (this.PrepareSplit && buffer.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))

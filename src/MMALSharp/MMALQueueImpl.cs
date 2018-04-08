@@ -14,7 +14,7 @@ namespace MMALSharp
     public unsafe class MMALQueueImpl : MMALObject, IMMALStatus
     {
         /// <summary>
-        /// Native pointer to the buffer header queue this object represents
+        /// Native pointer to the buffer header queue this object represents.
         /// </summary>
         internal MMAL_QUEUE_T* Ptr { get; set; }
 
@@ -30,9 +30,9 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Get a MMAL_BUFFER_HEADER_T from a queue
+        /// Get a MMAL_BUFFER_HEADER_T from a queue.
         /// </summary>
-        /// <returns>A new managed buffer header object</returns>
+        /// <returns>A new managed buffer header object.</returns>
         internal MMALBufferImpl GetBuffer()
         {           
             var ptr = MMALQueue.mmal_queue_get(this.Ptr);
@@ -46,10 +46,10 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Get a MMAL_BUFFER_HEADER_T from a queue
+        /// Get a MMAL_BUFFER_HEADER_T from a queue.
         /// </summary>
-        /// <param name="ptr">The queue to get a buffer from</param>
-        /// <returns>A new managed buffer header object</returns>
+        /// <param name="ptr">The queue to get a buffer from.</param>
+        /// <returns>A new managed buffer header object.</returns>
         internal static MMALBufferImpl GetBuffer(MMAL_QUEUE_T* ptr)
         {
             var bufPtr = MMALQueue.mmal_queue_get(ptr);
@@ -65,7 +65,7 @@ namespace MMALSharp
         /// <summary>
         /// Get the number of MMAL_BUFFER_HEADER_T currently in a queue.
         /// </summary>
-        /// <returns>The number of buffers currently in this queue</returns>
+        /// <returns>The number of buffers currently in this queue.</returns>
         internal uint QueueLength()
         {
             var length = MMALQueue.mmal_queue_length(this.Ptr);

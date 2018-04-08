@@ -218,10 +218,10 @@ namespace MMALSharp.Components
         }
         
         /// <summary>
-        /// Encodes/decodes user provided image data
+        /// Encodes/decodes user provided image data.
         /// </summary>
         /// <param name="outputPort">The output port to begin processing on. Usually will be 0.</param>
-        /// <returns>An awaitable task</returns>
+        /// <returns>An awaitable task.</returns>
         public virtual async Task Convert(int outputPort = 0)
         {
             MMALLog.Logger.Debug("Beginning Image decode from filestream. Please note, this process may take some time depending on the size of the input image.");

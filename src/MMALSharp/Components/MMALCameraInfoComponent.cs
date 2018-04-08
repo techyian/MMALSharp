@@ -11,22 +11,22 @@ using static MMALSharp.MMALCallerHelper;
 namespace MMALSharp.Components
 {
     /// <summary>
-    /// Represents a Camera Info component
+    /// Represents a Camera Info component.
     /// </summary>
     public unsafe class MMALCameraInfoComponent : MMALComponentBase
     {
         /// <summary>
-        /// The sensor name of the camera
+        /// The sensor name of the camera.
         /// </summary>
         public string SensorName { get; set; }
 
         /// <summary>
-        /// Maximum width supported by the sensor
+        /// Maximum width supported by the sensor.
         /// </summary>
         public int MaxWidth { get; set; }
 
         /// <summary>
-        /// Maximum height supported by the sensor
+        /// Maximum height supported by the sensor.
         /// </summary>
         public int MaxHeight { get; set; }
 

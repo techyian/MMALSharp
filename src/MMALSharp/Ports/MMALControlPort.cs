@@ -11,7 +11,7 @@ using static MMALSharp.MMALCallerHelper;
 namespace MMALSharp.Ports
 {
     /// <summary>
-    /// Represents a control port
+    /// Represents a control port.
     /// </summary>
     public unsafe class MMALControlPort : MMALPortImpl
     {
@@ -21,19 +21,19 @@ namespace MMALSharp.Ports
         }
 
         /// <summary>
-        /// Managed Control port callback delegate
+        /// Managed Control port callback delegate.
         /// </summary>
         public Action<MMALBufferImpl, MMALPortBase> ManagedControlCallback { get; set; }
 
         /// <summary>
-        /// Monitor lock for control port callback method
+        /// Monitor lock for control port callback method.
         /// </summary>
         internal static object ControlLock = new object();
 
         /// <summary>
         /// Enable processing on a port
         /// </summary>
-        /// <param name="managedCallback">A managed callback method we can do further processing on</param>
+        /// <param name="managedCallback">A managed callback method we can do further processing on.</param>
         internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, bool sendBuffers = true)
         {
             if (!this.Enabled)
@@ -60,10 +60,10 @@ namespace MMALSharp.Ports
         }
 
         /// <summary>
-        /// The native callback MMAL passes buffer headers to
+        /// The native callback MMAL passes buffer headers to.
         /// </summary>
-        /// <param name="port">The port the buffer is sent to</param>
-        /// <param name="buffer">The buffer header</param>
+        /// <param name="port">The port the buffer is sent to.</param>
+        /// <param name="buffer">The buffer header.</param>
         internal override void NativeControlPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
             lock (MMALControlPort.ControlLock)

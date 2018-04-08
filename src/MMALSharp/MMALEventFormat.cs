@@ -10,11 +10,11 @@ namespace MMALSharp
 {
     public unsafe class MMALEventFormat
     {        
-        // Dereferenced struct
+        // Dereferenced struct.
         internal MMAL_ES_FORMAT_T Format { get; set; }
 
         /// <summary>
-        /// Native pointer that represents this event format
+        /// Native pointer that represents this event format.
         /// </summary>
         internal MMAL_ES_FORMAT_T* Ptr { get; set; }
 

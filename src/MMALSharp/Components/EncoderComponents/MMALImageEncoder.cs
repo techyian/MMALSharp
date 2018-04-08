@@ -15,7 +15,7 @@ using static MMALSharp.MMALCallerHelper;
 namespace MMALSharp.Components
 {
     /// <summary>
-    /// Represents an image encoder component
+    /// Represents an image encoder component.
     /// </summary>
     public unsafe class MMALImageEncoder : MMALEncoderBase
     {
@@ -51,17 +51,17 @@ namespace MMALSharp.Components
         }
 
         /// <summary>
-        /// When enabled, raw bayer metadata will be included in JPEG still captures
+        /// When enabled, raw bayer metadata will be included in JPEG still captures.
         /// </summary>
         public bool RawBayer { get; set; }
 
         /// <summary>
-        /// When enabled, EXIF metadata will be included in image stills
+        /// When enabled, EXIF metadata will be included in image stills.
         /// </summary>
         public bool UseExif { get; set; }
 
         /// <summary>
-        /// Custom list of user defined EXIF metadata
+        /// Custom list of user defined EXIF metadata.
         /// </summary>
         public ExifTag[] ExifTags { get; set; }
         
@@ -98,9 +98,9 @@ namespace MMALSharp.Components
         }
 
         /// <summary>
-        /// Adds EXIF tags to the resulting image
+        /// Adds EXIF tags to the resulting image.
         /// </summary>
-        /// <param name="exifTags">A list of user defined EXIF tags</param>
+        /// <param name="exifTags">A list of user defined EXIF tags.</param>
         internal void AddExifTags(params ExifTag[] exifTags)
         {
             // Add the same defaults as per Raspistill.c
@@ -130,7 +130,7 @@ namespace MMALSharp.Components
         /// <summary>
         /// Provides a facility to add an EXIF tag to the image. 
         /// </summary>
-        /// <param name="exifTag">The EXIF tag to add to</param>
+        /// <param name="exifTag">The EXIF tag to add to.</param>
         internal void AddExifTag(ExifTag exifTag)
         {
             this.SetDisableExif(false);
