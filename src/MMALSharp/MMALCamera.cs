@@ -31,6 +31,9 @@ namespace MMALSharp
 
         private static readonly Lazy<MMALCamera> lazy = new Lazy<MMALCamera>(() => new MMALCamera());
 
+        /// <summary>
+        /// Gets the singleton instance of the MMAL Camera.
+        /// </summary>
         public static MMALCamera Instance => lazy.Value;
 
         private MMALCamera()

@@ -8,7 +8,8 @@ using System.Runtime.InteropServices;
 
 namespace MMALSharp.Native
 {
-#pragma warning disable 1591
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
     public enum MMALBufferProperties
     {
         MMAL_BUFFER_HEADER_FLAG_EOS = 1 << 0,
@@ -38,6 +39,7 @@ namespace MMALSharp.Native
         // Pointer to void * Pointer to MMAL_BUFFER_HEADER_T -> Returns MMAL_BOOL_T
         public unsafe delegate int MMAL_BH_PRE_RELEASE_CB_T(IntPtr ptr, MMAL_BUFFER_HEADER_T* ptr2);
 
+#pragma warning disable IDE1006 // Naming Styles
         [DllImport("libmmal.so", EntryPoint = "mmal_buffer_header_acquire", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern void mmal_buffer_header_acquire(MMAL_BUFFER_HEADER_T* header);
 
@@ -61,6 +63,7 @@ namespace MMALSharp.Native
 
         [DllImport("libmmal.so", EntryPoint = "mmal_buffer_header_mem_unlock", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern void mmal_buffer_header_mem_unlock(MMAL_BUFFER_HEADER_T* header);
+#pragma warning restore IDE1006 // Naming Styles
     }
 
     [StructLayout(LayoutKind.Sequential)]

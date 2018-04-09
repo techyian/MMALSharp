@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
-#pragma warning disable 1591
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
     public static class MMALConnection
     {
@@ -25,6 +25,7 @@ namespace MMALSharp.Native
         //typedef - Pointer to MMAL_CONNECTION_T -> Returns MMAL_BOOL_T
         public unsafe delegate int MMAL_CONNECTION_CALLBACK_T(MMAL_CONNECTION_T* conn);
 
+#pragma warning disable IDE1006 // Naming Styles
         [DllImport("libmmal.so", EntryPoint = "mmal_connection_create", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_connection_create(IntPtr* connection, MMAL_PORT_T* output, MMAL_PORT_T* input, uint flags);
 
@@ -45,7 +46,7 @@ namespace MMALSharp.Native
 
         [DllImport("libmmal.so", EntryPoint = "mmal_connection_event_format_changed", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_connection_event_format_changed(MMAL_CONNECTION_T* connection, MMAL_BUFFER_HEADER_T* buffer);
-
+#pragma warning restore IDE1006 // Naming Styles
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -60,7 +61,8 @@ namespace MMALSharp.Native
         private long timeSetup, timeEnable, timeDisable;
 
         public IntPtr UserData => userData;
-        public IntPtr Callback {
+        public IntPtr Callback
+        {
             get
             {
                 return this.callback;
