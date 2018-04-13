@@ -248,9 +248,16 @@ namespace MMALSharp.Components
 
             Marshal.StructureToPtr(param, ptr, false);
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs[outputPort].Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), "Unable to set video profile.");
-
-            Marshal.FreeHGlobal(ptr);
+            try
+            {
+                MMALCheck(
+                    MMALPort.mmal_port_parameter_set(this.Outputs[outputPort].Ptr, (MMAL_PARAMETER_HEADER_T*) ptr),
+                    "Unable to set video profile.");
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(ptr);
+            }
         }
 
         internal void ConfigureImmutableInput(int outputPort)

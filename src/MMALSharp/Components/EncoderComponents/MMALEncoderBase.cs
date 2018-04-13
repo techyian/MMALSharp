@@ -132,9 +132,14 @@ namespace MMALSharp.Components
                 var ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>());
                 Marshal.StructureToPtr(str, ptr, false);
 
-                MMALCheck(MMALPort.mmal_port_parameter_set(MMALCamera.Instance.Camera.Control.Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), "Unable to set annotate");
-
-                Marshal.FreeHGlobal(ptr);
+                try
+                {
+                    MMALCheck(MMALPort.mmal_port_parameter_set(MMALCamera.Instance.Camera.Control.Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), "Unable to set annotate");
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(ptr);
+                }
             }
         }
     }
