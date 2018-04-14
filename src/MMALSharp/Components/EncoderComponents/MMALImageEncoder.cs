@@ -164,6 +164,9 @@ namespace MMALSharp.Components
             Marshal.FreeHGlobal(ptr);
         }
 
+        /// <summary>
+        /// Prints a summary of the ports and the resolution associated with this component to the console.
+        /// </summary>
         public override void PrintComponent()
         {
             base.PrintComponent();

@@ -10,10 +10,20 @@ using NLog.Targets;
 using System;
 
 namespace MMALSharp
-{     
+{
+    /// <summary>
+    /// Represents unspecific errors that occur during working with the Pi Camera.
+    /// </summary>
     public class PiCameraError : Exception
     {
+        /// <summary>
+        /// Creates a new instance of the <see cref="PiCameraError"/> exception.
+        /// </summary>
         public PiCameraError() : base() { }
+        /// <summary>
+        /// Creates a new instance of the <see cref="PiCameraError"/> exception with a specified message.
+        /// </summary>
+        /// <param name="msg">A message that describes the current error.</param>
         public PiCameraError(string msg) : base(msg) { }
     }
 
@@ -129,50 +139,57 @@ namespace MMALSharp
         }
     }
 
-
+    /// <summary>
+    /// Provides methods which support calling native methods.
+    /// </summary>
     public static class MMALCallerHelper
     {
-        public static void MMALCheck(MMALUtil.MMAL_STATUS_T status, string prefix)
+        /// <summary>
+        /// Checks whether the provided MMAL_STATUS_T is equal to MMAL_SUCCESS and throws the associated exception in case of an error.
+        /// </summary>
+        /// <param name="status">The MMAL_STATUS_T to search for an error.</param>
+        /// <param name="message">The message for the exception that will be thrown if an error occurred.</param>
+        public static void MMALCheck(MMALUtil.MMAL_STATUS_T status, string message)
         {
             if (status != MMALUtil.MMAL_STATUS_T.MMAL_SUCCESS)
             {
                 switch (status)
                 {
                     case MMALUtil.MMAL_STATUS_T.MMAL_ENOMEM:
-                        throw new MMALNoMemoryException(prefix);
+                        throw new MMALNoMemoryException(message);
                     case MMALUtil.MMAL_STATUS_T.MMAL_ENOSPC:
-                        throw new MMALNoSpaceException(prefix);
+                        throw new MMALNoSpaceException(message);
                     case MMALUtil.MMAL_STATUS_T.MMAL_EINVAL:
-                        throw new MMALInvalidException(prefix);
+                        throw new MMALInvalidException(message);
                     case MMALUtil.MMAL_STATUS_T.MMAL_ENOSYS:
-                        throw new MMALNotImplementedException(prefix);
+                        throw new MMALNotImplementedException(message);
                     case MMALUtil.MMAL_STATUS_T.MMAL_ENOENT:
-                        throw new MMALInvalidDirectoryException(prefix);
+                        throw new MMALInvalidDirectoryException(message);
                     case MMALUtil.MMAL_STATUS_T.MMAL_ENXIO:
-                        throw new MMALInvalidDeviceException(prefix);
+                        throw new MMALInvalidDeviceException(message);
                     case MMALUtil.MMAL_STATUS_T.MMAL_EIO:
-                        throw new MMALIOException(prefix);
+                        throw new MMALIOException(message);
                     case MMALUtil.MMAL_STATUS_T.MMAL_ESPIPE:
-                        throw new MMALIllegalSeekException(prefix);
+                        throw new MMALIllegalSeekException(message);
                     case MMALUtil.MMAL_STATUS_T.MMAL_ECORRUPT:
-                        throw new MMALCorruptException(prefix);
+                        throw new MMALCorruptException(message);
                     case MMALUtil.MMAL_STATUS_T.MMAL_ENOTREADY:
-                        throw new MMALComponentNotReadyException(prefix);
+                        throw new MMALComponentNotReadyException(message);
                     case MMALUtil.MMAL_STATUS_T.MMAL_ECONFIG:
-                        throw new MMALComponentNotConfiguredException(prefix);
+                        throw new MMALComponentNotConfiguredException(message);
                     case MMALUtil.MMAL_STATUS_T.MMAL_EISCONN:
-                        throw new MMALPortConnectedException(prefix);
+                        throw new MMALPortConnectedException(message);
                     case MMALUtil.MMAL_STATUS_T.MMAL_ENOTCONN:
-                        throw new MMALPortNotConnectedException(prefix);
+                        throw new MMALPortNotConnectedException(message);
                     case MMALUtil.MMAL_STATUS_T.MMAL_EAGAIN:
-                        throw new MMALResourceUnavailableException(prefix);
+                        throw new MMALResourceUnavailableException(message);
                     case MMALUtil.MMAL_STATUS_T.MMAL_EFAULT:
-                        throw new MMALBadAddressException(prefix);
+                        throw new MMALBadAddressException(message);
                     default:
-                        throw new MMALException(status, "Unknown error occurred");
+                        throw new MMALException(status, $"Unknown error occurred. {message}");
                 }
             }
         }
     }
-    
+
 }
