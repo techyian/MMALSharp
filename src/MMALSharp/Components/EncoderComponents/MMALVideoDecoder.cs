@@ -58,10 +58,13 @@ namespace MMALSharp.Components
             ((MMALVideoPort)this.Outputs[outputPort]).Timeout = this.Timeout;
         }
 
+        /// <summary>
+        /// Prints a summary of the ports and the resolution associated with this component to the console.
+        /// </summary>
         public override void PrintComponent()
         {
             base.PrintComponent();
-            MMALLog.Logger.Info($"Width: {this.Width}. Height: {this.Height}");
+            MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
         }
 
         internal override void InitialiseOutputPort(int outputPort)

@@ -66,6 +66,9 @@ namespace MMALSharp.Components
             this.EnableComponent();
         }
 
+        /// <summary>
+        /// Prints the name of this component to the console.
+        /// </summary>
         public override void PrintComponent()
         {
             MMALLog.Logger.Info($"Component: Null sink renderer");
@@ -116,6 +119,9 @@ namespace MMALSharp.Components
             this.EnableComponent();
         }
 
+        /// <summary>
+        /// Prints the name of this component to the console.
+        /// </summary>
         public override void PrintComponent()
         {
             MMALLog.Logger.Info($"Component: Video renderer");

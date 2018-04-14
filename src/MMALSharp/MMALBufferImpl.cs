@@ -17,6 +17,10 @@ namespace MMALSharp
     /// </summary>
     public unsafe class MMALBufferImpl : MMALObject, IMMALStatus
     {
+        /// <summary>
+        /// Creates a new Managed reference to a MMAL Buffer.
+        /// </summary>
+        /// <param name="ptr">The native pointer to the buffer.</param>
         public MMALBufferImpl(MMAL_BUFFER_HEADER_T* ptr)
         {
             this.Ptr = ptr;
@@ -312,6 +316,10 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Checks whether this instance is attached to a valid native pointer.
+        /// </summary>
+        /// <returns></returns>
         public bool CheckState()
         {
             return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;

@@ -290,9 +290,9 @@ namespace MMALSharp
         /// </summary>
         /// <param name="cameraPort">The camera port which image data is coming from.</param>
         /// <returns>The awaitable Task.</returns>
-        public async Task ProcessAsync(MMALPortImpl cameraPort)
+        public Task ProcessAsync(MMALPortImpl cameraPort)
         {
-            await this.ProcessAsync(cameraPort, CancellationToken.None);
+            return this.ProcessAsync(cameraPort, CancellationToken.None); // we can directly forward this Task
         }
 
         /// <summary>
