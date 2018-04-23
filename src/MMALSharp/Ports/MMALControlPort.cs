@@ -31,9 +31,13 @@ namespace MMALSharp.Ports
         internal static object ControlLock = new object();
 
         /// <summary>
-        /// Enable processing on a port
+        /// Enables processing on a port.
         /// </summary>
         /// <param name="managedCallback">A managed callback method we can do further processing on.</param>
+        /// <param name="sendBuffers">
+        /// Indicates whether we want to send all the buffers in the port pool or simply create the pool.
+        /// This parameter has no effect for <see cref="MMALControlPort"/>.
+        /// </param>
         internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, bool sendBuffers = true)
         {
             if (!this.Enabled)

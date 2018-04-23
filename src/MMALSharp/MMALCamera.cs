@@ -124,6 +124,8 @@ namespace MMALSharp
         /// </summary>
         /// <param name="handler">The image capture handler to use to save image.</param>
         /// <returns>The awaitable Task.</returns>
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="PiCameraError"/>
         public async Task TakeRawPicture(ICaptureHandler handler)
         {
             var currentStillEncoder = MMALCameraConfig.StillEncoding;
@@ -134,12 +136,7 @@ namespace MMALSharp
                 throw new PiCameraError("A connection was found to the Camera still port. No encoder should be connected to the Camera's still port for raw capture.");
             }
 
-            if (handler == null)
-            {
-                throw new PiCameraError("No handler specified");
-            }
-
-            this.Camera.Handler = handler;
+            this.Camera.Handler = handler ?? throw new ArgumentNullException(nameof(handler));
 
             using (var renderer = new MMALNullSinkComponent())
             {
@@ -254,13 +251,14 @@ namespace MMALSharp
         /// <param name="pixelFormat">The pixel format to use with the encoder e.g. I420 (YUV420).</param>
         /// <param name="timelapse">A Timelapse object which specifies the timeout and rate at which images should be taken.</param>
         /// <returns>The awaitable Task.</returns>
+        /// <exception cref="ArgumentNullException"/>
         public async Task TakePictureTimelapse(ImageStreamCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, Timelapse timelapse)
         {
             int interval = 0;
 
             if (timelapse == null)
             {
-                throw new PiCameraError("Timelapse object null. This must be initialized for Timelapse mode");
+                throw new ArgumentNullException(nameof(timelapse), "Timelapse object null. This must be initialized for Timelapse mode");
             }
 
             while (!timelapse.CancellationToken.IsCancellationRequested)
