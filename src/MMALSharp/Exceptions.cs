@@ -119,7 +119,7 @@ namespace MMALSharp
     }
 
     /// <summary>
-    /// Native error that occurs when a device or address does not exist. For example when SDL initialisation fails.
+    /// Native error that occurs when a device or address does not exist.
     /// </summary>
     public class MMALInvalidDeviceException : MMALException
     {
@@ -165,13 +165,13 @@ namespace MMALSharp
     }
 
     /// <summary>
-    /// Native error that occurs when an underlying VideoCore container faces corrupted data.
+    /// Native error that occurs when MMAL encounters corrupt data.
     /// </summary>
     public class MMALCorruptException : MMALException
     {
         /// <summary>
         /// Creates a new instance of the <see cref="MMALCorruptException"/> class with the specified message.
-        /// This exception indicates corrupted data.
+        /// This exception indicates MMAL has encountered corrupted data.
         /// </summary>
         /// <param name="message">The error message to print.</param>
         public MMALCorruptException(string message) : base(MMALUtil.MMAL_STATUS_T.MMAL_ECORRUPT, $"Data is corrupt. {message}")
@@ -180,7 +180,7 @@ namespace MMALSharp
     }
 
     /// <summary>
-    /// Native error that occurs when a native VideoCore component is not ready.
+    /// Native error that occurs when a component is not ready.
     /// </summary>
     public class MMALComponentNotReadyException : MMALException
     {
@@ -256,7 +256,7 @@ namespace MMALSharp
     }
 
     /// <summary>
-    /// Native error that occurs when facing a bad address. For example when a property illegaly gets over overridden.
+    /// Native error that occurs when facing a bad address.
     /// </summary>
     public class MMALBadAddressException : MMALException
     {
