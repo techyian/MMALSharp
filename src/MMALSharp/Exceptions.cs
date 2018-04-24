@@ -67,8 +67,8 @@ namespace MMALSharp
         /// Creates a new instance of the <see cref="MMALNoSpaceException"/> class with the specified message.
         /// This exception indicates running out of resources other than memory.
         /// </summary>
-        /// <param name="prefix">The error message to print.</param>
-        public MMALNoSpaceException(string prefix) : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOSPC, $"Out of resources. {prefix}")
+        /// <param name="message">The error message to print.</param>
+        public MMALNoSpaceException(string message) : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOSPC, $"Out of resources. {message}")
         {
         }
     }
@@ -82,8 +82,8 @@ namespace MMALSharp
         /// Creates a new instance of the <see cref="MMALInvalidException"/> class with the specified message.
         /// This exception is similar to an <see cref="ArgumentException"/>.
         /// </summary>
-        /// <param name="prefix">The error message to print.</param>
-        public MMALInvalidException(string prefix) : base(MMALUtil.MMAL_STATUS_T.MMAL_EINVAL, $"Argument is invalid. {prefix}")
+        /// <param name="message">The error message to print.</param>
+        public MMALInvalidException(string message) : base(MMALUtil.MMAL_STATUS_T.MMAL_EINVAL, $"Argument is invalid. {message}")
         {
         }
     }
@@ -97,8 +97,8 @@ namespace MMALSharp
         /// Creates a new instance of the <see cref="MMALNotImplementedException"/> class with the specified message.
         /// This exception is similar to a <see cref="NotImplementedException"/>.
         /// </summary>
-        /// <param name="prefix">The error message to print.</param>
-        public MMALNotImplementedException(string prefix) : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOSYS, $"Function not implemented. {prefix}")
+        /// <param name="message">The error message to print.</param>
+        public MMALNotImplementedException(string message) : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOSYS, $"Function not implemented. {message}")
         {
         }
     }
@@ -112,15 +112,23 @@ namespace MMALSharp
         /// Creates a new instance of the <see cref="MMALInvalidDeviceException"/> class with the specified message.
         /// This exception is similar to a <see cref="System.IO.FileNotFoundException"/> or <see cref="System.IO.DirectoryNotFoundException"/>.
         /// </summary>
-        /// <param name="prefix">The error message to print.</param>
-        public MMALInvalidDirectoryException(string prefix) : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOENT, $"No such file or directory. {prefix}")
+        /// <param name="message">The error message to print.</param>
+        public MMALInvalidDirectoryException(string message) : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOENT, $"No such file or directory. {message}")
         {
         }
     }
 
+    /// <summary>
+    /// Native error that occurs when a device or address does not exist. For example when SDL initialisation fails.
+    /// </summary>
     public class MMALInvalidDeviceException : MMALException
     {
-        public MMALInvalidDeviceException(string prefix) : base(MMALUtil.MMAL_STATUS_T.MMAL_ENXIO, $"No such device or address. {prefix}")
+        /// <summary>
+        /// Creates a new instance of the <see cref="MMALInvalidDeviceException"/> class with the specified message.
+        /// This exception indicates a non existent device or address.
+        /// </summary>
+        /// <param name="message">The error message to print.</param>
+        public MMALInvalidDeviceException(string message) : base(MMALUtil.MMAL_STATUS_T.MMAL_ENXIO, $"No such device or address. {message}")
         {
         }
     }
@@ -134,65 +142,130 @@ namespace MMALSharp
         /// Creates a new instance of the <see cref="MMALIOException"/> class with the specified message.
         /// This exception is similar to an <see cref="System.IO.IOException"/>.
         /// </summary>
-        /// <param name="prefix">The error message to print.</param>
-        public MMALIOException(string prefix) : base(MMALUtil.MMAL_STATUS_T.MMAL_EIO, $"I/O error. {prefix}")
+        /// <param name="message">The error message to print.</param>
+        public MMALIOException(string message) : base(MMALUtil.MMAL_STATUS_T.MMAL_EIO, $"I/O error. {message}")
         {
         }
     }
 
+    /// <summary>
+    /// Native error that occurs when performing an illegal seek operation.
+    /// </summary>
     public class MMALIllegalSeekException : MMALException
     {
-        public MMALIllegalSeekException(string prefix) : base(MMALUtil.MMAL_STATUS_T.MMAL_ESPIPE, $"Illegal seek. {prefix}")
+        /// <summary>
+        /// Creates a new instance of the <see cref="MMALIllegalSeekException"/> class with the specified message.
+        /// This exception indicates an illegal seek operation.
+        /// </summary>
+        /// <param name="message">The error message to print.</param>
+        public MMALIllegalSeekException(string message) : base(MMALUtil.MMAL_STATUS_T.MMAL_ESPIPE, $"Illegal seek. {message}")
         {
+            // This native error seems to unused in the underlying MMAL code.
         }
     }
 
+    /// <summary>
+    /// Native error that occurs when an underlying VideoCore container faces corrupted data.
+    /// </summary>
     public class MMALCorruptException : MMALException
     {
-        public MMALCorruptException(string prefix) : base(MMALUtil.MMAL_STATUS_T.MMAL_ECORRUPT, $"Data is corrupt. {prefix}")
+        /// <summary>
+        /// Creates a new instance of the <see cref="MMALCorruptException"/> class with the specified message.
+        /// This exception indicates corrupted data.
+        /// </summary>
+        /// <param name="message">The error message to print.</param>
+        public MMALCorruptException(string message) : base(MMALUtil.MMAL_STATUS_T.MMAL_ECORRUPT, $"Data is corrupt. {message}")
         {
-            
         }
     }
 
+    /// <summary>
+    /// Native error that occurs when a native VideoCore component is not ready.
+    /// </summary>
     public class MMALComponentNotReadyException : MMALException
     {
-        public MMALComponentNotReadyException(string prefix) : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOTREADY, $"Component is not ready. {prefix}")
+        /// <summary>
+        /// Creates a new instance of the <see cref="MMALComponentNotReadyException"/> class with the specified message.
+        /// This exception indicates that a component is not ready.
+        /// </summary>
+        /// <param name="message">The error message to print.</param>
+        public MMALComponentNotReadyException(string message) : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOTREADY, $"Component is not ready. {message}")
         {
         }
     }
 
+    /// <summary>
+    /// Native error that occurs when a component is not configured.
+    /// </summary>
     public class MMALComponentNotConfiguredException : MMALException
     {
-        public MMALComponentNotConfiguredException(string prefix) : base(MMALUtil.MMAL_STATUS_T.MMAL_ECONFIG, $"Component is not configured. {prefix}")
+        /// <summary>
+        /// Creates a new instance of the <see cref="MMALComponentNotConfiguredException"/> class with the specified message.
+        /// This exception indicates a not configured component.
+        /// </summary>
+        /// <param name="message">The error message to print.</param>
+        public MMALComponentNotConfiguredException(string message) : base(MMALUtil.MMAL_STATUS_T.MMAL_ECONFIG, $"Component is not configured. {message}")
         {
+            // This native error seems to unused in the underlying MMAL code.
         }
     }
 
+    /// <summary>
+    /// Native error that occurs when a port is already connected.
+    /// </summary>
     public class MMALPortConnectedException : MMALException
     {
-        public MMALPortConnectedException(string prefix) : base(MMALUtil.MMAL_STATUS_T.MMAL_EISCONN, $"Port is already connected. {prefix}")
+        /// <summary>
+        /// Creates a new instance of the <see cref="MMALPortNotConnectedException"/> class with the specified message.
+        /// This exception indicates an already connected port.
+        /// </summary>
+        /// <param name="message">The error message to print.</param>
+        public MMALPortConnectedException(string message) : base(MMALUtil.MMAL_STATUS_T.MMAL_EISCONN, $"Port is already connected. {message}")
         {
         }
     }
 
+    /// <summary>
+    /// Native error that occurs when a port is not connected.
+    /// </summary>
     public class MMALPortNotConnectedException : MMALException
     {
-        public MMALPortNotConnectedException(string prefix) : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOTCONN, $"Port is disconnected. {prefix}")
+        /// <summary>
+        /// Creates a new instance of the <see cref="MMALPortNotConnectedException"/> class with the specified message.
+        /// This exception indicates a disconnected port.
+        /// </summary>
+        /// <param name="message">The error message to print.</param>
+        public MMALPortNotConnectedException(string message) : base(MMALUtil.MMAL_STATUS_T.MMAL_ENOTCONN, $"Port is disconnected. {message}")
         {
         }
     }
 
+    /// <summary>
+    /// Native error that occurs when resource (e.g. a buffer) is temporarily unavailable. You should try again later.
+    /// </summary>
     public class MMALResourceUnavailableException : MMALException
     {
-        public MMALResourceUnavailableException(string prefix) : base(MMALUtil.MMAL_STATUS_T.MMAL_EAGAIN, $"Resource temporarily unavailable; try again later. {prefix}")
+        /// <summary>
+        /// Creates a new instance of the <see cref="MMALResourceUnavailableException"/> class with the specified message.
+        /// This exception indicates a temporiarily unavailable resource.
+        /// </summary>
+        /// <param name="message">The error message to print.</param>
+        public MMALResourceUnavailableException(string message) : base(MMALUtil.MMAL_STATUS_T.MMAL_EAGAIN, $"Resource temporarily unavailable; try again later. {message}")
         {
         }
     }
 
+    /// <summary>
+    /// Native error that occurs when facing a bad address. For example when a property illegaly gets over overridden.
+    /// </summary>
     public class MMALBadAddressException : MMALException
     {
-        public MMALBadAddressException(string prefix) : base(MMALUtil.MMAL_STATUS_T.MMAL_EFAULT, $"Bad address. {prefix}")
+        /// <summary>
+        /// Creates a new instance of the <see cref="MMALBadAddressException"/> class with the specified message.
+        /// This exception indicates a bad address.
+        /// </summary>
+        /// <param name="message">The error message to print.</param>
+        public MMALBadAddressException(string message) : base(MMALUtil.MMAL_STATUS_T.MMAL_EFAULT, $"Bad address. {message}")
         {
         }
     }

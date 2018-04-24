@@ -124,6 +124,10 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Returns a summary, including length presentation timestamp and flags, about this buffer header instance.
+        /// </summary>
+        /// <returns>A string summarising this instance.</returns>
         public override string ToString()
         {
             var sb = new StringBuilder();
