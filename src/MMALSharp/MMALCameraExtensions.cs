@@ -119,6 +119,12 @@ namespace MMALSharp
             return (int)camera.Control.GetParameter(MMAL_PARAMETER_ISO);
         }
 
+        /// <summary>
+        /// Sets the ISO to the specified value. Range from 100 to 800.
+        /// </summary>
+        /// <param name="camera"></param>
+        /// <param name="iso"></param>
+        /// <exception cref="ArgumentOutOfRangeException"/>
         internal static void SetISO(this MMALCameraComponent camera, int iso)
         {
             MMALLog.Logger.Debug($"Setting ISO: {iso}");
@@ -126,7 +132,7 @@ namespace MMALSharp
             // 0 = auto
             if ((iso < 100 || iso > 800) && iso > 0)
             {
-                throw new PiCameraError("Invalid ISO setting. Valid values: 100 - 800");
+                throw new ArgumentOutOfRangeException(nameof(iso), iso, "Invalid ISO setting. Valid values: 100 - 800");
             }
 
             camera.Control.SetParameter(MMAL_PARAMETER_ISO, iso);
@@ -149,13 +155,18 @@ namespace MMALSharp
             return camera.Control.GetParameter(MMAL_PARAMETER_EXPOSURE_COMP);
         }
 
+        /// <summary>
+        /// Sets the exposure compensation to the specified value. Range from -10 to 10.
+        /// </summary>
+        /// <param name="camera"></param>
+        /// <param name="expCompensation"></param>
         internal static void SetExposureCompensation(this MMALCameraComponent camera, int expCompensation)
         {
             MMALLog.Logger.Debug($"Setting exposure compensation: {expCompensation}");
 
             if (expCompensation < -10 || expCompensation > 10)
             {
-                throw new PiCameraError("Invalid exposure compensation value. Valid values (-10 - 10)");
+                throw new ArgumentOutOfRangeException(nameof(expCompensation), expCompensation, "Invalid exposure compensation value. Valid values (-10 - 10)");
             }
 
             camera.Control.SetParameter(MMAL_PARAMETER_EXPOSURE_COMP, expCompensation);
@@ -406,7 +417,7 @@ namespace MMALSharp
         public static MMAL_RECT_T GetZoom(this MMALCameraComponent camera)
         {
             MMAL_PARAMETER_INPUT_CROP_T crop = new MMAL_PARAMETER_INPUT_CROP_T(
-                new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_INPUT_CROP, Marshal.SizeOf<MMAL_PARAMETER_INPUT_CROP_T>()), 
+                new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_INPUT_CROP, Marshal.SizeOf<MMAL_PARAMETER_INPUT_CROP_T>()),
                 default(MMAL_RECT_T));
 
             MMALCheck(MMALPort.mmal_port_parameter_get(camera.Control.Ptr, &crop.Hdr), "Unable to get zoom");
@@ -414,15 +425,20 @@ namespace MMALSharp
             return crop.Rect;
         }
 
+        /// <summary>
+        /// Sets the zoom to the specified value. Each parameter must not be greater than 1.0.
+        /// </summary>
+        /// <param name="camera"></param>
+        /// <param name="rect"></param>
         internal static void SetZoom(this MMALCameraComponent camera, Zoom rect)
         {
             if (rect.X > 1.0 || rect.Y > 1.0 || rect.Height > 1.0 || rect.Width > 1.0)
             {
-                throw new PiCameraError("Invalid zoom settings. Value mustn't be greater than 1.0");
+                throw new ArgumentOutOfRangeException(nameof(rect), "Invalid zoom settings. Value mustn't be greater than 1.0");
             }
 
             MMAL_PARAMETER_INPUT_CROP_T crop = new MMAL_PARAMETER_INPUT_CROP_T(
-                new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_INPUT_CROP, Marshal.SizeOf<MMAL_PARAMETER_INPUT_CROP_T>()), 
+                new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_INPUT_CROP, Marshal.SizeOf<MMAL_PARAMETER_INPUT_CROP_T>()),
                 new MMAL_RECT_T(Convert.ToInt32(65536 * rect.X), Convert.ToInt32(65536 * rect.Y), Convert.ToInt32(65536 * rect.Width), Convert.ToInt32(65536 * rect.Height)));
 
             MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, &crop.Hdr), "Unable to set zoom");

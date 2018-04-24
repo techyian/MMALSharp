@@ -224,7 +224,7 @@ namespace MMALSharp
         /// <summary>
         /// Delegate for native port callback.
         /// </summary>
-        internal MMALSharp.Native.MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
+        internal MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
 
         /// <summary>
         /// Delegate to populate native buffer header with user provided image data.
@@ -237,7 +237,7 @@ namespace MMALSharp
         public Action<MMALBufferImpl, MMALPortBase> ManagedOutputCallback { get; set; }
         
         /// <summary>
-        /// Creates a new Managed reference to a MMAL Component Port.
+        /// Creates a new managed reference to a MMAL Component Port.
         /// </summary>
         /// <param name="ptr">The native pointer to the component port.</param>
         /// <param name="comp">The component this port is associated with.</param>

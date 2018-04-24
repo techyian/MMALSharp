@@ -9,7 +9,7 @@ using MMALSharp.Native;
 namespace MMALSharp.Components
 {
     /// <summary>
-    /// Represents an image decoder component
+    /// Represents an image decoder component.
     /// </summary>
     public class MMALImageDecoder : MMALEncoderBase
     {

@@ -17,15 +17,22 @@ namespace MMALSharp
     /// </summary>
     public unsafe class MMALPortImpl : MMALPortBase
     {
+        /// <summary>
+        /// Creates a managed reference to a MMAL Component Port.
+        /// </summary>
+        /// <param name="ptr">The native pointer to the component port.</param>
+        /// <param name="comp">The component this port is associated with.</param>
+        /// <param name="type">The type of port this is.</param>
         public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
             : base(ptr, comp, type)
         {
         }
-        
+
         /// <summary>
-        /// Enable processing on an output port.
+        /// Enables processing on an output port.
         /// </summary>
         /// <param name="managedCallback">A managed callback method we can do further processing on.</param>
+        /// <param name="sendBuffers">Indicates whether we want to send all the buffers in the port pool or simply create the pool.</param>
         internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, bool sendBuffers = true)
         {            
             if (!this.Enabled)
