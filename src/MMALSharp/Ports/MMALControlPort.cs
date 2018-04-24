@@ -74,7 +74,7 @@ namespace MMALSharp.Ports
             {
                 if (MMALCameraConfig.Debug)
                 {
-                    MMALLog.Logger.Debug("In native control callback");
+                    MMALLog.Logger.Debug("In native control callback.");
                 }
 
                 var bufferImpl = new MMALBufferImpl(buffer);
@@ -84,16 +84,21 @@ namespace MMALSharp.Ports
                     if (MMALCameraConfig.Debug)
                     {
                         bufferImpl.ParseEvents();
+                        bufferImpl.PrintProperties();
                     }
 
                     this.ManagedControlCallback(bufferImpl, this);
 
                     if (MMALCameraConfig.Debug)
                     {
-                        MMALLog.Logger.Debug("Releasing buffer");
+                        MMALLog.Logger.Debug("Releasing buffer.");
                     }
 
                     bufferImpl.Release();
+                }
+                else
+                {
+                    MMALLog.Logger.Warn("Received null control buffer.");
                 }
             }
         }

@@ -144,12 +144,16 @@ namespace MMALSharp
 
             MMAL_PARAMETER_ENCODING_T encodings;
 
-            MMALCheck(MMALPort.mmal_port_parameter_get(port.Ptr, str1), "Unable to get supported encodings");
-
-            encodings = (MMAL_PARAMETER_ENCODING_T)Marshal.PtrToStructure(ptr1, typeof(MMAL_PARAMETER_ENCODING_T));
-            Marshal.FreeHGlobal(ptr1);
-
-            return encodings.Value;
+            try
+            {
+                MMALCheck(MMALPort.mmal_port_parameter_get(port.Ptr, str1), "Unable to get supported encodings");
+                encodings = (MMAL_PARAMETER_ENCODING_T)Marshal.PtrToStructure(ptr1, typeof(MMAL_PARAMETER_ENCODING_T));
+                return encodings.Value;
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(ptr1);
+            }
         }
 
         internal static void SetImageCapture(this MMALPortImpl port, bool enable)

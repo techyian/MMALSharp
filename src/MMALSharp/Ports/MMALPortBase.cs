@@ -352,7 +352,8 @@ namespace MMALSharp
                 {
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
                 }
-                this.BufferPool = new MMALPoolImpl(this);
+
+                this.InitialiseBufferPool();
             }
 
             if (!this.Enabled)
@@ -473,8 +474,8 @@ namespace MMALSharp
 
         internal void SendAllBuffers(bool sendBuffers = true)
         {
-            this.BufferPool = new MMALPoolImpl(this);
-
+            this.InitialiseBufferPool();
+            
             if (sendBuffers)
             {
                 var length = this.BufferPool.Queue.QueueLength();
@@ -599,6 +600,12 @@ namespace MMALSharp
                 MMALLog.Logger.Warn($"Unable to send buffer header. {e.Message}");
                 throw;
             }
-        }                
+        }
+
+        internal void InitialiseBufferPool()
+        {
+            MMALLog.Logger.Debug($"Initialising buffer pool.");
+            this.BufferPool = new MMALPoolImpl(this);
+        }
     }
 }

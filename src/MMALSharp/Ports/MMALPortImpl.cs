@@ -52,7 +52,7 @@ namespace MMALSharp
                     ptrCallback = this.PtrCallback;
                 }
                 
-                MMALLog.Logger.Debug("Enabling output port.");
+                MMALLog.Logger.Debug("Enabling port.");
 
                 if (managedCallback == null)
                 {

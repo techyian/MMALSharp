@@ -159,9 +159,15 @@ namespace MMALSharp.Components
 
             Marshal.StructureToPtr(str, ptr, false);
 
-            MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs[0].Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), $"Unable to set EXIF {formattedExif}");
-
-            Marshal.FreeHGlobal(ptr);
+            try
+            {
+                MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs[0].Ptr, (MMAL_PARAMETER_HEADER_T*) ptr),
+                    $"Unable to set EXIF {formattedExif}");
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(ptr);
+            }
         }
 
         /// <summary>
