@@ -7,10 +7,11 @@ using System.Runtime.InteropServices;
 
 namespace MMALSharp.Native
 {
-#pragma warning disable 1591
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
     public static class MMALQueue
     {
+#pragma warning disable IDE1006 // Naming Styles
         //MMAL_QUEUE_T*
         [DllImport("libmmal.so", EntryPoint = "mmal_queue_create", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern MMAL_QUEUE_T* mmal_queue_create();
@@ -34,6 +35,7 @@ namespace MMALSharp.Native
 
         [DllImport("libmmal.so", EntryPoint = "mmal_queue_destroy", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern void mmal_queue_destroy(MMAL_QUEUE_T* ptr);
+#pragma warning restore IDE1006 // Naming Styles
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -54,7 +56,4 @@ namespace MMALSharp.Native
             this.last = last;
         }
     }
-
-
-
 }

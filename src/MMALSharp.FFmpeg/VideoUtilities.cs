@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.FFmpeg
 {
+    /// <summary>
+    /// This class provides utility methods for video capturing and converting based on FFmpeg.
+    /// </summary>
     public static class VideoUtilities
     {
         /// <summary>
@@ -20,6 +23,7 @@ namespace MMALSharp.FFmpeg
         /// </summary>
         /// <param name="result">The list of images we wish to process.</param>
         /// <param name="targetDirectory">The target directory we want to save the video to.</param>
+        /// <param name="fps">The framerate in fps to set as -framerate parameter for FFmpeg.</param>
         public static void ImagesToVideo(this ImageStreamCaptureHandler result, string targetDirectory, int fps)
         {
             var process = new Process
@@ -31,14 +35,14 @@ namespace MMALSharp.FFmpeg
                     FileName = "ffmpeg"
                 }
             };
-            
+
             if (result.ProcessedFiles.Count == 0)
                 return;
 
             //Create temporary directory and copy all files in the capture handler to it.
             var tempDirectory = result.ProcessedFiles.FirstOrDefault().Directory.TrimEnd('/') + "/mmalsharptemp/";
             var extension = result.ProcessedFiles.FirstOrDefault().Extension;
-            
+
             try
             {
                 System.IO.Directory.CreateDirectory(tempDirectory);
@@ -63,10 +67,10 @@ namespace MMALSharp.FFmpeg
             finally
             {
                 //Make sure we try to cleanup even if error occurs.
-                if(System.IO.Directory.Exists(tempDirectory))
+                if (System.IO.Directory.Exists(tempDirectory))
                 {
                     System.IO.Directory.Delete(tempDirectory, true);
-                }                
+                }
             }
         }
     }

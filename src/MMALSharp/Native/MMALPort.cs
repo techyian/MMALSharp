@@ -8,7 +8,8 @@ using System.Runtime.InteropServices;
 
 namespace MMALSharp.Native
 {
-#pragma warning disable 1591
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
     public static class MMALPort
     {
         public enum MMAL_PORT_TYPE_T
@@ -26,6 +27,7 @@ namespace MMALSharp.Native
         public const int MMAL_PORT_CAPABILITY_ALLOCATION = 0x02;
         public const int MMAL_PORT_CAPABILITY_SUPPORTS_EVENT_FORMAT_CHANGE = 0x04;
 
+#pragma warning disable IDE1006 // Naming Styles
         //MMAL_PORT_T* port    
         [DllImport("libmmal.so", EntryPoint = "mmal_port_format_commit", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_port_format_commit(MMAL_PORT_T* port);
@@ -83,7 +85,7 @@ namespace MMALSharp.Native
         //MMAL_PORT_T* port * MMAL_BUFFER_HEADER_T** buffer
         [DllImport("libmmal.so", EntryPoint = "mmal_port_event_get", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_port_event_get(MMAL_PORT_T* port, IntPtr* buffer);
-
+#pragma warning restore IDE1006 // Naming Styles
     }
 
     [StructLayout(LayoutKind.Sequential)]

@@ -89,6 +89,9 @@ namespace MMALSharp.Components
             }
         }
 
+        /// <summary>
+        /// Prints the name of this component to the console.
+        /// </summary>
         public override void PrintComponent()
         {
             MMALLog.Logger.Info($"Component: Camera info");

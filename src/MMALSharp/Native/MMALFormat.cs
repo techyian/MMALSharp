@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace MMALSharp.Native
 {
-#pragma warning disable 1591
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
     public static class MMALFormat
     {
@@ -34,6 +34,7 @@ namespace MMALSharp.Native
 
         public static int MMAL_ES_FORMAT_COMPARE_FLAG_ES_OTHER = 0x10000000;
 
+#pragma warning disable IDE1006 // Naming Styles
         [DllImport("libmmal.so", EntryPoint = "mmal_format_alloc", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern MMAL_ES_FORMAT_T* mmal_format_alloc();
 
@@ -51,6 +52,7 @@ namespace MMALSharp.Native
 
         [DllImport("libmmal.so", EntryPoint = "mmal_format_compare", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern uint mmal_format_compare(MMAL_ES_FORMAT_T* ptr, MMAL_ES_FORMAT_T* ptr2);
+#pragma warning restore IDE1006 // Naming Styles
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -152,8 +154,4 @@ namespace MMALSharp.Native
             this.extraData = extraData;
         }
     }
-
-
-
-
 }

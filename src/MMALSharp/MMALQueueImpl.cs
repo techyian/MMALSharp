@@ -97,6 +97,10 @@ namespace MMALSharp
             base.Dispose();
         }
 
+        /// <summary>
+        /// Checks whether this instance is attached to a valid native pointer.
+        /// </summary>
+        /// <returns></returns>
         public bool CheckState()
         {
             return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;
