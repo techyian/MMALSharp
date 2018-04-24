@@ -398,20 +398,13 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// This applies the configuration settings against the camera such as Saturation, Contrast etc.
+        /// Initialises the camera component ready for operation. This method can also be called if you want to change
+        /// configuration settings in <see cref="MMALCameraConfig"/>.
         /// </summary>
         /// <returns>The camera instance.</returns>
         public MMALCamera ConfigureCameraSettings()
-        {
-            MMALLog.Logger.Debug("Configuring camera parameters.");
-
-            this.DisableCamera();
-            this.Camera.SetCameraParameters();
-            this.Camera.InitialiseStill();
-            this.Camera.InitialiseVideo();
-            this.Camera.InitialisePreview();
-            this.EnableCamera();
-
+        {            
+            this.Camera.Initialise();                               
             return this;
         }
 

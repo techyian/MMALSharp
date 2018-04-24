@@ -190,7 +190,7 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].EncodingType = encodingType;
             this.Outputs[outputPort].PixelFormat = pixelFormat;
 
-            this.Outputs[outputPort].Resolution = new Resolution(MMALUtil.VCOS_ALIGN_UP(this.Width, 32), MMALUtil.VCOS_ALIGN_UP(this.Height, 32));
+            this.Outputs[outputPort].Resolution = new Resolution(this.Width, this.Height).Pad();
             this.Outputs[outputPort].Crop = new Rectangle(0, 0, this.Width, this.Height);
             
             this.Outputs[outputPort].BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
