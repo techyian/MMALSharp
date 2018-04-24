@@ -13,7 +13,7 @@ namespace MMALSharp
         public static List<WeakReference<MMALObject>> Objects = new List<WeakReference<MMALObject>>();
         private WeakReference<MMALObject> reference;
 
-        public MMALObject()
+        protected MMALObject()
         {
             reference = new WeakReference<MMALObject>(this);
             Objects.Add(reference);

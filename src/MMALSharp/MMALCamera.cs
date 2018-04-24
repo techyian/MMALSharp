@@ -123,9 +123,6 @@ namespace MMALSharp
         /// <returns>The awaitable Task.</returns>
         public async Task TakeRawPicture(ICaptureHandler handler)
         {
-            var currentStillEncoder = MMALCameraConfig.StillEncoding;
-            var currentStillSubEncoder = MMALCameraConfig.StillSubFormat;
-
             if (this.Camera.StillPort.ConnectedReference != null)
             {
                 throw new PiCameraError("A connection was found to the Camera still port. No encoder should be connected to the Camera's still port for raw capture.");
@@ -140,9 +137,6 @@ namespace MMALSharp
 
             using (var renderer = new MMALNullSinkComponent())
             {
-                MMALCameraConfig.StillEncoding = MMALEncoding.I420;
-                MMALCameraConfig.StillSubFormat = MMALEncoding.I420;
-
                 this.ConfigureCameraSettings();
                 this.Camera.StillPort.SetRawCapture(true);
 
@@ -179,9 +173,6 @@ namespace MMALSharp
                 }
                 finally
                 {
-                    MMALCameraConfig.StillEncoding = currentStillEncoder;
-                    MMALCameraConfig.StillSubFormat = currentStillSubEncoder;
-
                     this.Camera.Handler.Dispose();
                 }
             }            
@@ -419,6 +410,12 @@ namespace MMALSharp
             this.EnableCamera();
 
             return this;
+        }
+
+        public MMALOverlayRenderer AddOverlay(MMALVideoRenderer parent, PreviewOverlayConfiguration config, byte[] source)
+        {
+            var overlay = new MMALOverlayRenderer(parent, config, source);
+            return overlay;
         }
 
         /// <summary>
