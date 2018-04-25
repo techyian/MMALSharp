@@ -10,6 +10,18 @@ using MMALSharp.Native;
 
 namespace MMALSharp.Components
 {
+    public enum MMALSensorMode
+    {
+        Mode0,
+        Mode1,
+        Mode2,
+        Mode3,
+        Mode4,
+        Mode5,
+        Mode6,
+        Mode7
+    }
+    
     /// <summary>
     /// Represents a camera component.
     /// </summary>
@@ -101,7 +113,9 @@ namespace MMALSharp.Components
         public override void PrintComponent()
         {
             base.PrintComponent();
-            MMALLog.Logger.Info($"    Width: {this.CameraInfo.MaxWidth}. Height: {this.CameraInfo.MaxHeight}");
+            MMALLog.Logger.Info($"    Still Width: {this.StillPort.Resolution.Width}. Video Height: {this.StillPort.Resolution.Height}");
+            MMALLog.Logger.Info($"    Video Width: {this.VideoPort.Resolution.Width}. Video Height: {this.VideoPort.Resolution.Height}");
+            MMALLog.Logger.Info($"    Max Width: {this.CameraInfo.MaxWidth}. Video Height: {this.CameraInfo.MaxHeight}");
         }
 
         internal void SetSensorDefaults()
@@ -145,14 +159,6 @@ namespace MMALSharp.Components
         internal void Initialise()
         {
             this.DisableComponent();
-
-            var currentMode = (int)this.Control.GetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_CUSTOM_SENSOR_CONFIG);
-
-            // Don't try and set the sensor mode if we aren't changing it.
-            if (currentMode != 0 || MMALCameraConfig.SensorMode != 0)
-            {
-                this.Control.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_CUSTOM_SENSOR_CONFIG, MMALCameraConfig.SensorMode);
-            }
             
             var camConfig = new MMAL_PARAMETER_CAMERA_CONFIG_T(
                 new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_CAMERA_CONFIG, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_CONFIG_T>()),
@@ -317,7 +323,8 @@ namespace MMALSharp.Components
         }
 
         internal void SetCameraParameters()
-        {            
+        {
+            this.SetSensorMode(MMALCameraConfig.SensorMode);
             this.SetSaturation(MMALCameraConfig.Saturation);
             this.SetSharpness(MMALCameraConfig.Sharpness);
             this.SetContrast(MMALCameraConfig.Contrast);

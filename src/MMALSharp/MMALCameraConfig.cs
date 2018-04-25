@@ -6,6 +6,7 @@
 using System;
 using System.Drawing;
 using System.Threading;
+using MMALSharp.Components;
 using MMALSharp.Native;
 
 namespace MMALSharp
@@ -20,7 +21,7 @@ namespace MMALSharp
         /// https://github.com/techyian/MMALSharp/wiki/OmniVision-OV5647-Camera-Module
         /// https://github.com/techyian/MMALSharp/wiki/Sony-IMX219-Camera-Module
         /// </summary>
-        public static int SensorMode { get; set; }
+        public static MMALSensorMode SensorMode { get; set; }
 
         /// <summary>
         /// Configure the sharpness of the image.
