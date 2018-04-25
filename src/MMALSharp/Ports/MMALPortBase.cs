@@ -78,7 +78,7 @@ namespace MMALSharp
         /// transferring large amounts of data or raw capture.
         /// See: https://www.raspberrypi.org/forums/viewtopic.php?t=170024
         /// </summary>
-        public bool ZeroCopy { get; set; }
+        public bool ZeroCopy { get; internal set; }
 
         #region Native properties
 
@@ -123,7 +123,7 @@ namespace MMALSharp
         public int BufferNum
         {
             get => this.Ptr->BufferNum;
-            set => this.Ptr->BufferNum = value;
+            internal set => this.Ptr->BufferNum = value;
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace MMALSharp
         public uint BufferSize
         {
             get => this.Ptr->BufferSize;
-            set => this.Ptr->BufferSize = value;
+            internal set => this.Ptr->BufferSize = value;
         }
 
         /// <summary>

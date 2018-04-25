@@ -67,6 +67,40 @@ namespace MMALSharp
                 throw;
             }
         }
+        
+        public static bool GetRawCapture(this MMALPortImpl port)
+        {
+            return port.GetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE);
+        }
+
+        /// <summary>
+        /// Retrieves an array of FourCC integer codes that this port is compatible with.
+        /// </summary>
+        /// <param name="port">The port we are getting supported encodings for.</param>
+        /// <returns>An array of FourCC integers.</returns>
+        public static unsafe int[] GetSupportedEncodings(this MMALPortImpl port)
+        {
+            IntPtr ptr1 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>() + 20);
+            var str1 = (MMAL_PARAMETER_HEADER_T*)ptr1;
+
+            str1->Id = MMALParametersCommon.MMAL_PARAMETER_SUPPORTED_ENCODINGS;
+
+            // Deliberately undersize to check if running on older firmware.
+            str1->Size = Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>() + 20;
+
+            MMAL_PARAMETER_ENCODING_T encodings;
+
+            try
+            {
+                MMALCheck(MMALPort.mmal_port_parameter_get(port.Ptr, str1), "Unable to get supported encodings");
+                encodings = (MMAL_PARAMETER_ENCODING_T)Marshal.PtrToStructure(ptr1, typeof(MMAL_PARAMETER_ENCODING_T));
+                return encodings.Value;
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(ptr1);
+            }
+        }
 
         /// <summary>
         /// Provides a facility to set data on the port using the native helper functions.
@@ -74,7 +108,7 @@ namespace MMALSharp
         /// <param name="port">The port we want to set the parameter on.</param>
         /// <param name="key">The unique key of the parameter.</param>
         /// <param name="value">The value of the parameter.</param>
-        public static unsafe void SetParameter(this MMALPortBase port, int key, dynamic value)
+        internal static unsafe void SetParameter(this MMALPortBase port, int key, dynamic value)
         {
             var t = MMALParameterHelpers.ParameterHelper.Where(c => c.ParamValue == key).FirstOrDefault();
 
@@ -119,40 +153,6 @@ namespace MMALSharp
             {
                 MMALLog.Logger.Warn($"Unable to set port parameter {t.ParamName}");
                 throw;
-            }
-        }
-
-        public static bool GetRawCapture(this MMALPortImpl port)
-        {
-            return port.GetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE);
-        }
-
-        /// <summary>
-        /// Retrieves an array of FourCC integer codes that this port is compatible with.
-        /// </summary>
-        /// <param name="port">The port we are getting supported encodings for.</param>
-        /// <returns>An array of FourCC integers.</returns>
-        public static unsafe int[] GetSupportedEncodings(this MMALPortImpl port)
-        {
-            IntPtr ptr1 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>() + 20);
-            var str1 = (MMAL_PARAMETER_HEADER_T*)ptr1;
-
-            str1->Id = MMALParametersCommon.MMAL_PARAMETER_SUPPORTED_ENCODINGS;
-
-            // Deliberately undersize to check if running on older firmware.
-            str1->Size = Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>() + 20;
-
-            MMAL_PARAMETER_ENCODING_T encodings;
-
-            try
-            {
-                MMALCheck(MMALPort.mmal_port_parameter_get(port.Ptr, str1), "Unable to get supported encodings");
-                encodings = (MMAL_PARAMETER_ENCODING_T)Marshal.PtrToStructure(ptr1, typeof(MMAL_PARAMETER_ENCODING_T));
-                return encodings.Value;
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(ptr1);
             }
         }
 

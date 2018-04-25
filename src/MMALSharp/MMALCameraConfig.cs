@@ -6,6 +6,7 @@
 using System;
 using System.Drawing;
 using System.Threading;
+using MMALSharp.Components;
 using MMALSharp.Native;
 
 namespace MMALSharp
@@ -13,6 +14,14 @@ namespace MMALSharp
     public static class MMALCameraConfig
     {
         public static bool Debug { get; set; }
+
+        /// <summary>
+        /// Manually set the camera sensor mode to force certain attributes.
+        /// See: 
+        /// https://github.com/techyian/MMALSharp/wiki/OmniVision-OV5647-Camera-Module
+        /// https://github.com/techyian/MMALSharp/wiki/Sony-IMX219-Camera-Module
+        /// </summary>
+        public static MMALSensorMode SensorMode { get; set; }
 
         /// <summary>
         /// Configure the sharpness of the image.
@@ -388,8 +397,8 @@ namespace MMALSharp
         /// <returns></returns>
         public Resolution Pad(int width = 32, int height = 16)
         {
-            this.Width = (this.Width + (width - 1)) / width * width;
-            this.Height = (this.Height + (height - 1)) / height * height;
+            this.Width = MMALUtil.VCOS_ALIGN_UP(this.Width, width);
+            this.Height = MMALUtil.VCOS_ALIGN_UP(this.Height, height);
             return this;
         }
     }

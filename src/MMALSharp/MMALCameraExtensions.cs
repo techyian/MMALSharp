@@ -25,6 +25,22 @@ namespace MMALSharp
             MMALCheck(MMALPort.mmal_port_parameter_set(controlPort.Ptr, &value.Hdr), "Unable to set camera event request.");
         }
 
+        public static MMALSensorMode GetSensorMode(this MMALCameraComponent camera)
+        {
+            return (MMALSensorMode)(int)camera.Control.GetParameter(MMAL_PARAMETER_CAMERA_CUSTOM_SENSOR_CONFIG);
+        }
+
+        internal static void SetSensorMode(this MMALCameraComponent camera, MMALSensorMode mode)
+        {
+            var currentMode = (int)camera.Control.GetParameter(MMAL_PARAMETER_CAMERA_CUSTOM_SENSOR_CONFIG);
+
+            // Don't try and set the sensor mode if we aren't changing it.
+            if (currentMode != 0 || MMALCameraConfig.SensorMode != 0)
+            {
+                camera.Control.SetParameter(MMAL_PARAMETER_CAMERA_CUSTOM_SENSOR_CONFIG, MMALCameraConfig.SensorMode);
+            }
+        }
+
         public static double GetSaturation(this MMALCameraComponent camera)
         {
             return camera.Control.GetParameter(MMAL_PARAMETER_SATURATION);
