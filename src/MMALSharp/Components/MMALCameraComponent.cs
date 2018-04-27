@@ -50,7 +50,7 @@ namespace MMALSharp.Components
         /// Camera Info component. This is used to provide detailed info about the camera itself.
         /// </summary>
         public MMALCameraInfoComponent CameraInfo { get; set; }
-
+        
         /// <summary>
         /// Initialises a new MMALCameraComponent.
         /// </summary>
@@ -97,8 +97,7 @@ namespace MMALSharp.Components
             if (MMALCameraConfig.SetChangeEventRequest)
             {
                 this.Control.SetChangeEventRequest(eventRequest);
-            }                       
-            
+            }
         }
 
         public override void Dispose()
