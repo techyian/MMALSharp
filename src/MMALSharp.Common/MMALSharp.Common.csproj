@@ -27,5 +27,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.5.0-rc03" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.4.0" />
   </ItemGroup>
 </Project>
