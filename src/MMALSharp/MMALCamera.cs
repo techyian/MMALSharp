@@ -406,6 +406,11 @@ namespace MMALSharp
             return this;
         }
 
+        public MMALCamera EnableAnnotation()
+        {
+
+        }
+
         public MMALOverlayRenderer AddOverlay(MMALVideoRenderer parent, PreviewOverlayConfiguration config, byte[] source)
         {
             var overlay = new MMALOverlayRenderer(parent, config, source);

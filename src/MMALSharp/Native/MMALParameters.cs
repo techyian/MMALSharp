@@ -4,11 +4,7 @@
 // </copyright>
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
@@ -1563,9 +1559,7 @@ namespace MMALSharp.Native
         public byte CustomTextU => customTextU;
         public byte CustomTextV => customTextV;
         public byte[] Text => text;
-
-
-
+        
         public MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(MMAL_PARAMETER_HEADER_T hdr, int enable, int showShutter, int showAnalogGain, int showLens, 
                                                    int showCaf, int showMotion, int showFrameNum, int enableTextBackground, int customBackgroundColor,
                                                    byte customBackgroundY, byte customBackgroundU, byte customBackgroundV, byte dummy1,
