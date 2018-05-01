@@ -14,6 +14,7 @@ namespace MMALSharp
     /// <summary>
     /// Represents unspecific errors that occur during working with the Pi Camera.
     /// </summary>
+    [Serializable]
     public class PiCameraError : Exception
     {
         /// <summary>
@@ -30,6 +31,7 @@ namespace MMALSharp
     /// <summary>
     /// Base class for all native error exception wrappers.
     /// </summary>
+    [Serializable]
     public class MMALException : Exception
     {
         /// <summary>
@@ -46,6 +48,7 @@ namespace MMALSharp
     /// <summary>
     /// Native error corresponding to an <see cref="OutOfMemoryException"/>.
     /// </summary>
+    [Serializable]
     public class MMALNoMemoryException : MMALException
     {
         /// <summary>
@@ -61,6 +64,7 @@ namespace MMALSharp
     /// <summary>
     /// Native error that occurs when running out of resources other than memory.
     /// </summary>
+    [Serializable]
     public class MMALNoSpaceException : MMALException
     {
         /// <summary>
@@ -76,6 +80,7 @@ namespace MMALSharp
     /// <summary>
     /// Native error corresponding to an <see cref="ArgumentException"/>.
     /// </summary>
+    [Serializable]
     public class MMALInvalidException : MMALException
     {
         /// <summary>
@@ -91,6 +96,7 @@ namespace MMALSharp
     /// <summary>
     /// Native error corresponding to a <see cref="NotImplementedException"/>.
     /// </summary>
+    [Serializable]
     public class MMALNotImplementedException : MMALException
     {
         /// <summary>
@@ -106,6 +112,7 @@ namespace MMALSharp
     /// <summary>
     /// Native error corresponding to a <see cref="System.IO.FileNotFoundException"/> or <see cref="System.IO.DirectoryNotFoundException"/>.
     /// </summary>
+    [Serializable]
     public class MMALInvalidDirectoryException : MMALException
     {
         /// <summary>
@@ -121,6 +128,7 @@ namespace MMALSharp
     /// <summary>
     /// Native error that occurs when a device or address does not exist.
     /// </summary>
+    [Serializable]
     public class MMALInvalidDeviceException : MMALException
     {
         /// <summary>
@@ -136,6 +144,7 @@ namespace MMALSharp
     /// <summary>
     /// Native error corresponding to an <see cref="System.IO.IOException"/>.
     /// </summary>
+    [Serializable]
     public class MMALIOException : MMALException
     {
         /// <summary>
@@ -151,6 +160,7 @@ namespace MMALSharp
     /// <summary>
     /// Native error that occurs when performing an illegal seek operation.
     /// </summary>
+    [Serializable]
     public class MMALIllegalSeekException : MMALException
     {
         /// <summary>
@@ -167,6 +177,7 @@ namespace MMALSharp
     /// <summary>
     /// Native error that occurs when MMAL encounters corrupt data.
     /// </summary>
+    [Serializable]
     public class MMALCorruptException : MMALException
     {
         /// <summary>
@@ -182,6 +193,7 @@ namespace MMALSharp
     /// <summary>
     /// Native error that occurs when a component is not ready.
     /// </summary>
+    [Serializable]
     public class MMALComponentNotReadyException : MMALException
     {
         /// <summary>
@@ -197,6 +209,7 @@ namespace MMALSharp
     /// <summary>
     /// Native error that occurs when a component is not configured.
     /// </summary>
+    [Serializable]
     public class MMALComponentNotConfiguredException : MMALException
     {
         /// <summary>
@@ -213,6 +226,7 @@ namespace MMALSharp
     /// <summary>
     /// Native error that occurs when a port is already connected.
     /// </summary>
+    [Serializable]
     public class MMALPortConnectedException : MMALException
     {
         /// <summary>
@@ -228,6 +242,7 @@ namespace MMALSharp
     /// <summary>
     /// Native error that occurs when a port is not connected.
     /// </summary>
+    [Serializable]
     public class MMALPortNotConnectedException : MMALException
     {
         /// <summary>
@@ -243,6 +258,7 @@ namespace MMALSharp
     /// <summary>
     /// Native error that occurs when resource (e.g. a buffer) is temporarily unavailable. You should try again later.
     /// </summary>
+    [Serializable]
     public class MMALResourceUnavailableException : MMALException
     {
         /// <summary>
@@ -258,6 +274,7 @@ namespace MMALSharp
     /// <summary>
     /// Native error that occurs when facing a bad address.
     /// </summary>
+    [Serializable]
     public class MMALBadAddressException : MMALException
     {
         /// <summary>

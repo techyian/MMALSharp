@@ -10,6 +10,12 @@ version: '0.4.0.{build}'
 # prevent the double build when a branch has an active PR
 skip_branch_with_pr: true
 
+# branches to build
+branches:  
+  only:
+    - master
+    - dev
+
 configuration: Release
 
 os: Visual Studio 2017
