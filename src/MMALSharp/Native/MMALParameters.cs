@@ -1550,6 +1550,7 @@ namespace MMALSharp.Native
         public int ShowMotion => showMotion;
         public int ShowFrameNum => showFrameNum;
         public int EnableTextBackground => enableTextBackground;
+        public int CustomBackgroundColor => customBackgroundColor;
         public byte CustomBackgroundY => customBackgroundY;
         public byte CustomBackgroundU => customBackgroundU;
         public byte CustomBackgroundV => customBackgroundV;
@@ -1558,7 +1559,9 @@ namespace MMALSharp.Native
         public byte CustomTextY => customTextY;
         public byte CustomTextU => customTextU;
         public byte CustomTextV => customTextV;
+        public byte TextSize => textSize;
         public byte[] Text => text;
+
         
         public MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(MMAL_PARAMETER_HEADER_T hdr, int enable, int showShutter, int showAnalogGain, int showLens, 
                                                    int showCaf, int showMotion, int showFrameNum, int enableTextBackground, int customBackgroundColor,

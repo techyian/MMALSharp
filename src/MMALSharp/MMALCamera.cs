@@ -406,9 +406,24 @@ namespace MMALSharp
             return this;
         }
 
+        /// <summary>
+        /// Enables the annotation feature which will produce a textual overlay on produced frames.
+        /// </summary>
+        /// <returns>The camera instance.</returns>
         public MMALCamera EnableAnnotation()
         {
+            this.Camera.SetAnnotateSettings();
+            return this;
+        }
 
+        /// <summary>
+        /// Disables the annotation feature.
+        /// </summary>
+        /// <returns>The camera instance.</returns>
+        public MMALCamera DisableAnnotation()
+        {
+            this.Camera.DisableAnnotate();
+            return this;
         }
 
         public MMALOverlayRenderer AddOverlay(MMALVideoRenderer parent, PreviewOverlayConfiguration config, byte[] source)

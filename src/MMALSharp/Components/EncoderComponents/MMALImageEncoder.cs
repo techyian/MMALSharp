@@ -92,12 +92,7 @@ namespace MMALSharp.Components
             if (this.UseExif)
             {
                 this.AddExifTags(this.ExifTags);
-            }
-
-            if (MMALCameraConfig.EnableAnnotate)
-            {
-                this.AnnotateImage();
-            }
+            }            
         }
 
         /// <summary>

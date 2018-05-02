@@ -4,11 +4,13 @@
 // </copyright>
 
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using MMALSharp.Components;
 using MMALSharp.Native;
 using MMALSharp.Ports;
+using MMALSharp.Utility;
 using static MMALSharp.MMALCallerHelper;
 using static MMALSharp.Native.MMALParametersCamera;
 
@@ -174,26 +176,38 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Gets the colour object that will be used to display information using the annotate feature.
+        /// Gets the <see cref="Color"/> structure that will be used to display information using the annotate feature.
         /// </summary>
         /// <param name="camera">The camera component.</param>
-        /// <returns>The colour object.</returns>
-        public static bool GetTextColourAnnotateSettings(this MMALCameraComponent camera)
+        /// <returns>The <see cref="Color"/> structure.</returns>
+        public static Color GetTextColourAnnotateSettings(this MMALCameraComponent camera)
         {
+            MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T annotate = new MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(
+                new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_ANNOTATE, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>()),
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null);
 
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Control.Ptr, &annotate.Hdr), "Unable to get camera annotate settings");
+
+            return MMALColor.FromYUVBytes(annotate.CustomTextY, annotate.CustomTextU, annotate.CustomTextV);
         }
 
         /// <summary>
-        /// Gets the colour object that will be used as a background when displaying information using the annotate feature.
+        /// Gets the <see cref="Color"/> structure that will be used as a background when displaying information using the annotate feature.
         /// </summary>
         /// <param name="camera">The camera component.</param>
-        /// <returns>The colour object.</returns>
-        public static bool GetBackgroundColourAnnotateSettings(this MMALCameraComponent camera)
+        /// <returns>The <see cref="Color"/> structure.</returns>
+        public static Color GetBackgroundColourAnnotateSettings(this MMALCameraComponent camera)
         {
+            MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T annotate = new MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(
+                new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_ANNOTATE, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>()),
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null);
 
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Control.Ptr, &annotate.Hdr), "Unable to get camera annotate settings");
+
+            return MMALColor.FromYUVBytes(annotate.CustomBackgroundY, annotate.CustomBackgroundU, annotate.CustomBackgroundV);
         }
         
-        internal static void SetAnnotateSettings(this MMALControlPort controlPort)
+        internal static void SetAnnotateSettings(this MMALCameraComponent camera)
         {
             if (MMALCameraConfig.Annotate != null)
             {
@@ -302,12 +316,40 @@ namespace MMALSharp
 
                 try
                 {
-                    MMALCheck(MMALPort.mmal_port_parameter_set(MMALCamera.Instance.Camera.Control.Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), "Unable to set annotate");
+                    MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), "Unable to set annotate");
                 }
                 finally
                 {
                     Marshal.FreeHGlobal(ptr);
                 }
+            }
+        }
+
+        internal static void DisableAnnotate(this MMALCameraComponent camera)
+        {
+            MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T annotate = new MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(
+                new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_ANNOTATE, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>()),
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null);
+
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Control.Ptr, &annotate.Hdr), "Unable to get camera annotate settings");
+
+            MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T disableAnnotate = new MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(
+                new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_ANNOTATE, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>()), 0,
+                annotate.ShowShutter, annotate.ShowAnalogGain, annotate.ShowLens, annotate.ShowCaf, annotate.ShowMotion, annotate.ShowFrameNum,
+                annotate.EnableTextBackground, annotate.CustomBackgroundColor, annotate.CustomBackgroundY, annotate.CustomBackgroundU, annotate.CustomBackgroundV, 0,
+                annotate.CustomTextColor, annotate.CustomTextY, annotate.CustomTextU, annotate.CustomTextV, annotate.TextSize, annotate.Text
+                );
+
+            var ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>());
+            Marshal.StructureToPtr(disableAnnotate, ptr, false);
+
+            try
+            {
+                MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), "Unable to set annotate");
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(ptr);
             }
         }
 

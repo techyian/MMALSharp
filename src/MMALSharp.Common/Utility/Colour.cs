@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace MMALSharp.Utility
 {
+    /// <summary>
+    /// Provides useful methods to convert from various colour spaces to RGB.
+    /// </summary>
     public static class MMALColor
     {
         /// <summary>
@@ -99,9 +102,9 @@ namespace MMALSharp.Utility
 
             var m1 = 2.0f * l - m2;
 
-            var r = HLSCoefficient(m1, m2, h + (1.0f / 3.0f));
-            var g = HLSCoefficient(m1, m2, h);
-            var b = HLSCoefficient(m1, m2, h - (1.0f / 3.0f));
+            var r = HLSConstant(m1, m2, h + (1.0f / 3.0f));
+            var g = HLSConstant(m1, m2, h);
+            var b = HLSConstant(m1, m2, h - (1.0f / 3.0f));
             
             return Color.FromArgb(255, r.ToByte(), g.ToByte(), b.ToByte());
         }
@@ -167,6 +170,14 @@ namespace MMALSharp.Utility
             throw new Exception("Calculated invalid HSV value.");
         }
 
+        /// <summary>
+        /// Returns a new <see cref="Color"/> structure based from CIEXYZ floating point values.
+        /// See: https://en.wikipedia.org/wiki/SRGB#The_forward_transformation_(CIE_XYZ_to_sRGB) 
+        /// </summary>
+        /// <param name="x">The chrominance X value.</param>
+        /// <param name="y">The luminance Y value.</param>
+        /// <param name="z">The chrominance Z value.</param>
+        /// <returns>A <see cref="Color"/> structure representing the CIEXYZ parameter values.</returns>
         public static Color FromCieXYZ(float x, float y, float z)
         {
             var rVector = new Vector3(3.2404542f * x, -1.5371385f * y, -0.4985314f * z);
@@ -180,17 +191,79 @@ namespace MMALSharp.Utility
             return Color.FromArgb(255, rLinear.ToByte(), gLinear.ToByte(), bLinear.ToByte());
         }
 
+        /// <summary>
+        /// Returns a new <see cref="Color"/> structure based from CIELab floating point values.
+        /// See: https://en.wikipedia.org/wiki/Lab_color_space#Forward_transformation
+        /// </summary>
+        /// <param name="l">The lightness L value.</param>
+        /// <param name="a">The chrominance A value.</param>
+        /// <param name="b">The chrominance B value.</param>
+        /// <returns>A <see cref="Color"/> structure representing the CIELab parameter values.</returns>
         public static Color FromCieLab(float l, float a, float b)
         {
-            
+            // D65 Illuminant values
+            var xn = 95.047f;
+            var yn = 100f;
+            var zn = 108.883f;
+
+            var f1 = (l + 16) / 116;
+            var f2 = f1 + a / 500;
+            var f3 = f1 - b / 200;
+
+            var y = yn * CieLABConstant(f1);
+            var x = xn * CieLABConstant(f2);            
+            var z = zn * CieLABConstant(f3);
+
+            return FromCieXYZ(x, y, z);            
         }
 
+        /// <summary>
+        /// Returns a new <see cref="Color"/> structure based from CIELUV floating point values.
+        /// See: https://en.wikipedia.org/wiki/Lab_color_space#Forward_transformation
+        /// </summary>
+        /// <param name="l">The lightness L value.</param>
+        /// <param name="u">The chrominance U value.</param>
+        /// <param name="v">The chrominance V value.</param>
+        /// <returns>A <see cref="Color"/> structure representing the CIELUV parameter values.</returns>
         public static Color FromCieLUV(float l, float u, float v)
         {
+            // D65 Illuminant
+            var un = 0.2009f;
+            var vn = 0.4610f;
 
+            var upt = u / (13 / l) + un;
+            var vpt = v / (13 / 1) + vn;
+
+            float y;
+
+            if (l <= 8)
+            {
+                y = (float)(1.0f * (l * Math.Pow(3 / 29, 3)));
+            }
+            else
+            {
+                y = (float)(1.0f * Math.Pow((l + 16) / 116, 3));
+            }
+
+            var x = y * (9 * u) / (4 * v);
+            var z = y * ((12 - (3 * u) - (20 * v)) / (4 * v));
+
+            return FromCieXYZ(x, y, z);
         }
 
-        private static float HLSCoefficient(float m1, float m2, float hue)
+        private static float CieLABConstant(float t)
+        {
+            float theta = 6 / 29;
+
+            if (t > theta)
+            {
+                return (float)Math.Pow(t, 3);
+            }
+
+            return (float)(3 * Math.Pow(theta, 2) * (t - (4 / 29)));
+        }
+
+        private static float HLSConstant(float m1, float m2, float hue)
         {
             hue = hue % 1f;
 
