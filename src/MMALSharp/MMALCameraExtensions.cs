@@ -801,11 +801,12 @@ namespace MMALSharp
 
             MMALCheck(MMALPort.mmal_port_parameter_get(camera.Control.Ptr, &colFx.Hdr), "Unable to get colour fx");
 
-            ColourEffects fx = new ColourEffects();
-            fx.Enable = colFx.Enable == 1;
-            fx.U = colFx.U;
-            fx.V = colFx.V;
-
+            ColourEffects fx = new ColourEffects
+            {
+                Enable = colFx.Enable == 1,
+                Color = MMALColor.FromCIE1960(colFx.U, colFx.V)
+            };
+            
             return fx;
         }
 
@@ -813,11 +814,13 @@ namespace MMALSharp
         {
             MMALLog.Logger.Debug("Setting colour effects");
 
+            var uv = MMALColor.RGBToCIE1960(colourFx.Color);
+
             MMAL_PARAMETER_COLOURFX_T colFx = new MMAL_PARAMETER_COLOURFX_T(
                 new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_COLOUR_EFFECT, Marshal.SizeOf<MMAL_PARAMETER_COLOURFX_T>()),
                                                                                                         colourFx.Enable ? 1 : 0,
-                                                                                                        colourFx.U,
-                                                                                                        colourFx.V);
+                                                                                                        (int)Math.Floor(uv.Item1),
+                                                                                                        (int)Math.Floor(uv.Item2));
 
             MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, &colFx.Hdr), "Unable to set colour fx");
         }

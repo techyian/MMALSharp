@@ -211,8 +211,7 @@ namespace MMALSharp
     public class ColourEffects
     {
         public bool Enable { get; set; }
-        public int U { get; set; } = 128;
-        public int V { get; set; } = 128;        
+        public Color Color { get; set; }
     }
     
     public class Zoom

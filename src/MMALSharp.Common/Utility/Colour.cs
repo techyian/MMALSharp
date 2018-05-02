@@ -14,6 +14,21 @@ namespace MMALSharp.Utility
     public static class MMALColor
     {
         /// <summary>
+        /// Returns a new <see cref="Color"/> structure based from CIE 1960 floating point values.
+        /// See: https://www.fourcc.org/fccyvrgb.php
+        /// </summary>
+        /// <param name="u">The chrominance U value.</param>
+        /// <param name="v">The chrominance V value.</param>
+        /// <returns>A <see cref="Color"/> structure representing the CIE 1960 parameter values.</returns>
+        public static Color FromCIE1960(float u, float v)
+        {
+            var x = (3 * u) / (2 * u) - (8 * v) + 4;
+            var y = (2 * v) / (2 * u) - (8 * v) + 4;
+
+            return FromCieXYZ(x, y, 0.5f);
+        }
+
+        /// <summary>
         /// Converts a RGB <see cref="Color"/> structure to the CIE 1960 uniform colour space.
         /// See: https://en.wikipedia.org/wiki/CIE_1960_color_space        
         /// </summary>
@@ -23,7 +38,7 @@ namespace MMALSharp.Utility
         {
             var xyz = RGBToXYZ(c);
 
-            var u = (2 / 3) * xyz.Item1;
+            var u = (2f / 3f) * xyz.Item1;
             var v = xyz.Item2;
 
             return new Tuple<float, float>(u, v);
@@ -492,8 +507,8 @@ namespace MMALSharp.Utility
             return (float)Math.Pow((c + 0.055) / (1 + 0.055), 2.4);
         }
 
-        private static int GetMaxComponent(int r, int g, int b) => Math.Max(Math.Max(r, g), b);
+        private static float GetMaxComponent(float r, float g, float b) => Math.Max(Math.Max(r, g), b);
 
-        private static int GetMinComponent(int r, int g, int b) => Math.Min(Math.Min(r, g), b);
+        private static float GetMinComponent(float r, float g, float b) => Math.Min(Math.Min(r, g), b);
     }        
 }

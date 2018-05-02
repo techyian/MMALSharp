@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MMALSharp.Components;
 using MMALSharp.Native;
+using MMALSharp.Utility;
 using Xunit;
 
 namespace MMALSharp.Tests
@@ -226,12 +227,18 @@ namespace MMALSharp.Tests
             TestHelper.BeginTest("SetThenGetColourFx");
             TestHelper.SetConfigurationDefaults();
 
-            var colFx = new ColourEffects { Enable = enable, U = u, V = v };
+            var color = MMALColor.FromCIE1960(u, v);
+
+            var colFx = new ColourEffects { Enable = enable, Color = color };
+
             MMALCameraConfig.ColourFx = colFx;
             fixture.MMALCamera.ConfigureCameraSettings();
+
+            var uv = MMALColor.RGBToCIE1960(fixture.MMALCamera.Camera.GetColourFx().Color);
+
             Assert.True(fixture.MMALCamera.Camera.GetColourFx().Enable == enable &&
-                        fixture.MMALCamera.Camera.GetColourFx().U == u &&
-                        fixture.MMALCamera.Camera.GetColourFx().V == v);
+                        uv.Item1 == u &&
+                        uv.Item2 == v);
         }
 
         [Theory]
