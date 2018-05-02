@@ -14,6 +14,189 @@ namespace MMALSharp.Utility
     public static class MMALColor
     {
         /// <summary>
+        /// Converts a RGB <see cref="Color"/> structure to the CIE 1960 uniform colour space.
+        /// See: https://en.wikipedia.org/wiki/CIE_1960_color_space        
+        /// </summary>
+        /// <param name="c">The <see cref="Color"/> structure.</param>        
+        /// <returns>A 2 pair <see cref="Tuple"/> of floating point values representing the RGB conversion to CIE 1960.</returns>
+        public static Tuple<float, float> RGBToCIE1960(Color c)
+        {
+            var xyz = RGBToXYZ(c);
+
+            var u = (2 / 3) * xyz.Item1;
+            var v = xyz.Item2;
+
+            return new Tuple<float, float>(u, v);
+        }
+
+        /// <summary>
+        /// Converts a RGB <see cref="Color"/> structure to the CIE XYZ colour space.
+        /// See: https://en.wikipedia.org/wiki/SRGB#The_forward_transformation_(CIE_XYZ_to_sRGB)
+        /// </summary>
+        /// <param name="c">The <see cref="Color"/> structure.</param>        
+        /// <returns>A 3 pair <see cref="Tuple"/> of floating point values representing the RGB conversion to CIE XYZ.</returns>
+        public static Tuple<float, float, float> RGBToXYZ(Color c)
+        {
+            var r = c.R.FromByte();
+            var g = c.G.FromByte();
+            var b = c.B.FromByte();
+
+            var rVector = new Vector3(0.4124f * r, 0.3576f * g, 0.1805f * b);
+            var gVector = new Vector3(0.2126f * r, 0.7152f * g, 0.0722f * b);
+            var bVector = new Vector3(0.0193f * r, 0.1192f * g, 0.9505f * b);
+
+            var x = ToXYZLinear(rVector.X + rVector.Y + rVector.Z);
+            var y = ToXYZLinear(gVector.X + gVector.Y + gVector.Z);
+            var z = ToXYZLinear(bVector.X + bVector.Y + bVector.Z);
+
+            return new Tuple<float, float, float>(x, y, z);
+        }
+
+        /// <summary>
+        /// Converts a RGB <see cref="Color"/> structure to the YIQ colour space.
+        /// See: https://en.wikipedia.org/wiki/YIQ
+        /// Math conversion from: https://github.com/python/cpython/blob/2.7/Lib/colorsys.py
+        /// </summary>
+        /// <param name="c">The <see cref="Color"/> structure.</param>        
+        /// <returns>A 3 pair <see cref="Tuple"/> of floating point values representing the RGB conversion to YIQ.</returns>
+        public static Tuple<float, float, float> RGBToYIQ(Color c)
+        {
+            var r = c.R.FromByte();
+            var g = c.G.FromByte();
+            var b = c.B.FromByte();
+
+            var y = (float)(0.30 * r + 0.59 * g + 0.11 * b);
+            var i = (float)(0.60 * r - 0.28 * g - 0.32 * b);
+            var q = (float)(0.21 * r - 0.52 * g + 0.31 * b);
+
+            return new Tuple<float, float, float>(y.Clamp(0, 1), i.Clamp(0, 1), q.Clamp(0, 1));
+        }
+
+        /// <summary>
+        /// Converts a RGB <see cref="Color"/> structure to the HLS colour space.
+        /// See: https://en.wikipedia.org/wiki/HSL_and_HSV
+        /// Math conversion from: https://github.com/python/cpython/blob/2.7/Lib/colorsys.py
+        /// </summary>
+        /// <param name="c">The <see cref="Color"/> structure.</param>        
+        /// <returns>A 3 pair <see cref="Tuple"/> of floating point values representing the RGB conversion to HLS.</returns>
+        public static Tuple<float, float, float> RGBToHLS(Color c)
+        {
+            float h, l, s;
+
+            var r = c.R.FromByte();
+            var g = c.G.FromByte();
+            var b = c.B.FromByte();
+
+            var maxc = GetMaxComponent(r, g, b);
+            var minc = GetMinComponent(r, g, b);
+
+            l = (minc + maxc) / 2.0f;
+
+            if (minc == maxc)
+            {
+                return new Tuple<float, float, float>(0.0f, l, 0.0f);
+            }
+
+            if (l <= 0.5f)
+            {
+                s = (maxc - minc) / (maxc + minc);
+            }
+            else
+            {
+                s = (maxc - minc) / (2.0f - maxc - minc);
+            }
+
+            var rc = (maxc - r) / (maxc - minc);
+            var gc = (maxc - g) / (maxc - minc);
+            var bc = (maxc - b) / (maxc - minc);
+
+            if (r == maxc)
+            {
+                h = bc - gc;
+            }
+            else if (g == maxc)
+            {
+                h = 2.0f + rc - bc;
+            }
+            else
+            {
+                h = 4.0f + gc - rc;
+            }
+
+            h = (h / 6.0f) % 1.0f;
+
+            return new Tuple<float, float, float>(h.Clamp(0, 1), l.Clamp(0, 1), s.Clamp(0, 1));
+        }
+
+        /// <summary>
+        /// Converts a RGB <see cref="Color"/> structure to the HSV colour space.
+        /// See: https://en.wikipedia.org/wiki/HSL_and_HSV
+        /// Math conversion from: https://github.com/python/cpython/blob/2.7/Lib/colorsys.py
+        /// </summary>
+        /// <param name="c">The <see cref="Color"/> structure.</param>        
+        /// <returns>A 3 pair <see cref="Tuple"/> of floating point values representing the RGB conversion to HSV.</returns>
+        public static Tuple<float, float, float> RGBToHSV(Color c)
+        {
+            float h, s, v;
+
+            var r = c.R.FromByte();
+            var g = c.G.FromByte();
+            var b = c.B.FromByte();
+
+            var maxc = GetMaxComponent(r, g, b);
+            var minc = GetMinComponent(r, g, b);
+
+            v = maxc;
+
+            if (minc == maxc)
+            {
+                return new Tuple<float, float, float>(0.0f, 0.0f, v);
+            }
+
+            s = (maxc - minc) / maxc;
+
+            var rc = (maxc - r) / (maxc - minc);
+            var gc = (maxc - g) / (maxc - minc);
+            var bc = (maxc - b) / (maxc - minc);
+
+            if (r == maxc)
+            {
+                h = bc - gc;
+            }
+            else if (g == maxc)
+            {
+                h = 2.0f + rc - bc;
+            }
+            else
+            {
+                h = 4.0f + gc - rc;
+            }
+
+            h = (h / 6.0f) % 1.0f;
+
+            return new Tuple<float, float, float>(h.Clamp(0, 1), s.Clamp(0, 1), v.Clamp(0, 1));
+        }
+
+        /// <summary>
+        /// Converts a RGB <see cref="Color"/> structure to the YUV colour space.
+        /// See: https://en.wikipedia.org/wiki/YUV#Converting_between_Y%E2%80%B2UV_and_RGB
+        /// </summary>
+        /// <param name="c">The <see cref="Color"/> structure.</param>        
+        /// <returns>A 3 pair <see cref="Tuple"/> of floating point values representing the RGB conversion to YUV.</returns>
+        public static Tuple<float, float, float> RGBToYUV(Color c)
+        {
+            var r = c.R.FromByte();
+            var g = c.G.FromByte();
+            var b = c.B.FromByte();
+
+            var y = (float)(0.299 * r + 0.587 * g + 0.114 * b);
+            var u = (float)(-0.147 * r - 0.289 * g + 0.436 * b);
+            var v = (float)(0.615 * r - 0.515 * g - 0.100 * b);
+
+            return new Tuple<float, float, float>(y, u, v);
+        }
+
+        /// <summary>
         /// Returns a new <see cref="Color"/> structure based from YUV floating point values.
         /// See: https://www.fourcc.org/fccyvrgb.php
         /// </summary>
@@ -23,11 +206,11 @@ namespace MMALSharp.Utility
         /// <returns>A <see cref="Color"/> structure representing the YUV parameter values.</returns>
         public static Color FromYUV(float y, float u, float v)
         {
-            var r = Math.Ceiling((1.164 * (y - 16) + 1.596 * (v - 128)).Clamp(0, 255));
-            var g = Math.Ceiling((1.164 * (y - 16) - 0.813 * (v - 128) - 0.391 * (u - 128)).Clamp(0, 255));
-            var b = Math.Ceiling((1.164 * (y - 16) + 2.018 * (u - 128)).Clamp(0, 255));
+            var r = (float)(1.164 * (y - 16) + 1.596 * (v - 128)).Clamp(0, 1);
+            var g = (float)(1.164 * (y - 16) - 0.813 * (v - 128) - 0.391 * (u - 128)).Clamp(0, 1);
+            var b = (float)(1.164 * (y - 16) + 2.018 * (u - 128)).Clamp(0, 1);
 
-            return Color.FromArgb(255, (int)r, (int)g, (int)b);
+            return Color.FromArgb(255, r.ToByte(), g.ToByte(), b.ToByte());
         }
 
         /// <summary>
@@ -62,6 +245,10 @@ namespace MMALSharp.Utility
         /// <returns>A <see cref="Color"/> structure representing the YIQ parameter values.</returns>
         public static Color FromYIQ(float y, float i, float q)
         {
+            y = y.Clamp(0, 1);
+            i = i.Clamp(0, 1);
+            q = q.Clamp(0, 1);
+
             var r = (y + 0.948262f * i + 0.624013f * q).Clamp(0, 1);
             var g = (y - 0.276066f * i - 0.639810f * q).Clamp(0, 1);
             var b = (y - 1.105450f * i + 1.729860f * q).Clamp(0, 1);
@@ -184,9 +371,9 @@ namespace MMALSharp.Utility
             var gVector = new Vector3(-0.9692660f * x, 1.8760108f * y, 0.0415560f * z);
             var bVector = new Vector3(0.0556434f * x, -0.2040259f * y, 1.0572252f * z);
 
-            var rLinear = ToStandardRGB(rVector.X + rVector.Y + rVector.Z);
-            var gLinear = ToStandardRGB(gVector.X + gVector.Y + gVector.Z);
-            var bLinear = ToStandardRGB(bVector.X + bVector.Y + bVector.Z);
+            var rLinear = ToStandardRGBLinear(rVector.X + rVector.Y + rVector.Z);
+            var gLinear = ToStandardRGBLinear(gVector.X + gVector.Y + gVector.Z);
+            var bLinear = ToStandardRGBLinear(bVector.X + bVector.Y + bVector.Z);
 
             return Color.FromArgb(255, rLinear.ToByte(), gLinear.ToByte(), bLinear.ToByte());
         }
@@ -285,7 +472,7 @@ namespace MMALSharp.Utility
             return m1;
         }
 
-        private static float ToStandardRGB(float c)
+        private static float ToStandardRGBLinear(float c)
         {
             if (c <= 0.0031308f)
             {
@@ -294,5 +481,19 @@ namespace MMALSharp.Utility
 
             return (1 + 0.055f) * (c * (float)Math.Pow(1, 2.4)) - 0.55f;
         }
+
+        private static float ToXYZLinear(float c)
+        {
+            if (c <= 0.04045f)
+            {
+                return c / 12.92f;
+            }
+
+            return (float)Math.Pow((c + 0.055) / (1 + 0.055), 2.4);
+        }
+
+        private static int GetMaxComponent(int r, int g, int b) => Math.Max(Math.Max(r, g), b);
+
+        private static int GetMinComponent(int r, int g, int b) => Math.Min(Math.Min(r, g), b);
     }        
 }

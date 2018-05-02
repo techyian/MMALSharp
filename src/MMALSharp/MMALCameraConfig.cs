@@ -212,8 +212,7 @@ namespace MMALSharp
     {
         public bool Enable { get; set; }
         public int U { get; set; } = 128;
-        public int V { get; set; } = 128;
-        
+        public int V { get; set; } = 128;        
     }
     
     public class Zoom
@@ -251,8 +250,8 @@ namespace MMALSharp
     {
         public string CustomText { get; set; }
         public int TextSize { get; set; }
-        public int TextColour { get; set; } = -1;
-        public int BgColour { get; set; } = -1;
+        public Color TextColour { get; set; } = Color.Empty;
+        public Color BgColour { get; set; } = Color.Empty;
         public bool ShowShutterSettings { get; set; }
         public bool ShowGainSettings { get; set; }
         public bool ShowLensSettings { get; set; }

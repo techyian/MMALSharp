@@ -284,20 +284,23 @@ namespace MMALSharp
 
                 textSize = Convert.ToByte(MMALCameraConfig.Annotate.TextSize);
 
-                if (MMALCameraConfig.Annotate.TextColour != -1)
+                if (MMALCameraConfig.Annotate.TextColour != Color.Empty)
                 {
                     customTextColor = 1;
-                    customTextY = Convert.ToByte(MMALCameraConfig.Annotate.TextColour & 0xff);
-                    customTextU = Convert.ToByte((MMALCameraConfig.Annotate.TextColour >> 8) & 0xff);
-                    customTextV = Convert.ToByte((MMALCameraConfig.Annotate.TextColour >> 16) & 0xff);
+
+                    var yuv = MMALColor.RGBToYUV(MMALCameraConfig.Annotate.TextColour);
+                    customTextY = yuv.Item1.ToByte();
+                    customTextU = yuv.Item2.ToByte();
+                    customTextV = yuv.Item3.ToByte();                                        
                 }
 
-                if (MMALCameraConfig.Annotate.BgColour != -1)
+                if (MMALCameraConfig.Annotate.BgColour != Color.Empty)
                 {
                     customBackgroundColor = 1;
-                    customBackgroundY = Convert.ToByte(MMALCameraConfig.Annotate.BgColour & 0xff);
-                    customBackgroundU = Convert.ToByte((MMALCameraConfig.Annotate.BgColour >> 8) & 0xff);
-                    customBackgroundV = Convert.ToByte((MMALCameraConfig.Annotate.BgColour >> 16) & 0xff);
+                    var yuv = MMALColor.RGBToYUV(MMALCameraConfig.Annotate.BgColour);
+                    customBackgroundY = yuv.Item1.ToByte();
+                    customBackgroundU = yuv.Item2.ToByte();
+                    customBackgroundV = yuv.Item3.ToByte();
                 }
 
                 string t = sb.ToString() + char.MinValue;
