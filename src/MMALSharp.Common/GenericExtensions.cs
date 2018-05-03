@@ -14,7 +14,8 @@ namespace MMALSharp
             {
                 return min;
             }
-            else if (val.CompareTo(max) > 0)
+
+            if (val.CompareTo(max) > 0)
             {
                 return max;
             }

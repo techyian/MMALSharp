@@ -84,7 +84,7 @@ namespace MMALSharp.Utility
             var i = (float)(0.60 * r - 0.28 * g - 0.32 * b);
             var q = (float)(0.21 * r - 0.52 * g + 0.31 * b);
 
-            return new Tuple<float, float, float>(y.Clamp(0, 1), i.Clamp(0, 1), q.Clamp(0, 1));
+            return new Tuple<float, float, float>(y.Clamp(0, 1), i.Clamp(-1, 1), q.Clamp(-1, 1));
         }
 
         /// <summary>
@@ -204,16 +204,16 @@ namespace MMALSharp.Utility
             var g = c.G.FromByte();
             var b = c.B.FromByte();
 
-            var y = (float)(0.299 * r + 0.587 * g + 0.114 * b);
-            var u = (float)(-0.147 * r - 0.289 * g + 0.436 * b);
-            var v = (float)(0.615 * r - 0.515 * g - 0.100 * b);
+            var y = 0.299f * r + 0.587f * g + 0.114f * b;
+            var u = -0.147f * r - 0.289f * g + 0.436f * b;
+            var v = 0.615f * r - 0.515f * g - 0.100f * b;
 
             return new Tuple<float, float, float>(y, u, v);
         }
 
         /// <summary>
         /// Returns a new <see cref="Color"/> structure based from YUV floating point values.
-        /// See: https://www.fourcc.org/fccyvrgb.php
+        /// See: https://en.wikipedia.org/wiki/YUV#Conversion_to/from_RGB
         /// </summary>
         /// <param name="y">The luma value.</param>
         /// <param name="u">The chrominance U value.</param>
@@ -221,9 +221,13 @@ namespace MMALSharp.Utility
         /// <returns>A <see cref="Color"/> structure representing the YUV parameter values.</returns>
         public static Color FromYUV(float y, float u, float v)
         {
-            var r = (float)(1.164 * (y - 16) + 1.596 * (v - 128)).Clamp(0, 1);
-            var g = (float)(1.164 * (y - 16) - 0.813 * (v - 128) - 0.391 * (u - 128)).Clamp(0, 1);
-            var b = (float)(1.164 * (y - 16) + 2.018 * (u - 128)).Clamp(0, 1);
+            y = y.Clamp(0, 1);
+            u = u.Clamp(-0.436f, 0.436f);
+            v = v.Clamp(-0.615f, 0.615f);
+
+            var r = y + 1.140f * v;
+            var g = y - 0.395f * u - 0.581f * v;
+            var b = y + 2.032f * u;
 
             return Color.FromArgb(255, r.ToByte(), g.ToByte(), b.ToByte());
         }
@@ -254,15 +258,15 @@ namespace MMALSharp.Utility
         /// See: https://en.wikipedia.org/wiki/YIQ
         /// Math conversion from: https://github.com/python/cpython/blob/2.7/Lib/colorsys.py
         /// </summary>
-        /// <param name="y">The luma value.</param>
-        /// <param name="i">The chrominance I value.</param>
-        /// <param name="q">The chrominance Q value.</param>
+        /// <param name="y">The luma value (between 0 - 1).</param>
+        /// <param name="i">The chrominance I value (between -1 - 1).</param>
+        /// <param name="q">The chrominance Q value (between -1 - 1).</param>
         /// <returns>A <see cref="Color"/> structure representing the YIQ parameter values.</returns>
         public static Color FromYIQ(float y, float i, float q)
         {
             y = y.Clamp(0, 1);
-            i = i.Clamp(0, 1);
-            q = q.Clamp(0, 1);
+            i = i.Clamp(-1, 1);
+            q = q.Clamp(-1, 1);
 
             var r = (y + 0.948262f * i + 0.624013f * q).Clamp(0, 1);
             var g = (y - 0.276066f * i - 0.639810f * q).Clamp(0, 1);
