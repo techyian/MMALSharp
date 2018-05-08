@@ -137,9 +137,7 @@ namespace MMALSharp
 
             using (var renderer = new MMALNullSinkComponent())
             {
-                this.ConfigureCameraSettings();
-                this.Camera.StillPort.SetRawCapture(true);
-
+                this.ConfigureCameraSettings();                
                 this.Camera.PreviewPort.ConnectTo(renderer);
                 
                 // Enable the image encoder output port.
