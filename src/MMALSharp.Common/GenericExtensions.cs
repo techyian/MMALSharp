@@ -23,7 +23,7 @@ namespace MMALSharp
             return val;
         }
 
-        public static float FromByte(this byte val)
+        public static float ToFloat(this byte val)
         {
             return (float)Math.Floor(val >= 255 ? 1f : val / 255f);
         } 

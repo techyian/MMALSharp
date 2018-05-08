@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMALSharp.Utility
 {
@@ -15,7 +11,7 @@ namespace MMALSharp.Utility
     {
         /// <summary>
         /// Returns a new <see cref="Color"/> structure based from CIE 1960 floating point values.
-        /// See: https://www.fourcc.org/fccyvrgb.php
+        /// See: https://en.wikipedia.org/wiki/CIE_1960_color_space
         /// </summary>
         /// <param name="u">The chrominance U value.</param>
         /// <param name="v">The chrominance V value.</param>
@@ -52,9 +48,9 @@ namespace MMALSharp.Utility
         /// <returns>A 3 pair <see cref="Tuple"/> of floating point values representing the RGB conversion to CIE XYZ.</returns>
         public static Tuple<float, float, float> RGBToXYZ(Color c)
         {
-            var r = c.R.FromByte();
-            var g = c.G.FromByte();
-            var b = c.B.FromByte();
+            var r = c.R.ToFloat();
+            var g = c.G.ToFloat();
+            var b = c.B.ToFloat();
 
             var rVector = new Vector3(0.4124f * r, 0.3576f * g, 0.1805f * b);
             var gVector = new Vector3(0.2126f * r, 0.7152f * g, 0.0722f * b);
@@ -76,9 +72,9 @@ namespace MMALSharp.Utility
         /// <returns>A 3 pair <see cref="Tuple"/> of floating point values representing the RGB conversion to YIQ.</returns>
         public static Tuple<float, float, float> RGBToYIQ(Color c)
         {
-            var r = c.R.FromByte();
-            var g = c.G.FromByte();
-            var b = c.B.FromByte();
+            var r = c.R.ToFloat();
+            var g = c.G.ToFloat();
+            var b = c.B.ToFloat();
 
             var y = (float)(0.30 * r + 0.59 * g + 0.11 * b);
             var i = (float)(0.60 * r - 0.28 * g - 0.32 * b);
@@ -98,9 +94,9 @@ namespace MMALSharp.Utility
         {
             float h, l, s;
 
-            var r = c.R.FromByte();
-            var g = c.G.FromByte();
-            var b = c.B.FromByte();
+            var r = c.R.ToFloat();
+            var g = c.G.ToFloat();
+            var b = c.B.ToFloat();
 
             var maxc = GetMaxComponent(r, g, b);
             var minc = GetMinComponent(r, g, b);
@@ -154,9 +150,9 @@ namespace MMALSharp.Utility
         {
             float h, s, v;
 
-            var r = c.R.FromByte();
-            var g = c.G.FromByte();
-            var b = c.B.FromByte();
+            var r = c.R.ToFloat();
+            var g = c.G.ToFloat();
+            var b = c.B.ToFloat();
 
             var maxc = GetMaxComponent(r, g, b);
             var minc = GetMinComponent(r, g, b);
@@ -200,9 +196,9 @@ namespace MMALSharp.Utility
         /// <returns>A 3 pair <see cref="Tuple"/> of floating point values representing the RGB conversion to YUV.</returns>
         public static Tuple<float, float, float> RGBToYUV(Color c)
         {
-            var r = c.R.FromByte();
-            var g = c.G.FromByte();
-            var b = c.B.FromByte();
+            var r = c.R.ToFloat();
+            var g = c.G.ToFloat();
+            var b = c.B.ToFloat();
 
             var y = 0.299f * r + 0.587f * g + 0.114f * b;
             var u = -0.147f * r - 0.289f * g + 0.436f * b;
@@ -377,24 +373,28 @@ namespace MMALSharp.Utility
         }
 
         /// <summary>
-        /// Returns a new <see cref="Color"/> structure based from CIEXYZ floating point values.
+        /// Returns a new <see cref="Color"/> structure based from CIEXYZ floating point values. Assumes D65 illuminant.
         /// See: https://en.wikipedia.org/wiki/SRGB#The_forward_transformation_(CIE_XYZ_to_sRGB) 
         /// </summary>
-        /// <param name="x">The chrominance X value.</param>
-        /// <param name="y">The luminance Y value.</param>
-        /// <param name="z">The chrominance Z value.</param>
+        /// <param name="x">The chrominance X value (0 <= x <= 0.9505).</param>
+        /// <param name="y">The luminance Y value (0 <= y <= 1.0000).</param>
+        /// <param name="z">The chrominance Z value (0 <= z <= 1.0890).</param>
         /// <returns>A <see cref="Color"/> structure representing the CIEXYZ parameter values.</returns>
         public static Color FromCieXYZ(float x, float y, float z)
         {
-            var rVector = new Vector3(3.2404542f * x, -1.5371385f * y, -0.4985314f * z);
-            var gVector = new Vector3(-0.9692660f * x, 1.8760108f * y, 0.0415560f * z);
-            var bVector = new Vector3(0.0556434f * x, -0.2040259f * y, 1.0572252f * z);
+            x = x.Clamp(0, 0.9505f);
+            y = y.Clamp(0, 1.0000f);
+            z = z.Clamp(0, 1.0890f);
 
-            var rLinear = ToStandardRGBLinear(rVector.X + rVector.Y + rVector.Z);
-            var gLinear = ToStandardRGBLinear(gVector.X + gVector.Y + gVector.Z);
-            var bLinear = ToStandardRGBLinear(bVector.X + bVector.Y + bVector.Z);
+            var rLinear = new Vector3(3.2404542f * x, -1.5371385f * y, -0.4985314f * z);
+            var gLinear = new Vector3(-0.9692660f * x, 1.8760108f * y, 0.0415560f * z);
+            var bLinear = new Vector3(0.0556434f * x, -0.2040259f * y, 1.0572252f * z);
 
-            return Color.FromArgb(255, rLinear.ToByte(), gLinear.ToByte(), bLinear.ToByte());
+            var sr = StandardRGBLinearTransform(rLinear.X + rLinear.Y + rLinear.Z).Clamp(0, 1);
+            var sg = StandardRGBLinearTransform(gLinear.X + gLinear.Y + gLinear.Z).Clamp(0, 1);
+            var sb = StandardRGBLinearTransform(bLinear.X + bLinear.Y + bLinear.Z).Clamp(0, 1);
+
+            return Color.FromArgb(255, sr.ToByte(), sg.ToByte(), sb.ToByte());
         }
 
         /// <summary>
@@ -491,14 +491,14 @@ namespace MMALSharp.Utility
             return m1;
         }
 
-        private static float ToStandardRGBLinear(float c)
+        private static float StandardRGBLinearTransform(float c)
         {
             if (c <= 0.0031308f)
             {
                 return 12.92f * c;
             }
 
-            return (1 + 0.055f) * (c * (float)Math.Pow(1, 2.4)) - 0.55f;
+            return 1.055f * ((float)Math.Pow(c, (1 / 2.4))) - 0.055f;
         }
 
         private static float ToXYZLinear(float c)
