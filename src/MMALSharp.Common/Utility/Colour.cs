@@ -18,10 +18,11 @@ namespace MMALSharp.Utility
         /// <returns>A <see cref="Color"/> structure representing the CIE 1960 parameter values.</returns>
         public static Color FromCIE1960(float u, float v)
         {
-            var x = (3 * u) / (2 * u) - (8 * v) + 4;
-            var y = (2 * v) / (2 * u) - (8 * v) + 4;
+            var x = (3 / 2) * u;
+            var y = v;
+            var z = (3 / 2) - (3 * v);
 
-            return FromCieXYZ(x, y, 0.5f);
+            return FromCieXYZ(x, y, z);
         }
 
         /// <summary>
@@ -36,8 +37,13 @@ namespace MMALSharp.Utility
 
             var u = (2f / 3f) * xyz.Item1;
             var v = xyz.Item2;
+            var w = (1f / 2f) * (-xyz.Item1 + (3 * xyz.Item2) + xyz.Item3);
 
-            return new Tuple<float, float>(u, v);
+            // calculate chromaticity variables
+            var cu = u / (u + v + w);
+            var cv = v / (u + v + w);
+
+            return new Tuple<float, float>(cu, cv);
         }
 
         /// <summary>
@@ -52,13 +58,17 @@ namespace MMALSharp.Utility
             var g = c.G.ToFloat();
             var b = c.B.ToFloat();
 
-            var rVector = new Vector3(0.4124f * r, 0.3576f * g, 0.1805f * b);
-            var gVector = new Vector3(0.2126f * r, 0.7152f * g, 0.0722f * b);
-            var bVector = new Vector3(0.0193f * r, 0.1192f * g, 0.9505f * b);
+            var rl = ToXYZLinear(r);
+            var gl = ToXYZLinear(g);
+            var bl = ToXYZLinear(b);
 
-            var x = ToXYZLinear(rVector.X + rVector.Y + rVector.Z);
-            var y = ToXYZLinear(gVector.X + gVector.Y + gVector.Z);
-            var z = ToXYZLinear(bVector.X + bVector.Y + bVector.Z);
+            var rVector = new Vector3(0.4124f * rl, 0.3576f * gl, 0.1805f * bl);
+            var gVector = new Vector3(0.2126f * rl, 0.7152f * gl, 0.0722f * bl);
+            var bVector = new Vector3(0.0193f * rl, 0.1192f * gl, 0.9505f * bl);
+
+            var x = rVector.X + rVector.Y + rVector.Z;
+            var y = gVector.X + gVector.Y + gVector.Z;
+            var z = bVector.X + bVector.Y + bVector.Z;
 
             return new Tuple<float, float, float>(x, y, z);
         }
@@ -185,6 +195,10 @@ namespace MMALSharp.Utility
 
             h = (h / 6.0f) % 1.0f;
 
+            h = (float)Math.Ceiling(h * 100) / 100;
+            s = (float)Math.Ceiling(s * 100) / 100;
+            v = (float)Math.Ceiling(v * 100) / 100;
+
             return new Tuple<float, float, float>(h.Clamp(0, 1), s.Clamp(0, 1), v.Clamp(0, 1));
         }
 
@@ -221,9 +235,9 @@ namespace MMALSharp.Utility
             u = u.Clamp(-0.436f, 0.436f);
             v = v.Clamp(-0.615f, 0.615f);
 
-            var r = y + 1.140f * v;
-            var g = y - 0.395f * u - 0.581f * v;
-            var b = y + 2.032f * u;
+            var r = y + (1.140f * v);
+            var g = y - (0.395f * u) - (0.581f * v);
+            var b = y + (2.032f * u);
 
             return Color.FromArgb(255, r.ToByte(), g.ToByte(), b.ToByte());
         }
@@ -267,7 +281,7 @@ namespace MMALSharp.Utility
             var r = (y + 0.948262f * i + 0.624013f * q).Clamp(0, 1);
             var g = (y - 0.276066f * i - 0.639810f * q).Clamp(0, 1);
             var b = (y - 1.105450f * i + 1.729860f * q).Clamp(0, 1);
-            
+
             return Color.FromArgb(255, r.ToByte(), g.ToByte(), b.ToByte());
         }
 
@@ -307,7 +321,7 @@ namespace MMALSharp.Utility
             var r = HLSConstant(m1, m2, h + (1.0f / 3.0f));
             var g = HLSConstant(m1, m2, h);
             var b = HLSConstant(m1, m2, h - (1.0f / 3.0f));
-            
+
             return Color.FromArgb(255, r.ToByte(), g.ToByte(), b.ToByte());
         }
 
@@ -331,14 +345,14 @@ namespace MMALSharp.Utility
                 return Color.FromArgb(255, v.ToByte(), v.ToByte(), v.ToByte());
             }
 
-            var i = (int) h * 6;
+            var i = (int)(h * 6);
             var f = (h * 6.0f) - i;
             var p = v * (1.0f - s);
-            var q = v * (1.0f - s * f);
+            var q = v * (1.0f - (s * f));
             var t = v * (1.0f - s * (1.0f - f));
 
             i = i % 6;
-            
+
             if (i == 0)
             {
                 return Color.FromArgb(255, v.ToByte(), t.ToByte(), p.ToByte());
@@ -408,24 +422,24 @@ namespace MMALSharp.Utility
         public static Color FromCieLab(float l, float a, float b)
         {
             // D65 Illuminant values
-            var xn = 95.047f;
-            var yn = 100f;
-            var zn = 108.883f;
+            var xn = 0.95047f;
+            var yn = 1.0f;
+            var zn = 1.08883f;
 
-            var f1 = (l + 16) / 116;
-            var f2 = f1 + a / 500;
-            var f3 = f1 - b / 200;
+            var f1 = (l + 16f) / 116f;
+            var f2 = f1 + (a / 500f);
+            var f3 = f1 - (b / 200f);
 
             var y = yn * CieLABConstant(f1);
-            var x = xn * CieLABConstant(f2);            
+            var x = xn * CieLABConstant(f2);
             var z = zn * CieLABConstant(f3);
 
-            return FromCieXYZ(x, y, z);            
+            return FromCieXYZ(x, y, z);
         }
 
         /// <summary>
         /// Returns a new <see cref="Color"/> structure based from CIELUV floating point values.
-        /// See: https://en.wikipedia.org/wiki/Lab_color_space#Forward_transformation
+        /// See: https://en.wikipedia.org/wiki/CIELUV
         /// </summary>
         /// <param name="l">The lightness L value.</param>
         /// <param name="u">The chrominance U value.</param>
@@ -433,22 +447,27 @@ namespace MMALSharp.Utility
         /// <returns>A <see cref="Color"/> structure representing the CIELUV parameter values.</returns>
         public static Color FromCieLUV(float l, float u, float v)
         {
-            // D65 Illuminant
-            var un = 0.2009f;
-            var vn = 0.4610f;
+            // D65 Illuminant values
+            var xn = 0.95047f;
+            var yn = 1.0f;
+            var zn = 1.08883f;
 
-            var upt = u / (13 / l) + un;
-            var vpt = v / (13 / 1) + vn;
+            // D65 Illuminant
+            var uc = (4 * xn) / (xn + (15 * yn) + (3 * zn));
+            var vc = (9 * yn) / (xn + (15 * yn) + (3 * zn));
+
+            var upt = u / ((13 / l) + uc);
+            var vpt = v / ((13 / 1) + vc);
 
             float y;
 
             if (l <= 8)
             {
-                y = (float)(1.0f * (l * Math.Pow(3 / 29, 3)));
+                y = yn * (float)(l * Math.Pow(3 / 29, 3));
             }
             else
             {
-                y = (float)(1.0f * Math.Pow((l + 16) / 116, 3));
+                y = yn * (float)Math.Pow((l + 16) / 116, 3);
             }
 
             var x = y * (9 * u) / (4 * v);
@@ -459,14 +478,14 @@ namespace MMALSharp.Utility
 
         private static float CieLABConstant(float t)
         {
-            float theta = 6 / 29;
+            float theta = 6f / 29f;
 
             if (t > theta)
             {
                 return (float)Math.Pow(t, 3);
             }
 
-            return (float)(3 * Math.Pow(theta, 2) * (t - (4 / 29)));
+            return (float)((3 * Math.Pow(theta, 2)) * (t - (4 / 29)));
         }
 
         private static float HLSConstant(float m1, float m2, float hue)
@@ -508,11 +527,11 @@ namespace MMALSharp.Utility
                 return c / 12.92f;
             }
 
-            return (float)Math.Pow((c + 0.055) / (1 + 0.055), 2.4);
+            return (float)Math.Pow((c + 0.055) / 1.055, 2.4);
         }
 
         private static float GetMaxComponent(float r, float g, float b) => Math.Max(Math.Max(r, g), b);
 
         private static float GetMinComponent(float r, float g, float b) => Math.Min(Math.Min(r, g), b);
-    }        
+    }
 }
