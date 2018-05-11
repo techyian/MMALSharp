@@ -166,8 +166,6 @@ namespace MMALSharp
                     this.Camera.DisableConnections();
 
                     this.Camera.CleanPortPools();
-
-                    this.Camera.StillPort.SetRawCapture(false);
                 }
                 finally
                 {

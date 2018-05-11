@@ -211,6 +211,10 @@ namespace MMALSharp.Native
         public static MMALEncoding BAYER_SBGGR16 = new MMALEncoding("BYR2", EncodingType.PixelFormat);
         public static MMALEncoding BAYER_SBGGR10DPCM8 = new MMALEncoding("bBA8", EncodingType.PixelFormat);
         public static MMALEncoding YUVUV128 = new MMALEncoding("SAND", EncodingType.PixelFormat);
+        /// <summary>
+        /// An opaque buffer is a Broadcom specific format that references a GPU internal bitmap. It is typed as <see cref="EncodingType.Internal"/>.
+        /// </summary>
+        /// <remarks>https://www.raspberrypi.org/forums/viewtopic.php?t=53698</remarks>
         public static MMALEncoding OPAQUE = new MMALEncoding("OPQV", EncodingType.Internal);
         public static MMALEncoding EGL_IMAGE = new MMALEncoding("EGLI", EncodingType.PixelFormat);
         public static MMALEncoding PCM_UNSIGNED_BE = new MMALEncoding("PCMU", EncodingType.PixelFormat);
