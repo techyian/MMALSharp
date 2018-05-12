@@ -84,3 +84,7 @@ Raspberry Pi is a trademark of the Raspberry Pi Foundation
 
 Dave Jones [@waveform80](https://github.com/waveform80) - your Python header conversions have saved me numerous hours so far. 
 Thank you very much.
+
+### Contributors
+
+**Daniel Lerch** @daniel-lerch
