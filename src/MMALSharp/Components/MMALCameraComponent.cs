@@ -10,15 +10,47 @@ using MMALSharp.Native;
 
 namespace MMALSharp.Components
 {
+    /// <summary>
+    /// Defines a set of sensor modes that allow to configure how the raw image data is sent to the GPU before further processing. See wiki on GitHub for more information.
+    /// </summary>
+    /// <remarks>
+    /// https://github.com/techyian/MMALSharp/wiki/OmniVision-OV5647-Camera-Module
+    /// https://github.com/techyian/MMALSharp/wiki/Sony-IMX219-Camera-Module
+    /// https://www.raspberrypi.org/forums/viewtopic.php?t=85714
+    /// </remarks>
     public enum MMALSensorMode
     {
+        /// <summary>
+        /// Automatic mode (default).
+        /// </summary>
         Mode0,
+        /// <summary>
+        /// 1080p cropped mode.
+        /// </summary>
         Mode1,
+        /// <summary>
+        /// 4:3 ratio.
+        /// </summary>
         Mode2,
+        /// <summary>
+        /// 4:3 ratio (low FPS with OV5647).
+        /// </summary>
         Mode3,
+        /// <summary>
+        /// 2x2 binned 4:3.
+        /// </summary>
         Mode4,
+        /// <summary>
+        /// 2x2 binned 16:9.
+        /// </summary>
         Mode5,
+        /// <summary>
+        /// High FPS. Ratio and resolution depend on camera module.
+        /// </summary>
         Mode6,
+        /// <summary>
+        /// VGA high FPS.
+        /// </summary>
         Mode7
     }
     
@@ -27,8 +59,17 @@ namespace MMALSharp.Components
     /// </summary>
     public sealed class MMALCameraComponent : MMALComponentBase
     {
+        /// <summary>
+        /// The output port number of the camera's preview port.
+        /// </summary>
         public const int MMALCameraPreviewPort = 0;
+        /// <summary>
+        /// The output port number of the camera's video port.
+        /// </summary>
         public const int MMALCameraVideoPort = 1;
+        /// <summary>
+        /// The output port number of the camera's still port.
+        /// </summary>
         public const int MMALCameraStillPort = 2;
 
         /// <summary>
@@ -100,6 +141,9 @@ namespace MMALSharp.Components
             }
         }
 
+        /// <summary>
+        /// Disposes of the current component, and frees any native resources still in use by it.
+        /// </summary>
         public override void Dispose()
         {
             this.CameraInfo?.DestroyComponent();

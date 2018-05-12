@@ -12,6 +12,9 @@ using static MMALSharp.Native.MMALParametersCamera;
 
 namespace MMALSharp
 {
+    /// <summary>
+    /// Provides extension methods to obtain and change the configuration of a port.
+    /// </summary>
     public static class MMALPortExtensions
     {
         /// <summary>
@@ -68,6 +71,11 @@ namespace MMALSharp
             }
         }
         
+        /// <summary>
+        /// Gets a value indicating whether to include raw Bayer image data on this port.
+        /// </summary>
+        /// <param name="port"></param>
+        /// <returns></returns>
         public static bool GetRawCapture(this MMALPortImpl port)
         {
             return port.GetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE);
@@ -156,6 +164,11 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Enables or Disables inclusion of raw Bayer image data on this port.
+        /// </summary>
+        /// <param name="port"></param>
+        /// <param name="enable"></param>
         internal static void SetImageCapture(this MMALPortImpl port, bool enable)
         {
             port.SetParameter(MMAL_PARAMETER_CAPTURE, enable);
