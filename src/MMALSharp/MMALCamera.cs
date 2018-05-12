@@ -168,7 +168,8 @@ namespace MMALSharp
                     this.Camera.CleanPortPools();
                 }
                 finally
-                {
+                {                    
+                    this.Camera.Handler.PostProcess();
                     this.Camera.Handler.Dispose();
                 }
             }            
