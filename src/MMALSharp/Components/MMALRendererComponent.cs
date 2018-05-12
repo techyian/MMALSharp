@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -89,7 +90,7 @@ namespace MMALSharp.Components
     {
         private int _width;
         private int _height;
-        
+
         public override int Width
         {
             get
@@ -118,7 +119,7 @@ namespace MMALSharp.Components
 
         public PreviewConfiguration Configuration { get; }
 
-        public List<MMALOverlayRenderer> Overlays { get; protected set; } = new List<MMALOverlayRenderer>();
+        public List<MMALOverlayRenderer> Overlays { get; } = new List<MMALOverlayRenderer>();
 
         /// <summary>
         /// Creates a new instance of a Video renderer component. This component is intended to be connected to the Camera's preview port
@@ -156,19 +157,19 @@ namespace MMALSharp.Components
                         this.Configuration.PreviewWindow.X, this.Configuration.PreviewWindow.Y,
                         this.Configuration.PreviewWindow.Width, this.Configuration.PreviewWindow.Height);
                 }
-                
-                displaySet = (int) MMALParametersVideo.MMAL_DISPLAYSET_T.MMAL_DISPLAY_SET_LAYER;
-                displaySet |= (int) MMALParametersVideo.MMAL_DISPLAYSET_T.MMAL_DISPLAY_SET_ALPHA;
-                
+
+                displaySet = (int)MMALParametersVideo.MMAL_DISPLAYSET_T.MMAL_DISPLAY_SET_LAYER;
+                displaySet |= (int)MMALParametersVideo.MMAL_DISPLAYSET_T.MMAL_DISPLAY_SET_ALPHA;
+
                 if (this.Configuration.FullScreen)
                 {
-                    displaySet |= (int) MMALParametersVideo.MMAL_DISPLAYSET_T.MMAL_DISPLAY_SET_FULLSCREEN;
+                    displaySet |= (int)MMALParametersVideo.MMAL_DISPLAYSET_T.MMAL_DISPLAY_SET_FULLSCREEN;
                     fullScreen = 1;
                 }
                 else
                 {
-                    displaySet |= ((int) MMALParametersVideo.MMAL_DISPLAYSET_T.MMAL_DISPLAY_SET_DEST_RECT |
-                                    (int) MMALParametersVideo.MMAL_DISPLAYSET_T.MMAL_DISPLAY_SET_FULLSCREEN);
+                    displaySet |= ((int)MMALParametersVideo.MMAL_DISPLAYSET_T.MMAL_DISPLAY_SET_DEST_RECT |
+                                    (int)MMALParametersVideo.MMAL_DISPLAYSET_T.MMAL_DISPLAY_SET_FULLSCREEN);
                 }
 
                 if (this.Configuration.NoAspect)
@@ -218,7 +219,7 @@ namespace MMALSharp.Components
             base.Dispose();
         }
     }
-    
+
     /// <summary>
     /// MMAL provides the ability to add a static video render overlay onto the display output. The user must provide unencoded RGB input padded to the width/height of the camera block size (32x16).
     /// This class represents a video renderer which has the ability to overlay static resources to the display output.
@@ -235,21 +236,30 @@ namespace MMALSharp.Components
         /// </summary>
         public MMALVideoRenderer ParentRenderer { get; set; }
 
+        /// <summary>
+        /// The configuration for rendering a static preview overlay.
+        /// </summary>
         public PreviewOverlayConfiguration OverlayConfiguration { get; set; }
 
-        public readonly List<MMALEncoding> AllowedEncodings = new List<MMALEncoding>
+        /// <summary>
+        /// A list of supported encodings for overlay image data.
+        /// </summary>
+        public readonly IReadOnlyCollection<MMALEncoding> AllowedEncodings = new ReadOnlyCollection<MMALEncoding>(new List<MMALEncoding>
         {
             MMALEncoding.I420,
             MMALEncoding.RGB24,
             MMALEncoding.RGBA,
             MMALEncoding.BGR24,
             MMALEncoding.BGRA
-        };
+        });
 
         /// <summary>
         /// Creates a new instance of a Overlay renderer component. This component is identical to the <see cref="MMALVideoRenderer"/> class, however it provides
         /// the ability to overlay a static source onto the render overlay.
         /// </summary>
+        /// <param name="parent">The parent renderer which is being used to overlay onto the display.</param>
+        /// <param name="config">The configuration for rendering a static preview overlay.</param>
+        /// <param name="source">A reference to the current stream being used in the overlay.</param>
         public MMALOverlayRenderer(MMALVideoRenderer parent, PreviewOverlayConfiguration config, byte[] source)
             : base(config)
         {
@@ -257,7 +267,7 @@ namespace MMALSharp.Components
             this.ParentRenderer = parent;
             this.OverlayConfiguration = config;
             parent.Overlays.Add(this);
-            
+
             if (config != null)
             {
                 if (config.Resolution != null)
@@ -278,7 +288,7 @@ namespace MMALSharp.Components
                     var sourceLength = source.Length;
                     var planeSize = this.Inputs[0].Resolution.Pad();
                     var planeLength = Math.Floor((double)planeSize.Width * planeSize.Height);
-                    
+
                     if (Math.Floor(sourceLength / planeLength) == 3)
                     {
                         config.Encoding = MMALEncoding.RGB24;
@@ -299,34 +309,41 @@ namespace MMALSharp.Components
             {
                 throw new PiCameraError($"Incompatible encoding type for use with Preview Render overlay {MMALEncodingHelpers.ParseEncoding(this.Inputs[0].NativeEncodingType).EncodingName}.");
             }
-            
+
             this.Inputs[0].Commit();
 
             this.Inputs[0].BufferNum = 1;
             this.Inputs[0].BufferSize = Math.Max((uint)this.Source.LongLength, this.Inputs[0].BufferSizeMin);
-            
+
             this.Start(this.Control, new Action<MMALBufferImpl, MMALPortBase>(this.ManagedControlCallback));
             this.Start(this.Inputs[0], this.ManagedInputCallback);
         }
 
+        /// <summary>
+        /// Updates the overlay by sending <see cref="Source"/> as new image data.
+        /// </summary>
         public void UpdateOverlay()
         {
             this.UpdateOverlay(this.Source);
         }
 
-        public void UpdateOverlay(byte[] stream)
+        /// <summary>
+        /// Updates the overlay by sending the specified buffer as new image data.
+        /// </summary>
+        /// <param name="imageData">Byte array containing the image data encoded like configured.</param>
+        public void UpdateOverlay(byte[] imageData)
         {
             lock (MMALPortBase.InputLock)
             {
                 var buffer = this.Inputs[0].BufferPool.Queue.GetBuffer();
-                
+
                 if (buffer == null)
                 {
                     MMALLog.Logger.Warn("Received null buffer when updating overlay.");
                     return;
                 }
-                
-                buffer.ReadIntoBuffer(stream, stream.Length, false);
+
+                buffer.ReadIntoBuffer(imageData, imageData.Length, false);
                 this.Inputs[0].SendBuffer(buffer);
             }
         }

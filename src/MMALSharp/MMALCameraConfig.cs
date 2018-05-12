@@ -11,8 +11,14 @@ using MMALSharp.Native;
 
 namespace MMALSharp
 {
+    /// <summary>
+    /// Provides a rich set of camera/sensor related configuration. Call <see cref="MMALCamera.ConfigureCameraSettings"/> to apply changes.
+    /// </summary>
     public static class MMALCameraConfig
     {
+        /// <summary>
+        /// Gets or sets a value indicating whether to enable verbose debug output for many operations.
+        /// </summary>
         public static bool Debug { get; set; }
 
         /// <summary>
@@ -95,9 +101,8 @@ namespace MMALSharp
 
         /// <summary>
         /// Changing the shutter speed alters how long the sensor is exposed to light (in microseconds).
-        /// 
-        /// There's currently an upper limit of approximately 6000000us (6000ms, 6s), past which operation is undefined. 8MP Sony sensor supports 8s max shutter speed.
-        /// 
+        /// <para />
+        /// There's currently an upper limit of approximately 6.000.000µs (6.000ms, 6s), past which operation is undefined. 8MP Sony sensor supports 8s max shutter speed.
         /// </summary>
         public static int ShutterSpeed { get; set; }
 
@@ -277,6 +282,9 @@ namespace MMALSharp
         Minute
     }
 
+    /// <summary>
+    /// Exposes properties for width and height. This class is used to specify a resolution for camera and ports.
+    /// </summary>
     public class Resolution : IComparable<Resolution>
     {
         /// <summary>
@@ -289,6 +297,11 @@ namespace MMALSharp
         /// </summary>
         public int Height { get; set; }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="Resolution"/> class with the specified width and height.
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
         public Resolution(int width, int height)
         {
             this.Width = width;

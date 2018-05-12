@@ -325,12 +325,12 @@ namespace MMALSharp
 
             if (cancellationToken == CancellationToken.None)
             {
-                await Task.WhenAll(tasks.ToArray());
+                await Task.WhenAll(tasks);
             }
             else
             {
                 tasks.Add(cancellationToken.AsTask());
-                await Task.WhenAny(tasks.ToArray());
+                await Task.WhenAny(tasks);
             }
             
             this.StopCapture(cameraPort);
@@ -402,6 +402,13 @@ namespace MMALSharp
             return this;
         }
 
+        /// <summary>
+        /// Creates an overlay renderer that is able to render an overlay from a static image source.
+        /// </summary>
+        /// <param name="parent">The parent renderer which is being used to overlay onto the display.</param>
+        /// <param name="config">The configuration for rendering a static preview overlay.</param>
+        /// <param name="source">A reference to the current stream being used in the overlay.</param>
+        /// <returns>The created <see cref="MMALOverlayRenderer"/> object.</returns>
         public MMALOverlayRenderer AddOverlay(MMALVideoRenderer parent, PreviewOverlayConfiguration config, byte[] source)
         {
             var overlay = new MMALOverlayRenderer(parent, config, source);
