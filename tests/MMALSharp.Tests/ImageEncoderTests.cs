@@ -28,16 +28,12 @@ namespace MMALSharp.Tests
         {
             get
             {
-                var list = new List<object[]>();
-
-                list.AddRange(TestData.JpegEncoderData.Cast<object[]>().ToList());
-                list.AddRange(TestData.GifEncoderData.Cast<object[]>().ToList());
-                list.AddRange(TestData.PngEncoderData.Cast<object[]>().ToList());
-                list.AddRange(TestData.TgaEncoderData.Cast<object[]>().ToList());
-                list.AddRange(TestData.PpmEncoderData.Cast<object[]>().ToList());
-                list.AddRange(TestData.BmpEncoderData.Cast<object[]>().ToList());
-
-                return list;
+                yield return new object[] { TestData.JpegEncoderData.Cast<object[]>() };
+                yield return new object[] { TestData.GifEncoderData.Cast<object[]>() };
+                yield return new object[] { TestData.PngEncoderData.Cast<object[]>() };
+                yield return new object[] { TestData.TgaEncoderData.Cast<object[]>() };
+                yield return new object[] { TestData.PpmEncoderData.Cast<object[]>() };
+                yield return new object[] { TestData.BmpEncoderData.Cast<object[]>() };                
             }
         }
 
@@ -45,20 +41,16 @@ namespace MMALSharp.Tests
         {
             get
             {
-                var list = new List<object[]>();
-
-                list.AddRange(TestData.YUV420EncoderData.Cast<object[]>().ToList());
-                list.AddRange(TestData.YUV422EncoderData.Cast<object[]>().ToList());
-                list.AddRange(TestData.RGB24EncoderData.Cast<object[]>().ToList());
-                list.AddRange(TestData.RGBAEncoderData.Cast<object[]>().ToList());
-  
-                return list;
+                yield return new object[] { TestData.YUV420EncoderData.Cast<object[]>() };
+                yield return new object[] { TestData.YUV422EncoderData.Cast<object[]>() };
+                yield return new object[] { TestData.RGB24EncoderData.Cast<object[]>() };
+                yield return new object[] { TestData.RGB24EncoderData.Cast<object[]>() };
+                yield return new object[] { TestData.RGBAEncoderData.Cast<object[]>() };                
             }
         }
 
         public static IEnumerable<object[]> TakePictureDataJpeg => TestData.JpegEncoderData.Cast<object[]>().ToList();
        
-
         [Theory, MemberData(nameof(TakePictureData))]        
         public void TakePicture(string extension, MMALEncoding encodingType, MMALEncoding pixelFormat)
         {

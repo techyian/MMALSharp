@@ -38,7 +38,7 @@ namespace MMALSharp.Utility
         /// <returns>A 2 pair <see cref="Tuple"/> of floating point values representing the RGB conversion to CIE 1960.</returns>
         public static Tuple<float, float> RGBToCIE1960(Color c)
         {
-            var xyz = RGBToXYZ(c);
+            var xyz = RGBToCIEXYZ(c);
 
             var u = (2f / 3f) * xyz.Item1;
             var v = xyz.Item2;
@@ -57,7 +57,7 @@ namespace MMALSharp.Utility
         /// </summary>
         /// <param name="c">The <see cref="Color"/> structure.</param>        
         /// <returns>A 3 pair <see cref="Tuple"/> of floating point values representing the RGB conversion to CIE XYZ.</returns>
-        public static Tuple<float, float, float> RGBToXYZ(Color c)
+        public static Tuple<float, float, float> RGBToCIEXYZ(Color c)
         {
             var r = c.R.ToFloat();
             var g = c.G.ToFloat();

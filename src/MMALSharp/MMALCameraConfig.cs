@@ -122,12 +122,7 @@ namespace MMALSharp
         /// Displays the exposure, analogue and digital gains, and AWB settings used.
         /// </summary>
         public static bool StatsPass { get; set; }
-
-        /// <summary>
-        /// Enable annotation of captured images.
-        /// </summary>
-        public static bool EnableAnnotate { get; set; }    
-        
+                
         /// <summary>
         /// Allows fine tuning of annotation options.
         /// </summary>
@@ -246,7 +241,7 @@ namespace MMALSharp
     }
     
     public class AnnotateImage
-    {
+    {      
         public string CustomText { get; set; }
         public int TextSize { get; set; }
         public Color TextColour { get; set; } = Color.Empty;
