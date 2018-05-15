@@ -1,14 +1,10 @@
 ﻿// <copyright file="MMALParameters.cs" company="Techyian">
-// Copyright (c) Techyian. All rights reserved.
+// Copyright (c) Ian Auty. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
@@ -1554,6 +1550,7 @@ namespace MMALSharp.Native
         public int ShowMotion => showMotion;
         public int ShowFrameNum => showFrameNum;
         public int EnableTextBackground => enableTextBackground;
+        public int CustomBackgroundColor => customBackgroundColor;
         public byte CustomBackgroundY => customBackgroundY;
         public byte CustomBackgroundU => customBackgroundU;
         public byte CustomBackgroundV => customBackgroundV;
@@ -1562,10 +1559,10 @@ namespace MMALSharp.Native
         public byte CustomTextY => customTextY;
         public byte CustomTextU => customTextU;
         public byte CustomTextV => customTextV;
+        public byte TextSize => textSize;
         public byte[] Text => text;
 
-
-
+        
         public MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(MMAL_PARAMETER_HEADER_T hdr, int enable, int showShutter, int showAnalogGain, int showLens, 
                                                    int showCaf, int showMotion, int showFrameNum, int enableTextBackground, int customBackgroundColor,
                                                    byte customBackgroundY, byte customBackgroundU, byte customBackgroundV, byte dummy1,

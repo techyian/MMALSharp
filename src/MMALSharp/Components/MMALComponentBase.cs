@@ -1,5 +1,5 @@
 ﻿// <copyright file="MMALComponentBase.cs" company="Techyian">
-// Copyright (c) Techyian. All rights reserved.
+// Copyright (c) Ian Auty. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 

@@ -1,5 +1,5 @@
 ﻿// <copyright file="MMALCamera.cs" company="Techyian">
-// Copyright (c) Techyian. All rights reserved.
+// Copyright (c) Ian Auty. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
@@ -400,6 +400,26 @@ namespace MMALSharp
         public MMALCamera ConfigureCameraSettings()
         {            
             this.Camera.Initialise();                               
+            return this;
+        }
+
+        /// <summary>
+        /// Enables the annotation feature which will produce a textual overlay on produced frames.
+        /// </summary>
+        /// <returns>The camera instance.</returns>
+        public MMALCamera EnableAnnotation()
+        {
+            this.Camera.SetAnnotateSettings();
+            return this;
+        }
+
+        /// <summary>
+        /// Disables the annotation feature.
+        /// </summary>
+        /// <returns>The camera instance.</returns>
+        public MMALCamera DisableAnnotation()
+        {
+            this.Camera.DisableAnnotate();
             return this;
         }
 

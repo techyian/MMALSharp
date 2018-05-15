@@ -1,5 +1,5 @@
 ﻿// <copyright file="MMALCameraConfig.cs" company="Techyian">
-// Copyright (c) Techyian. All rights reserved.
+// Copyright (c) Ian Auty. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
@@ -127,12 +127,7 @@ namespace MMALSharp
         /// Displays the exposure, analogue and digital gains, and AWB settings used.
         /// </summary>
         public static bool StatsPass { get; set; }
-
-        /// <summary>
-        /// Enable annotation of captured images.
-        /// </summary>
-        public static bool EnableAnnotate { get; set; }    
-        
+                
         /// <summary>
         /// Allows fine tuning of annotation options.
         /// </summary>
@@ -216,9 +211,7 @@ namespace MMALSharp
     public class ColourEffects
     {
         public bool Enable { get; set; }
-        public int U { get; set; } = 128;
-        public int V { get; set; } = 128;
-        
+        public Color Color { get; set; }
     }
     
     public class Zoom
@@ -253,11 +246,11 @@ namespace MMALSharp
     }
     
     public class AnnotateImage
-    {
+    {      
         public string CustomText { get; set; }
         public int TextSize { get; set; }
-        public int TextColour { get; set; } = -1;
-        public int BgColour { get; set; } = -1;
+        public Color TextColour { get; set; } = Color.Empty;
+        public Color BgColour { get; set; } = Color.Empty;
         public bool ShowShutterSettings { get; set; }
         public bool ShowGainSettings { get; set; }
         public bool ShowLensSettings { get; set; }

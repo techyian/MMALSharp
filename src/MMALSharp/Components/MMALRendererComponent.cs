@@ -1,5 +1,5 @@
 ﻿// <copyright file="MMALRendererComponent.cs" company="Techyian">
-// Copyright (c) Techyian. All rights reserved.
+// Copyright (c) Ian Auty. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using MMALSharp.Native;
