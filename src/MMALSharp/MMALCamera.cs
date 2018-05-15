@@ -171,6 +171,7 @@ namespace MMALSharp
                 {                    
                     this.Camera.Handler.PostProcess();
                     this.Camera.Handler.Dispose();
+                    this.Camera.Handler = null;
                 }
             }            
         }

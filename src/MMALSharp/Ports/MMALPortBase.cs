@@ -565,7 +565,7 @@ namespace MMALSharp
         /// Release an output port buffer, get a new one from the queue and send it for processing.
         /// </summary>
         /// <param name="bufferImpl">A managed buffer object.</param>
-        internal void ReleaseOutputBuffer(MMALBufferImpl bufferImpl)
+        internal void ReleaseOutputBuffer(MMALBufferImpl bufferImpl, bool eos)
         {
             bufferImpl.Release();
             bufferImpl.Dispose();
@@ -581,7 +581,7 @@ namespace MMALSharp
                     MMALLog.Logger.Warn("Buffer pool null.");
                 }
 
-                if (this.Enabled && this.BufferPool != null)
+                if (this.Enabled && this.BufferPool != null && !eos)
                 {
                     var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
 
