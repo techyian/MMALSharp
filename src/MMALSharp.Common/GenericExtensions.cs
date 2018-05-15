@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="GenericExtensions.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 
 namespace MMALSharp
 {

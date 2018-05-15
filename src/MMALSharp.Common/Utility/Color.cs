@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="Color.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using System.Drawing;
 using System.Numerics;
 
@@ -452,26 +457,25 @@ namespace MMALSharp.Utility
             var yn = 1.0f;
             var zn = 1.08883f;
 
-            // D65 Illuminant
-            var uc = (4 * xn) / (xn + (15 * yn) + (3 * zn));
-            var vc = (9 * yn) / (xn + (15 * yn) + (3 * zn));
+            var uc = 4f * xn / (xn + 15f * yn + 3f * zn);
+            var vc = 9f * yn / (xn + 15f * yn + 3f * zn);
 
-            var upt = u / ((13 / l) + uc);
-            var vpt = v / ((13 / 1) + vc);
+            var upt = u / (13f * l) + uc;
+            var vpt = v / (13f * 1) + vc;
 
             float y;
 
             if (l <= 8)
             {
-                y = yn * (float)(l * Math.Pow(3 / 29, 3));
+                y = yn * (float)(l * Math.Pow(3f / 29f, 3f));
             }
             else
             {
-                y = yn * (float)Math.Pow((l + 16) / 116, 3);
+                y = yn * (float)Math.Pow((l + 16f) / 116f, 3f);
             }
 
-            var x = y * (9 * u) / (4 * v);
-            var z = y * ((12 - (3 * u) - (20 * v)) / (4 * v));
+            var x = y * (9f * upt) / (4f * vpt);
+            var z = y * (12f - 3f * upt - 20f * vpt) / (4f * vpt);
 
             return FromCieXYZ(x, y, z);
         }
