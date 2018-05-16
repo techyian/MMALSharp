@@ -1,10 +1,13 @@
-﻿using MMALSharp.Native;
+﻿// <copyright file="TestData.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using MMALSharp.Native;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMALSharp.Tests
 {
@@ -51,7 +54,7 @@ namespace MMALSharp.Tests
         }
         
         public static void BeginTest(string name) => MMALLog.Logger.Info($"Running test: {name}.");
-        public static void BeginTest(string name, string encodingType, string pixelFormat) => MMALLog.Logger.Info($"Running test: {name}. Encoding type: {encodingType}. Pixel format: {pixelFormat}");
+        public static void BeginTest(string name, string encodingType, string pixelFormat) => MMALLog.Logger.Info($"Running test: {name}. Encoding type: {encodingType}. Pixel format: {pixelFormat}.");
     }
 
     public class TestData

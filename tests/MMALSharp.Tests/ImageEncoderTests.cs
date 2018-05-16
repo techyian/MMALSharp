@@ -1,4 +1,9 @@
-﻿using MMALSharp.Components;
+﻿// <copyright file="ImageEncoderTests.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using Nito.AsyncEx;
@@ -8,7 +13,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 using Xunit;
 
 namespace MMALSharp.Tests

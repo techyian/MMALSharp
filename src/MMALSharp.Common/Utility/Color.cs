@@ -20,12 +20,16 @@ namespace MMALSharp.Utility
         /// </summary>
         /// <param name="u">The chrominance U value.</param>
         /// <param name="v">The chrominance V value.</param>
+        /// <param name="y">The CIE XYZ Y tristimulus value.</param>
         /// <returns>A <see cref="Color"/> structure representing the CIE 1960 parameter values.</returns>
-        public static Color FromCIE1960(float u, float v)
+        public static Color FromCIE1960(float u, float v, float y)
         {
-            var x = (3 / 2) * u;
-            var y = v;
-            var z = (3 / 2) - (3 * v);
+            // x and y chromaticity values
+            var xc = (3f * u) / (2f * u - 8f * v + 4);
+            var yc = (2f * v) / (2f * u - 8f * v + 4);
+
+            var x = (y / yc) * xc;
+            var z = (y / yc) * (1 - xc - yc);
 
             return FromCieXYZ(x, y, z);
         }
@@ -36,7 +40,7 @@ namespace MMALSharp.Utility
         /// </summary>
         /// <param name="c">The <see cref="Color"/> structure.</param>        
         /// <returns>A 2 pair <see cref="Tuple"/> of floating point values representing the RGB conversion to CIE 1960.</returns>
-        public static Tuple<float, float> RGBToCIE1960(Color c)
+        public static Tuple<float, float, float> RGBToCIE1960(Color c)
         {
             var xyz = RGBToCIEXYZ(c);
 
@@ -48,7 +52,7 @@ namespace MMALSharp.Utility
             var cu = u / (u + v + w);
             var cv = v / (u + v + w);
 
-            return new Tuple<float, float>(cu, cv);
+            return new Tuple<float, float, float>(cu, cv, xyz.Item2);
         }
 
         /// <summary>
@@ -199,10 +203,6 @@ namespace MMALSharp.Utility
             }
 
             h = (h / 6.0f) % 1.0f;
-
-            h = (float)Math.Ceiling(h * 100) / 100;
-            s = (float)Math.Ceiling(s * 100) / 100;
-            v = (float)Math.Ceiling(v * 100) / 100;
 
             return new Tuple<float, float, float>(h.Clamp(0, 1), s.Clamp(0, 1), v.Clamp(0, 1));
         }

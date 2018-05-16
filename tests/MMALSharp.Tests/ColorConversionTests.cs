@@ -1,86 +1,75 @@
-﻿using MMALSharp.Utility;
-using System;
-using System.Collections.Generic;
+﻿// <copyright file="ColorConversionTests.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using MMALSharp.Utility;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace MMALSharp.Tests
 {
     public class ColorConversionTests
-    {
-        [Theory]
-        [Fact]        
-        public void FromCIE1960()
-        {
-            TestHelper.BeginTest("FromCIE1960");
-
-            var cie1960 = MMALColor.RGBToCIE1960(Color.Blue);
-            var from1960 = MMALColor.FromCIE1960(cie1960.Item1, cie1960.Item2);
-            
-            Assert.True(from1960.Equals(Color.Blue));
-        }
-
-        [Theory]
+    {        
         [Fact]
+        [DisplayTestMethodName]
+        public void FromCIE1960()
+        {          
+            var cie1960 = MMALColor.RGBToCIE1960(Color.Blue);
+            var from1960 = MMALColor.FromCIE1960(cie1960.Item1, cie1960.Item2, cie1960.Item3);
+            
+            Assert.True(from1960.R == Color.Blue.R && from1960.G == Color.Blue.G && from1960.B == Color.Blue.B);
+        }
+             
+        [Fact]
+        [DisplayTestMethodName]
         public void FromCIEXYZ()
-        {
-            TestHelper.BeginTest("FromCIEXYZ");
-
+        {           
             var cieXYZ = MMALColor.RGBToCIEXYZ(Color.Blue);
             var fromXYZ = MMALColor.FromCieXYZ(cieXYZ.Item1, cieXYZ.Item2, cieXYZ.Item3);
 
-            Assert.True(fromXYZ.Equals(Color.Blue));
+            Assert.True(fromXYZ.R == Color.Blue.R && fromXYZ.G == Color.Blue.G && fromXYZ.B == Color.Blue.B);
         }
-
-        [Theory]
+                
         [Fact]
+        [DisplayTestMethodName]
         public void FromYIQ()
-        {
-            TestHelper.BeginTest("FromYIQ");
-
+        {           
             var yiq = MMALColor.RGBToYIQ(Color.Blue);
             var fromYIQ = MMALColor.FromYIQ(yiq.Item1, yiq.Item2, yiq.Item3);
-            
-            Assert.True(fromYIQ.Equals(Color.Blue));
-        }
 
-        [Theory]
+            Assert.True(fromYIQ.R == Color.Blue.R && fromYIQ.G == Color.Blue.G && fromYIQ.B == Color.Blue.B);
+        }
+                
         [Fact]
+        [DisplayTestMethodName]
         public void FromYUV()
         {
-            TestHelper.BeginTest("FromYUV");
-
-            var yuv = MMALColor.RGBToYUV(Color.Blue);
-            var fromYUV = MMALColor.FromYUV(yuv.Item1, yuv.Item2, yuv.Item3);
-
-            Assert.True(fromYUV.Equals(Color.Blue));
+            var fromYUVBytes = MMALColor.FromYUVBytes(0, 20, 20);
+            var rgbToYUV = MMALColor.RGBToYUV(fromYUVBytes);
+            var fromYUV = MMALColor.FromYUV(rgbToYUV.Item1, rgbToYUV.Item2, rgbToYUV.Item3);
+                        
+            Assert.True(fromYUV.Equals(fromYUVBytes));
         }
-
-        [Theory]
+                
         [Fact]
+        [DisplayTestMethodName]
         public void FromHLS()
-        {
-            TestHelper.BeginTest("FromHLS");
-
+        {            
             var hls = MMALColor.RGBToHLS(Color.Blue);
             var fromHLS = MMALColor.FromHLS(hls.Item1, hls.Item2, hls.Item3);
-            
-            Assert.True(fromHLS.Equals(Color.Blue));
+
+            Assert.True(fromHLS.R == Color.Blue.R && fromHLS.G == Color.Blue.G && fromHLS.B == Color.Blue.B);
         }
-
-        [Theory]
+                
         [Fact]
+        [DisplayTestMethodName]
         public void FromHSV()
-        {
-            TestHelper.BeginTest("FromHSV");
-
+        {            
             var hsv = MMALColor.RGBToHSV(Color.Blue);
             var fromHSV = MMALColor.FromHSV(hsv.Item1, hsv.Item2, hsv.Item3);
-
-            Assert.True(fromHSV.Equals(Color.Blue));
+            
+            Assert.True(fromHSV.R == Color.Blue.R && fromHSV.G == Color.Blue.G && fromHSV.B == Color.Blue.B);
         }        
     }
 }
