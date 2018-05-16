@@ -230,7 +230,7 @@ namespace MMALSharp.Tests
 
             var color = MMALColor.FromYUVBytes(0, u, v);
 
-            var colFx = new ColourEffects { Enable = enable, Color = color };
+            var colFx = new ColourEffects(enable, color);
 
             MMALCameraConfig.ColourFx = colFx;
             fixture.MMALCamera.ConfigureCameraSettings();
@@ -282,7 +282,7 @@ namespace MMALSharp.Tests
         {            
             TestHelper.SetConfigurationDefaults();
 
-            var zoom = new Zoom { Height = height, Width = width, X = x, Y = y };
+            var zoom = new Zoom(x, y, width, height);
 
             MMALCameraConfig.ROI = zoom;
 

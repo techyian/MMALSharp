@@ -264,17 +264,22 @@ namespace MMALSharp.Components
         /// </summary>
         internal void InitialiseVideo()
         {
-            if (MMALCameraConfig.VideoResolution.Width == 0 || MMALCameraConfig.VideoResolution.Width > this.CameraInfo.MaxWidth)
+            int currentWidth = MMALCameraConfig.VideoResolution.Width;
+            int currentHeight = MMALCameraConfig.VideoResolution.Height;
+
+            if (currentWidth == 0 || currentWidth > this.CameraInfo.MaxWidth)
             {
-                MMALCameraConfig.VideoResolution.Width = this.CameraInfo.MaxWidth;
+                currentWidth = this.CameraInfo.MaxWidth;
             }
 
-            if (MMALCameraConfig.VideoResolution.Height == 0 || MMALCameraConfig.VideoResolution.Height > this.CameraInfo.MaxHeight)
+            if (currentHeight == 0 || currentHeight > this.CameraInfo.MaxHeight)
             {
-                MMALCameraConfig.VideoResolution.Height = this.CameraInfo.MaxHeight;
+                currentHeight = this.CameraInfo.MaxHeight;
             }
 
-            this.VideoPort.Resolution = new Resolution(MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height).Pad();
+            MMALCameraConfig.VideoResolution = new Resolution(currentWidth, currentHeight);
+
+            this.VideoPort.Resolution = MMALCameraConfig.VideoResolution.Pad();
             this.VideoPort.Crop = new Rectangle(0, 0, MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height);
             this.VideoPort.FrameRate = MMALCameraConfig.VideoFramerate;
             this.VideoPort.NativeEncodingType = MMALCameraConfig.VideoEncoding.EncodingVal;
@@ -297,16 +302,21 @@ namespace MMALSharp.Components
         /// </summary>
         internal void InitialiseStill()
         {
-            if (MMALCameraConfig.StillResolution.Width == 0 || MMALCameraConfig.StillResolution.Width > this.CameraInfo.MaxWidth)
+            int currentWidth = MMALCameraConfig.StillResolution.Width;
+            int currentHeight = MMALCameraConfig.StillResolution.Height;
+
+            if (currentWidth == 0 || currentWidth > this.CameraInfo.MaxWidth)
             {
-                MMALCameraConfig.StillResolution.Width = this.CameraInfo.MaxWidth;
+                currentWidth = this.CameraInfo.MaxWidth;
             }
 
-            if (MMALCameraConfig.StillResolution.Height == 0 || MMALCameraConfig.StillResolution.Height > this.CameraInfo.MaxHeight)
+            if (currentHeight == 0 || currentHeight > this.CameraInfo.MaxHeight)
             {
-                MMALCameraConfig.StillResolution.Height = this.CameraInfo.MaxHeight;
+                currentHeight = this.CameraInfo.MaxHeight;
             }
-            
+
+            MMALCameraConfig.StillResolution = new Resolution(currentWidth, currentHeight);
+                        
             if (MMALCameraConfig.StillEncoding == MMALEncoding.RGB32 ||
                 MMALCameraConfig.StillEncoding == MMALEncoding.RGB24 ||
                 MMALCameraConfig.StillEncoding == MMALEncoding.RGB16)
@@ -331,8 +341,7 @@ namespace MMALSharp.Components
 
                 this.StillPort.Commit();
 
-                this.StillPort.Resolution =
-                    new Resolution(MMALCameraConfig.StillResolution.Width, MMALCameraConfig.StillResolution.Height).Pad(16, 16);
+                this.StillPort.Resolution = MMALCameraConfig.StillResolution.Pad(16, 16);
                 
                 this.StillPort.Crop = new Rectangle(0, 0, MMALCameraConfig.StillResolution.Width, MMALCameraConfig.StillResolution.Height);
 
@@ -346,8 +355,7 @@ namespace MMALSharp.Components
 
                 this.StillPort.Commit();
 
-                this.StillPort.Resolution =
-                    new Resolution(MMALCameraConfig.StillResolution.Width, MMALCameraConfig.StillResolution.Height).Pad();
+                this.StillPort.Resolution = MMALCameraConfig.StillResolution.Pad();
                 
                 this.StillPort.Crop = new Rectangle(0, 0, MMALCameraConfig.StillResolution.Width, MMALCameraConfig.StillResolution.Height);
                 this.StillPort.FrameRate = MMALCameraConfig.StillFramerate;

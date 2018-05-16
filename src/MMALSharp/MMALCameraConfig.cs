@@ -82,7 +82,7 @@ namespace MMALSharp
         /// <summary>
         /// Allows a user to change the colour of an image, e.g. U = 128, V = 128 will result in a greyscale (monochrome) image.
         /// </summary>
-        public static ColourEffects ColourFx { get; set; } = new ColourEffects();
+        public static ColourEffects ColourFx { get; set; }
 
         /// <summary>
         /// Specify the rotation of the image, possible values are 0, 90, 180, 270.
@@ -97,7 +97,7 @@ namespace MMALSharp
         /// <summary>
         /// Zoom in on an image to focus on a region of interest.
         /// </summary>
-        public static Zoom ROI { get; set; } = new Zoom();
+        public static Zoom ROI { get; set; }
 
         /// <summary>
         /// Changing the shutter speed alters how long the sensor is exposed to light (in microseconds).
@@ -208,18 +208,37 @@ namespace MMALSharp
         public static MMAL_RATIONAL_T StillFramerate { get; set; } = new MMAL_RATIONAL_T(0, 1);        
     }
     
-    public class ColourEffects
+    public struct ColourEffects
     {
-        public bool Enable { get; set; }
-        public Color Color { get; set; }
+        private bool _enable;
+        private Color _color;
+
+        public bool Enable => _enable;
+        public Color Color => _color;
+
+        public ColourEffects(bool enable, Color color)
+        {
+            _enable = enable;
+            _color = color;
+        }
     }
     
-    public class Zoom
+    public struct Zoom
     {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Width { get; set; }
-        public double Height { get; set; }
+        private double _x, _y, _width, _height;
+
+        public double X => _x;
+        public double Y => _y;
+        public double Width => _width;
+        public double Height => _height;
+
+        public Zoom(double x, double y, double width, double height)
+        {
+            _x = x;
+            _y = y;
+            _width = width;
+            _height = height;
+        }
     }
 
     /// <summary>
@@ -246,7 +265,7 @@ namespace MMALSharp
     }
     
     public class AnnotateImage
-    {      
+    {   
         public string CustomText { get; set; }
         public int TextSize { get; set; }
         public Color TextColour { get; set; } = Color.Empty;
@@ -278,17 +297,19 @@ namespace MMALSharp
     /// <summary>
     /// Exposes properties for width and height. This class is used to specify a resolution for camera and ports.
     /// </summary>
-    public class Resolution : IComparable<Resolution>
+    public struct Resolution : IComparable<Resolution>
     {
+        private int _width, _height;
+
         /// <summary>
         /// The width of the <see cref="Resolution"/> object.
         /// </summary>
-        public int Width { get; set; }
+        public int Width => _width;
 
         /// <summary>
         /// The height of the <see cref="Resolution"/> object.
         /// </summary>
-        public int Height { get; set; }
+        public int Height => _height;
 
         /// <summary>
         /// Creates a new instance of the <see cref="Resolution"/> class with the specified width and height.
@@ -297,8 +318,8 @@ namespace MMALSharp
         /// <param name="height"></param>
         public Resolution(int width, int height)
         {
-            this.Width = width;
-            this.Height = height;
+            _width = width;
+            _height = height;
         }
 
         /*
@@ -403,9 +424,8 @@ namespace MMALSharp
         /// <returns></returns>
         public Resolution Pad(int width = 32, int height = 16)
         {
-            this.Width = MMALUtil.VCOS_ALIGN_UP(this.Width, width);
-            this.Height = MMALUtil.VCOS_ALIGN_UP(this.Height, height);
-            return this;
+            return new Resolution(MMALUtil.VCOS_ALIGN_UP(this.Width, width),
+                                  MMALUtil.VCOS_ALIGN_UP(this.Height, height));            
         }
     }
 

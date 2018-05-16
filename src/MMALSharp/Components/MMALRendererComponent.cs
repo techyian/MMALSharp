@@ -269,7 +269,7 @@ namespace MMALSharp.Components
 
             if (config != null)
             {
-                if (config.Resolution != null)
+                if (config.Resolution.Width > 0 && config.Resolution.Height > 0)
                 {
                     this.Inputs[0].Resolution = config.Resolution;
                     this.Inputs[0].Crop = new Rectangle(0, 0, config.Resolution.Width, config.Resolution.Height);

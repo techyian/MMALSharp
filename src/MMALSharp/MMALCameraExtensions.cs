@@ -801,12 +801,8 @@ namespace MMALSharp
 
             MMALCheck(MMALPort.mmal_port_parameter_get(camera.Control.Ptr, &colFx.Hdr), "Unable to get colour fx");
 
-            ColourEffects fx = new ColourEffects
-            {
-                Enable = colFx.Enable == 1,
-                Color = MMALColor.FromYUVBytes(0, (byte)colFx.U, (byte)colFx.V)
-            };
-            
+            ColourEffects fx = new ColourEffects(colFx.Enable == 1, MMALColor.FromYUVBytes(0, (byte)colFx.U, (byte)colFx.V));
+                        
             return fx;
         }
 
