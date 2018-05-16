@@ -155,8 +155,14 @@ namespace MMALSharp
          * -----------------------------------------------------------------------------------------------------------
         */
 
+        /// <summary>
+        /// The encoding type to use with the Preview renderer.
+        /// </summary>
         public static MMALEncoding PreviewEncoding { get; set; } = MMALEncoding.OPAQUE;
 
+        /// <summary>
+        /// The pixel format to use with the Preview renderer.
+        /// </summary>
         public static MMALEncoding PreviewSubformat { get; set; } = MMALEncoding.I420;
         
         /*
@@ -165,10 +171,19 @@ namespace MMALSharp
          * -----------------------------------------------------------------------------------------------------------
         */
 
+        /// <summary>
+        /// The encoding type to use for Video captures.
+        /// </summary>
         public static MMALEncoding VideoEncoding { get; set; } = MMALEncoding.OPAQUE;
 
+        /// <summary>
+        /// The pixel format to use for Video captures.
+        /// </summary>
         public static MMALEncoding VideoSubformat { get; set; } = MMALEncoding.I420;
 
+        /// <summary>
+        /// The Resolution to use for Video captures.
+        /// </summary>
         public static Resolution VideoResolution { get; set; } = Resolution.As1080p;
         
         /// <summary>
@@ -176,22 +191,48 @@ namespace MMALSharp
         /// </summary> 
         public static bool VideoStabilisation { get; set; } = true;
 
+        /// <summary>
+        /// Used to force behaviour of frame rate control.
+        /// </summary>
         public static MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T RateControl { get; set; } = MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T.MMAL_VIDEO_RATECONTROL_DEFAULT;
 
+        /// <summary>
+        /// Specifies the number of frames after which a new I-frame is inserted in to the stream.
+        /// </summary>
         public static int IntraPeriod { get; set; } = -1;
                 
+        /// <summary>
+        /// Represents the H.264 video profile you wish to use.
+        /// </summary>
         public static MMALParametersVideo.MMAL_VIDEO_PROFILE_T VideoProfile { get; set; } = MMALParametersVideo.MMAL_VIDEO_PROFILE_T.MMAL_VIDEO_PROFILE_H264_HIGH;
 
+        /// <summary>
+        /// Represents the H.264 video level you wish to use.
+        /// </summary>
         public static MMALParametersVideo.MMAL_VIDEO_LEVEL_T VideoLevel { get; set; } = MMALParametersVideo.MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4;
 
         public static bool ImmutableInput { get; set; } = true;
 
+        /// <summary>
+        /// Force the stream to include PPS and SPS headers on every I-frame. Needed for certain 
+        /// streaming cases e.g. Apple HLS.
+        /// </summary>
         public static bool InlineHeaders { get; set; }
 
+        /// <summary>
+        /// Enable output of motion vectors. 
+        /// See https://www.raspberrypi.org/forums/viewtopic.php?t=85867 for use case.
+        /// </summary>
         public static bool InlineMotionVectors { get; set; }
 
+        /// <summary>
+        /// Sets the intra refresh period (GoP) rate for the recorded video.
+        /// </summary>
         public static MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T IntraRefresh { get; set; } = MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T.MMAL_VIDEO_INTRA_REFRESH_DISABLED;
 
+        /// <summary>
+        /// Specifies the frames per second to record
+        /// </summary>
         public static MMAL_RATIONAL_T VideoFramerate { get; set; } = new MMAL_RATIONAL_T(30, 1);
 
         /*
@@ -199,39 +240,92 @@ namespace MMALSharp
          * Camera still port specific properties.
          * -----------------------------------------------------------------------------------------------------------
         */
+
+        /// <summary>
+        /// The encoding type to use for Still captures.
+        /// </summary>
         public static MMALEncoding StillEncoding { get; set; } = MMALEncoding.OPAQUE;
 
+        /// <summary>
+        /// The pixel format to use for Still captures.
+        /// </summary>
         public static MMALEncoding StillSubFormat { get; set; } = MMALEncoding.I420;
 
+        /// <summary>
+        /// The Resolution to use for Still captures.
+        /// </summary>
         public static Resolution StillResolution { get; set; } = Resolution.As5MPixel;
         
+        /// <summary>
+        /// The frame rate to use for Still captures.
+        /// </summary>
         public static MMAL_RATIONAL_T StillFramerate { get; set; } = new MMAL_RATIONAL_T(0, 1);        
     }
     
+    /// <summary>
+    /// Allows a user to adjust the colour of outputted frames.
+    /// </summary>
     public struct ColourEffects
     {
         private bool _enable;
         private Color _color;
 
+        /// <summary>
+        /// Enable the Colour Effects functionality.
+        /// </summary>
         public bool Enable => _enable;
+
+        /// <summary>
+        /// The <see cref="Color"/> to use.
+        /// </summary>
         public Color Color => _color;
 
+        /// <summary>
+        /// Initialises a new <see cref="ColourEffects"/> struct.
+        /// </summary>
+        /// <param name="enable">Enable the Colour Effects functionality.</param>
+        /// <param name="color">The <see cref="Color"/> to use.</param>
         public ColourEffects(bool enable, Color color)
         {
             _enable = enable;
             _color = color;
         }
     }
-    
+
+    /// <summary>
+    /// Allows a user to specify a Region of Interest with Still captures.
+    /// </summary>
     public struct Zoom
     {
         private double _x, _y, _width, _height;
 
+        /// <summary>
+        /// The X coordinate between 0 - 1.0.
+        /// </summary>
         public double X => _x;
+
+        /// <summary>
+        /// The Y coordinate between 0 - 1.0.
+        /// </summary>
         public double Y => _y;
+
+        /// <summary>
+        /// The Width value between 0 - 1.0.
+        /// </summary>
         public double Width => _width;
+
+        /// <summary>
+        /// The Height value between 0 - 1.0.
+        /// </summary>
         public double Height => _height;
 
+        /// <summary>
+        /// Intialises a new <see cref="Zoom"/> struct.
+        /// </summary>
+        /// <param name="x">The X coordinate.</param>
+        /// <param name="y">The Y coordinate.</param>
+        /// <param name="width">The Width value.</param>
+        /// <param name="height">The Height value.</param>
         public Zoom(double x, double y, double width, double height)
         {
             _x = x;
@@ -251,44 +345,138 @@ namespace MMALSharp
         public int SwapEyes { get; set; }
     }
     
+    /// <summary>
+    /// Represents an Exif tag for use with JPEG still captures.
+    /// </summary>
     public class ExifTag
     {
+        /// <summary>
+        /// The Exif key.
+        /// </summary>
         public string Key { get; set; }
+
+        /// <summary>
+        /// The Exif value.
+        /// </summary>
         public string Value { get; set; }
     }
-    
+
+    /// <summary>
+    /// The <see cref="Timelapse"/> type is for use with Timelapse still captures.
+    /// </summary>
     public class Timelapse
     {
+        /// <summary>
+        /// The timelapse mode.
+        /// </summary>
         public TimelapseMode Mode { get; set; }
+
+        /// <summary>
+        /// Specifies when timelapse capture should finish.
+        /// </summary>
         public CancellationToken CancellationToken { get; set; }
+
+        /// <summary>
+        /// How often images should be taken (relates to the <see cref="TimelapseMode"/> chosen).
+        /// </summary>
         public int Value { get; set; }
     }
-    
+
+    /// <summary>
+    /// The <see cref="AnnotateImage"/> type is for use with the image annotation functionality.
+    /// This will produce a textual overlay on image stills depending on the options enabled.
+    /// </summary>
     public class AnnotateImage
     {   
+        /// <summary>
+        /// Custom text to overlay on the stills capture.
+        /// </summary>
         public string CustomText { get; set; }
+
+        /// <summary>
+        /// The text size to use.
+        /// </summary>
         public int TextSize { get; set; }
+
+        /// <summary>
+        /// The <see cref="Color"/> of the text.
+        /// </summary>
         public Color TextColour { get; set; } = Color.Empty;
+
+        /// <summary>
+        /// The <see cref="Color"/> of the background. Note: ShowBlackBackground should be enabled
+        /// for this to work.
+        /// </summary>
         public Color BgColour { get; set; } = Color.Empty;
+
+        /// <summary>
+        /// Show shutter settings.
+        /// </summary>
         public bool ShowShutterSettings { get; set; }
+
+        /// <summary>
+        /// Show gain settings.
+        /// </summary>
         public bool ShowGainSettings { get; set; }
+
+        /// <summary>
+        /// Show lens settings.
+        /// </summary>
         public bool ShowLensSettings { get; set; }
+
+        /// <summary>
+        /// Show Continuous Auto Focus settings.
+        /// </summary>
         public bool ShowCafSettings { get; set; }
+
+        /// <summary>
+        /// Show motion settings.
+        /// </summary>
         public bool ShowMotionSettings { get; set; }
+
+        /// <summary>
+        /// Show the frame number.
+        /// </summary>
         public bool ShowFrameNumber { get; set; }
+
+        /// <summary>
+        /// Allows custom background colour to be used.
+        /// </summary>
         public bool ShowBlackBackground { get; set; }
+
+        /// <summary>
+        /// Show the current date.
+        /// </summary>
         public bool ShowDateText { get; set; }
+
+        /// <summary>
+        /// Show the current time.
+        /// </summary>
         public bool ShowTimeText { get; set; }
     }
 
+    /// <summary>
+    /// The <see cref="Split"/> type is used when taking video capture and a user wishes to split
+    /// recording into multiple files. 
+    /// </summary>
     public class Split
     {
+        /// <summary>
+        /// How often files should be split.
+        /// </summary>
         public int Value { get; set; }
+
+        /// <summary>
+        /// The <see cref="TimelapseMode"/> mode to use.
+        /// </summary>
         public TimelapseMode Mode { get; set; }        
     }
 
+    /// <summary>
+    /// The unit of time to use.
+    /// </summary>
     public enum TimelapseMode
-    {
+    {        
         Millisecond,
         Second,
         Minute
