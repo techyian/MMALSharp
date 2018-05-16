@@ -288,19 +288,19 @@ namespace MMALSharp
                 {
                     customTextColor = 1;
 
-                    var yuv = MMALColor.RGBToYUV(MMALCameraConfig.Annotate.TextColour);
-                    customTextY = yuv.Item1.ToByte();
-                    customTextU = yuv.Item2.ToByte();
-                    customTextV = yuv.Item3.ToByte();                                        
+                    var yuv = MMALColor.RGBToYUVBytes(MMALCameraConfig.Annotate.TextColour);
+                    customTextY = yuv.Item1;
+                    customTextU = yuv.Item2;
+                    customTextV = yuv.Item3;                                        
                 }
 
                 if (MMALCameraConfig.Annotate.BgColour != Color.Empty)
                 {
                     customBackgroundColor = 1;
-                    var yuv = MMALColor.RGBToYUV(MMALCameraConfig.Annotate.BgColour);
-                    customBackgroundY = yuv.Item1.ToByte();
-                    customBackgroundU = yuv.Item2.ToByte();
-                    customBackgroundV = yuv.Item3.ToByte();
+                    var yuv = MMALColor.RGBToYUVBytes(MMALCameraConfig.Annotate.BgColour);
+                    customBackgroundY = yuv.Item1;
+                    customBackgroundU = yuv.Item2;
+                    customBackgroundV = yuv.Item3;
                 }
 
                 string t = sb.ToString() + char.MinValue;
@@ -810,13 +810,13 @@ namespace MMALSharp
         {
             MMALLog.Logger.Debug("Setting colour effects");
 
-            var uv = MMALColor.RGBToYUV(colourFx.Color);
+            var uv = MMALColor.RGBToYUVBytes(colourFx.Color);
 
             MMAL_PARAMETER_COLOURFX_T colFx = new MMAL_PARAMETER_COLOURFX_T(
                 new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_COLOUR_EFFECT, Marshal.SizeOf<MMAL_PARAMETER_COLOURFX_T>()),
                                                                                                         colourFx.Enable ? 1 : 0,
-                                                                                                        (int)Math.Floor(uv.Item2),
-                                                                                                        (int)Math.Floor(uv.Item3));
+                                                                                                        uv.Item2,
+                                                                                                        uv.Item3);
 
             MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, &colFx.Hdr), "Unable to set colour fx");
         }

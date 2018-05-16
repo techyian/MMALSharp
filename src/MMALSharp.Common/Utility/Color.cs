@@ -227,6 +227,21 @@ namespace MMALSharp.Utility
         }
 
         /// <summary>
+        /// Converts a RGB <see cref="Color"/> structure to the YUV colour space as byte values.
+        /// See: https://en.wikipedia.org/wiki/YUV#Converting_between_Y%E2%80%B2UV_and_RGB
+        /// </summary>
+        /// <param name="c">The <see cref="Color"/> structure.</param>
+        /// <returns>A 3 pair <see cref="Tuple"/> of byte values representing the RGB conversion to YUV.</returns>
+        public static Tuple<byte, byte, byte> RGBToYUVBytes(Color c)
+        {
+            var y = ((66  * c.R + 129 * c.G + 25  * c.B + 128) >> 8) + 16;
+            var u = ((-38 * c.R - 73  * c.G + 112 * c.B + 128) >> 8) + 128;
+            var v = ((112 * c.R - 94  * c.G - 18  * c.B + 128) >> 8) + 128;
+
+            return new Tuple<byte, byte, byte>((byte)y, (byte)u, (byte)v);
+        }
+
+        /// <summary>
         /// Returns a new <see cref="Color"/> structure based from YUV floating point values.
         /// See: https://en.wikipedia.org/wiki/YUV#Conversion_to/from_RGB
         /// </summary>

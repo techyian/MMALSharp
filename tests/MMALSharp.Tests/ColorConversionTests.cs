@@ -51,7 +51,17 @@ namespace MMALSharp.Tests
                         
             Assert.True(fromYUV.Equals(fromYUVBytes));
         }
-                
+
+        [Fact]
+        [DisplayTestMethodName]
+        public void RGBToYUVBytes()
+        {
+            var yuvBytes = MMALColor.RGBToYUVBytes(Color.Blue);
+            var fromYuvBytes = MMALColor.FromYUVBytes(yuvBytes.Item1, yuvBytes.Item2, yuvBytes.Item3);
+
+            Assert.True(fromYuvBytes.R == Color.Blue.R && fromYuvBytes.G == Color.Blue.G && fromYuvBytes.B == Color.Blue.B);
+        }
+
         [Fact]
         [DisplayTestMethodName]
         public void FromHLS()
