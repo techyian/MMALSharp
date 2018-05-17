@@ -565,6 +565,7 @@ namespace MMALSharp
         /// Release an output port buffer, get a new one from the queue and send it for processing.
         /// </summary>
         /// <param name="bufferImpl">A managed buffer object.</param>
+        /// <param name="eos">End of stream. Disables sending the next buffer after releasing the old one.</param>
         internal void ReleaseOutputBuffer(MMALBufferImpl bufferImpl, bool eos)
         {
             bufferImpl.Release();
