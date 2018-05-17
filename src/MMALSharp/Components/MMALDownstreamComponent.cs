@@ -192,12 +192,12 @@ namespace MMALSharp.Components
 
             this.Outputs[outputPort].Resolution = new Resolution(this.Width, this.Height).Pad();
             this.Outputs[outputPort].Crop = new Rectangle(0, 0, this.Width, this.Height);
-            
-            this.Outputs[outputPort].BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
-            this.Outputs[outputPort].BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
-
+                        
             // It is important to re-commit changes to width and height.
             this.Outputs[outputPort].Commit();
+
+            this.Outputs[outputPort].BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
+            this.Outputs[outputPort].BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
         }
 
         public override void Dispose()

@@ -111,13 +111,15 @@ namespace MMALSharp.Components
                 new ExifTag { Key = "IFD0.DateTime", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") }
             };
 
+            this.SetDisableExif(false);
+
             defaultTags.ForEach(c => this.AddExifTag(c));
 
             if ((defaultTags.Count + exifTags.Length) > 32)
             {
                 throw new PiCameraError("Maximum number of EXIF tags exceeded.");
             }
-
+                        
             // Add user defined tags.
             foreach (ExifTag tag in exifTags)
             {
@@ -130,8 +132,7 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="exifTag">The EXIF tag to add to.</param>
         internal void AddExifTag(ExifTag exifTag)
-        {
-            this.SetDisableExif(false);
+        {            
             var formattedExif = exifTag.Key + "=" + exifTag.Value + char.MinValue;
 
             if (formattedExif.Length > MaxExifPayloadLength)

@@ -102,8 +102,7 @@ namespace MMALSharp.Native
         private ushort index, indexAll;
         private int isEnabled;
         private MMAL_ES_FORMAT_T* format;
-        private int bufferNumMin, bufferAlignmentMin, bufferNumRecommended, bufferNum;
-        private uint bufferSizeMin, bufferSizeRecommended, bufferSize;
+        private int bufferNumMin, bufferSizeMin, bufferAlignmentMin, bufferNumRecommended, bufferSizeRecommended, bufferNum, bufferSize;        
         private MMAL_COMPONENT_T* component;
         private IntPtr userData;
         private uint capabilities;
@@ -116,10 +115,10 @@ namespace MMALSharp.Native
         public int IsEnabled => isEnabled;
         public MMAL_ES_FORMAT_T* Format => format;
         public int BufferNumMin => bufferNumMin;        
-        public uint BufferSizeMin => bufferSizeMin;        
+        public int BufferSizeMin => bufferSizeMin;        
         public int BufferAlignmentMin => bufferAlignmentMin;        
         public int BufferNumRecommended => bufferNumRecommended;        
-        public uint BufferSizeRecommended => bufferSizeRecommended;
+        public int BufferSizeRecommended => bufferSizeRecommended;
         
         public int BufferNum
         {
@@ -132,7 +131,7 @@ namespace MMALSharp.Native
                 this.bufferNum = value;
             }
         }
-        public uint BufferSize
+        public int BufferSize
         {
             get
             {
@@ -148,8 +147,8 @@ namespace MMALSharp.Native
         public uint Capabilities => capabilities;
         
         public MMAL_PORT_T(IntPtr priv, char* name, MMALPort.MMAL_PORT_TYPE_T type, ushort index, ushort indexAll,
-                           int isEnabled, MMAL_ES_FORMAT_T* format, int bufferNumMin, uint bufferSizeMin, int bufferAlignmentMin, 
-                           int bufferNumRecommended, uint bufferSizeRecommended, int bufferNum, uint bufferSize, MMAL_COMPONENT_T* component, 
+                           int isEnabled, MMAL_ES_FORMAT_T* format, int bufferNumMin, int bufferSizeMin, int bufferAlignmentMin, 
+                           int bufferNumRecommended, int bufferSizeRecommended, int bufferNum, int bufferSize, MMAL_COMPONENT_T* component, 
                            IntPtr userData, uint capabilities)
         {
             this.priv = priv;
