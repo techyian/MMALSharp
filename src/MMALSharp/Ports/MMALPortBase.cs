@@ -100,7 +100,7 @@ namespace MMALSharp
         /// <summary>
         /// Specifies minimum size of buffer headers required for this port.
         /// </summary>
-        public uint BufferSizeMin => this.Ptr->BufferSizeMin;
+        public int BufferSizeMin => this.Ptr->BufferSizeMin;
 
         /// <summary>
         /// Specifies minimum alignment value for buffer headers required for this port.
@@ -115,7 +115,7 @@ namespace MMALSharp
         /// <summary>
         /// Specifies recommended size of buffer headers for this port.
         /// </summary>
-        public uint BufferSizeRecommended => this.Ptr->BufferSizeRecommended;
+        public int BufferSizeRecommended => this.Ptr->BufferSizeRecommended;
 
         /// <summary>
         /// Indicates the currently set number of buffer headers for this port.
@@ -129,7 +129,7 @@ namespace MMALSharp
         /// <summary>
         /// Indicates the currently set size of buffer headers for this port.
         /// </summary>
-        public uint BufferSize
+        public int BufferSize
         {
             get => this.Ptr->BufferSize;
             internal set => this.Ptr->BufferSize = value;
