@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using MMALSharp.Callbacks;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
@@ -52,9 +53,9 @@ namespace MMALSharp.Components
             this.Timeout = timeout;
         }
 
-        public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
+        public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, ICallbackHandler callbackHandler, int quality, int bitrate = 0, bool zeroCopy = false)
         {
-            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate, zeroCopy);
+            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, callbackHandler, quality, bitrate, zeroCopy);
             ((MMALVideoPort)this.Outputs[outputPort]).Timeout = this.Timeout;
         }
 

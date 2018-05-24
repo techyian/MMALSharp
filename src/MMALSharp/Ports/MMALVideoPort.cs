@@ -52,7 +52,7 @@ namespace MMALSharp.Ports
 
                 if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero && bufferImpl.Length > 0)
                 {
-                    this.ManagedOutputCallback(bufferImpl, this);
+                    this.ManagedOutputCallback.Callback(bufferImpl);
                 }
 
                 var eos = this.Timeout.HasValue && DateTime.Now.CompareTo(this.Timeout.Value) > 0;

@@ -6,6 +6,7 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using MMALSharp.Callbacks;
 using MMALSharp.Native;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
@@ -28,16 +29,6 @@ namespace MMALSharp
     /// </summary>
     public abstract unsafe class MMALPortBase : MMALObject
     {
-        /// <summary>
-        /// Native pointer that represents this port.
-        /// </summary>
-        internal MMAL_PORT_T* Ptr { get; set; }
-
-        /// <summary>
-        /// Native pointer that represents the component this port is associated with.
-        /// </summary>
-        internal MMAL_COMPONENT_T* Comp { get; set; }
-
         /// <summary>
         /// Specifies the type of port this is.
         /// </summary>
@@ -80,6 +71,51 @@ namespace MMALSharp
         /// </summary>
         public bool ZeroCopy { get; internal set; }
 
+        /// <summary>
+        /// Asynchronous trigger which is set when processing has completed on this port.
+        /// </summary>
+        public AsyncCountdownEvent Trigger { get; set; }
+
+        /// <summary>
+        /// Delegate to populate native buffer header with user provided image data.
+        /// </summary>
+        public IInputCallbackHandler ManagedInputCallback { get; set; }
+
+        /// <summary>
+        /// Delegate we use to do further processing on buffer headers when they're received by the native callback delegate.
+        /// </summary>
+        public ICallbackHandler ManagedOutputCallback { get; set; }
+
+        /// <summary>
+        /// Monitor lock for input port callback method.
+        /// </summary>
+        internal static object InputLock = new object();
+
+        /// <summary>
+        /// Monitor lock for output port callback method.
+        /// </summary>
+        internal static object OutputLock = new object();
+
+        /// <summary>
+        /// Native pointer to the native callback function.
+        /// </summary>
+        internal IntPtr PtrCallback { get; set; }
+
+        /// <summary>
+        /// Delegate for native port callback.
+        /// </summary>
+        internal MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
+
+        /// <summary>
+        /// Native pointer that represents this port.
+        /// </summary>
+        internal MMAL_PORT_T* Ptr { get; set; }
+
+        /// <summary>
+        /// Native pointer that represents the component this port is associated with.
+        /// </summary>
+        internal MMAL_COMPONENT_T* Comp { get; set; }
+        
         #region Native properties
 
         /// <summary>
@@ -200,41 +236,6 @@ namespace MMALSharp
         } 
 
         #endregion
-
-        /// <summary>
-        /// Asynchronous trigger which is set when processing has completed on this port.
-        /// </summary>
-        public AsyncCountdownEvent Trigger { get; set; }
-
-        /// <summary>
-        /// Monitor lock for input port callback method.
-        /// </summary>
-        internal static object InputLock = new object();
-
-        /// <summary>
-        /// Monitor lock for output port callback method.
-        /// </summary>
-        internal static object OutputLock = new object();
-                
-        /// <summary>
-        /// Native pointer to the native callback function.
-        /// </summary>
-        internal IntPtr PtrCallback { get; set; }
-
-        /// <summary>
-        /// Delegate for native port callback.
-        /// </summary>
-        internal MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
-
-        /// <summary>
-        /// Delegate to populate native buffer header with user provided image data.
-        /// </summary>
-        public Func<MMALBufferImpl, MMALPortBase, ProcessResult> ManagedInputCallback { get; set; }
-
-        /// <summary>
-        /// Delegate we use to do further processing on buffer headers when they're received by the native callback delegate.
-        /// </summary>
-        public Action<MMALBufferImpl, MMALPortBase> ManagedOutputCallback { get; set; }
         
         /// <summary>
         /// Creates a new managed reference to a MMAL Component Port.
@@ -318,9 +319,9 @@ namespace MMALSharp
         /// </summary>
         /// <param name="managedCallback">Delegate for managed output port callback.</param>
         /// <param name="sendBuffers">Indicates whether we want to send all the buffers in the port pool or simply create the pool.</param>
-        internal virtual void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, bool sendBuffers = true)
+        internal virtual void EnablePort(bool sendBuffers = true)
         {
-            if (managedCallback != null)
+            if (this.ManagedOutputCallback != null)
             {
                 this.SendAllBuffers(sendBuffers);
             }
@@ -330,19 +331,17 @@ namespace MMALSharp
         /// Provides functionality to enable processing on an input port.
         /// </summary>
         /// <param name="managedCallback">Delegate for managed input port callback.</param>
-        internal virtual void EnablePort(Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback)
+        internal virtual void EnablePort()
         {            
             if (!this.Enabled)
             {
-                this.ManagedInputCallback = managedCallback;
-
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeInputPortCallback);
 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
                 MMALLog.Logger.Debug("Enabling input port.");
 
-                if (managedCallback == null)
+                if (this.ManagedInputCallback == null)
                 {
                     MMALLog.Logger.Warn("Callback null");
 
@@ -530,7 +529,7 @@ namespace MMALSharp
                 }
                 
                 // Populate the new input buffer with user provided image data.
-                var result = this.ManagedInputCallback(newBuffer, this);
+                var result = this.ManagedInputCallback.Callback(newBuffer);
                 newBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
 
                 try

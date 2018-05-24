@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using MMALSharp.Callbacks;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
@@ -80,9 +81,9 @@ namespace MMALSharp.Components
             this.Outputs[outputPort] = new MMALStillPort(this.Outputs[outputPort]);
         }
 
-        public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
+        public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, ICallbackHandler callbackHandler, int quality, int bitrate = 0, bool zeroCopy = false)
         {
-            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate, false);
+            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, callbackHandler, quality, bitrate, false);
 
             if (this.RawBayer)
             {

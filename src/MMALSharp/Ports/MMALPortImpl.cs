@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using MMALSharp.Callbacks;
 using MMALSharp.Handlers;
 using static MMALSharp.MMALCallerHelper;
 using MMALSharp.Native;
@@ -33,12 +34,10 @@ namespace MMALSharp
         /// </summary>
         /// <param name="managedCallback">A managed callback method we can do further processing on.</param>
         /// <param name="sendBuffers">Indicates whether we want to send all the buffers in the port pool or simply create the pool.</param>
-        internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, bool sendBuffers = true)
+        internal override void EnablePort(bool sendBuffers = true)
         {            
             if (!this.Enabled)
             {
-                this.ManagedOutputCallback = managedCallback;
-
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeOutputPortCallback);
                 
                 IntPtr ptrCallback = IntPtr.Zero;
@@ -54,7 +53,7 @@ namespace MMALSharp
                 
                 MMALLog.Logger.Debug("Enabling port.");
 
-                if (managedCallback == null)
+                if (this.ManagedOutputCallback == null)
                 {
                     MMALLog.Logger.Warn("Callback null");
 
@@ -65,7 +64,7 @@ namespace MMALSharp
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
                 }
                                 
-                base.EnablePort(managedCallback, sendBuffers);                
+                base.EnablePort(sendBuffers);                
             }
 
             if (!this.Enabled)
@@ -117,7 +116,7 @@ namespace MMALSharp
 
                 if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero && bufferImpl.Length > 0)
                 {
-                    this.ManagedOutputCallback(bufferImpl, this);
+                    this.ManagedOutputCallback.Callback(bufferImpl);
                 }
 
                 var eos = bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END ||

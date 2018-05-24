@@ -314,8 +314,8 @@ namespace MMALSharp.Components
             this.Inputs[0].BufferNum = 1;
             this.Inputs[0].BufferSize = Math.Max(this.Source.Length, this.Inputs[0].BufferSizeMin);
 
-            this.Start(this.Control, new Action<MMALBufferImpl, MMALPortBase>(this.ManagedControlCallback));
-            this.Start(this.Inputs[0], this.ManagedInputCallback);
+            this.Start(this.Control);
+            this.Start(this.Inputs[0]);
         }
 
         /// <summary>

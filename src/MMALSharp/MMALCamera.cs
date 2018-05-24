@@ -102,7 +102,7 @@ namespace MMALSharp
             {
                 this.ConfigureCameraSettings();
 
-                vidEncoder.ConfigureOutputPort(0, MMALEncoding.H264, MMALEncoding.I420, 0, MMALVideoEncoder.MaxBitrateLevel4);
+                vidEncoder.ConfigureOutputPort(0, MMALEncoding.H264, MMALEncoding.I420, null, 0, MMALVideoEncoder.MaxBitrateLevel4);
 
                 // Create our component pipeline.
                 this.Camera.VideoPort.ConnectTo(vidEncoder);
@@ -149,7 +149,7 @@ namespace MMALSharp
                     // Camera warm up time
                     await Task.Delay(2000);
                     
-                    this.Camera.Start(this.Camera.StillPort, new Action<MMALBufferImpl, MMALPortBase>(this.Camera.ManagedOutputCallback));
+                    this.Camera.Start(this.Camera.StillPort);
                     this.Camera.StillPort.Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
 
                     this.StartCapture(this.Camera.StillPort);
@@ -191,7 +191,7 @@ namespace MMALSharp
             {
                 this.ConfigureCameraSettings();
 
-                imgEncoder.ConfigureOutputPort(0, encodingType, pixelFormat, 90);
+                imgEncoder.ConfigureOutputPort(0, encodingType, pixelFormat, null, 90);
 
                 // Create our component pipeline.
                 this.Camera.StillPort.ConnectTo(imgEncoder);
@@ -302,7 +302,7 @@ namespace MMALSharp
                 {
                     if (component.Outputs[portNum].ConnectedReference == null)
                     {
-                        component.Start(portNum, new Action<MMALBufferImpl, MMALPortBase>(component.ManagedOutputCallback));
+                        component.Start(portNum);
                         component.Outputs[portNum].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
                     }
                 }

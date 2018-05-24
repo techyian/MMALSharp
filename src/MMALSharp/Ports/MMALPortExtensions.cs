@@ -110,6 +110,23 @@ namespace MMALSharp
             }
         }
 
+        public static string GetPortType(this PortType type)
+        {
+            switch (type)
+            {
+                case PortType.Input:
+                    return "Input";
+                case PortType.Output:
+                    return "Output";
+                case PortType.Clock:
+                    return "Clock";
+                case PortType.Control:
+                    return "Control";
+            }
+
+            return string.Empty;
+        }
+
         /// <summary>
         /// Provides a facility to set data on the port using the native helper functions.
         /// </summary>
