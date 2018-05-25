@@ -13,20 +13,17 @@ namespace MMALSharp.Callbacks
         protected MMALEncoding EncodingType { get; set; }
         protected MMALPortBase WorkingPort { get; set; }
 
-        protected InputCallbackHandlerBase()
-        {
-        }
-
-        protected InputCallbackHandlerBase(MMALEncoding encodingType)
-        {
-            this.EncodingType = encodingType;
-        }
-
-        public void Initialise(MMALPortBase port)
+        protected InputCallbackHandlerBase(MMALPortBase port)
         {
             this.WorkingPort = port;
         }
 
+        protected InputCallbackHandlerBase(MMALEncoding encodingType, MMALPortBase port)
+        {
+            this.EncodingType = encodingType;
+            this.WorkingPort = port;
+        }
+        
         public virtual ProcessResult Callback(MMALBufferImpl buffer)
         {
             MMALLog.Logger.Debug("In managed input callback");

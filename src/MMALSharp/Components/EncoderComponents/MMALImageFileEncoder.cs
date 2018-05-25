@@ -17,7 +17,7 @@ namespace MMALSharp.Components
 
         public static MMALQueueImpl WorkingQueue { get; set; }
 
-        public override unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, IInputCallbackHandler callbackHandler, int width, int height, bool zeroCopy = false)
+        public override unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, bool zeroCopy = false)
         {
             this.InitialiseInputPort(0);
 
@@ -55,9 +55,6 @@ namespace MMALSharp.Components
                 this.Inputs[0].ZeroCopy = true;
                 this.Inputs[0].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
             }
-
-            this.Inputs[0].ManagedInputCallback = callbackHandler ?? new DefaultInputCallbackHandler();
-            this.Inputs[0].ManagedInputCallback.Initialise(this.Inputs[0]);
         }
 
         internal unsafe void ConfigureOutputPortWithoutInit(int outputPort, MMALEncoding encodingType)
@@ -211,7 +208,7 @@ namespace MMALSharp.Components
 
             this.ConfigureOutputPortWithoutInit(0, this.Outputs[0].EncodingType);
 
-            this.Outputs[0].EnablePort(false);
+            this.Outputs[0].EnableOutputPort(false);
         }
 
         /// <summary>

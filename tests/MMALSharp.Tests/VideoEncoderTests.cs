@@ -93,7 +93,7 @@ namespace MMALSharp.Tests
                 {
                     fixture.MMALCamera.ConfigureCameraSettings();
 
-                    vidEncoder.ConfigureOutputPort(0, encodingType, pixelFormat, null, 10, 25000000);
+                    vidEncoder.ConfigureOutputPort(encodingType, pixelFormat, 10, 25000000);
 
                     //Create our component pipeline.         
                     fixture.MMALCamera.Camera.VideoPort
@@ -141,7 +141,7 @@ namespace MMALSharp.Tests
                 {
                     fixture.MMALCamera.ConfigureCameraSettings();
 
-                    vidEncoder.ConfigureOutputPort(0, encodingType, pixelFormat, null, 10, 25000000);
+                    vidEncoder.ConfigureOutputPort(encodingType, pixelFormat, 10, 25000000);
 
                     //Create our component pipeline.         
                     fixture.MMALCamera.Camera.VideoPort
@@ -179,7 +179,7 @@ namespace MMALSharp.Tests
                 {
                     fixture.MMALCamera.ConfigureCameraSettings();
 
-                    vidEncoder.ConfigureOutputPort(0, MMALEncoding.MJPEG, MMALEncoding.I420, null, 10, 25000000);
+                    vidEncoder.ConfigureOutputPort(MMALEncoding.MJPEG, MMALEncoding.I420, 10, 25000000);
 
                     //Create our component pipeline.         
                     fixture.MMALCamera.Camera.VideoPort
@@ -214,7 +214,7 @@ namespace MMALSharp.Tests
                 {
                     fixture.MMALCamera.ConfigureCameraSettings();
 
-                    vidEncoder.ConfigureOutputPort(0, MMALEncoding.MJPEG, MMALEncoding.I420, null, 90, 25000000);
+                    vidEncoder.ConfigureOutputPort(MMALEncoding.MJPEG, MMALEncoding.I420, 90, 25000000);
 
                     //Create our component pipeline.         
                     fixture.MMALCamera.Camera.VideoPort

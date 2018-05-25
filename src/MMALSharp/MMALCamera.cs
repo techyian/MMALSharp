@@ -102,7 +102,7 @@ namespace MMALSharp
             {
                 this.ConfigureCameraSettings();
 
-                vidEncoder.ConfigureOutputPort(0, MMALEncoding.H264, MMALEncoding.I420, null, 0, MMALVideoEncoder.MaxBitrateLevel4);
+                vidEncoder.ConfigureOutputPort(MMALEncoding.H264, MMALEncoding.I420, 0, MMALVideoEncoder.MaxBitrateLevel4);
 
                 // Create our component pipeline.
                 this.Camera.VideoPort.ConnectTo(vidEncoder);
@@ -191,7 +191,7 @@ namespace MMALSharp
             {
                 this.ConfigureCameraSettings();
 
-                imgEncoder.ConfigureOutputPort(0, encodingType, pixelFormat, null, 90);
+                imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, 90);
 
                 // Create our component pipeline.
                 this.Camera.StillPort.ConnectTo(imgEncoder);

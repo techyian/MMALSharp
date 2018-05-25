@@ -34,15 +34,12 @@ namespace MMALSharp.Ports
         /// <summary>
         /// Enables processing on a port.
         /// </summary>
-        /// <param name="managedCallback">A managed callback method we can do further processing on.</param>
-        /// <param name="sendBuffers">
-        /// Indicates whether we want to send all the buffers in the port pool or simply create the pool.
-        /// This parameter has no effect for <see cref="MMALControlPort"/>.
-        /// </param>
-        internal override void EnablePort(bool sendBuffers = true)
+        internal override void EnableControlPort()
         {
             if (!this.Enabled)
             {
+                this.ManagedControlCallback = OutputCallbackProvider.FindCallback(this);
+
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeControlPortCallback);
 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);

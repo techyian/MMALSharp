@@ -42,7 +42,7 @@ namespace MMALSharp.Components
         /// <param name="pixelFormat">The pixel format the input port shall be expecting.</param>
         /// <param name="copyPort">The output port we are copying format data from.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, IInputCallbackHandler callbackHandler, MMALPortImpl copyPort, bool zeroCopy = false)
+        public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, MMALPortImpl copyPort, bool zeroCopy = false)
         {
             this.InitialiseInputPort(0);
 
@@ -68,9 +68,6 @@ namespace MMALSharp.Components
                 this.Inputs[0].ZeroCopy = true;
                 this.Inputs[0].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
             }
-
-            this.Inputs[0].ManagedInputCallback = callbackHandler ?? new DefaultInputCallbackHandler();
-            this.Inputs[0].ManagedInputCallback.Initialise(this.Inputs[0]);
         }
 
         /// <summary>
@@ -82,19 +79,7 @@ namespace MMALSharp.Components
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
         public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, bool zeroCopy = false)
         {
-            this.ConfigureInputPort(encodingType, pixelFormat, null, 0, 0, zeroCopy);
-        }
-
-        /// <summary>
-        /// Call to configure changes on an Image Encoder input port. Used when providing an image file directly
-        /// to the component.
-        /// </summary>
-        /// <param name="encodingType">The encoding type the input port will expect data in.</param>
-        /// <param name="pixelFormat">The pixel format the input port will expect data in.</param>
-        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, IInputCallbackHandler callbackHandler, bool zeroCopy = false)
-        {
-            this.ConfigureInputPort(encodingType, pixelFormat, callbackHandler, 0, 0, zeroCopy);
+            this.ConfigureInputPort(encodingType, pixelFormat, 0, 0, zeroCopy);
         }
 
         /// <summary>
@@ -106,7 +91,7 @@ namespace MMALSharp.Components
         /// <param name="width">The width of the incoming frame.</param>
         /// <param name="height">The height of the incoming frame.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, IInputCallbackHandler callbackHandler, int width, int height, bool zeroCopy = false)
+        public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, bool zeroCopy = false)
         {
             this.InitialiseInputPort(0);
 
@@ -137,9 +122,6 @@ namespace MMALSharp.Components
                 this.Inputs[0].ZeroCopy = true;
                 this.Inputs[0].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
             }
-
-            this.Inputs[0].ManagedInputCallback = callbackHandler ?? new DefaultInputCallbackHandler();
-            this.Inputs[0].ManagedInputCallback.Initialise(this.Inputs[0]);
         }
 
         /// <summary>
@@ -152,22 +134,9 @@ namespace MMALSharp.Components
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
         public virtual unsafe void ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
-            this.ConfigureOutputPort(0, encodingType, pixelFormat, null, quality, bitrate, zeroCopy);
+            this.ConfigureOutputPort(0, encodingType, pixelFormat, quality, bitrate, zeroCopy);
         }
-
-        /// <summary>
-        /// Call to configure changes on the 1st Downstream component output port.
-        /// </summary>
-        /// <param name="encodingType">The encoding type this output port will send data in.</param>
-        /// <param name="pixelFormat">The pixel format this output port will send data in.</param>
-        /// <param name="quality">The quality of our outputted data.</param>
-        /// <param name="bitrate">The bitrate we are sending data at.</param>
-        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        public virtual unsafe void ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, ICallbackHandler callbackHandler, int quality, int bitrate = 0, bool zeroCopy = false)
-        {
-            this.ConfigureOutputPort(0, encodingType, pixelFormat, callbackHandler, quality, bitrate, zeroCopy);
-        }
-
+        
         /// <summary>
         /// Call to configure changes on an Downstream component output port.
         /// </summary>
@@ -177,7 +146,7 @@ namespace MMALSharp.Components
         /// <param name="quality">The quality of our outputted data.</param>
         /// <param name="bitrate">The bitrate we are sending data at.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        public virtual unsafe void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, ICallbackHandler callbackHandler, int quality, int bitrate = 0, bool zeroCopy = false)
+        public virtual unsafe void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
             this.InitialiseOutputPort(outputPort);
             this.ProcessingPorts.Add(outputPort);
@@ -230,9 +199,8 @@ namespace MMALSharp.Components
 
             this.Outputs[outputPort].BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
             this.Outputs[outputPort].BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
-
-            this.Outputs[outputPort].ManagedOutputCallback = callbackHandler ?? new DefaultCallbackHandler();
-            this.Outputs[outputPort].ManagedOutputCallback.Initialise(this.Outputs[outputPort]);
+            
+            this.Outputs[outputPort].ManagedOutputCallback = OutputCallbackProvider.FindCallback(this.Outputs[outputPort]);
         }
 
         public override void Dispose()

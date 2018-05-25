@@ -7,7 +7,6 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
-using MMALSharp.Handlers;
 using static MMALSharp.MMALCallerHelper;
 using MMALSharp.Native;
 
@@ -30,15 +29,51 @@ namespace MMALSharp
         }
 
         /// <summary>
+        /// Enables processing on an input port.
+        /// </summary>
+        internal override void EnableInputPort()
+        {
+            if (!this.Enabled)
+            {
+                this.ManagedInputCallback = InputCallbackProvider.FindCallback(this);
+
+                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeInputPortCallback);
+
+                IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
+
+                MMALLog.Logger.Debug("Enabling input port.");
+
+                if (this.ManagedInputCallback == null)
+                {
+                    MMALLog.Logger.Warn("Callback null");
+
+                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
+                }
+                else
+                {
+                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
+                }
+
+                this.InitialiseBufferPool();
+            }
+
+            if (!this.Enabled)
+            {
+                throw new PiCameraError("Unknown error occurred whilst enabling port");
+            }
+        }
+
+        /// <summary>
         /// Enables processing on an output port.
         /// </summary>
-        /// <param name="managedCallback">A managed callback method we can do further processing on.</param>
         /// <param name="sendBuffers">Indicates whether we want to send all the buffers in the port pool or simply create the pool.</param>
-        internal override void EnablePort(bool sendBuffers = true)
+        internal override void EnableOutputPort(bool sendBuffers = true)
         {            
             if (!this.Enabled)
             {
-                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeOutputPortCallback);
+                this.ManagedOutputCallback = OutputCallbackProvider.FindCallback(this);
+
+                this.NativeCallback = this.NativeOutputPortCallback;
                 
                 IntPtr ptrCallback = IntPtr.Zero;
                 if (sendBuffers)
@@ -64,7 +99,7 @@ namespace MMALSharp
                     MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
                 }
                                 
-                base.EnablePort(sendBuffers);                
+                base.EnableOutputPort(sendBuffers);                
             }
 
             if (!this.Enabled)

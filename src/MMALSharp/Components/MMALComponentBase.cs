@@ -100,41 +100,7 @@ namespace MMALSharp
                 this.Ports.Add(new MMALPortImpl(&(*this.Ptr->Port[i]), this, PortType.Unknown));
             }
         }
-
-        /// <summary>
-        /// Delegate to process the buffer header containing image data.
-        /// </summary>
-        /// <param name="buffer">The current buffer header being processed.</param>
-        /// <param name="port">The port we're currently processing on.</param>
-        /// <returns>A process result containing user fed image data.</returns>
-        /*public virtual ProcessResult ManagedInputCallback(MMALBufferImpl buffer, MMALPortBase port)
-        {
-            MMALLog.Logger.Debug("In managed input callback");
-            return this.Handler?.Process(buffer.AllocSize);
-        }*/
-
-        /// <summary>
-        /// Delegate to process the buffer header containing image data.
-        /// </summary>
-        /// <param name="buffer">The current buffer header being processed.</param>
-        /// <param name="port">The port we're currently processing on.</param>
-        /*public virtual void ManagedOutputCallback(MMALBufferImpl buffer, MMALPortBase port)
-        {
-            MMALLog.Logger.Debug("In managed output callback");
-            var data = buffer.GetBufferData();
-            this.Handler?.Process(data);
-        }*/
-
-        /// <summary>
-        /// Delegate to process any information sent to the component's control port.
-        /// </summary>
-        /// <param name="buffer">The current buffer header being processed.</param>
-        /// <param name="port">The port we're currently processing on.</param>
-        public virtual void ManagedControlCallback(MMALBufferImpl buffer, MMALPortBase port)
-        {
-            MMALLog.Logger.Debug("In managed control callback");                        
-        }
-
+        
         /// <summary>
         /// Enables any connections associated with this component, traversing down the pipeline to enable those connections
         /// also.
@@ -315,12 +281,25 @@ namespace MMALSharp
         /// <param name="managedCallback">The managed method to callback to from the native callback.</param>
         internal void Start(MMALPortBase port)
         {
-            if (this.Handler != null && this.Handler.GetType().GetTypeInfo().IsSubclassOf(typeof(StreamCaptureHandler)))
+            switch (port.PortType)
             {
-                ((StreamCaptureHandler)this.Handler).NewFile();
+                case PortType.Input:
+                    port.EnableInputPort();
+                    break;
+                case PortType.Output:
+                    if (this.Handler != null && this.Handler.GetType().GetTypeInfo().IsSubclassOf(typeof(StreamCaptureHandler)))
+                    {
+                        ((StreamCaptureHandler)this.Handler).NewFile();
+                    }
+                    port.EnableOutputPort();
+                    break;
+                case PortType.Control:
+                    port.EnableControlPort();
+                    break;
+                default:
+                    port.EnableOutputPort();
+                    break;
             }
-
-            port.EnablePort();
         }
         
         /// <summary>

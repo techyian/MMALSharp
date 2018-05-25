@@ -220,7 +220,7 @@ namespace MMALSharp.Components
 
             MMALLog.Logger.Debug("Camera config set");
 
-            this.Control.EnablePort();
+            this.Control.EnableControlPort();
 
             MMALLog.Logger.Debug("Configuring camera parameters.");
 

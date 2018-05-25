@@ -315,11 +315,17 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Provides functionality to enable processing on an output port.
+        /// Provides functionality to enable processing on a control port.
         /// </summary>
-        /// <param name="managedCallback">Delegate for managed output port callback.</param>
+        internal virtual void EnableControlPort()
+        {
+        }
+
+        /// <summary>
+        /// Provides functionality to enable processing on an output port.
         /// <param name="sendBuffers">Indicates whether we want to send all the buffers in the port pool or simply create the pool.</param>
-        internal virtual void EnablePort(bool sendBuffers = true)
+        /// </summary>
+        internal virtual void EnableOutputPort(bool sendBuffers = true)
         {
             if (this.ManagedOutputCallback != null)
             {
@@ -330,35 +336,8 @@ namespace MMALSharp
         /// <summary>
         /// Provides functionality to enable processing on an input port.
         /// </summary>
-        /// <param name="managedCallback">Delegate for managed input port callback.</param>
-        internal virtual void EnablePort()
-        {            
-            if (!this.Enabled)
-            {
-                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeInputPortCallback);
-
-                IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
-
-                MMALLog.Logger.Debug("Enabling input port.");
-
-                if (this.ManagedInputCallback == null)
-                {
-                    MMALLog.Logger.Warn("Callback null");
-
-                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
-                }
-                else
-                {
-                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
-                }
-
-                this.InitialiseBufferPool();
-            }
-
-            if (!this.Enabled)
-            {
-                throw new PiCameraError("Unknown error occurred whilst enabling port");
-            }
+        internal virtual void EnableInputPort()
+        {
         }
 
         /// <summary>

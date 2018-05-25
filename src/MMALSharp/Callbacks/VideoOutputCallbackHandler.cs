@@ -11,39 +11,43 @@ namespace MMALSharp.Callbacks
 {
     public class VideoOutputCallbackHandler : DefaultCallbackHandler
     {
-        private readonly MMALVideoEncoder _component;
-
-        public VideoOutputCallbackHandler(MMALVideoEncoder component)
+        public VideoOutputCallbackHandler(MMALPortBase port)
+            : base(port)
         {
-            _component = component;
         }
 
-        public VideoOutputCallbackHandler(MMALVideoEncoder component, MMALEncoding encoding)
-            : base(encoding)
+        public VideoOutputCallbackHandler(MMALEncoding encoding, MMALPortBase port)
+            : base(encoding, port)
         {
-            _component = component;
         }
 
         public override void Callback(MMALBufferImpl buffer)
         {
-            if (_component.PrepareSplit && buffer.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))
+            if (this.WorkingPort.ComponentReference.GetType() != typeof(MMALVideoEncoder))
             {
-                ((VideoStreamCaptureHandler)_component.Handler).Split();
-                _component.LastSplit = DateTime.Now;
-                _component.PrepareSplit = false;
+                throw new ArgumentException($"Working port component is not of type {nameof(MMALVideoEncoder)}");
+            }
+
+            var component = (MMALVideoEncoder)this.WorkingPort.ComponentReference;
+
+            if (component.PrepareSplit && buffer.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))
+            {
+                ((VideoStreamCaptureHandler)component.Handler).Split();
+                component.LastSplit = DateTime.Now;
+                component.PrepareSplit = false;
             }
 
             // Ensure that if we need to split then this is done before processing the buffer data.
-            if (_component.Split != null)
+            if (component.Split != null)
             {
-                if (!_component.LastSplit.HasValue)
+                if (!component.LastSplit.HasValue)
                 {
-                    _component.LastSplit = DateTime.Now;
+                    component.LastSplit = DateTime.Now;
                 }
 
-                if (DateTime.Now.CompareTo(_component.CalculateSplit()) > 0)
+                if (DateTime.Now.CompareTo(component.CalculateSplit()) > 0)
                 {
-                    _component.PrepareSplit = true;
+                    component.PrepareSplit = true;
                     this.WorkingPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_REQUEST_I_FRAME, true);
                 }
             }

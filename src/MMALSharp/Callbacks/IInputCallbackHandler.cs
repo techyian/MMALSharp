@@ -9,7 +9,6 @@ namespace MMALSharp.Callbacks
 {
     public interface IInputCallbackHandler
     {
-        void Initialise(MMALPortBase port);
         ProcessResult Callback(MMALBufferImpl buffer);
     }
 }

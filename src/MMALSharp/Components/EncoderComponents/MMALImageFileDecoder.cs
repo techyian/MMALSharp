@@ -17,7 +17,7 @@ namespace MMALSharp.Components
 
         public static MMALQueueImpl WorkingQueue { get; set; }
 
-        public override unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, IInputCallbackHandler callbackHandler, int width, int height, bool zeroCopy = false)
+        public override unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, bool zeroCopy = false)
         {
             this.InitialiseInputPort(0);
 
@@ -38,12 +38,9 @@ namespace MMALSharp.Components
             
             this.Inputs[0].Ptr->BufferNum = Math.Max(this.Inputs[0].Ptr->BufferNumRecommended, this.Inputs[0].Ptr->BufferNumMin);
             this.Inputs[0].Ptr->BufferSize = Math.Max(this.Inputs[0].Ptr->BufferSizeRecommended, this.Inputs[0].Ptr->BufferSizeMin);
-
-            this.Inputs[0].ManagedInputCallback = callbackHandler ?? new DefaultInputCallbackHandler();
-            this.Inputs[0].ManagedInputCallback.Initialise(this.Inputs[0]);
         }
 
-        public override unsafe void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, ICallbackHandler callbackHandler, int quality, int bitrate = 0, bool zeroCopy = false)
+        public override unsafe void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
             this.InitialiseOutputPort(outputPort);
             this.ProcessingPorts.Add(outputPort);
@@ -65,8 +62,7 @@ namespace MMALSharp.Components
 
             this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
             this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
-            this.Outputs[outputPort].ManagedOutputCallback = callbackHandler ?? new DefaultCallbackHandler();
-            this.Outputs[outputPort].ManagedOutputCallback.Initialise(this.Outputs[outputPort]);
+            this.Outputs[outputPort].ManagedOutputCallback = OutputCallbackProvider.FindCallback(this.Outputs[outputPort]);
         }
 
         internal unsafe void ConfigureOutputPortWithoutInit(int outputPort, MMALEncoding encodingType)
@@ -220,7 +216,7 @@ namespace MMALSharp.Components
                         
             this.ConfigureOutputPortWithoutInit(0, this.Outputs[outputPort].EncodingType);
                         
-            this.Outputs[outputPort].EnablePort(false);            
+            this.Outputs[outputPort].EnableOutputPort(false);            
         }
         
         /// <summary>

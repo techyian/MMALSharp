@@ -98,13 +98,13 @@ namespace MMALSharp.Components
         /// <param name="quality">Quantisation parameter - quality. When using this setting, set bitrate 0 and set this for variable bitrate.</param>
         /// <param name="bitrate">The bitrate we are sending data at.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, ICallbackHandler callbackHandler, int quality, int bitrate = 0, bool zeroCopy = false)
+        public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
-            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, callbackHandler, quality, bitrate, zeroCopy);
+            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate, zeroCopy);
 
-            if (callbackHandler == null)
+            if (OutputCallbackProvider.FindCallback(this.Outputs[outputPort]).GetType() == typeof(DefaultCallbackHandler))
             {
-                this.Outputs[outputPort].ManagedOutputCallback = new VideoOutputCallbackHandler(this);
+                this.Outputs[outputPort].ManagedOutputCallback = new VideoOutputCallbackHandler(this.Outputs[outputPort]);
             }
 
             ((MMALVideoPort)this.Outputs[outputPort]).Timeout = this.Timeout;
