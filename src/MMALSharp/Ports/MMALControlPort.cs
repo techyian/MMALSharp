@@ -22,7 +22,7 @@ namespace MMALSharp.Ports
         }
 
         /// <summary>
-        /// Managed Control port callback delegate.
+        /// A callback handler for Control ports we use to do further processing on buffer headers after they've been received by the native callback delegate.
         /// </summary>
         public ICallbackHandler ManagedControlCallback { get; set; }
 

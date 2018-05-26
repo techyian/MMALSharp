@@ -77,12 +77,12 @@ namespace MMALSharp
         public AsyncCountdownEvent Trigger { get; set; }
 
         /// <summary>
-        /// Delegate to populate native buffer header with user provided image data.
+        /// A callback handler for Input ports to populate native buffer header with user provided image data.
         /// </summary>
         public IInputCallbackHandler ManagedInputCallback { get; set; }
 
         /// <summary>
-        /// Delegate we use to do further processing on buffer headers when they're received by the native callback delegate.
+        /// A callback handler for Output ports we use to do further processing on buffer headers after they've been received by the native callback delegate.
         /// </summary>
         public ICallbackHandler ManagedOutputCallback { get; set; }
 

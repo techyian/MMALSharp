@@ -1,15 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MMALSharp.Native;
 
 namespace MMALSharp.Callbacks
 {
+    /// <summary>
+    /// The base class for Output and Control port callback handlers.
+    /// </summary>
     public abstract class CallbackHandlerBase : ICallbackHandler
     {
+        /// <summary>
+        /// A whitelisted Encoding Type that this callback handler will operate on.
+        /// </summary>
         protected MMALEncoding EncodingType { get; set; }
+
+        /// <summary>
+        /// The port this callback handler is used with.
+        /// </summary>
         protected MMALPortBase WorkingPort { get; set; }
         
         protected CallbackHandlerBase(MMALPortBase port)
@@ -22,7 +28,11 @@ namespace MMALSharp.Callbacks
             this.EncodingType = encodingType;
             this.WorkingPort = port;
         }
-        
+
+        /// <summary>
+        /// The callback function to carry out.
+        /// </summary>
+        /// <param name="buffer">The working buffer header.</param>
         public virtual void Callback(MMALBufferImpl buffer)
         {
             MMALLog.Logger.Debug($"In managed {this.WorkingPort.PortType.GetPortType()} callback");

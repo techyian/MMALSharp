@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MMALSharp.Native;
+﻿using MMALSharp.Native;
 
 namespace MMALSharp.Callbacks
 {
+    /// <summary>
+    /// A default callback handler for Output and Control ports.
+    /// </summary>
     public class DefaultCallbackHandler : CallbackHandlerBase
     {
         public DefaultCallbackHandler(MMALPortBase port)
@@ -18,7 +16,11 @@ namespace MMALSharp.Callbacks
             : base(encodingType, port)
         {
         }
-        
+
+        /// <summary>
+        /// The callback function to carry out.
+        /// </summary>
+        /// <param name="buffer">The working buffer header.</param>
         public override void Callback(MMALBufferImpl buffer)
         {
             base.Callback(buffer);

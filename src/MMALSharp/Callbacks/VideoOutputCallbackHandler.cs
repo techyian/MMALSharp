@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 
 namespace MMALSharp.Callbacks
 {
+    /// <summary>
+    /// Represents a callback handler specifically for <see cref="MMALVideoEncoder"/> components.
+    /// </summary>
     public class VideoOutputCallbackHandler : DefaultCallbackHandler
     {
         public VideoOutputCallbackHandler(MMALPortBase port)
@@ -21,6 +21,10 @@ namespace MMALSharp.Callbacks
         {
         }
 
+        /// <summary>
+        /// The callback function to carry out.
+        /// </summary>
+        /// <param name="buffer">The working buffer header.</param>
         public override void Callback(MMALBufferImpl buffer)
         {
             if (this.WorkingPort.ComponentReference.GetType() != typeof(MMALVideoEncoder))
