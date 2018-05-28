@@ -42,17 +42,18 @@ namespace MMALSharp
         /// <returns></returns>
         public static float ToFloat(this byte val)
         {
-            return val >= 255 ? 1.0f : val / 255.0f;
+            return val / 255.0f;
         }
 
         /// <summary>
         /// Converts a <see cref="float"/> value (0.0 to 1.0) to a <see cref="byte"/> value from 0 to 255.
         /// </summary>
         /// <param name="val"></param>
+        /// <remarks>https://stackoverflow.com/questions/1914115/converting-color-value-from-float-0-1-to-byte-0-255</remarks>
         /// <returns></returns>
         public static byte ToByte(this float val)
         {
-            return (byte)(val >= 1.0f ? 255 : val * 255.0f);
+            return (byte)(val * 255.999f);
         }
     }
 }
