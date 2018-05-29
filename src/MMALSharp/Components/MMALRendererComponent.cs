@@ -37,29 +37,23 @@ namespace MMALSharp.Components
         private int _width;
         private int _height;
 
+        /// <summary>
+        /// Gets or sets the width of resulting frames. This property has no direct effect as no frames will exit a Null Sink component.
+        /// If not specified, the camera's video resolution is used.
+        /// </summary>
         public override int Width
         {
-            get
-            {
-                if (_width == 0)
-                {
-                    return MMALCameraConfig.VideoResolution.Width;
-                }
-                return _width;
-            }
+            get => _width == 0 ? MMALCameraConfig.VideoResolution.Width : _width;
             set => _width = value;
         }
 
+        /// <summary>
+        /// Gets or sets the height of resulting frames. This property has no direct effect as no frames will exit a Null Sink component.
+        /// If not specified, the camera's video resolution is used.
+        /// </summary>
         public override int Height
         {
-            get
-            {
-                if (_height == 0)
-                {
-                    return MMALCameraConfig.VideoResolution.Height;
-                }
-                return _height;
-            }
+            get => _height == 0 ? MMALCameraConfig.VideoResolution.Height : _height;
             set => _height = value;
         }
 
@@ -90,34 +84,32 @@ namespace MMALSharp.Components
         private int _width;
         private int _height;
 
+        /// <summary>
+        /// Gets or sets the width of resulting frames. If not specified, the camera's video resolution is used.
+        /// </summary>
         public override int Width
         {
-            get
-            {
-                if (_width == 0)
-                {
-                    return MMALCameraConfig.VideoResolution.Width;
-                }
-                return _width;
-            }
+            get => _width == 0 ? MMALCameraConfig.VideoResolution.Width : _width;
             set => _width = value;
         }
 
+        /// <summary>
+        /// Gets or sets the height of resulting frames. If not specified, the camera's video resolution is used.
+        /// </summary>
         public override int Height
         {
-            get
-            {
-                if (_height == 0)
-                {
-                    return MMALCameraConfig.VideoResolution.Height;
-                }
-                return _height;
-            }
+            get => _height == 0 ? MMALCameraConfig.VideoResolution.Height : _height;
             set => _height = value;
         }
 
+        /// <summary>
+        /// Gets the configuration for this video renderer. Call <see cref="ConfigureRenderer"/> to apply changes.
+        /// </summary>
         public PreviewConfiguration Configuration { get; }
 
+        /// <summary>
+        /// Gets a list of overlay renderers connected to this video renderer.
+        /// </summary>
         public List<MMALOverlayRenderer> Overlays { get; } = new List<MMALOverlayRenderer>();
 
         /// <summary>
@@ -141,6 +133,10 @@ namespace MMALSharp.Components
             this.Configuration = config;
         }
 
+        /// <summary>
+        /// Commits all changes made to the configuration.
+        /// </summary>
+        /// <exception cref="MMALException"/>
         public unsafe void ConfigureRenderer()
         {
             if (this.Configuration != null)
@@ -212,6 +208,9 @@ namespace MMALSharp.Components
             MMALLog.Logger.Info($"Component: Video renderer");
         }
 
+        /// <summary>
+        /// Disposes off the component, and frees any native resources still in use by it.
+        /// </summary>
         public override void Dispose()
         {
             Overlays.ForEach(c => c.Dispose());

@@ -297,6 +297,7 @@ namespace MMALSharp
         /// </summary>
         /// <param name="status">The MMAL_STATUS_T to search for an error.</param>
         /// <param name="message">The message for the exception that will be thrown if an error occurred.</param>
+        /// <exception cref="MMALException"/>
         public static void MMALCheck(MMALUtil.MMAL_STATUS_T status, string message)
         {
             if (status != MMALUtil.MMAL_STATUS_T.MMAL_SUCCESS)
