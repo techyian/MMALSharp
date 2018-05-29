@@ -410,9 +410,9 @@ namespace MMALSharp.Utility
         /// Returns a new <see cref="Color"/> structure based from CIEXYZ floating point values. Assumes D65 illuminant.
         /// See: https://en.wikipedia.org/wiki/SRGB#The_forward_transformation_(CIE_XYZ_to_sRGB) 
         /// </summary>
-        /// <param name="x">The chrominance X value (0 <= x <= 0.9505).</param>
-        /// <param name="y">The luminance Y value (0 <= y <= 1.0000).</param>
-        /// <param name="z">The chrominance Z value (0 <= z <= 1.0890).</param>
+        /// <param name="x">The chrominance X value (0 &lt;= x &lt;= 0.9505).</param>
+        /// <param name="y">The luminance Y value (0 &lt;= y &lt;= 1.0000).</param>
+        /// <param name="z">The chrominance Z value (0 &lt;= z &lt;= 1.0890).</param>
         /// <returns>A <see cref="Color"/> structure representing the CIEXYZ parameter values.</returns>
         public static Color FromCieXYZ(float x, float y, float z)
         {
