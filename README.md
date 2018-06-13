@@ -87,4 +87,4 @@ Thank you very much.
 
 ### Contributors
 
-**Daniel Lerch** @daniel-lerch
+**Daniel Lerch** [@daniel-lerch](https://github.com/daniel-lerch)

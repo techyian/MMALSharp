@@ -14,10 +14,12 @@ namespace MMALSharp.Handlers
         /// Gets or sets the directory path of the file.
         /// </summary>
         public string Directory { get; set; }
+
         /// <summary>
         /// Gets or sets the filename without extension.
         /// </summary>
         public string Filename { get; set; }
+
         /// <summary>
         /// Gets or sets the file extension without the leading dot.
         /// </summary>
