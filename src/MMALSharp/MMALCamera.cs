@@ -40,7 +40,7 @@ namespace MMALSharp
         {
             BcmHost.bcm_host_init();
 
-            MMALLog.ConfigureLogConfig();
+            MMALLog.ConfigureLogger();
 
             this.Camera = new MMALCameraComponent();
             this.DownstreamComponents = new List<MMALDownstreamComponent>();
