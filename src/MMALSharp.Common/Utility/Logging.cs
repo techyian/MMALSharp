@@ -9,13 +9,25 @@ using NLog.Targets;
 
 namespace MMALSharp
 {
+    /// <summary>
+    /// Provides static access to the global logger.
+    /// </summary>
     public static class MMALLog
     {
+        /// <summary>
+        /// Gets or sets the file path of the current logfile.
+        /// </summary>
         public static string LogLocation { get; set; }
 
+        /// <summary>
+        /// Gets or sets the global logger component.
+        /// </summary>
         public static Logger Logger { get; set; }
 
-        public static void ConfigureLogConfig()
+        /// <summary>
+        /// Configures the logger and applies the configuration.
+        /// </summary>
+        public static void ConfigureLogger()
         {
             var debugLayout = @"${longdate}|${event-properties:item=EventId.Id}|${uppercase:${level}}|${logger}|${message} ${exception}";
             var consoleLayout = @"${message} ${exception}";

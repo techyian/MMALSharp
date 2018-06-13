@@ -402,6 +402,7 @@ namespace MMALSharp
         /// <summary>
         /// Commit format changes on this port.
         /// </summary>
+        /// <exception cref="MMALException"/>
         internal void Commit()
         {
             MMALLog.Logger.Debug("Committing port format changes");

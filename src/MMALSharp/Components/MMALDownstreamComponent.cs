@@ -200,6 +200,9 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
         }
 
+        /// <summary>
+        /// Disposes of the current component, closes all connections and frees all associated unmanaged resources.
+        /// </summary>
         public override void Dispose()
         {
             MMALLog.Logger.Debug("Removing downstream component");
