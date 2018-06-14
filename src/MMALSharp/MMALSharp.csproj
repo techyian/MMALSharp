@@ -2,7 +2,7 @@
   <Import Project="..\..\build\MMALSharp.props" />
   <PropertyGroup>
 	<Description>MMALSharp brings low level access to the Raspberry Pi camera module in C#. Based on the native MMAL library,
-	 MMALSharp allows you to configure a rich set of </Description>
+ MMALSharp allows you to configure a rich set of camera/sensor related settings via an easy to use asynchronous API.</Description>
     <AssemblyTitle>MMALSharp</AssemblyTitle>
     <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <AssemblyName>MMALSharp</AssemblyName>
