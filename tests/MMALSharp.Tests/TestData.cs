@@ -22,16 +22,19 @@ namespace MMALSharp.Tests
             MMALCameraConfig.AwbGainsB = 0;
             MMALCameraConfig.AwbGainsR = 0;
             MMALCameraConfig.AwbMode = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_AUTO;
+            MMALCameraConfig.ColourFx = new ColourEffects();
             MMALCameraConfig.ExposureCompensation = -1;
             MMALCameraConfig.ExposureMeterMode = MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE;
             MMALCameraConfig.ExposureMode = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
+            MMALCameraConfig.ROI = new Zoom();
             MMALCameraConfig.ISO = 0;
             MMALCameraConfig.StatsPass = false;
             MMALCameraConfig.Flips = MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE;
             MMALCameraConfig.ImageFx = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NONE;
             MMALCameraConfig.Rotation = 0;
             MMALCameraConfig.DrcLevel = MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_OFF;
-            MMALCameraConfig.ShutterSpeed = 0;            
+            MMALCameraConfig.ShutterSpeed = 0;
+            
         }
 
         public static void CleanDirectory(string directory)
@@ -63,19 +66,19 @@ namespace MMALSharp.Tests
 
         private static IEnumerable<object> GetVideoEncoderData(MMALEncoding encodingType, string extension)
         {
-            var supportedEncodings = Fixture.MmalCamera.Camera.VideoPort.GetSupportedEncodings();
+            var supportedEncodings = Fixture.MMALCamera.Camera.VideoPort.GetSupportedEncodings();
             return PixelFormats.Where(c => supportedEncodings.Contains(c.EncodingVal)).Select(pixFormat => new object[] { extension, encodingType, pixFormat });
         }
 
         private static IEnumerable<object> GetImageEncoderData(MMALEncoding encodingType, string extension)
         {
-            var supportedEncodings = Fixture.MmalCamera.Camera.StillPort.GetSupportedEncodings();
+            var supportedEncodings = Fixture.MMALCamera.Camera.StillPort.GetSupportedEncodings();
             return PixelFormats.Where(c => supportedEncodings.Contains(c.EncodingVal)).Select(pixFormat => new object[] { extension, encodingType, pixFormat });
         }
         
         private static IEnumerable<object> GetEncoderData(MMALEncoding encodingType, MMALEncoding pixelFormat, string extension)
         {
-            var supportedEncodings = Fixture.MmalCamera.Camera.StillPort.GetSupportedEncodings();
+            var supportedEncodings = Fixture.MMALCamera.Camera.StillPort.GetSupportedEncodings();
 
             if (!supportedEncodings.Contains(pixelFormat.EncodingVal))
             {
