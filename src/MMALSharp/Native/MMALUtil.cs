@@ -9,12 +9,15 @@ using System.Runtime.InteropServices;
 namespace MMALSharp.Native
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable SA1132 // Each field should be declared on its own line
 
     public static class MMALUtil
     {
-        /* Special Unknown Time Value
-           Timestamps in MMAL are defined as signed 64 bits integer values representing microseconds.
-           However a pre-defined special value is used to signal that a timestamp is not known. */        
+        /// <summary>
+        /// Special Unknown Time Value
+        /// Timestamps in MMAL are defined as signed 64 bits integer values representing microseconds.
+        /// However a pre-defined special value is used to signal that a timestamp is not known.
+        /// </summary>
         public static long MMAL_TIME_UNKNOWN => 1 << 63;
 
         public static int VCOS_ALIGN_UP(int value, int roundTo)
@@ -154,54 +157,53 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_RECT_T
     {
-        public int X { get; }
+        private int x, y, width, height;
 
-        public int Y { get; }
-
-        public int Width { get; }
-
-        public int Height { get; }
+        public int X => x;
+        public int Y => y;
+        public int Width => width;
+        public int Height => height;
 
         public MMAL_RECT_T(int x, int y, int width, int height)
         {
-            this.X = x;
-            this.Y = y;
-            this.Height = height;
-            this.Width = width;
+            this.x = x;
+            this.y = y;
+            this.height = height;
+            this.width = width;
         }
     }
-    
+
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_FLOAT_RECT_T
     {
-        public double X { get; }
+        private double x, y, width, height;
 
-        public double Y { get; }
-
-        public double Width { get; }
-
-        public double Height { get; }
+        public double X => x;
+        public double Y => y;
+        public double Width => width;
+        public double Height => height;
 
         public MMAL_FLOAT_RECT_T(double x, double y, double width, double height)
         {
-            this.X = x;
-            this.Y = y;            
-            this.Width = width;
-            this.Height = height;
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
         }
     }
-    
+
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_RATIONAL_T
     {
-        public int Num { get; }
+        private int num, den;
 
-        public int Den { get; }
+        public int Num => num;
+        public int Den => den;
 
         public MMAL_RATIONAL_T(int num, int den)
         {
-            this.Num = num;
-            this.Den = den;
+            this.num = num;
+            this.den = den;
         }
     }
 }

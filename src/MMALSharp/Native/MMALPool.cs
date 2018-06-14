@@ -49,17 +49,19 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_POOL_T
     {
-        public MMAL_QUEUE_T* Queue { get; }
+        private MMAL_QUEUE_T* queue;
+        private uint headersNum;
+        private IntPtr header;
 
-        public uint HeadersNum { get; }
-
-        public IntPtr Header { get; }
+        public MMAL_QUEUE_T* Queue => queue;
+        public uint HeadersNum => headersNum;
+        public IntPtr Header => header;
 
         public MMAL_POOL_T(MMAL_QUEUE_T* queue, uint headersNum, IntPtr header)
         {
-            this.Queue = queue;
-            this.HeadersNum = headersNum;
-            this.Header = header;
+            this.queue = queue;
+            this.headersNum = headersNum;
+            this.header = header;
         }
     }
 }

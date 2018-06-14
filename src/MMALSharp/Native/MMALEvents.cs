@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 namespace MMALSharp.Native
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable SA1132 // Each field should be declared on its own line
 
     public static class MMALEvents
     {
@@ -25,49 +26,57 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_EVENT_END_OF_STREAM_T
     {
-        public MMALPort.MMAL_PORT_TYPE_T PortType { get; }
+        private MMALPort.MMAL_PORT_TYPE_T portType;
+        private uint portIndex;
 
-        public uint PortIndex { get; }
+        public MMALPort.MMAL_PORT_TYPE_T PortType => portType;
+
+        public uint PortIndex => portIndex;
 
         public MMAL_EVENT_END_OF_STREAM_T(MMALPort.MMAL_PORT_TYPE_T portType, uint portIndex)
         {
-            this.PortType = portType;
-            this.PortIndex = portIndex;
+            this.portType = portType;
+            this.portIndex = portIndex;
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_EVENT_FORMAT_CHANGED_T
     {
-        public uint BufferSizeMin { get; }
+        private uint bufferSizeMin, bufferNumMin, bufferSizeRecommended, bufferNumRecommended;
+        private MMAL_ES_FORMAT_T* format;
 
-        public uint BufferNumMin { get; }
+        public uint BufferSizeMin => bufferSizeMin;
 
-        public uint BufferSizeRecommended { get; }
+        public uint BufferNumMin => bufferNumMin;
 
-        public uint BufferNumRecommended { get; }
+        public uint BufferSizeRecommended => bufferSizeRecommended;
 
-        public MMAL_ES_FORMAT_T* Format { get; }
+        public uint BufferNumRecommended => bufferNumRecommended;
+
+        public MMAL_ES_FORMAT_T* Format => format;
 
         public MMAL_EVENT_FORMAT_CHANGED_T(uint bufferSizeMin, uint bufferNumMin, uint bufferSizeRecommended, uint bufferNumRecommended,
-                                           MMAL_ES_FORMAT_T* format)
+            MMAL_ES_FORMAT_T* format)
         {
-            this.BufferSizeMin = bufferSizeMin;
-            this.BufferNumMin = bufferNumMin;
-            this.BufferSizeRecommended = bufferSizeRecommended;
-            this.BufferNumRecommended = bufferNumRecommended;
-            this.Format = format;
+            this.bufferSizeMin = bufferSizeMin;
+            this.bufferNumMin = bufferNumMin;
+            this.bufferSizeRecommended = bufferSizeRecommended;
+            this.bufferNumRecommended = bufferNumRecommended;
+            this.format = format;
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_EVENT_PARAMETER_CHANGED_T
     {
-        public MMAL_PARAMETER_HEADER_T Hdr;
-    
+        public MMAL_PARAMETER_HEADER_T hdr;
+
+        public MMAL_PARAMETER_HEADER_T Hdr => hdr;
+
         public MMAL_EVENT_PARAMETER_CHANGED_T(MMAL_PARAMETER_HEADER_T hdr)
         {
-            this.Hdr = hdr;
+            this.hdr = hdr;
         }
     }
 }

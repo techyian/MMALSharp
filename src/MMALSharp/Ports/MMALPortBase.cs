@@ -157,8 +157,8 @@ namespace MMALSharp
         /// </summary>
         public MMAL_RATIONAL_T FrameRate
         {
-            get => this.Ptr->Format->Es->Video.Framerate;
-            internal set => this.Ptr->Format->Es->Video.Framerate = new MMAL_RATIONAL_T(value.Num, value.Den);
+            get => this.Ptr->Format->Es->Video.FrameRate;
+            internal set => this.Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(value.Num, value.Den);
         }
         
         /// <summary>

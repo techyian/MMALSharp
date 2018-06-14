@@ -8,38 +8,39 @@ using System.Runtime.InteropServices;
 namespace MMALSharp.Native
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable SA1132 // Each field should be declared on its own line
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_CORE_STATISTICS_T
     {
-        public uint BufferCount { get; }
+        private uint bufferCount, firstBufferTime, lastBufferTime, maxDelay;
 
-        public uint FirstBufferTime { get; }
-
-        public uint LastBufferTime { get; }
-
-        public uint MaxDelay { get; }
+        public uint BufferCount => bufferCount;
+        public uint FirstBufferTime => firstBufferTime;
+        public uint LastBufferTime => lastBufferTime;
+        public uint MaxDelay => maxDelay;
 
         public MMAL_CORE_STATISTICS_T(uint bufferCount, uint firstBufferTime, uint lastBufferTime, uint maxDelay)
         {
-            this.BufferCount = bufferCount;
-            this.FirstBufferTime = firstBufferTime;
-            this.LastBufferTime = lastBufferTime;
-            this.MaxDelay = maxDelay;
+            this.bufferCount = bufferCount;
+            this.firstBufferTime = firstBufferTime;
+            this.lastBufferTime = lastBufferTime;
+            this.maxDelay = maxDelay;
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_CORE_PORT_STATISTICS_T
     {
-        public MMAL_CORE_STATISTICS_T Rx { get; }
+        private MMAL_CORE_STATISTICS_T rx, tx;
 
-        public MMAL_CORE_STATISTICS_T Tx { get; }
+        public MMAL_CORE_STATISTICS_T Rx => rx;
+        public MMAL_CORE_STATISTICS_T Tx => tx;
 
         public MMAL_CORE_PORT_STATISTICS_T(MMAL_CORE_STATISTICS_T rx, MMAL_CORE_STATISTICS_T tx)
         {
-            this.Rx = rx;
-            this.Tx = tx;
+            this.rx = rx;
+            this.tx = tx;
         }
     }
 }

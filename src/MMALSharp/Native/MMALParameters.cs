@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 namespace MMALSharp.Native
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable SA1132 // Each field should be declared on its own line
 
     // mmal_parameters_common.h
     public static class MMALParametersCommon
@@ -65,29 +66,32 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
 
-        public byte[] Data { get; }
+        private byte[] data;
+
+        public byte[] Data => data;
 
         public MMAL_PARAMETER_BYTES_T(MMAL_PARAMETER_HEADER_T hdr, byte[] data)
         {
             this.Hdr = hdr;
-            this.Data = data;
+            this.data = data;
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T
+    public unsafe struct MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private int changeId;
+        private int enable;
 
-        public int ChangeId { get; }
-
-        public int Enable { get; }
+        public int ChangeId => changeId;
+        public int Enable => enable;
 
         public MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T(MMAL_PARAMETER_HEADER_T hdr, int changeId, int enable)
         {
             this.Hdr = hdr;
-            this.ChangeId = changeId;
-            this.Enable = enable;
+            this.changeId = changeId;
+            this.enable = enable;
         }
     }
 
@@ -96,24 +100,26 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
 
-        public int BufferNumMin { get; }
+        private int bufferNumMin, bufferSizeMin, bufferAlignmentMin, bufferNumRecommended, bufferSizeRecommended;
 
-        public int BufferSizeMin { get; }
+        public int BufferNumMin => this.bufferNumMin;
 
-        public int BufferAlignmentMin { get; }
+        public int BufferSizeMin => this.bufferSizeMin;
 
-        public int BufferNumRecommended { get; }
+        public int BufferAlignmentMin => this.bufferAlignmentMin;
 
-        public int BufferSizeRecommended { get; }
+        public int BufferNumRecommended => this.bufferNumRecommended;
+
+        public int BufferSizeRecommended => this.bufferSizeRecommended;
 
         public MMAL_PARAMETER_BUFFER_REQUIREMENTS_T(MMAL_PARAMETER_HEADER_T hdr, int bufferNumMin, int bufferSizeMin, int bufferAlignmentMin, int bufferNumRecommended, int bufferSizeRecommended)
         {
             this.Hdr = hdr;
-            this.BufferNumMin = bufferNumMin;
-            this.BufferSizeMin = bufferSizeMin;
-            this.BufferAlignmentMin = bufferAlignmentMin;
-            this.BufferNumRecommended = bufferNumRecommended;
-            this.BufferSizeRecommended = bufferSizeRecommended;
+            this.bufferNumMin = bufferNumMin;
+            this.bufferSizeMin = bufferSizeMin;
+            this.bufferAlignmentMin = bufferAlignmentMin;
+            this.bufferNumRecommended = bufferNumRecommended;
+            this.bufferSizeRecommended = bufferSizeRecommended;
         }
     }
 
@@ -121,16 +127,18 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_SEEK_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private long offset;
+        private uint flags;
 
-        public long Offset { get; }
+        public long Offset => this.offset;
 
-        public uint Flags { get; }
+        public uint Flags => this.flags;
 
         public MMAL_PARAMETER_SEEK_T(MMAL_PARAMETER_HEADER_T hdr, long offset, uint flags)
         {
             this.Hdr = hdr;
-            this.Offset = offset;
-            this.Flags = flags;
+            this.offset = offset;
+            this.flags = flags;
         }
     }
 
@@ -139,35 +147,44 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
 
-        public uint BufferCount { get; }
+        private uint bufferCount;
+        private uint frameCount;
+        private uint framesSkipped;
+        private uint framesDiscarded;
+        private uint eosSeen;
+        private uint maximumFrameBytes;
+        private uint totalBytes;
+        private uint corruptMacroblocks;
 
-        public uint FrameCount { get; }
+        public uint BufferCount => this.bufferCount;
 
-        public uint FramesSkipped { get; }
+        public uint FrameCount => this.frameCount;
 
-        public uint FramesDiscarded { get; }
+        public uint FramesSkipped => this.framesSkipped;
 
-        public uint EosSeen { get; }
+        public uint FramesDiscarded => this.framesDiscarded;
 
-        public uint MaximumFrameBytes { get; }
+        public uint EosSeen => this.eosSeen;
 
-        public uint TotalBytes { get; }
+        public uint MaximumFrameBytes => this.maximumFrameBytes;
 
-        public uint CorruptMacroBlocks { get; }
+        public uint TotalBytes => this.totalBytes;
 
-        public MMAL_PARAMETER_STATISTICS_T(MMAL_PARAMETER_HEADER_T hdr, uint bufferCount, uint frameCount, uint framesSkipped, 
-                                           uint framesDiscarded, uint eosSeen, uint maximumFrameBytes, uint totalBytes, 
+        public uint CorruptMacroBlocks => this.corruptMacroblocks;
+
+        public MMAL_PARAMETER_STATISTICS_T(MMAL_PARAMETER_HEADER_T hdr, uint bufferCount, uint frameCount, uint framesSkipped,
+                                           uint framesDiscarded, uint eosSeen, uint maximumFrameBytes, uint totalBytes,
                                            uint corruptMacroblocks)
         {
             this.Hdr = hdr;
-            this.BufferCount = bufferCount;
-            this.FrameCount = frameCount;
-            this.FramesSkipped = framesSkipped;
-            this.FramesDiscarded = framesDiscarded;
-            this.EosSeen = eosSeen;
-            this.MaximumFrameBytes = maximumFrameBytes;
-            this.TotalBytes = totalBytes;
-            this.CorruptMacroBlocks = corruptMacroblocks;
+            this.bufferCount = bufferCount;
+            this.frameCount = frameCount;
+            this.framesSkipped = framesSkipped;
+            this.framesDiscarded = framesDiscarded;
+            this.eosSeen = eosSeen;
+            this.maximumFrameBytes = maximumFrameBytes;
+            this.totalBytes = totalBytes;
+            this.corruptMacroblocks = corruptMacroblocks;
         }
     }
 
@@ -176,19 +193,23 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
 
-        public MMAL_CORE_STATS_DIR Dir { get; }
+        private MMAL_CORE_STATS_DIR dir;
+        private int reset;
+        private MMAL_CORE_STATISTICS_T stats;
 
-        public int Reset { get; }
+        public MMAL_CORE_STATS_DIR Dir => this.dir;
 
-        public MMAL_CORE_STATISTICS_T Stats { get; }
+        public int Reset => this.reset;
+
+        public MMAL_CORE_STATISTICS_T Stats => this.stats;
 
         public MMAL_PARAMETER_CORE_STATISTICS_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_CORE_STATS_DIR dir, int reset,
                                                 MMAL_CORE_STATISTICS_T stats)
         {
             this.Hdr = hdr;
-            this.Dir = dir;
-            this.Reset = reset;
-            this.Stats = stats;
+            this.dir = dir;
+            this.reset = reset;
+            this.stats = stats;
         }
     }
 
@@ -196,13 +217,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_MEM_USAGE_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private int poolMemAllocSize;
 
-        public int PoolMemAllocSize { get; }
+        public int PoolMemAllocSize => this.poolMemAllocSize;
 
         public MMAL_PARAMETER_MEM_USAGE_T(MMAL_PARAMETER_HEADER_T hdr, int poolMemAllocSize)
         {
             this.Hdr = hdr;
-            this.PoolMemAllocSize = poolMemAllocSize;
+            this.poolMemAllocSize = poolMemAllocSize;
         }
     }
 
@@ -211,18 +233,21 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
 
-        public uint Set { get; }
+        private uint set;
+        private uint clear;
 
-        public uint Clear { get; }
+        public uint Set => this.set;
+
+        public uint Clear => this.clear;
 
         public MMAL_PARAMETER_LOGGING_T(MMAL_PARAMETER_HEADER_T hdr, uint set, uint clear)
         {
             this.Hdr = hdr;
-            this.Set = set;
-            this.Clear = clear;
+            this.set = set;
+            this.clear = clear;
         }
     }
-    
+
     // mmal_parameters_camera.h
     public static class MMALParametersCamera
     {
@@ -316,7 +341,7 @@ namespace MMALSharp.Native
 
         public const int MMAL_CAMERA_ANNOTATE_MAX_TEXT_LEN = 32;
         public const int MMAL_CAMERA_ANNOTATE_MAX_TEXT_LEN_V2 = 256;
-        public const int MMAL_CAMERA_ANNOTATE_MAX_TEXT_LEN_V3 = 256;        
+        public const int MMAL_CAMERA_ANNOTATE_MAX_TEXT_LEN_V3 = 256;
     }
 
     public enum MMAL_PARAM_EXPOSUREMODE_T
@@ -628,24 +653,28 @@ namespace MMALSharp.Native
         MMAL_CAMERA_RX_CONFIG_PACK_RAW12,
         MMAL_CAMERA_RX_CONFIG_PACK_MAX = 0x7fffffff
     }
-    
+
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_THUMBNAIL_CONFIG_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
 
-        public int Width { get; }
+        private int width;
+        private int height;
+        private int quality;
 
-        public int Height { get; }
+        public int Width => this.width;
 
-        public int Quality { get; }
+        public int Height => this.height;
+
+        public int Quality => this.quality;
 
         public MMAL_PARAMETER_THUMBNAIL_CONFIG_T(MMAL_PARAMETER_HEADER_T hdr, int width, int height, int quality)
         {
             this.Hdr = hdr;
-            this.Width = width;
-            this.Height = height;
-            this.Quality = quality;
+            this.width = width;
+            this.height = height;
+            this.quality = quality;
         }
     }
 
@@ -654,23 +683,27 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
 
+        private int keylen;
+        private int valueOffset;
+        private int valueLen;
+
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
         private byte[] data;
 
-        public int KeyLen { get; }
+        public int KeyLen => this.keylen;
 
-        public int ValueOffset { get; }
+        public int ValueOffset => this.valueOffset;
 
-        public int ValueLen { get; }
+        public int ValueLen => this.valueLen;
 
         public byte[] Data => this.data;
 
         public MMAL_PARAMETER_EXIF_T(MMAL_PARAMETER_HEADER_T hdr, int keylen, int valueOffset, int valueLen, byte[] data)
         {
             this.Hdr = hdr;
-            this.KeyLen = keylen;
-            this.ValueOffset = valueOffset;
-            this.ValueLen = valueLen;
+            this.keylen = keylen;
+            this.valueOffset = valueOffset;
+            this.valueLen = valueLen;
             this.data = data;
         }
     }
@@ -680,21 +713,26 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
 
-        public int KeyLen { get; }
+        private int keylen;
+        private int valueOffset;
+        private int valueLen;
+        private byte data;
 
-        public int ValueOffset { get; }
+        public int KeyLen => this.keylen;
 
-        public int ValueLen { get; }
+        public int ValueOffset => this.valueOffset;
 
-        public byte Data { get; }
+        public int ValueLen => this.valueLen;
+
+        public byte Data => this.data;
 
         public MMAL_PARAMETER_EXIF_T_DUMMY(MMAL_PARAMETER_HEADER_T hdr, int keylen, int valueOffset, int valueLen, byte data)
         {
             this.Hdr = hdr;
-            this.KeyLen = keylen;
-            this.ValueOffset = valueOffset;
-            this.ValueLen = valueLen;
-            this.Data = data;
+            this.keylen = keylen;
+            this.valueOffset = valueOffset;
+            this.valueLen = valueLen;
+            this.data = data;
         }
     }
 
@@ -703,12 +741,14 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
 
-        public MMAL_PARAM_EXPOSUREMODE_T Value { get; }
+        private MMAL_PARAM_EXPOSUREMODE_T value;
+
+        public MMAL_PARAM_EXPOSUREMODE_T Value => this.value;
 
         public MMAL_PARAMETER_EXPOSUREMODE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_EXPOSUREMODE_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -717,12 +757,14 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
 
-        public MMAL_PARAM_EXPOSUREMETERINGMODE_T Value { get; }
+        private MMAL_PARAM_EXPOSUREMETERINGMODE_T value;
+
+        public MMAL_PARAM_EXPOSUREMETERINGMODE_T Value => this.value;
 
         public MMAL_PARAMETER_EXPOSUREMETERINGMODE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_EXPOSUREMETERINGMODE_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -731,12 +773,14 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
 
-        public MMAL_PARAM_AWBMODE_T Value { get; }
+        private MMAL_PARAM_AWBMODE_T value;
+
+        public MMAL_PARAM_AWBMODE_T Value => this.value;
 
         public MMAL_PARAMETER_AWBMODE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_AWBMODE_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -744,13 +788,14 @@ namespace MMALSharp.Native
     public unsafe struct MMAL_PARAMETER_IMAGEFX_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_PARAM_IMAGEFX_T value;
 
-        public MMAL_PARAM_IMAGEFX_T Value { get; }
+        public MMAL_PARAM_IMAGEFX_T Value => value;
 
         public MMAL_PARAMETER_IMAGEFX_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_IMAGEFX_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -759,18 +804,22 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
 
-        public MMAL_PARAM_IMAGEFX_T Effect { get; }
+        private MMAL_PARAM_IMAGEFX_T effect;
+        private uint numEffectParams;
+        private uint[] effectParameter;
 
-        public uint NumEffectParams { get; }
+        public MMAL_PARAM_IMAGEFX_T Effect => this.effect;
 
-        public uint[] EffectParameter { get; }
+        public uint NumEffectParams => this.numEffectParams;
+
+        public uint[] EffectParameter => this.effectParameter;
 
         public MMAL_PARAMETER_IMAGEFX_PARAMETERS_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_IMAGEFX_T effect, uint numEffectParams, uint[] effectParameter)
         {
             this.Hdr = hdr;
-            this.Effect = effect;
-            this.NumEffectParams = numEffectParams;
-            this.EffectParameter = effectParameter;
+            this.effect = effect;
+            this.numEffectParams = numEffectParams;
+            this.effectParameter = effectParameter;
         }
     }
 
@@ -779,18 +828,22 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
 
-        public int Enable { get; }
+        private int enable;
+        private int u;
+        private int v;
 
-        public int U { get; }
+        public int Enable => this.enable;
 
-        public int V { get; }
+        public int U => this.u;
+
+        public int V => this.v;
 
         public MMAL_PARAMETER_COLOURFX_T(MMAL_PARAMETER_HEADER_T hdr, int enable, int u, int v)
         {
             this.Hdr = hdr;
-            this.Enable = enable;
-            this.U = u;
-            this.V = v;
+            this.enable = enable;
+            this.u = u;
+            this.v = v;
         }
     }
 
@@ -798,13 +851,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_STC_MODE_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_CAMERA_STC_MODE_T value;
 
-        public MMAL_CAMERA_STC_MODE_T Value { get; }
+        public MMAL_CAMERA_STC_MODE_T Value => this.value;
 
         public MMAL_PARAMETER_CAMERA_STC_MODE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_CAMERA_STC_MODE_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -812,13 +866,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_FLICKERAVOID_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_PARAM_FLICKERAVOID_T value;
 
-        public MMAL_PARAM_FLICKERAVOID_T Value { get; }
+        public MMAL_PARAM_FLICKERAVOID_T Value => value;
 
         public MMAL_PARAMETER_FLICKERAVOID_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_FLICKERAVOID_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -826,13 +881,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_FLASH_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_PARAM_FLASH_T value;
 
-        public MMAL_PARAM_FLASH_T Value { get; }
+        public MMAL_PARAM_FLASH_T Value => value;
 
         public MMAL_PARAMETER_FLASH_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_FLASH_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -840,13 +896,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_REDEYE_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_PARAM_REDEYE_T value;
 
-        public MMAL_PARAM_REDEYE_T Value { get; }
+        public MMAL_PARAM_REDEYE_T Value => value;
 
         public MMAL_PARAMETER_REDEYE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_REDEYE_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -854,13 +911,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_FOCUS_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_PARAM_FOCUS_T value;
 
-        public MMAL_PARAM_FOCUS_T Value { get; }
+        public MMAL_PARAM_FOCUS_T Value => value;
 
         public MMAL_PARAMETER_FOCUS_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_FOCUS_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -868,13 +926,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAPTURE_STATUS_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_PARAM_CAPTURE_STATUS_T value;
 
-        public MMAL_PARAM_CAPTURE_STATUS_T Value { get; }
+        public MMAL_PARAM_CAPTURE_STATUS_T Value => value;
 
         public MMAL_PARAMETER_CAPTURE_STATUS_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_CAPTURE_STATUS_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -882,13 +941,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_FOCUS_STATUS_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_PARAM_FOCUS_STATUS_T value;
 
-        public MMAL_PARAM_FOCUS_STATUS_T Value { get; }
+        public MMAL_PARAM_FOCUS_STATUS_T Value => value;
 
         public MMAL_PARAMETER_FOCUS_STATUS_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_FOCUS_STATUS_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -896,46 +956,46 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_FACE_TRACK_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_PARAM_FACE_TRACK_MODE_T mode;
+        private uint maxRegions, frames, quality;
 
-        public MMAL_PARAM_FACE_TRACK_MODE_T Mode { get; }
-
-        public uint MaxRegions { get; }
-
-        public uint Frames { get; }
-
-        public uint Quality { get; }
+        public MMAL_PARAM_FACE_TRACK_MODE_T Value => mode;
+        public uint MaxRegions => maxRegions;
+        public uint Frames => frames;
+        public uint Quality => quality;
 
         public MMAL_PARAMETER_FACE_TRACK_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_FACE_TRACK_MODE_T mode,
                                            uint maxRegions, uint frames, uint quality)
         {
             this.Hdr = hdr;
-            this.Mode = mode;
-            this.MaxRegions = maxRegions;
-            this.Frames = frames;
-            this.Quality = quality;
+            this.mode = mode;
+            this.maxRegions = maxRegions;
+            this.frames = frames;
+            this.quality = quality;
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_FACE_TRACK_FACE_T
     {
-        public int FaceId { get; }
+        private int faceId, score;
+        private MMAL_RECT_T faceRect;
+        private MMAL_RECT_T[] eyeRect;
+        private MMAL_RECT_T mouthRect;
 
-        public int Score { get; }
-
-        public MMAL_RECT_T FaceRect { get; }
-
-        public MMAL_RECT_T[] EyeRect { get; }
-
-        public MMAL_RECT_T MouthRect { get; }
+        public int FaceId => faceId;
+        public int Score => score;
+        public MMAL_RECT_T FaceRect => faceRect;
+        public MMAL_RECT_T[] EyeRect => eyeRect;
+        public MMAL_RECT_T MouthRect => mouthRect;
 
         public MMAL_PARAMETER_FACE_TRACK_FACE_T(int faceId, int score, MMAL_RECT_T faceRect, MMAL_RECT_T[] eyeRect, MMAL_RECT_T mouthRect)
         {
-            this.FaceId = faceId;
-            this.Score = score;
-            this.FaceRect = faceRect;
-            this.EyeRect = eyeRect;
-            this.MouthRect = mouthRect;
+            this.faceId = faceId;
+            this.score = score;
+            this.faceRect = faceRect;
+            this.eyeRect = eyeRect;
+            this.mouthRect = mouthRect;
         }
     }
 
@@ -943,23 +1003,22 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_FACE_TRACK_RESULTS_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private uint numFaces, frameWidth, frameHeight;
+        private MMAL_PARAMETER_FACE_TRACK_FACE_T[] faces;
 
-        public uint NumFaces { get; }
-
-        public uint FrameWidth { get; }
-
-        public uint FrameHeight { get; }
-
-        public MMAL_PARAMETER_FACE_TRACK_FACE_T[] Faces { get; }
+        public uint NumFaces => numFaces;
+        public uint FrameWidth => frameWidth;
+        public uint FrameHeight => frameHeight;
+        public MMAL_PARAMETER_FACE_TRACK_FACE_T[] Faces => faces;
 
         public MMAL_PARAMETER_FACE_TRACK_RESULTS_T(MMAL_PARAMETER_HEADER_T hdr, uint numFaces, uint frameWidth, uint frameHeight,
                                                    MMAL_PARAMETER_FACE_TRACK_FACE_T[] faces)
         {
             this.Hdr = hdr;
-            this.NumFaces = numFaces;
-            this.FrameWidth = frameWidth;
-            this.FrameHeight = frameHeight;
-            this.Faces = faces;
+            this.numFaces = numFaces;
+            this.frameWidth = frameWidth;
+            this.frameHeight = frameHeight;
+            this.faces = faces;
         }
     }
 
@@ -967,100 +1026,92 @@ namespace MMALSharp.Native
     public unsafe struct MMAL_PARAMETER_CAMERA_CONFIG_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private int maxStillsW, maxStillsH, stillsYUV422, oneShotStills, maxPreviewVideoW, maxPreviewVideoH, numPreviewVideoFrames,
+                    stillsCaptureCircularBufferHeight, fastPreviewResume;
+        private MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T useSTCTimestamp;
 
-        public int MaxStillsW { get; }
+        public int MaxStillsW => maxStillsW;
+        public int MaxStillsH => maxStillsH;
+        public int StillsYUV422 => stillsYUV422;
+        public int OneShotStills => oneShotStills;
+        public int MaxPreviewVideoW => maxPreviewVideoW;
+        public int MaxPreviewVideoH => maxPreviewVideoH;
+        public int NumPreviewVideoFrames => numPreviewVideoFrames;
+        public int StillsCaptureCircularBufferHeight => stillsCaptureCircularBufferHeight;
+        public int FastPreviewResume => fastPreviewResume;
+        public MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T UseSTCTimestamp => useSTCTimestamp;
 
-        public int MaxStillsH { get; }
-
-        public int StillsYUV422 { get; }
-
-        public int OneShotStills { get; }
-
-        public int MaxPreviewVideoW { get; }
-
-        public int MaxPreviewVideoH { get; }
-
-        public int NumPreviewVideoFrames { get; }
-
-        public int StillsCaptureCircularBufferHeight { get; }
-
-        public int FastPreviewResume { get; }
-
-        public MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T UseSTCTimestamp { get; }
-
-        public MMAL_PARAMETER_CAMERA_CONFIG_T(MMAL_PARAMETER_HEADER_T hdr, int maxStillsW, int maxStillsH, int stillsYUV422, 
+        public MMAL_PARAMETER_CAMERA_CONFIG_T(MMAL_PARAMETER_HEADER_T hdr, int maxStillsW, int maxStillsH, int stillsYUV422,
                                               int oneShotStills, int maxPreviewVideoW, int maxPreviewVideoH, int numPreviewVideoFrames,
                                               int stillsCaptureCircularBufferHeight, int fastPreviewResume,
                                               MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T useSTCTimestamp)
         {
             this.Hdr = hdr;
-            this.MaxStillsW = maxStillsW;
-            this.MaxStillsH = maxStillsH;
-            this.StillsYUV422 = stillsYUV422;
-            this.OneShotStills = oneShotStills;
-            this.MaxPreviewVideoW = maxPreviewVideoW;
-            this.MaxPreviewVideoH = maxPreviewVideoH;
-            this.NumPreviewVideoFrames = numPreviewVideoFrames;
-            this.StillsCaptureCircularBufferHeight = stillsCaptureCircularBufferHeight;
-            this.FastPreviewResume = fastPreviewResume;
-            this.UseSTCTimestamp = useSTCTimestamp;
+            this.maxStillsW = maxStillsW;
+            this.maxStillsH = maxStillsH;
+            this.stillsYUV422 = stillsYUV422;
+            this.oneShotStills = oneShotStills;
+            this.maxPreviewVideoW = maxPreviewVideoW;
+            this.maxPreviewVideoH = maxPreviewVideoH;
+            this.numPreviewVideoFrames = numPreviewVideoFrames;
+            this.stillsCaptureCircularBufferHeight = stillsCaptureCircularBufferHeight;
+            this.fastPreviewResume = fastPreviewResume;
+            this.useSTCTimestamp = useSTCTimestamp;
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAMERA_INFO_CAMERA_T
     {
-        public int PortId { get; }
+        private int portId, maxWidth, maxHeight, lensPresent;
 
-        public int MaxWidth { get; }
-
-        public int MaxHeight { get; }
-
-        public int LensPresent { get; }
+        public int PortId => portId;
+        public int MaxWidth => maxWidth;
+        public int MaxHeight => maxHeight;
+        public int LensPresent => lensPresent;
 
         public MMAL_PARAMETER_CAMERA_INFO_CAMERA_T(int portId, int maxWidth, int maxHeight, int lensPresent)
         {
-            this.PortId = portId;
-            this.MaxWidth = maxWidth;
-            this.MaxHeight = maxHeight;
-            this.LensPresent = lensPresent;            
+            this.portId = portId;
+            this.maxWidth = maxWidth;
+            this.maxHeight = maxHeight;
+            this.lensPresent = lensPresent;
         }
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct MMAL_PARAMETER_CAMERA_INFO_CAMERA_V2_T
     {
+        private int portId, maxWidth, maxHeight, lensPresent;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
         private string cameraName;
 
-        public int PortId { get; }
-
-        public int MaxWidth { get; }
-
-        public int MaxHeight { get; }
-
-        public int LensPresent { get; }
-
+        public int PortId => portId;
+        public int MaxWidth => maxWidth;
+        public int MaxHeight => maxHeight;
+        public int LensPresent => lensPresent;
         public string CameraName => cameraName;
 
         public MMAL_PARAMETER_CAMERA_INFO_CAMERA_V2_T(int portId, int maxWidth, int maxHeight, int lensPresent, string cameraName)
         {
-            this.PortId = portId;
-            this.MaxWidth = maxWidth;
-            this.MaxHeight = maxHeight;
-            this.LensPresent = lensPresent;
-            this.cameraName = cameraName;                 
+            this.portId = portId;
+            this.maxWidth = maxWidth;
+            this.maxHeight = maxHeight;
+            this.lensPresent = lensPresent;
+            this.cameraName = cameraName;
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAMERA_INFO_FLASH_T
     {
-        public MMAL_PARAMETER_CAMERA_INFO_FLASH_TYPE_T FlashType { get; }
+        private MMAL_PARAMETER_CAMERA_INFO_FLASH_TYPE_T flashType;
+
+        public MMAL_PARAMETER_CAMERA_INFO_FLASH_TYPE_T FlashType => flashType;
 
         public MMAL_PARAMETER_CAMERA_INFO_FLASH_T(MMAL_PARAMETER_CAMERA_INFO_FLASH_TYPE_T flashType)
         {
-            this.FlashType = flashType;
+            this.flashType = flashType;
         }
     }
 
@@ -1068,16 +1119,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_INFO_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
-
+        private int numCameras, numFlashes;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
         private MMAL_PARAMETER_CAMERA_INFO_CAMERA_T[] cameras;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
         private MMAL_PARAMETER_CAMERA_INFO_FLASH_T[] flashes;
-        
-        public int NumCameras { get; }
 
-        public int NumFlashes { get; }
-
+        public int NumCameras => numCameras;
+        public int NumFlashes => numFlashes;
         public MMAL_PARAMETER_CAMERA_INFO_CAMERA_T[] Cameras => cameras;
         public MMAL_PARAMETER_CAMERA_INFO_FLASH_T[] Flashes => flashes;
 
@@ -1085,8 +1134,8 @@ namespace MMALSharp.Native
                                             MMAL_PARAMETER_CAMERA_INFO_FLASH_T[] flashes)
         {
             this.Hdr = hdr;
-            this.NumCameras = numCameras;
-            this.NumFlashes = numFlashes;
+            this.numCameras = numCameras;
+            this.numFlashes = numFlashes;
             this.cameras = cameras;
             this.flashes = flashes;
         }
@@ -1096,16 +1145,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_INFO_V2_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
-
+        private int numCameras, numFlashes;
         [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 4)]
         private MMAL_PARAMETER_CAMERA_INFO_CAMERA_V2_T[] cameras;
         [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 2)]
         private MMAL_PARAMETER_CAMERA_INFO_FLASH_T[] flashes;
-        
-        public int NumCameras { get; }
 
-        public int NumFlashes { get; }
-
+        public int NumCameras => numCameras;
+        public int NumFlashes => numFlashes;
         public MMAL_PARAMETER_CAMERA_INFO_CAMERA_V2_T[] Cameras => cameras;
         public MMAL_PARAMETER_CAMERA_INFO_FLASH_T[] Flashes => flashes;
 
@@ -1113,44 +1160,46 @@ namespace MMALSharp.Native
                                             MMAL_PARAMETER_CAMERA_INFO_FLASH_T[] flashes)
         {
             this.Hdr = hdr;
-            this.NumCameras = numCameras;
-            this.NumFlashes = numFlashes;
+            this.numCameras = numCameras;
+            this.numFlashes = numFlashes;
             this.cameras = cameras;
             this.flashes = flashes;
         }
     }
-        
+
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_CAPTUREMODE_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_PARAMETER_CAPTUREMODE_MODE_T mode;
 
-        public MMAL_PARAMETER_CAPTUREMODE_MODE_T Mode { get; }
+        public MMAL_PARAMETER_CAPTUREMODE_MODE_T Mode => mode;
 
         public MMAL_PARAMETER_CAPTUREMODE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAMETER_CAPTUREMODE_MODE_T mode)
         {
             this.Hdr = hdr;
-            this.Mode = mode;
+            this.mode = mode;
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_FOCUS_REGION_T
     {
-        public MMAL_RECT_T Rect { get; }
+        private MMAL_RECT_T rect;
+        private int weight, mask;
+        private MMAL_PARAMETER_FOCUS_REGION_TYPE_T type;
 
-        public int Weight { get; }
-
-        public int Mask { get; }
-
-        public MMAL_PARAMETER_FOCUS_REGION_TYPE_T Type { get; }
+        public MMAL_RECT_T Rect => rect;
+        public int Weight => weight;
+        public int Mask => mask;
+        public MMAL_PARAMETER_FOCUS_REGION_TYPE_T Type => type;
 
         public MMAL_PARAMETER_FOCUS_REGION_T(MMAL_RECT_T rect, int weight, int mask, MMAL_PARAMETER_FOCUS_REGION_TYPE_T type)
         {
-            this.Rect = rect;
-            this.Weight = weight;
-            this.Mask = mask;
-            this.Type = type;
+            this.rect = rect;
+            this.weight = weight;
+            this.mask = mask;
+            this.type = type;
         }
     }
 
@@ -1158,19 +1207,20 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_FOCUS_REGIONS_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private uint numRegions;
+        private int lockToFaces;
+        private MMAL_PARAMETER_FOCUS_REGION_T[] regions;
 
-        public uint NumRegions { get; }
-
-        public int LockToFaces { get; }
-
-        public MMAL_PARAMETER_FOCUS_REGION_T[] Regions { get; }
+        public uint NumRegions => numRegions;
+        public int LockToFaces => lockToFaces;
+        public MMAL_PARAMETER_FOCUS_REGION_T[] Regions => regions;
 
         public MMAL_PARAMETER_FOCUS_REGIONS_T(MMAL_PARAMETER_HEADER_T hdr, uint numRegions, int lockToFaces, MMAL_PARAMETER_FOCUS_REGION_T[] regions)
         {
             this.Hdr = hdr;
-            this.NumRegions = numRegions;
-            this.LockToFaces = lockToFaces;
-            this.Regions = regions;
+            this.numRegions = numRegions;
+            this.lockToFaces = lockToFaces;
+            this.regions = regions;
         }
     }
 
@@ -1178,13 +1228,14 @@ namespace MMALSharp.Native
     public unsafe struct MMAL_PARAMETER_INPUT_CROP_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_RECT_T rect;
 
-        public MMAL_RECT_T Rect { get; }
+        public MMAL_RECT_T Rect => rect;
 
         public MMAL_PARAMETER_INPUT_CROP_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_RECT_T rect)
         {
             this.Hdr = hdr;
-            this.Rect = rect;
+            this.rect = rect;
         }
     }
 
@@ -1192,26 +1243,24 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_SENSOR_INFORMATION_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_RATIONAL_T fNumber, focalLength;
+        private uint modelId, manufacturerId, revision;
 
-        public MMAL_RATIONAL_T FNumber { get; }
-
-        public MMAL_RATIONAL_T FocalLength { get; }
-
-        public uint ModelId { get; }
-
-        public uint ManufacturerId { get; }
-
-        public uint Revision { get; }
+        public MMAL_RATIONAL_T FNumber => fNumber;
+        public MMAL_RATIONAL_T FocalLength => focalLength;
+        public uint ModelId => modelId;
+        public uint ManufacturerId => manufacturerId;
+        public uint Revision => revision;
 
         public MMAL_PARAMETER_SENSOR_INFORMATION_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_RATIONAL_T fNumber, MMAL_RATIONAL_T focalLength,
                                                    uint modelId, uint manufacturerId, uint revision)
         {
             this.Hdr = hdr;
-            this.FNumber = fNumber;
-            this.FocalLength = focalLength;
-            this.ModelId = modelId;
-            this.ManufacturerId = manufacturerId;
-            this.Revision = revision;
+            this.fNumber = fNumber;
+            this.focalLength = focalLength;
+            this.modelId = modelId;
+            this.manufacturerId = manufacturerId;
+            this.revision = revision;
         }
     }
 
@@ -1219,13 +1268,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_FLASH_SELECT_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_PARAMETER_CAMERA_INFO_FLASH_TYPE_T flashType;
 
-        public MMAL_PARAMETER_CAMERA_INFO_FLASH_TYPE_T FlashType { get; }
+        public MMAL_PARAMETER_CAMERA_INFO_FLASH_TYPE_T FlashType => flashType;
 
         public MMAL_PARAMETER_FLASH_SELECT_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAMETER_CAMERA_INFO_FLASH_TYPE_T flashType)
         {
             this.Hdr = hdr;
-            this.FlashType = flashType;
+            this.flashType = flashType;
         }
     }
 
@@ -1233,16 +1283,16 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_FIELD_OF_VIEW_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_RATIONAL_T fovH, fovV;
 
-        public MMAL_RATIONAL_T FovH { get; }
-
-        public MMAL_RATIONAL_T FovV { get; }
+        public MMAL_RATIONAL_T FovH => fovH;
+        public MMAL_RATIONAL_T FovV => fovV;
 
         public MMAL_PARAMETER_FIELD_OF_VIEW_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_RATIONAL_T fovH, MMAL_RATIONAL_T fovV)
         {
             this.Hdr = hdr;
-            this.FovH = fovH;
-            this.FovV = fovV;
+            this.fovH = fovH;
+            this.fovV = fovV;
         }
     }
 
@@ -1250,13 +1300,14 @@ namespace MMALSharp.Native
     public unsafe struct MMAL_PARAMETER_DRC_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_PARAMETER_DRC_STRENGTH_T strength;
 
-        public MMAL_PARAMETER_DRC_STRENGTH_T Strength { get; }
+        public MMAL_PARAMETER_DRC_STRENGTH_T Strength => strength;
 
         public MMAL_PARAMETER_DRC_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAMETER_DRC_STRENGTH_T strength)
         {
             this.Hdr = hdr;
-            this.Strength = strength;
+            this.strength = strength;
         }
     }
 
@@ -1264,17 +1315,18 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_ALGORITHM_CONTROL_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_PARAMETER_ALGORITHM_CONTROL_ALGORITHMS_T algorithm;
+        private int enabled;
 
-        public MMAL_PARAMETER_ALGORITHM_CONTROL_ALGORITHMS_T Algorithm { get; }
-
-        public int Enabled { get; }
+        public MMAL_PARAMETER_ALGORITHM_CONTROL_ALGORITHMS_T Algorithm => algorithm;
+        public int Enabled => enabled;
 
         public MMAL_PARAMETER_ALGORITHM_CONTROL_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAMETER_ALGORITHM_CONTROL_ALGORITHMS_T algorithm,
                                                   int enabled)
         {
             this.Hdr = hdr;
-            this.Algorithm = algorithm;
-            this.Enabled = enabled;
+            this.algorithm = algorithm;
+            this.enabled = enabled;
         }
     }
 
@@ -1282,13 +1334,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_USE_CASE_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_PARAM_CAMERA_USE_CASE_T useCase;
 
-        public MMAL_PARAM_CAMERA_USE_CASE_T UseCase { get; }
+        public MMAL_PARAM_CAMERA_USE_CASE_T UseCase => useCase;
 
         public MMAL_PARAMETER_CAMERA_USE_CASE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_CAMERA_USE_CASE_T useCase)
         {
             this.Hdr = hdr;
-            this.UseCase = useCase;
+            this.useCase = useCase;
         }
     }
 
@@ -1296,16 +1349,16 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_FPS_RANGE_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_RATIONAL_T fpsLow, fpsHigh;
 
-        public MMAL_RATIONAL_T FpsLow { get; }
-
-        public MMAL_RATIONAL_T FpsHigh { get; }
+        public MMAL_RATIONAL_T FpsLow => fpsLow;
+        public MMAL_RATIONAL_T FpsHigh => fpsHigh;
 
         public MMAL_PARAMETER_FPS_RANGE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_RATIONAL_T fpsLow, MMAL_RATIONAL_T fpsHigh)
         {
             this.Hdr = hdr;
-            this.FpsLow = fpsLow;
-            this.FpsHigh = fpsHigh;
+            this.fpsLow = fpsLow;
+            this.fpsHigh = fpsHigh;
         }
     }
 
@@ -1313,15 +1366,16 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_ZEROSHUTTERLAG_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
-        public int ZeroShutterLagMode { get; }
+        private int zeroShutterLagMode, concurrentCapture;
 
-        public int ConcurrentCapture { get; }
+        public int ZeroShutterLagMode => zeroShutterLagMode;
+        public int ConcurrentCapture => concurrentCapture;
 
         public MMAL_PARAMETER_ZEROSHUTTERLAG_T(MMAL_PARAMETER_HEADER_T hdr, int zeroShutterLagMode, int concurrentCapture)
         {
             this.Hdr = hdr;
-            this.ZeroShutterLagMode = zeroShutterLagMode;
-            this.ConcurrentCapture = concurrentCapture;
+            this.zeroShutterLagMode = zeroShutterLagMode;
+            this.concurrentCapture = concurrentCapture;
         }
     }
 
@@ -1329,16 +1383,16 @@ namespace MMALSharp.Native
     public unsafe struct MMAL_PARAMETER_AWB_GAINS_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_RATIONAL_T rGain, bGain;
 
-        public MMAL_RATIONAL_T RGain { get; }
-
-        public MMAL_RATIONAL_T BGain { get; }
+        public MMAL_RATIONAL_T RGain => rGain;
+        public MMAL_RATIONAL_T BGain => bGain;
 
         public MMAL_PARAMETER_AWB_GAINS_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_RATIONAL_T rGain, MMAL_RATIONAL_T bGain)
         {
             this.Hdr = hdr;
-            this.RGain = rGain;
-            this.BGain = bGain;
+            this.rGain = rGain;
+            this.bGain = bGain;
         }
     }
 
@@ -1346,30 +1400,28 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_SETTINGS_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private int exposure;
+        private MMAL_RATIONAL_T analogGain, digitalGain, awbRedGain, awbBlueGain;
+        private int focusPosition;
 
-        public int Exposure { get; }
+        public int Exposure => exposure;
+        public MMAL_RATIONAL_T AnalogGain => analogGain;
+        public MMAL_RATIONAL_T DigitalGain => digitalGain;
+        public MMAL_RATIONAL_T AwbRedGain => awbRedGain;
+        public MMAL_RATIONAL_T AwbBlueGain => awbBlueGain;
+        public int FocusPosition => focusPosition;
 
-        public MMAL_RATIONAL_T AnalogGain { get; }
-
-        public MMAL_RATIONAL_T DigitalGain { get; }
-
-        public MMAL_RATIONAL_T AwbRedGain { get; }
-
-        public MMAL_RATIONAL_T AwbBlueGain { get; }
-
-        public int FocusPosition { get; }
-
-        public MMAL_PARAMETER_CAMERA_SETTINGS_T(MMAL_PARAMETER_HEADER_T hdr, int exposure, MMAL_RATIONAL_T analogGain, 
+        public MMAL_PARAMETER_CAMERA_SETTINGS_T(MMAL_PARAMETER_HEADER_T hdr, int exposure, MMAL_RATIONAL_T analogGain,
                                                 MMAL_RATIONAL_T digitalGain, MMAL_RATIONAL_T awbRedGain, MMAL_RATIONAL_T awbBlueGain,
                                                 int focusPosition)
         {
             this.Hdr = hdr;
-            this.Exposure = exposure;
-            this.AnalogGain = analogGain;
-            this.DigitalGain = digitalGain;
-            this.AwbRedGain = awbRedGain;
-            this.AwbBlueGain = awbBlueGain;
-            this.FocusPosition = focusPosition;
+            this.exposure = exposure;
+            this.analogGain = analogGain;
+            this.digitalGain = digitalGain;
+            this.awbRedGain = awbRedGain;
+            this.awbBlueGain = awbBlueGain;
+            this.focusPosition = focusPosition;
         }
     }
 
@@ -1377,13 +1429,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_PRIVACY_INDICATOR_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_PARAM_PRIVACY_INDICATOR_T mode;
 
-        public MMAL_PARAM_PRIVACY_INDICATOR_T Mode { get; }
+        public MMAL_PARAM_PRIVACY_INDICATOR_T Mode => mode;
 
         public MMAL_PARAMETER_PRIVACY_INDICATOR_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_PRIVACY_INDICATOR_T mode)
         {
             this.Hdr = hdr;
-            this.Mode = mode;
+            this.mode = mode;
         }
     }
 
@@ -1391,32 +1444,29 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_ANNOTATE_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private int enable;
+        private string text;
+        private int showShutter, showAnalogGain, showLens, showCaf, showMotion;
 
-        public int Enable { get; }
-
-        public string Text { get; }
-
-        public int ShowShutter { get; }
-
-        public int ShowAnalogGain { get; }
-
-        public int ShowLens { get; }
-
-        public int ShowCaf { get; }
-
-        public int ShowMotion { get; }
+        public int Enable => enable;
+        public string Text => text;
+        public int ShowShutter => showShutter;
+        public int ShowAnalogGain => showAnalogGain;
+        public int ShowLens => showLens;
+        public int ShowCaf => showCaf;
+        public int ShowMotion => showMotion;
 
         public MMAL_PARAMETER_CAMERA_ANNOTATE_T(MMAL_PARAMETER_HEADER_T hdr, int enable, string text,
                                                 int showShutter, int showAnalogGain, int showLens, int showCaf, int showMotion)
         {
             this.Hdr = hdr;
-            this.Enable = enable;
-            this.Text = text;
-            this.ShowShutter = showShutter;
-            this.ShowAnalogGain = showAnalogGain;
-            this.ShowLens = showLens;
-            this.ShowCaf = showCaf;
-            this.ShowMotion = showMotion;
+            this.enable = enable;
+            this.text = text;
+            this.showShutter = showShutter;
+            this.showAnalogGain = showAnalogGain;
+            this.showLens = showLens;
+            this.showCaf = showCaf;
+            this.showMotion = showMotion;
         }
     }
 
@@ -1424,32 +1474,29 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_ANNOTATE_V2_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private int enable;
+        private string text;
+        private int showShutter, showAnalogGain, showLens, showCaf, showMotion;
 
-        public int Enable { get; }
-
-        public string Text { get; }
-
-        public int ShowShutter { get; }
-
-        public int ShowAnalogGain { get; }
-
-        public int ShowLens { get; }
-
-        public int ShowCaf { get; }
-
-        public int ShowMotion { get; }
+        public int Enable => enable;
+        public string Text => text;
+        public int ShowShutter => showShutter;
+        public int ShowAnalogGain => showAnalogGain;
+        public int ShowLens => showLens;
+        public int ShowCaf => showCaf;
+        public int ShowMotion => showMotion;
 
         public MMAL_PARAMETER_CAMERA_ANNOTATE_V2_T(MMAL_PARAMETER_HEADER_T hdr, int enable, string text,
                                                 int showShutter, int showAnalogGain, int showLens, int showCaf, int showMotion)
         {
             this.Hdr = hdr;
-            this.Enable = enable;
-            this.Text = text;
-            this.ShowShutter = showShutter;
-            this.ShowAnalogGain = showAnalogGain;
-            this.ShowLens = showLens;
-            this.ShowCaf = showCaf;
-            this.ShowMotion = showMotion;
+            this.enable = enable;
+            this.text = text;
+            this.showShutter = showShutter;
+            this.showAnalogGain = showAnalogGain;
+            this.showLens = showLens;
+            this.showCaf = showCaf;
+            this.showMotion = showMotion;
         }
     }
 
@@ -1457,74 +1504,62 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private int enable;
+        private int showShutter, showAnalogGain, showLens, showCaf, showMotion, showFrameNum,
+                    enableTextBackground, customBackgroundColor;
+        private byte customBackgroundY, customBackgroundU, customBackgroundV, dummy1;
+        private int customTextColor;
+        private byte customTextY, customTextU, customTextV, textSize;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
         private byte[] text;
-        
-        public int Enable { get; }
 
-        public int ShowShutter { get; }
-
-        public int ShowAnalogGain { get; }
-
-        public int ShowLens { get; }
-
-        public int ShowCaf { get; }
-
-        public int ShowMotion { get; }
-
-        public int ShowFrameNum { get; }
-
-        public int EnableTextBackground { get; }
-
-        public int CustomBackgroundColor { get; }
-
-        public byte CustomBackgroundY { get; }
-
-        public byte CustomBackgroundU { get; }
-
-        public byte CustomBackgroundV { get; }
-
-        public byte Dummy1 { get; }
-
-        public int CustomTextColor { get; }
-
-        public byte CustomTextY { get; }
-
-        public byte CustomTextU { get; }
-
-        public byte CustomTextV { get; }
-
-        public byte TextSize { get; }
-
+        public int Enable => enable;
+        public int ShowShutter => showShutter;
+        public int ShowAnalogGain => showAnalogGain;
+        public int ShowLens => showLens;
+        public int ShowCaf => showCaf;
+        public int ShowMotion => showMotion;
+        public int ShowFrameNum => showFrameNum;
+        public int EnableTextBackground => enableTextBackground;
+        public int CustomBackgroundColor => customBackgroundColor;
+        public byte CustomBackgroundY => customBackgroundY;
+        public byte CustomBackgroundU => customBackgroundU;
+        public byte CustomBackgroundV => customBackgroundV;
+        public byte Dummy1 => dummy1;
+        public int CustomTextColor => customTextColor;
+        public byte CustomTextY => customTextY;
+        public byte CustomTextU => customTextU;
+        public byte CustomTextV => customTextV;
+        public byte TextSize => textSize;
         public byte[] Text => text;
-        
-        public MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(MMAL_PARAMETER_HEADER_T hdr, int enable, int showShutter, int showAnalogGain, int showLens, 
+
+        public MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(MMAL_PARAMETER_HEADER_T hdr, int enable, int showShutter, int showAnalogGain, int showLens,
                                                    int showCaf, int showMotion, int showFrameNum, int enableTextBackground, int customBackgroundColor,
                                                    byte customBackgroundY, byte customBackgroundU, byte customBackgroundV, byte dummy1,
                                                    int customTextColor, byte customTextY, byte customTextU, byte customTextV, byte textSize,
                                                    byte[] text)
         {
             this.Hdr = hdr;
-            this.Enable = enable;
+            this.enable = enable;
             this.text = text;
-            this.ShowShutter = showShutter;
-            this.ShowAnalogGain = showAnalogGain;
-            this.ShowLens = showLens;
-            this.ShowCaf = showCaf;
-            this.ShowMotion = showMotion;
-            this.ShowFrameNum = showFrameNum;
-            this.EnableTextBackground = enableTextBackground;
-            this.CustomBackgroundColor = customBackgroundColor;
-            this.CustomBackgroundY = customBackgroundY;
-            this.CustomBackgroundU = customBackgroundU;
-            this.CustomBackgroundV = customBackgroundV;
-            this.Dummy1 = dummy1;
-            this.CustomTextColor = customTextColor;
-            this.CustomTextY = customTextY;
-            this.CustomTextU = customTextU;
-            this.CustomTextV = customTextV;
-            this.TextSize = textSize;
+            this.showShutter = showShutter;
+            this.showAnalogGain = showAnalogGain;
+            this.showLens = showLens;
+            this.showCaf = showCaf;
+            this.showMotion = showMotion;
+            this.showFrameNum = showFrameNum;
+            this.enableTextBackground = enableTextBackground;
+            this.customBackgroundColor = customBackgroundColor;
+            this.customBackgroundY = customBackgroundY;
+            this.customBackgroundU = customBackgroundU;
+            this.customBackgroundV = customBackgroundV;
+            this.dummy1 = dummy1;
+            this.customTextColor = customTextColor;
+            this.customTextY = customTextY;
+            this.customTextU = customTextU;
+            this.customTextV = customTextV;
+            this.textSize = textSize;
             this.text = text;
         }
     }
@@ -1533,20 +1568,20 @@ namespace MMALSharp.Native
     public unsafe struct MMAL_PARAMETER_STEREOSCOPIC_MODE_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_STEREOSCOPIC_MODE_T mode;
+        private int decimate, swapEyes;
 
-        public MMAL_STEREOSCOPIC_MODE_T Mode { get; }
-
-        public int Decimate { get; }
-
-        public int SwapEyes { get; }
+        public MMAL_STEREOSCOPIC_MODE_T Mode => mode;
+        public int Decimate => decimate;
+        public int SwapEyes => swapEyes;
 
         public MMAL_PARAMETER_STEREOSCOPIC_MODE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_STEREOSCOPIC_MODE_T mode,
                                                   int decimate, int swapEyes)
         {
             this.Hdr = hdr;
-            this.Mode = mode;
-            this.Decimate = decimate;
-            this.SwapEyes = swapEyes;
+            this.mode = mode;
+            this.decimate = decimate;
+            this.swapEyes = swapEyes;
         }
     }
 
@@ -1554,13 +1589,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_INTERFACE_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_CAMERA_INTERFACE_T mode;
 
-        public MMAL_CAMERA_INTERFACE_T Mode { get; }
+        public MMAL_CAMERA_INTERFACE_T Mode => mode;
 
         public MMAL_PARAMETER_CAMERA_INTERFACE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_CAMERA_INTERFACE_T mode)
         {
             this.Hdr = hdr;
-            this.Mode = mode;
+            this.mode = mode;
         }
     }
 
@@ -1568,13 +1604,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_CLOCKING_MODE_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_CAMERA_CLOCKING_MODE_T mode;
 
-        public MMAL_CAMERA_CLOCKING_MODE_T Mode { get; }
+        public MMAL_CAMERA_CLOCKING_MODE_T Mode => mode;
 
         public MMAL_PARAMETER_CAMERA_CLOCKING_MODE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_CAMERA_CLOCKING_MODE_T mode)
         {
             this.Hdr = hdr;
-            this.Mode = mode;
+            this.mode = mode;
         }
     }
 
@@ -1582,22 +1619,20 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_RX_CONFIG_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_CAMERA_RX_CONFIG_DECODE decode;
+        private MMAL_CAMERA_RX_CONFIG_ENCODE encode;
+        private MMAL_CAMERA_RX_CONFIG_UNPACK unpack;
+        private MMAL_CAMERA_RX_CONFIG_PACK pack;
+        private uint dataLanes, encodeBlockLength, embeddedDataLines, imageId;
 
-        public MMAL_CAMERA_RX_CONFIG_DECODE Decode { get; }
-
-        public MMAL_CAMERA_RX_CONFIG_ENCODE Encode { get; }
-
-        public MMAL_CAMERA_RX_CONFIG_UNPACK Unpack { get; }
-
-        public MMAL_CAMERA_RX_CONFIG_PACK Pack { get; }
-
-        public uint DataLanes { get; }
-
-        public uint EncodeBlockLength { get; }
-
-        public uint EmbeddedDataLanes { get; }
-
-        public uint ImageId { get; }
+        public MMAL_CAMERA_RX_CONFIG_DECODE Decode => decode;
+        public MMAL_CAMERA_RX_CONFIG_ENCODE Encode => encode;
+        public MMAL_CAMERA_RX_CONFIG_UNPACK Unpack => unpack;
+        public MMAL_CAMERA_RX_CONFIG_PACK Pack => pack;
+        public uint DataLanes => dataLanes;
+        public uint EncodeBlockLength => encodeBlockLength;
+        public uint EmbeddedDataLanes => embeddedDataLines;
+        public uint ImageId => imageId;
 
         public MMAL_PARAMETER_CAMERA_RX_CONFIG_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_CAMERA_RX_CONFIG_DECODE decode,
                                                  MMAL_CAMERA_RX_CONFIG_ENCODE encode, MMAL_CAMERA_RX_CONFIG_UNPACK unpack,
@@ -1605,14 +1640,14 @@ namespace MMALSharp.Native
                                                  uint dataLanes, uint encodeBlockLength, uint embeddedDataLines, uint imageId)
         {
             this.Hdr = hdr;
-            this.Decode = decode;
-            this.Encode = encode;
-            this.Unpack = unpack;
-            this.Pack = pack;
-            this.DataLanes = dataLanes;
-            this.EncodeBlockLength = encodeBlockLength;
-            this.EmbeddedDataLanes = embeddedDataLines;
-            this.ImageId = imageId;
+            this.decode = decode;
+            this.encode = encode;
+            this.unpack = unpack;
+            this.pack = pack;
+            this.dataLanes = dataLanes;
+            this.encodeBlockLength = encodeBlockLength;
+            this.embeddedDataLines = embeddedDataLines;
+            this.imageId = imageId;
         }
     }
 
@@ -1620,38 +1655,31 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_RX_TIMING_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private uint timing1, timing2, timing3, timing4, timing5, term1, term2, cpiTiming1, cpiTiming2;
 
-        public uint Timing1 { get; }
+        public uint Timing1 => timing1;
+        public uint Timing2 => timing2;
+        public uint Timing3 => timing3;
+        public uint Timing4 => timing4;
+        public uint Timing5 => timing5;
+        public uint Term1 => term1;
+        public uint Term2 => term2;
+        public uint CpiTiming1 => cpiTiming1;
+        public uint CpiTiming2 => cpiTiming2;
 
-        public uint Timing2 { get; }
-
-        public uint Timing3 { get; }
-
-        public uint Timing4 { get; }
-
-        public uint Timing5 { get; }
-
-        public uint Term1 { get; }
-
-        public uint Term2 { get; }
-
-        public uint CpiTiming1 { get; }
-
-        public uint CpiTiming2 { get; }
-
-        public MMAL_PARAMETER_CAMERA_RX_TIMING_T(MMAL_PARAMETER_HEADER_T hdr, uint timing1, uint timing2, uint timing3, uint timing4, 
+        public MMAL_PARAMETER_CAMERA_RX_TIMING_T(MMAL_PARAMETER_HEADER_T hdr, uint timing1, uint timing2, uint timing3, uint timing4,
                                                  uint timing5, uint term1, uint term2, uint cpiTiming1, uint cpiTiming2)
         {
             this.Hdr = hdr;
-            this.Timing1 = timing1;
-            this.Timing2 = timing2;
-            this.Timing3 = timing3;
-            this.Timing4 = timing4;
-            this.Timing5 = timing5;
-            this.Term1 = term1;
-            this.Term2 = term2;
-            this.CpiTiming1 = cpiTiming1;
-            this.CpiTiming2 = cpiTiming2;
+            this.timing1 = timing1;
+            this.timing2 = timing2;
+            this.timing3 = timing3;
+            this.timing4 = timing4;
+            this.timing5 = timing5;
+            this.term1 = term1;
+            this.term2 = term2;
+            this.cpiTiming1 = cpiTiming1;
+            this.cpiTiming2 = cpiTiming2;
         }
     }
 
@@ -1721,7 +1749,7 @@ namespace MMALSharp.Native
             MMAL_DISPLAY_MIRROR_ROT270,
             MMAL_DISPLAY_DUMMY = 0x7FFFFFFF
         }
-        
+
         public enum MMAL_DISPLAYMODE_T
         {
             /// <summary>
@@ -1735,7 +1763,7 @@ namespace MMALSharp.Native
             MMAL_DISPLAY_MODE_LETTERBOX,
             MMAL_DISPLAY_MODE_DUMMY = 0x7FFFFFFF
         }
-        
+
         public enum MMAL_DISPLAYSET_T
         {
             MMAL_DISPLAY_SET_NONE = 0,
@@ -1752,7 +1780,7 @@ namespace MMALSharp.Native
             MMAL_DISPLAY_SET_ALPHA = 0x400,
             MMAL_DISPLAY_SET_DUMMY = 0x7FFFFFFF
         }
-        
+
         public enum MMAL_VIDEO_PROFILE_T
         {
             MMAL_VIDEO_PROFILE_H263_BASELINE,
@@ -1790,7 +1818,7 @@ namespace MMALSharp.Native
             MMAL_VIDEO_PROFILE_H264_CONSTRAINED_BASELINE,
             MMAL_VIDEO_PROFILE_DUMMY = 0x7FFFFFFF
         }
-        
+
         public enum MMAL_VIDEO_LEVEL_T
         {
             MMAL_VIDEO_LEVEL_H263_10,
@@ -1828,7 +1856,7 @@ namespace MMALSharp.Native
             MMAL_VIDEO_LEVEL_H264_51,
             MMAL_VIDEO_LEVEL_DUMMY = 0x7FFFFFFF
         }
-        
+
         public enum MMAL_VIDEO_RATECONTROL_T
         {
             MMAL_VIDEO_RATECONTROL_DEFAULT,
@@ -1838,7 +1866,7 @@ namespace MMALSharp.Native
             MMAL_VIDEO_RATECONTROL_CONSTANT_SKIP_FRAMES,
             MMAL_VIDEO_RATECONTROL_DUMMY = 0x7FFFFFFF
         }
-        
+
         public enum MMAL_VIDEO_INTRA_REFRESH_T
         {
             MMAL_VIDEO_INTRA_REFRESH_DISABLED = -1,
@@ -1863,7 +1891,7 @@ namespace MMALSharp.Native
             MMAL_VIDEO_ENCODER_RC_MODEL_LAST = MMAL_VIDEO_ENCODER_RC_MODEL_DEFAULT + 3,
             MMAL_VIDEO_ENCODER_RC_MODEL_DUMMY = 0x7FFFFFFF
         }
-        
+
         public enum MMAL_VIDEO_ENCODE_H264_MB_INTRA_MODES_T
         {
             MMAL_VIDEO_ENCODER_H264_MB_4x4_INTRA,
@@ -1871,7 +1899,7 @@ namespace MMALSharp.Native
             MMAL_VIDEO_ENCODER_H264_MB_16x16_INTRA,
             MMAL_VIDEO_ENCODER_H264_MB_INTRA_DUMMY = 0x7FFFFFFF
         }
-        
+
         public enum MMAL_VIDEO_NALUNITFORMAT_T
         {
             MMAL_VIDEO_NALUNITFORMAT_STARTCODES,
@@ -1881,7 +1909,7 @@ namespace MMALSharp.Native
             MMAL_VIDEO_NALUNITFORMAT_FOURBYTEINTERLEAVELENGTH,
             MMAL_VIDEO_NALUNITFORMAT_DUMMY = 0x7FFFFFFF
         }
-        
+
         public enum MMAL_INTERLACE_TYPE_T
         {
             MMAL_InterlaceProgressive,
@@ -1900,32 +1928,29 @@ namespace MMALSharp.Native
     public struct MMAL_DISPLAYREGION_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private uint set, displayNum;
+        private int fullscreen;
+        private MMALParametersVideo.MMAL_DISPLAYTRANSFORM_T transform;
+        private MMAL_RECT_T destRect, srcRect;
+        private int noAspect;
+        private MMALParametersVideo.MMAL_DISPLAYMODE_T mode;
+        private int pixelX, pixelY;
+        private int layer, copyrightRequired;
+        private int alpha;
 
-        public uint Set { get; }
-
-        public uint DisplayNum { get; }
-
-        public int Fullscreen { get; }
-
-        public MMALParametersVideo.MMAL_DISPLAYTRANSFORM_T Transform { get; }
-
-        public MMAL_RECT_T DestRect { get; }
-
-        public MMAL_RECT_T SrcRect { get; }
-
-        public int NoAspect { get; }
-
-        public MMALParametersVideo.MMAL_DISPLAYMODE_T Mode { get; }
-
-        public int PixelX { get; }
-
-        public int PixelY { get; }
-
-        public int Layer { get; }
-
-        public int CopyrightRequired { get; }
-
-        public int Alpha { get; }
+        public uint Set => set;
+        public uint DisplayNum => displayNum;
+        public int Fullscreen => fullscreen;
+        public MMALParametersVideo.MMAL_DISPLAYTRANSFORM_T Transform => transform;
+        public MMAL_RECT_T DestRect => destRect;
+        public MMAL_RECT_T SrcRect => srcRect;
+        public int NoAspect => noAspect;
+        public MMALParametersVideo.MMAL_DISPLAYMODE_T Mode => mode;
+        public int PixelX => pixelX;
+        public int PixelY => pixelY;
+        public int Layer => layer;
+        public int CopyrightRequired => copyrightRequired;
+        public int Alpha => alpha;
 
         public MMAL_DISPLAYREGION_T(MMAL_PARAMETER_HEADER_T hdr, uint set, uint displayNum, int fullscreen,
                                     MMALParametersVideo.MMAL_DISPLAYTRANSFORM_T transform, MMAL_RECT_T destRect, MMAL_RECT_T srcRect,
@@ -1933,33 +1958,35 @@ namespace MMALSharp.Native
                                     int layer, int copyrightRequired, int alpha)
         {
             this.Hdr = hdr;
-            this.Set = set;
-            this.DisplayNum = displayNum;
-            this.Fullscreen = fullscreen;
-            this.Transform = transform;
-            this.DestRect = destRect;
-            this.SrcRect = srcRect;
-            this.NoAspect = noAspect;
-            this.Mode = mode;
-            this.PixelX = pixelX;
-            this.PixelY = pixelY;
-            this.Layer = layer;
-            this.CopyrightRequired = copyrightRequired;
-            this.Alpha = alpha;
+            this.set = set;
+            this.displayNum = displayNum;
+            this.fullscreen = fullscreen;
+            this.transform = transform;
+            this.destRect = destRect;
+            this.srcRect = srcRect;
+            this.noAspect = noAspect;
+            this.mode = mode;
+            this.pixelX = pixelX;
+            this.pixelY = pixelY;
+            this.layer = layer;
+            this.copyrightRequired = copyrightRequired;
+            this.alpha = alpha;
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_PARAMETER_VIDEO_PROFILE_S
     {
-        public MMALParametersVideo.MMAL_VIDEO_PROFILE_T Profile { get; }
+        private MMALParametersVideo.MMAL_VIDEO_PROFILE_T profile;
+        private MMALParametersVideo.MMAL_VIDEO_LEVEL_T level;
 
-        public MMALParametersVideo.MMAL_VIDEO_LEVEL_T Level { get; }
+        public MMALParametersVideo.MMAL_VIDEO_PROFILE_T Profile => profile;
+        public MMALParametersVideo.MMAL_VIDEO_LEVEL_T Level => level;
 
         public MMAL_PARAMETER_VIDEO_PROFILE_S(MMALParametersVideo.MMAL_VIDEO_PROFILE_T profile, MMALParametersVideo.MMAL_VIDEO_LEVEL_T level)
         {
-            this.Profile = profile;
-            this.Level = level;
+            this.profile = profile;
+            this.level = level;
         }
     }
 
@@ -1983,13 +2010,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_VIDEO_ENCODE_RC_MODEL_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private uint rcModel;
 
-        public uint RcModel { get; }
+        public uint RcModel => rcModel;
 
         public MMAL_PARAMETER_VIDEO_ENCODE_RC_MODEL_T(MMAL_PARAMETER_HEADER_T hdr, uint rcModel)
         {
             this.Hdr = hdr;
-            this.RcModel = rcModel;
+            this.rcModel = rcModel;
         }
     }
 
@@ -1997,6 +2025,7 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_VIDEO_RATECONTROL_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T control;
 
         public unsafe MMAL_PARAMETER_HEADER_T* HdrPtr
         {
@@ -2008,13 +2037,12 @@ namespace MMALSharp.Native
                 }
             }
         }
-
-        public MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T Control { get; }
+        public MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T Control => control;
 
         public MMAL_PARAMETER_VIDEO_RATECONTROL_T(MMAL_PARAMETER_HEADER_T hdr, MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T control)
         {
             this.Hdr = hdr;
-            this.Control = control;
+            this.control = control;
         }
     }
 
@@ -2022,13 +2050,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_VIDEO_ENCODER_H264_MB_INTRA_MODES_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMALParametersVideo.MMAL_VIDEO_ENCODE_H264_MB_INTRA_MODES_T mbMode;
 
-        public MMALParametersVideo.MMAL_VIDEO_ENCODE_H264_MB_INTRA_MODES_T MbMode { get; }
+        public MMALParametersVideo.MMAL_VIDEO_ENCODE_H264_MB_INTRA_MODES_T MbMode => mbMode;
 
         public MMAL_PARAMETER_VIDEO_ENCODER_H264_MB_INTRA_MODES_T(MMAL_PARAMETER_HEADER_T hdr, MMALParametersVideo.MMAL_VIDEO_ENCODE_H264_MB_INTRA_MODES_T mbMode)
         {
             this.Hdr = hdr;
-            this.MbMode = mbMode;
+            this.mbMode = mbMode;
         }
     }
 
@@ -2036,13 +2065,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_VIDEO_NALUNITFORMAT_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMALParametersVideo.MMAL_VIDEO_NALUNITFORMAT_T format;
 
-        public MMALParametersVideo.MMAL_VIDEO_NALUNITFORMAT_T Format { get; }
+        public MMALParametersVideo.MMAL_VIDEO_NALUNITFORMAT_T Format => format;
 
         public MMAL_PARAMETER_VIDEO_NALUNITFORMAT_T(MMAL_PARAMETER_HEADER_T hdr, MMALParametersVideo.MMAL_VIDEO_NALUNITFORMAT_T format)
         {
             this.Hdr = hdr;
-            this.Format = format;
+            this.format = format;
         }
     }
 
@@ -2050,19 +2080,18 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_VIDEO_LEVEL_EXTENSION_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private uint customMaxMbps, customMaxFs, customMaxBrAndCpb;
 
-        public uint CustomMaxMbps { get; }
-
-        public uint CustomMaxFs { get; }
-
-        public uint CustomMaxBrAndCpb { get; }
+        public uint CustomMaxMbps => customMaxMbps;
+        public uint CustomMaxFs => customMaxFs;
+        public uint CustomMaxBrAndCpb => customMaxBrAndCpb;
 
         public MMAL_PARAMETER_VIDEO_LEVEL_EXTENSION_T(MMAL_PARAMETER_HEADER_T hdr, uint customMaxMbps, uint customMaxFs, uint customMaxBrAndCpb)
         {
             this.Hdr = hdr;
-            this.CustomMaxMbps = customMaxMbps;
-            this.CustomMaxFs = customMaxFs;
-            this.CustomMaxBrAndCpb = customMaxBrAndCpb;           
+            this.customMaxMbps = customMaxMbps;
+            this.customMaxFs = customMaxFs;
+            this.customMaxBrAndCpb = customMaxBrAndCpb;
         }
     }
 
@@ -2070,6 +2099,8 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_VIDEO_INTRA_REFRESH_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T refreshMode;
+        private int airMbs, airRef, cirMbs, pirMbs;
 
         public unsafe MMAL_PARAMETER_HEADER_T* HdrPtr
         {
@@ -2081,26 +2112,21 @@ namespace MMALSharp.Native
                 }
             }
         }
-
-        public MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T RefreshMode { get; }
-
-        public int AirMbs { get; }
-
-        public int AirRef { get; }
-
-        public int CirMbs { get; }
-
-        public int PirMbs { get; }
+        public MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T RefreshMode => refreshMode;
+        public int AirMbs => airMbs;
+        public int AirRef => airRef;
+        public int CirMbs => cirMbs;
+        public int PirMbs => pirMbs;
 
         public MMAL_PARAMETER_VIDEO_INTRA_REFRESH_T(MMAL_PARAMETER_HEADER_T hdr, MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T refreshMode,
                                                     int airMbs, int airRef, int cirMbs, int pirMbs)
         {
             this.Hdr = hdr;
-            this.RefreshMode = refreshMode;
-            this.AirMbs = airMbs;
-            this.AirRef = airRef;
-            this.CirMbs = cirMbs;
-            this.PirMbs = pirMbs;
+            this.refreshMode = refreshMode;
+            this.airMbs = airMbs;
+            this.airRef = airRef;
+            this.cirMbs = cirMbs;
+            this.pirMbs = pirMbs;
         }
     }
 
@@ -2108,13 +2134,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_VIDEO_EEDE_ENABLE_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private int enable;
 
-        public int Enable { get; }
+        public int Enable => enable;
 
         public MMAL_PARAMETER_VIDEO_EEDE_ENABLE_T(MMAL_PARAMETER_HEADER_T hdr, int enable)
         {
             this.Hdr = hdr;
-            this.Enable = enable;
+            this.enable = enable;
         }
     }
 
@@ -2122,13 +2149,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_VIDEO_EEDE_LOSSRATE_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private uint lossRate;
 
-        public uint LossRate { get; }
+        public uint LossRate => lossRate;
 
         public MMAL_PARAMETER_VIDEO_EEDE_LOSSRATE_T(MMAL_PARAMETER_HEADER_T hdr, uint lossRate)
         {
             this.Hdr = hdr;
-            this.LossRate = lossRate;
+            this.lossRate = lossRate;
         }
     }
 
@@ -2136,19 +2164,19 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_VIDEO_DRM_INIT_INFO_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private uint currentTime, ticksPerSec;
+        private uint[] lhs;
 
-        public uint CurrentTime { get; }
-
-        public uint TicksPerSec { get; }
-
-        public uint[] Lhs { get; }
+        public uint CurrentTime => currentTime;
+        public uint TicksPerSec => ticksPerSec;
+        public uint[] Lhs => lhs;
 
         public MMAL_PARAMETER_VIDEO_DRM_INIT_INFO_T(MMAL_PARAMETER_HEADER_T hdr, uint currentTime, uint ticksPerSec, uint[] lhs)
         {
             this.Hdr = hdr;
-            this.CurrentTime = currentTime;
-            this.TicksPerSec = ticksPerSec;
-            this.Lhs = lhs;
+            this.currentTime = currentTime;
+            this.ticksPerSec = ticksPerSec;
+            this.lhs = lhs;
         }
     }
 
@@ -2156,23 +2184,22 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_VIDEO_DRM_PROTECT_BUFFER_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private uint sizeWanted, protect, memHandle;
+        private IntPtr physAddr;
 
-        public uint SizeWanted { get; }
-
-        public uint Protect { get; }
-
-        public uint MemHandle { get; }
-
-        public IntPtr PhysAddr { get; }
+        public uint SizeWanted => sizeWanted;
+        public uint Protect => protect;
+        public uint MemHandle => memHandle;
+        public IntPtr PhysAddr => physAddr;
 
         public MMAL_PARAMETER_VIDEO_DRM_PROTECT_BUFFER_T(MMAL_PARAMETER_HEADER_T hdr, uint sizeWanted, uint protect, uint memHandle,
                                                          IntPtr physAddr)
         {
             this.Hdr = hdr;
-            this.SizeWanted = sizeWanted;
-            this.Protect = protect;
-            this.MemHandle = memHandle;
-            this.PhysAddr = physAddr;
+            this.sizeWanted = sizeWanted;
+            this.protect = protect;
+            this.memHandle = memHandle;
+            this.physAddr = physAddr;
         }
     }
 
@@ -2180,32 +2207,29 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_VIDEO_RENDER_STATS_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private int valid;
+        private uint match, period, phase, pixelClockNominal, hvsStatus;
+        private uint[] dummy;
 
-        public int Valid { get; }
+        public int Valid => valid;
+        public uint Match => match;
+        public uint Period => period;
+        public uint Phase => phase;
+        public uint PixelClockNominal => pixelClockNominal;
+        public uint HvsStatus => hvsStatus;
+        public uint[] Dummy => dummy;
 
-        public uint Match { get; }
-
-        public uint Period { get; }
-
-        public uint Phase { get; }
-
-        public uint PixelClockNominal { get; }
-
-        public uint HvsStatus { get; }
-
-        public uint[] Dummy { get; }
-
-        public MMAL_PARAMETER_VIDEO_RENDER_STATS_T(MMAL_PARAMETER_HEADER_T hdr, int valid, uint match, uint period, 
+        public MMAL_PARAMETER_VIDEO_RENDER_STATS_T(MMAL_PARAMETER_HEADER_T hdr, int valid, uint match, uint period,
                                                    uint phase, uint pixelClockNominal, uint hvsStatus, uint[] dummy)
         {
             this.Hdr = hdr;
-            this.Valid = valid;
-            this.Match = match;
-            this.Period = period;
-            this.Phase = phase;
-            this.PixelClockNominal = pixelClockNominal;
-            this.HvsStatus = hvsStatus;
-            this.Dummy = dummy;
+            this.valid = valid;
+            this.match = match;
+            this.period = period;
+            this.phase = phase;
+            this.pixelClockNominal = pixelClockNominal;
+            this.hvsStatus = hvsStatus;
+            this.dummy = dummy;
         }
     }
 
@@ -2213,17 +2237,18 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_VIDEO_INTERLACE_TYPE_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMALParametersVideo.MMAL_INTERLACE_TYPE_T eMode;
+        private int bRepeatFirstField;
 
-        public MMALParametersVideo.MMAL_INTERLACE_TYPE_T EMode { get; }
-
-        public int BRepeatFirstField { get; }
+        public MMALParametersVideo.MMAL_INTERLACE_TYPE_T EMode => eMode;
+        public int BRepeatFirstField => bRepeatFirstField;
 
         public MMAL_PARAMETER_VIDEO_INTERLACE_TYPE_T(MMAL_PARAMETER_HEADER_T hdr, MMALParametersVideo.MMAL_INTERLACE_TYPE_T eMode,
                                                      int bRepeatFirstField)
         {
             this.Hdr = hdr;
-            this.EMode = eMode;
-            this.BRepeatFirstField = bRepeatFirstField;
+            this.eMode = eMode;
+            this.bRepeatFirstField = bRepeatFirstField;
         }
     }
 
@@ -2240,32 +2265,29 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_AUDIO_LATENCY_TARGET_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private int enable;
+        private uint filter, target, shift;
+        private int speedFactor, interFactor, adjCap;
 
-        public int Enable { get; }
-
-        public uint Filter { get; }
-
-        public uint Target { get; }
-
-        public uint Shift { get; }
-
-        public int SpeedFactor { get; }
-
-        public int InterFactor { get; }
-
-        public int AdjCap { get; }
+        public int Enable => enable;
+        public uint Filter => filter;
+        public uint Target => target;
+        public uint Shift => shift;
+        public int SpeedFactor => speedFactor;
+        public int InterFactor => interFactor;
+        public int AdjCap => adjCap;
 
         public MMAL_PARAMETER_AUDIO_LATENCY_TARGET_T(MMAL_PARAMETER_HEADER_T hdr, int enable, uint filter, uint target, uint shift,
                                                      int speedFactor, int interFactor, int adjCap)
         {
             this.Hdr = hdr;
-            this.Enable = enable;
-            this.Filter = filter;
-            this.Target = target;
-            this.Shift = shift;
-            this.SpeedFactor = speedFactor;
-            this.InterFactor = interFactor;
-            this.AdjCap = adjCap;
+            this.enable = enable;
+            this.filter = filter;
+            this.target = target;
+            this.shift = shift;
+            this.speedFactor = speedFactor;
+            this.interFactor = interFactor;
+            this.adjCap = adjCap;
         }
     }
 
@@ -2288,13 +2310,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CLOCK_UPDATE_THRESHOLD_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_CLOCK_UPDATE_THRESHOLD_T value;
 
-        public MMAL_CLOCK_UPDATE_THRESHOLD_T Value { get; }
+        public MMAL_CLOCK_UPDATE_THRESHOLD_T Value => value;
 
         public MMAL_PARAMETER_CLOCK_UPDATE_THRESHOLD_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_CLOCK_UPDATE_THRESHOLD_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -2302,13 +2325,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CLOCK_DISCONT_THRESHOLD_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_CLOCK_DISCONT_THRESHOLD_T value;
 
-        public MMAL_CLOCK_DISCONT_THRESHOLD_T Value { get; }
+        public MMAL_CLOCK_DISCONT_THRESHOLD_T Value => value;
 
         public MMAL_PARAMETER_CLOCK_DISCONT_THRESHOLD_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_CLOCK_DISCONT_THRESHOLD_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -2316,13 +2340,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CLOCK_REQUEST_THRESHOLD_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_CLOCK_REQUEST_THRESHOLD_T value;
 
-        public MMAL_CLOCK_REQUEST_THRESHOLD_T Value { get; }
+        public MMAL_CLOCK_REQUEST_THRESHOLD_T Value => value;
 
         public MMAL_PARAMETER_CLOCK_REQUEST_THRESHOLD_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_CLOCK_REQUEST_THRESHOLD_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -2330,13 +2355,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CLOCK_LATENCY_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_CLOCK_LATENCY_T value;
 
-        public MMAL_CLOCK_LATENCY_T Value { get; }
+        public MMAL_CLOCK_LATENCY_T Value => value;
 
         public MMAL_PARAMETER_CLOCK_LATENCY_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_CLOCK_LATENCY_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -2377,13 +2403,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_UINT64_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private ulong value;
 
-        public ulong Value { get; }
+        public ulong Value => value;
 
         public MMAL_PARAMETER_UINT64_T(MMAL_PARAMETER_HEADER_T hdr, ulong value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -2391,13 +2418,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_INT64_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private long value;
 
-        public long Value { get; }
+        public long Value => value;
 
         public MMAL_PARAMETER_INT64_T(MMAL_PARAMETER_HEADER_T hdr, long value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -2405,13 +2433,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_UINT32_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private uint value;
 
-        public uint Value { get; }
+        public uint Value => value;
 
         public MMAL_PARAMETER_UINT32_T(MMAL_PARAMETER_HEADER_T hdr, uint value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -2419,13 +2448,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_INT32_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private int value;
 
-        public int Value { get; }
+        public int Value => value;
 
         public MMAL_PARAMETER_INT32_T(MMAL_PARAMETER_HEADER_T hdr, int value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -2433,13 +2463,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_RATIONAL_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_RATIONAL_T value;
 
-        public MMAL_RATIONAL_T Value { get; }
+        public MMAL_RATIONAL_T Value => value;
 
         public MMAL_PARAMETER_RATIONAL_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_RATIONAL_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -2447,13 +2478,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_BOOLEAN_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private int value;
 
-        public int Value { get; }
+        public int Value => value;
 
         public MMAL_PARAMETER_BOOLEAN_T(MMAL_PARAMETER_HEADER_T hdr, int value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -2461,13 +2493,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_STRING_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private string value;
 
-        public string Value { get; }
+        public string Value => value;
 
         public MMAL_PARAMETER_STRING_T(MMAL_PARAMETER_HEADER_T hdr, string value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -2475,16 +2508,16 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_SCALEFACTOR_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private uint scaleX, scaleY;
 
-        public uint ScaleX { get; }
-
-        public uint ScaleY { get; }
+        public uint ScaleX => scaleX;
+        public uint ScaleY => scaleY;
 
         public MMAL_PARAMETER_SCALEFACTOR_T(MMAL_PARAMETER_HEADER_T hdr, uint scaleX, uint scaleY)
         {
             this.Hdr = hdr;
-            this.ScaleX = scaleX;
-            this.ScaleY = scaleY;
+            this.scaleX = scaleX;
+            this.scaleY = scaleY;
         }
     }
 
@@ -2492,13 +2525,14 @@ namespace MMALSharp.Native
     public unsafe struct MMAL_PARAMETER_MIRROR_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_PARAM_MIRROR_T value;
 
-        public MMAL_PARAM_MIRROR_T Value { get; }
+        public MMAL_PARAM_MIRROR_T Value => value;
 
         public MMAL_PARAMETER_MIRROR_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_MIRROR_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -2506,13 +2540,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_URI_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private string value;
 
-        public string Value { get; }
+        public string Value => value;
 
         public MMAL_PARAMETER_URI_T(MMAL_PARAMETER_HEADER_T hdr, string value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -2523,7 +2558,7 @@ namespace MMALSharp.Native
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
         private int[] value;
-        
+
         public int[] Value => value;
 
         public MMAL_PARAMETER_ENCODING_T(MMAL_PARAMETER_HEADER_T hdr, int[] value)
@@ -2537,13 +2572,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_FRAME_RATE_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private MMAL_RATIONAL_T value;
 
-        public MMAL_RATIONAL_T Value { get; }
+        public MMAL_RATIONAL_T Value => value;
 
         public MMAL_PARAMETER_FRAME_RATE_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_RATIONAL_T value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -2551,13 +2587,14 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CONFIGFILE_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private uint value;
 
-        public uint Value { get; }
+        public uint Value => value;
 
         public MMAL_PARAMETER_CONFIGFILE_T(MMAL_PARAMETER_HEADER_T hdr, uint value)
         {
             this.Hdr = hdr;
-            this.Value = value;
+            this.value = value;
         }
     }
 
@@ -2565,19 +2602,19 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CONFIGFILE_CHUNK_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
+        private uint size, offset;
+        private string data;
 
-        public uint Size { get; }
-
-        public uint Offset { get; }
-
-        public string Data { get; }
+        public uint Size => size;
+        public uint Offset => offset;
+        public string Data => data;
 
         public MMAL_PARAMETER_CONFIGFILE_CHUNK_T(MMAL_PARAMETER_HEADER_T hdr, uint size, uint offset, string data)
         {
             this.Hdr = hdr;
-            this.Size = size;
-            this.Offset = offset;
-            this.Data = data;
+            this.size = size;
+            this.offset = offset;
+            this.data = data;
         }
     }
 }

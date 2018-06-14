@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 namespace MMALSharp.Native
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable SA1132 // Each field should be declared on its own line
 
     public static class MMALConnection
     {
@@ -48,45 +49,52 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_CONNECTION_T
     {
-        public IntPtr UserData { get; }
+        private IntPtr userData, callback;
+        private uint isEnabled, flags;
+        private MMAL_PORT_T* input, output;
+        private MMAL_POOL_T* pool;
+        private MMAL_QUEUE_T* queue;
+        private char* name;
+        private long timeSetup, timeEnable, timeDisable;
 
-        public IntPtr Callback { get; set; }
-
-        public uint IsEnabled { get; }
-
-        public uint Flags { get; }
-
-        public MMAL_PORT_T* Input { get; }
-
-        public MMAL_PORT_T* Output { get; }
-
-        public MMAL_POOL_T* Pool { get; }
-
-        public MMAL_QUEUE_T* Queue { get; }
-
-        public char* Name { get; }
-
-        public long TimeSetup { get; }
-
-        public long TimeEnable { get; }
-
-        public long TimeDisable { get; }
+        public IntPtr UserData => userData;
+        public IntPtr Callback
+        {
+            get
+            {
+                return this.callback;
+            }
+            set
+            {
+                this.callback = value;
+            }
+        }
+        public uint IsEnabled => isEnabled;
+        public uint Flags => flags;
+        public MMAL_PORT_T* Input => input;
+        public MMAL_PORT_T* Output => output;
+        public MMAL_POOL_T* Pool => pool;
+        public MMAL_QUEUE_T* Queue => queue;
+        public char* Name => name;
+        public long TimeSetup => timeSetup;
+        public long TimeEnable => timeEnable;
+        public long TimeDisable => timeDisable;
 
         public MMAL_CONNECTION_T(IntPtr userData, IntPtr callback, uint isEnabled, uint flags, MMAL_PORT_T* input, MMAL_PORT_T* output,
-                                 MMAL_POOL_T* pool, MMAL_QUEUE_T* queue, char* name, long timeSetup, long timeEnable, long timeDisable)
+            MMAL_POOL_T* pool, MMAL_QUEUE_T* queue, char* name, long timeSetup, long timeEnable, long timeDisable)
         {
-            this.UserData = userData;
-            this.Callback = callback;
-            this.IsEnabled = isEnabled;
-            this.Flags = flags;
-            this.Input = input;
-            this.Output = output;
-            this.Pool = pool;
-            this.Queue = queue;
-            this.Name = name;
-            this.TimeSetup = timeSetup;
-            this.TimeEnable = timeEnable;
-            this.TimeDisable = timeDisable;
+            this.userData = userData;
+            this.callback = callback;
+            this.isEnabled = isEnabled;
+            this.flags = flags;
+            this.input = input;
+            this.output = output;
+            this.pool = pool;
+            this.queue = queue;
+            this.name = name;
+            this.timeSetup = timeSetup;
+            this.timeEnable = timeEnable;
+            this.timeDisable = timeDisable;
         }
     }
 }

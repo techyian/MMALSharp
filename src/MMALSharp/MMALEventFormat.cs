@@ -16,8 +16,8 @@ namespace MMALSharp
         public int CropHeight => this.Format.Es->Video.Crop.Height;
         public int ParNum => this.Format.Es->Video.Par.Num;
         public int ParDen => this.Format.Es->Video.Par.Den;
-        public int FramerateNum => this.Format.Es->Video.Framerate.Num;
-        public int FramerateDen => this.Format.Es->Video.Framerate.Den;
+        public int FramerateNum => this.Format.Es->Video.FrameRate.Num;
+        public int FramerateDen => this.Format.Es->Video.FrameRate.Den;
 
         // Dereferenced struct.
         internal MMAL_ES_FORMAT_T Format { get; set; }

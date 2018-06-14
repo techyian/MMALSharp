@@ -28,7 +28,7 @@ namespace MMALSharp.Components
             this.Inputs[0].Ptr->Format->Type = MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_VIDEO;
             this.Inputs[0].Ptr->Format->Es->Video.Height = 0;
             this.Inputs[0].Ptr->Format->Es->Video.Width = 0;
-            this.Inputs[0].Ptr->Format->Es->Video.Framerate = new MMAL_RATIONAL_T(0, 1);
+            this.Inputs[0].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(0, 1);
             this.Inputs[0].Ptr->Format->Es->Video.Par = new MMAL_RATIONAL_T(1, 1);
             
             this.Inputs[0].EncodingType = encodingType;

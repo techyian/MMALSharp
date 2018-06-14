@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 namespace MMALSharp.Native
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable SA1132 // Each field should be declared on its own line
 
     public static class MMALFormat
     {
@@ -58,21 +59,18 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_VIDEO_FORMAT_T
     {
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public MMAL_RECT_T Crop { get; set; }
-        public MMAL_RATIONAL_T Framerate { get; set; }
-        public MMAL_RATIONAL_T Par { get; set; }
-        
+        public int Width, Height;
+        public MMAL_RECT_T Crop;
+        public MMAL_RATIONAL_T FrameRate, Par;
         public int ColorSpace;
-        
+
         public MMAL_VIDEO_FORMAT_T(int width, int height, MMAL_RECT_T crop, MMAL_RATIONAL_T frameRate,
                                     MMAL_RATIONAL_T par, int colorSpace)
         {
             this.Width = width;
             this.Height = height;
             this.Crop = crop;
-            this.Framerate = frameRate;
+            this.FrameRate = frameRate;
             this.Par = par;
             this.ColorSpace = colorSpace;
         }
@@ -81,34 +79,34 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_AUDIO_FORMAT_T
     {
-        public uint Channels { get; }
+        private uint channels, sampleRate, bitsPerSample, blockAlign;
 
-        public uint SampleRate { get; }
-
-        public uint BitsPerSample { get; }
-
-        public uint BlockAlign { get; }
+        public uint Channels => channels;
+        public uint SampleRate => sampleRate;
+        public uint BitsPerSample => bitsPerSample;
+        public uint BlockAlign => blockAlign;
 
         public MMAL_AUDIO_FORMAT_T(uint channels, uint sampleRate, uint bitsPerSample, uint blockAlign)
         {
-            this.Channels = channels;
-            this.SampleRate = sampleRate;
-            this.BitsPerSample = bitsPerSample;
-            this.BlockAlign = blockAlign;
+            this.channels = channels;
+            this.sampleRate = sampleRate;
+            this.bitsPerSample = bitsPerSample;
+            this.blockAlign = blockAlign;
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_SUBPICTURE_FORMAT_T
     {
-        public uint XOffset { get; }
+        private uint xOffset, yOffset;
 
-        public uint YOffset { get; }
+        public uint XOffset => xOffset;
+        public uint YOffset => yOffset;
 
         public MMAL_SUBPICTURE_FORMAT_T(uint xOffset, uint yOffset)
         {
-            this.XOffset = xOffset;
-            this.YOffset = yOffset;
+            this.xOffset = xOffset;
+            this.yOffset = yOffset;
         }
     }
 
@@ -121,30 +119,27 @@ namespace MMALSharp.Native
         [FieldOffset(0)]
         public MMAL_VIDEO_FORMAT_T Video;
         [FieldOffset(0)]
-        public MMAL_SUBPICTURE_FORMAT_T SubPicture;
-        
+        public MMAL_SUBPICTURE_FORMAT_T Subpicture;
+
         public MMAL_ES_SPECIFIC_FORMAT_T(MMAL_AUDIO_FORMAT_T audio, MMAL_VIDEO_FORMAT_T video, MMAL_SUBPICTURE_FORMAT_T subpicture)
         {
             this.Audio = audio;
             this.Video = video;
-            this.SubPicture = subpicture;
+            this.Subpicture = subpicture;
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_ES_FORMAT_T
     {
-        public MMALFormat.MMAL_ES_TYPE_T Type { get; set; }
-        public int Encoding { get; set; }
-        public int EncodingVariant { get; set; }
-        public MMAL_ES_SPECIFIC_FORMAT_T* Es { get; set; }
-        public int Bitrate { get; set; }
-        public int Flags { get; set; }
-        public int ExtraDataSize { get; set; }
-        
+        public MMALFormat.MMAL_ES_TYPE_T Type;
+        public int Encoding, EncodingVariant;
+        public MMAL_ES_SPECIFIC_FORMAT_T* Es;
+        public int Bitrate, Flags, ExtraDataSize;
+
         // byte*
-        public IntPtr ExtraData { get; set; }
-        
+        public IntPtr ExtraData;
+
         public MMAL_ES_FORMAT_T(MMALFormat.MMAL_ES_TYPE_T type, int encoding, int encodingVariant,
                                 MMAL_ES_SPECIFIC_FORMAT_T* es, int bitrate, int flags, int extraDataSize,
                                 IntPtr extraData)

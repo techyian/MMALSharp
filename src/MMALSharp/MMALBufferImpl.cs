@@ -30,7 +30,7 @@ namespace MMALSharp
         /// <summary>
         /// Pointer to the data associated with this buffer header.
         /// </summary>
-        public byte* Data => this.Ptr->Data;
+        public byte* Data => this.Ptr->data;
 
         /// <summary>
         /// Defines what the buffer header contains. This is a FourCC with 0 as a special value meaning stream data.
@@ -173,7 +173,7 @@ namespace MMALSharp
 
             try
             {
-                var ps = this.Ptr->Data + this.Offset;
+                var ps = this.Ptr->data + this.Offset;
                 var buffer = Array.CreateInstance(typeof(byte), (int)this.Ptr->Length) as byte[];
                 Marshal.Copy((IntPtr)ps, buffer, 0, buffer.Length);
                 MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
@@ -202,16 +202,16 @@ namespace MMALSharp
                 MMALLog.Logger.Debug("Reading data into buffer");
             }
             
-            this.Ptr->Length = (uint)length;                        
-            this.Ptr->Dts = this.Ptr->Pts = MMALUtil.MMAL_TIME_UNKNOWN;                        
-            this.Ptr->Offset = 0;
+            this.Ptr->length = (uint)length;                        
+            this.Ptr->dts = this.Ptr->pts = MMALUtil.MMAL_TIME_UNKNOWN;                        
+            this.Ptr->offset = 0;
 
             if (eof)
             {
-                this.Ptr->Flags = (uint)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
+                this.Ptr->flags = (uint)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
             }
 
-            Marshal.Copy(source, 0, (IntPtr)this.Ptr->Data, length);
+            Marshal.Copy(source, 0, (IntPtr)this.Ptr->data, length);
         }
 
         /// <summary>

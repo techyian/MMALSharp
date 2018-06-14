@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 namespace MMALSharp.Native
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable SA1132 // Each field should be declared on its own line
 
     public static class MMALPort
     {
@@ -96,62 +97,78 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_PORT_T
     {
-        public IntPtr Priv { get; }
+        private IntPtr priv;
+        private char* name;
+        private MMALPort.MMAL_PORT_TYPE_T type;
+        private ushort index, indexAll;
+        private int isEnabled;
+        private MMAL_ES_FORMAT_T* format;
+        private int bufferNumMin, bufferSizeMin, bufferAlignmentMin, bufferNumRecommended, bufferSizeRecommended, bufferNum, bufferSize;
+        private MMAL_COMPONENT_T* component;
+        private IntPtr userData;
+        private uint capabilities;
 
-        public char* Name { get; }
+        public IntPtr Priv => priv;
+        public char* Name => name;
+        public MMALPort.MMAL_PORT_TYPE_T Type => type;
+        public ushort Index => index;
+        public ushort IndexAll => indexAll;
+        public int IsEnabled => isEnabled;
+        public MMAL_ES_FORMAT_T* Format => format;
+        public int BufferNumMin => bufferNumMin;
+        public int BufferSizeMin => bufferSizeMin;
+        public int BufferAlignmentMin => bufferAlignmentMin;
+        public int BufferNumRecommended => bufferNumRecommended;
+        public int BufferSizeRecommended => bufferSizeRecommended;
 
-        public MMALPort.MMAL_PORT_TYPE_T Type { get; }
-
-        public ushort Index { get; }
-
-        public ushort IndexAll { get; }
-
-        public int IsEnabled { get; }
-
-        public MMAL_ES_FORMAT_T* Format { get; }
-
-        public int BufferNumMin { get; }
-
-        public int BufferSizeMin { get; }
-
-        public int BufferAlignmentMin { get; }
-
-        public int BufferNumRecommended { get; }
-
-        public int BufferSizeRecommended { get; }
-
-        public int BufferNum { get; set; }
-
-        public int BufferSize { get; set; }
-
-        public MMAL_COMPONENT_T* Component { get; }
-
-        public IntPtr UserData { get; }
-
-        public uint Capabilities { get; }
+        public int BufferNum
+        {
+            get
+            {
+                return this.bufferNum;
+            }
+            set
+            {
+                this.bufferNum = value;
+            }
+        }
+        public int BufferSize
+        {
+            get
+            {
+                return this.bufferSize;
+            }
+            set
+            {
+                this.bufferSize = value;
+            }
+        }
+        public MMAL_COMPONENT_T* Component => component;
+        public IntPtr UserData => userData;
+        public uint Capabilities => capabilities;
 
         public MMAL_PORT_T(IntPtr priv, char* name, MMALPort.MMAL_PORT_TYPE_T type, ushort index, ushort indexAll,
-                           int isEnabled, MMAL_ES_FORMAT_T* format, int bufferNumMin, int bufferSizeMin, int bufferAlignmentMin, 
-                           int bufferNumRecommended, int bufferSizeRecommended, int bufferNum, int bufferSize, MMAL_COMPONENT_T* component, 
+                           int isEnabled, MMAL_ES_FORMAT_T* format, int bufferNumMin, int bufferSizeMin, int bufferAlignmentMin,
+                           int bufferNumRecommended, int bufferSizeRecommended, int bufferNum, int bufferSize, MMAL_COMPONENT_T* component,
                            IntPtr userData, uint capabilities)
         {
-            this.Priv = priv;
-            this.Name = name;
-            this.Type = type;
-            this.Index = index;
-            this.IndexAll = indexAll;
-            this.IsEnabled = isEnabled;
-            this.Format = format;
-            this.BufferNumMin = bufferNumMin;
-            this.BufferSizeMin = bufferSizeMin;
-            this.BufferAlignmentMin = bufferAlignmentMin;
-            this.BufferNumRecommended = bufferNumRecommended;
-            this.BufferSizeRecommended = bufferSizeRecommended;
-            this.BufferNum = bufferNum;
-            this.BufferSize = bufferSize;
-            this.Component = component;
-            this.UserData = userData;
-            this.Capabilities = capabilities;
+            this.priv = priv;
+            this.name = name;
+            this.type = type;
+            this.index = index;
+            this.indexAll = indexAll;
+            this.isEnabled = isEnabled;
+            this.format = format;
+            this.bufferNumMin = bufferNumMin;
+            this.bufferSizeMin = bufferSizeMin;
+            this.bufferAlignmentMin = bufferAlignmentMin;
+            this.bufferNumRecommended = bufferNumRecommended;
+            this.bufferSizeRecommended = bufferSizeRecommended;
+            this.bufferNum = bufferNum;
+            this.bufferSize = bufferSize;
+            this.component = component;
+            this.userData = userData;
+            this.capabilities = capabilities;
         }
     }
 }
