@@ -12,32 +12,31 @@ namespace MMALSharp.Native
 
     public static class MMALComponent
     {
-        //name: char* * comp: MMAL_COMPONENT_T**    
-
+        // name: char* * comp: MMAL_COMPONENT_T** 
 #pragma warning disable IDE1006 // Naming Styles
         [DllImport("libmmal.so", EntryPoint = "mmal_component_create", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_component_create(string name, IntPtr* comp);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_component_create(string name, IntPtr* comp);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_component_acquire", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_component_acquire(MMAL_COMPONENT_T* comp);
+        public static extern unsafe void mmal_component_acquire(MMAL_COMPONENT_T* comp);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_component_release", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_component_release(MMAL_COMPONENT_T* comp);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_component_release(MMAL_COMPONENT_T* comp);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_component_destroy", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_component_destroy(MMAL_COMPONENT_T* comp);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_component_destroy(MMAL_COMPONENT_T* comp);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_component_enable", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_component_enable(MMAL_COMPONENT_T* comp);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_component_enable(MMAL_COMPONENT_T* comp);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_component_disable", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_component_disable(MMAL_COMPONENT_T* comp);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_component_disable(MMAL_COMPONENT_T* comp);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_wrapper_create", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_wrapper_create(IntPtr* wrapper, string name);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_wrapper_create(IntPtr* wrapper, string name);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_wrapper_destroy", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_wrapper_destroy(IntPtr* wrapper);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_wrapper_destroy(IntPtr* wrapper);
 #pragma warning restore IDE1006 // Naming Styles
     }
 
@@ -49,47 +48,33 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_COMPONENT_T
     {
-        private IntPtr priv, userData;
-        private char* name;
-        private uint isEnabled;
-        private MMAL_PORT_T* control;
-        private uint inputNum;
-        private MMAL_PORT_T** input;
-        private uint outputNum;
-        private MMAL_PORT_T** output;
-        private uint clockNum;
-        private MMAL_PORT_T** clock;
-        private uint portNum;
-        private MMAL_PORT_T** port;
-        private uint id;
+        public IntPtr Priv { get; }
 
-        public IntPtr Priv => this.priv;
+        public IntPtr UserData { get; }
 
-        public IntPtr UserData => this.userData;
+        public char* Name { get; }
 
-        public char* Name => this.name;
+        public uint IsEnabled { get; }
 
-        public uint IsEnabled => this.isEnabled;
+        public MMAL_PORT_T* Control { get; }
 
-        public MMAL_PORT_T* Control => this.control;
+        public uint InputNum { get; }
 
-        public uint InputNum => this.inputNum;
+        public MMAL_PORT_T** Input { get; }
 
-        public MMAL_PORT_T** Input => this.input;
+        public uint OutputNum { get; }
 
-        public uint OutputNum => this.outputNum;
+        public MMAL_PORT_T** Output { get; }
 
-        public MMAL_PORT_T** Output => this.output;
+        public uint ClockNum { get; }
 
-        public uint ClockNum => this.clockNum;
+        public MMAL_PORT_T** Clock { get; }
 
-        public MMAL_PORT_T** Clock => this.clock;
+        public uint PortNum { get; }
 
-        public uint PortNum => this.portNum;
+        public MMAL_PORT_T** Port { get; }
 
-        public MMAL_PORT_T** Port => this.port;
-
-        public uint Id => this.id;
+        public uint Id { get; }
 
         public MMAL_COMPONENT_T(
                                 IntPtr priv,
@@ -107,66 +92,55 @@ namespace MMALSharp.Native
                                 MMAL_PORT_T** port,
                                 uint id)
         {
-            this.priv = priv;
-            this.userData = userData;
-            this.name = name;
-            this.isEnabled = isEnabled;
-            this.control = control;
-            this.inputNum = inputNum;
-            this.input = input;
-            this.outputNum = outputNum;
-            this.output = output;
-            this.clockNum = clockNum;
-            this.clock = clock;
-            this.portNum = portNum;
-            this.port = port;
-            this.id = id;
+            this.Priv = priv;
+            this.UserData = userData;
+            this.Name = name;
+            this.IsEnabled = isEnabled;
+            this.Control = control;
+            this.InputNum = inputNum;
+            this.Input = input;
+            this.OutputNum = outputNum;
+            this.Output = output;
+            this.ClockNum = clockNum;
+            this.Clock = clock;
+            this.PortNum = portNum;
+            this.Port = port;
+            this.Id = id;
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_WRAPPER_T
     {
-        private IntPtr userData, callback;
         private MMAL_COMPONENT_T* component;
-        private MMALUtil.MMAL_STATUS_T status;
-        private MMAL_PORT_T* control;
-        private uint inputNum;
-        private MMAL_PORT_T** input;
-        private MMAL_POOL_T** inputPool;
-        private uint outputNum;
-        private MMAL_PORT_T** output;
-        private MMAL_POOL_T** outputPool;
-        private MMAL_QUEUE_T** outputQueue;
-        private long timeSetup, timeEnable, timeDisable;
 
-        public IntPtr UserData => this.userData;
+        public IntPtr UserData { get; }
 
-        public IntPtr Callback => this.callback;
+        public IntPtr Callback { get; }
 
-        public MMALUtil.MMAL_STATUS_T Status => this.status;
+        public MMALUtil.MMAL_STATUS_T Status { get; }
 
-        public MMAL_PORT_T* Control => this.control;
+        public MMAL_PORT_T* Control { get; }
 
-        public uint InputNum => this.inputNum;
+        public uint InputNum { get; }
 
-        public MMAL_PORT_T** Input => this.input;
+        public MMAL_PORT_T** Input { get; }
 
-        public MMAL_POOL_T** InputPool => this.inputPool;
+        public MMAL_POOL_T** InputPool { get; }
 
-        public uint OutputNum => this.outputNum;
+        public uint OutputNum { get; }
 
-        public MMAL_PORT_T** Output => this.output;
+        public MMAL_PORT_T** Output { get; }
 
-        public MMAL_POOL_T** OutputPool => this.outputPool;
+        public MMAL_POOL_T** OutputPool { get; }
 
-        public MMAL_QUEUE_T** OutputQueue => this.outputQueue;
+        public MMAL_QUEUE_T** OutputQueue { get; }
 
-        public long TimeSetup => this.timeSetup;
+        public long TimeSetup { get; }
 
-        public long TimeEnable => this.timeEnable;
+        public long TimeEnable { get; }
 
-        public long TimeDisable => this.timeDisable;
+        public long TimeDisable { get; }
 
         public MMAL_WRAPPER_T (
                                IntPtr userData,
@@ -185,21 +159,21 @@ namespace MMALSharp.Native
                                long timeEnable,
                                long timeDisable)
         {
-            this.userData = userData;
-            this.callback = callback;
+            this.UserData = userData;
+            this.Callback = callback;
             this.component = component;
-            this.status = status;
-            this.control = control;
-            this.inputNum = inputNum;
-            this.input = input;
-            this.inputPool = inputPool;
-            this.outputNum = outputNum;
-            this.output = output;
-            this.outputPool = outputPool;
-            this.outputQueue = outputQueue;
-            this.timeSetup = timeSetup;
-            this.timeEnable = timeEnable;
-            this.timeDisable = timeDisable;
+            this.Status = status;
+            this.Control = control;
+            this.InputNum = inputNum;
+            this.Input = input;
+            this.InputPool = inputPool;
+            this.OutputNum = outputNum;
+            this.Output = output;
+            this.OutputPool = outputPool;
+            this.OutputQueue = outputQueue;
+            this.TimeSetup = timeSetup;
+            this.TimeEnable = timeEnable;
+            this.TimeDisable = timeDisable;
         }
     }
 }

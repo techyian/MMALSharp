@@ -15,20 +15,10 @@ namespace MMALSharp.Handlers
     public abstract class StreamCaptureHandler : ICaptureHandler
     {
         /// <summary>
-        /// A Stream instance that we can process image data to.
-        /// </summary>
-        protected Stream CurrentStream { get; set; }
-
-        /// <summary>
         /// A list of files that have been processed by this capture handler.
         /// </summary>
         public List<ProcessedFileResult> ProcessedFiles { get; set; } = new List<ProcessedFileResult>();
-
-        /// <summary>
-        /// The total size of data that has been processed by this capture handler.
-        /// </summary>
-        protected int Processed { get; set; }
-
+        
         /// <summary>
         /// The directory to save to (if applicable).
         /// </summary>
@@ -38,6 +28,16 @@ namespace MMALSharp.Handlers
         /// The extension of the file (if applicable).
         /// </summary>
         public string Extension { get; protected set; }
+
+        /// <summary>
+        /// A Stream instance that we can process image data to.
+        /// </summary>
+        protected Stream CurrentStream { get; set; }
+
+        /// <summary>
+        /// The total size of data that has been processed by this capture handler.
+        /// </summary>
+        protected int Processed { get; set; }
 
         /// <summary>
         /// Creates a new instance of the <see cref="StreamCaptureHandler"/> class with the specified directory and filename extension.
@@ -152,6 +152,5 @@ namespace MMALSharp.Handlers
         {
             CurrentStream?.Dispose();
         }
-                        
     }
 }

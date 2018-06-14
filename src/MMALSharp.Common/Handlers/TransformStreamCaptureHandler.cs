@@ -24,7 +24,8 @@ namespace MMALSharp.Common.Handlers
         /// <param name="inputStream">The stream to retrieve input data from.</param>
         /// <param name="outputDirectory">The directory to save captured data.</param>
         /// <param name="outputExtension">The filename extension for saving files.</param>
-        public TransformStreamCaptureHandler(Stream inputStream, string outputDirectory, string outputExtension) : base(outputDirectory, outputExtension)
+        public TransformStreamCaptureHandler(Stream inputStream, string outputDirectory, string outputExtension)
+            : base(outputDirectory, outputExtension)
         {
             this.InputStream = inputStream;
         }

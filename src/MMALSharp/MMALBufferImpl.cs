@@ -26,16 +26,11 @@ namespace MMALSharp
             this.Ptr = ptr;
             this.InitialiseProperties();
         }
-
-        /// <summary>
-        /// Native pointer that represents this buffer header.
-        /// </summary>
-        internal MMAL_BUFFER_HEADER_T* Ptr { get; set; }
-
+        
         /// <summary>
         /// Pointer to the data associated with this buffer header.
         /// </summary>
-        public byte* Data => this.Ptr->data;
+        public byte* Data => this.Ptr->Data;
 
         /// <summary>
         /// Defines what the buffer header contains. This is a FourCC with 0 as a special value meaning stream data.
@@ -86,6 +81,11 @@ namespace MMALSharp
         /// List of events associated with this buffer header.
         /// </summary>
         public List<int> Events { get; set; }
+
+        /// <summary>
+        /// Native pointer that represents this buffer header.
+        /// </summary>
+        internal MMAL_BUFFER_HEADER_T* Ptr { get; set; }
 
         /// <summary>
         /// Print the properties associated with this buffer header to console.
@@ -147,6 +147,113 @@ namespace MMALSharp
             sb.Append("---------------- \r\n");
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Checks whether this instance is attached to a valid native pointer.
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckState()
+        {
+            return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;
+        }
+
+        /// <summary>
+        /// Gathers all data in this payload and returns as a byte array.
+        /// </summary>
+        /// <returns>A byte array containing the image frame.</returns>
+        internal byte[] GetBufferData()
+        {
+            if (MMALCameraConfig.Debug)
+            {
+                MMALLog.Logger.Debug("Getting data from buffer");
+            }
+
+            MMALCheck(MMALBuffer.mmal_buffer_header_mem_lock(this.Ptr), "Unable to lock buffer header.");
+
+            try
+            {
+                var ps = this.Ptr->Data + this.Offset;
+                var buffer = Array.CreateInstance(typeof(byte), (int)this.Ptr->Length) as byte[];
+                Marshal.Copy((IntPtr)ps, buffer, 0, buffer.Length);
+                MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
+
+                return buffer;
+            }
+            catch
+            {
+                // If something goes wrong, unlock the header.
+                MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
+                MMALLog.Logger.Warn("Unable to handle data. Returning null.");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Writes user provided image data into a buffer header.
+        /// </summary>
+        /// <param name="source">The array of image data to write to buffer header.</param>
+        /// <param name="length">The length of the data being written.</param>
+        /// <param name="eof">Signal that we've reached the end of the input file.</param>
+        internal void ReadIntoBuffer(byte[] source, int length, bool eof)
+        {
+            if (MMALCameraConfig.Debug)
+            {
+                MMALLog.Logger.Debug("Reading data into buffer");
+            }
+            
+            this.Ptr->Length = (uint)length;                        
+            this.Ptr->Dts = this.Ptr->Pts = MMALUtil.MMAL_TIME_UNKNOWN;                        
+            this.Ptr->Offset = 0;
+
+            if (eof)
+            {
+                this.Ptr->Flags = (uint)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
+            }
+
+            Marshal.Copy(source, 0, (IntPtr)this.Ptr->Data, length);
+        }
+
+        /// <summary>
+        /// Acquire a buffer header. Acquiring a buffer header increases a reference counter on it and makes 
+        /// sure that the buffer header won't be recycled until all the references to it are gone.
+        /// </summary>
+        internal void Acquire()
+        {
+            if (this.CheckState())
+            {
+                MMALBuffer.mmal_buffer_header_acquire(this.Ptr);
+            }
+        }
+
+        /// <summary>
+        /// Release a buffer header. Releasing a buffer header will decrease its reference counter and when no more references are left, 
+        /// the buffer header will be recycled by calling its 'release' callback function.
+        /// </summary>
+        internal void Release()
+        {
+            if (this.CheckState())
+            {
+                MMALLog.Logger.Debug("Releasing buffer.");
+                MMALBuffer.mmal_buffer_header_release(this.Ptr);
+            }
+            else
+            {
+                MMALLog.Logger.Warn("Input buffer null, could not release.");
+            }
+
+            this.Dispose();
+        }
+
+        /// <summary>
+        /// Reset a buffer header. Resets all header variables to default values.
+        /// </summary>
+        internal void Reset()
+        {
+            if (this.CheckState())
+            {
+                MMALBuffer.mmal_buffer_header_reset(this.Ptr);
+            }
         }
 
         /// <summary>
@@ -220,113 +327,6 @@ namespace MMALSharp
             {
                 this.Properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
             }
-        }
-
-        /// <summary>
-        /// Gathers all data in this payload and returns as a byte array.
-        /// </summary>
-        /// <returns>A byte array containing the image frame.</returns>
-        internal byte[] GetBufferData()
-        {
-            if (MMALCameraConfig.Debug)
-            {
-                MMALLog.Logger.Debug("Getting data from buffer");
-            }
-
-            MMALCheck(MMALBuffer.mmal_buffer_header_mem_lock(this.Ptr), "Unable to lock buffer header.");
-
-            try
-            {
-                var ps = this.Ptr->data + this.Offset;
-                var buffer = Array.CreateInstance(typeof(byte), (int)this.Ptr->Length) as byte[];
-                Marshal.Copy((IntPtr)ps, buffer, 0, buffer.Length);
-                MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
-
-                return buffer;
-            }
-            catch
-            {
-                // If something goes wrong, unlock the header.
-                MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
-                MMALLog.Logger.Warn("Unable to handle data. Returning null.");
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Writes user provided image data into a buffer header.
-        /// </summary>
-        /// <param name="source">The array of image data to write to buffer header.</param>
-        /// <param name="length">The length of the data being written.</param>
-        /// <param name="eof">Signal that we've reached the end of the input file.</param>
-        internal void ReadIntoBuffer(byte[] source, int length, bool eof)
-        {
-            if (MMALCameraConfig.Debug)
-            {
-                MMALLog.Logger.Debug("Reading data into buffer");
-            }
-            
-            this.Ptr->length = (uint)length;                        
-            this.Ptr->dts = this.Ptr->pts = MMALUtil.MMAL_TIME_UNKNOWN;                        
-            this.Ptr->offset = 0;
-
-            if (eof)
-            {
-                this.Ptr->flags = (uint)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
-            }
-
-            Marshal.Copy(source, 0, (IntPtr)this.Ptr->data, length);
-        }
-
-        /// <summary>
-        /// Acquire a buffer header. Acquiring a buffer header increases a reference counter on it and makes 
-        /// sure that the buffer header won't be recycled until all the references to it are gone.
-        /// </summary>
-        internal void Acquire()
-        {
-            if (this.CheckState())
-            {
-                MMALBuffer.mmal_buffer_header_acquire(this.Ptr);
-            }
-        }
-
-        /// <summary>
-        /// Release a buffer header. Releasing a buffer header will decrease its reference counter and when no more references are left, 
-        /// the buffer header will be recycled by calling its 'release' callback function.
-        /// </summary>
-        internal void Release()
-        {
-            if (this.CheckState())
-            {
-                MMALLog.Logger.Debug("Releasing buffer.");
-                MMALBuffer.mmal_buffer_header_release(this.Ptr);
-            }
-            else
-            {
-                MMALLog.Logger.Warn("Input buffer null, could not release.");
-            }
-
-            this.Dispose();
-        }
-
-        /// <summary>
-        /// Reset a buffer header. Resets all header variables to default values.
-        /// </summary>
-        internal void Reset()
-        {
-            if (this.CheckState())
-            {
-                MMALBuffer.mmal_buffer_header_reset(this.Ptr);
-            }
-        }
-
-        /// <summary>
-        /// Checks whether this instance is attached to a valid native pointer.
-        /// </summary>
-        /// <returns></returns>
-        public bool CheckState()
-        {
-            return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;
         }
     }
 }

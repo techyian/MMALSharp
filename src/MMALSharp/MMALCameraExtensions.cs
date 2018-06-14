@@ -16,6 +16,8 @@ using static MMALSharp.Native.MMALParametersCamera;
 
 namespace MMALSharp
 {
+#pragma warning disable SA1202
+
     /// <summary>
     /// Provides extension methods for useful configuration against the Camera component.
     /// </summary>
@@ -340,8 +342,7 @@ namespace MMALSharp
                 new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_ANNOTATE, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>()), 0,
                 annotate.ShowShutter, annotate.ShowAnalogGain, annotate.ShowLens, annotate.ShowCaf, annotate.ShowMotion, annotate.ShowFrameNum,
                 annotate.EnableTextBackground, annotate.CustomBackgroundColor, annotate.CustomBackgroundY, annotate.CustomBackgroundU, annotate.CustomBackgroundV, 0,
-                annotate.CustomTextColor, annotate.CustomTextY, annotate.CustomTextU, annotate.CustomTextV, annotate.TextSize, annotate.Text
-                );
+                annotate.CustomTextColor, annotate.CustomTextY, annotate.CustomTextU, annotate.CustomTextV, annotate.TextSize, annotate.Text);
 
             var ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>());
             Marshal.StructureToPtr(disableAnnotate, ptr, false);
@@ -963,3 +964,4 @@ namespace MMALSharp
         }
     }
 }
+#pragma warning restore SA1202 // Public methods before Internal

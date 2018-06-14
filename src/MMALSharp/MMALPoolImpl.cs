@@ -14,16 +14,16 @@ namespace MMALSharp
     public unsafe class MMALPoolImpl : MMALObject
     {
         /// <summary>
-        /// Native pointer that represents this buffer header pool.
-        /// </summary>
-        internal MMAL_POOL_T* Ptr { get; set; }
-
-        /// <summary>
         /// Accessor to the queue of buffer headers this pool has.
         /// </summary>
         public MMALQueueImpl Queue { get; set; }
 
         public uint HeadersNum => this.Ptr->HeadersNum;
+
+        /// <summary>
+        /// Native pointer that represents this buffer header pool.
+        /// </summary>
+        internal MMAL_POOL_T* Ptr { get; set; }
 
         public MMALPoolImpl(MMALPortBase port)
         {            

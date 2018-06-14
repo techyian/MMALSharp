@@ -20,7 +20,8 @@ namespace MMALSharp
         /// <param name="min">The mininum inclusive value.</param>
         /// <param name="max">The maximum inclusive value.</param>
         /// <returns></returns>
-        public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
+        public static T Clamp<T>(this T val, T min, T max) 
+            where T : IComparable<T>
         {
             if (val.CompareTo(min) < 0)
             {

@@ -20,6 +20,13 @@ namespace MMALSharp
     public sealed class MMALCamera
     {
         /// <summary>
+        /// Gets the singleton instance of the MMAL Camera.
+        /// </summary>
+        public static MMALCamera Instance => Lazy.Value;
+
+        private static readonly Lazy<MMALCamera> Lazy = new Lazy<MMALCamera>(() => new MMALCamera());
+
+        /// <summary>
         /// Reference to the camera component.
         /// </summary>
         public MMALCameraComponent Camera { get; set; }
@@ -28,14 +35,7 @@ namespace MMALSharp
         /// List of all encoders currently in the pipeline.
         /// </summary>
         public List<MMALDownstreamComponent> DownstreamComponents { get; set; }
-
-        private static readonly Lazy<MMALCamera> lazy = new Lazy<MMALCamera>(() => new MMALCamera());
-
-        /// <summary>
-        /// Gets the singleton instance of the MMAL Camera.
-        /// </summary>
-        public static MMALCamera Instance => lazy.Value;
-
+        
         private MMALCamera()
         {
             BcmHost.bcm_host_init();

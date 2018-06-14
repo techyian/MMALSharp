@@ -6,9 +6,8 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
-using MMALSharp.Handlers;
-using static MMALSharp.MMALCallerHelper;
 using MMALSharp.Native;
+using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {

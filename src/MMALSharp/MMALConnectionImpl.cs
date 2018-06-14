@@ -16,11 +16,6 @@ namespace MMALSharp
     /// </summary>
     public unsafe class MMALConnectionImpl : MMALObject
     {
-        /// <summary>
-        /// Native pointer to the connection that this object represents.
-        /// </summary>
-        internal MMAL_CONNECTION_T* Ptr { get; set; }
-
         public MMALDownstreamComponent DownstreamComponent { get; set; }
 
         public MMALComponentBase UpstreamComponent { get; set; }
@@ -34,16 +29,14 @@ namespace MMALSharp
         /// The output port of this connection.
         /// </summary>
         public MMALPortBase OutputPort { get; set; }
-
-        internal MMALConnection.MMAL_CONNECTION_CALLBACK_T NativeCallback;
-
+        
         public MMALPoolImpl ConnectionPool { get; set; }
 
         /// <summary>
         /// Monitor lock for connection callback method.
         /// </summary>
         protected static object ConnectionLock = new object();
-
+        
         #region Connection struct wrapper properties
 
         /// <summary>
@@ -78,6 +71,13 @@ namespace MMALSharp
 
         #endregion
 
+        internal MMALConnection.MMAL_CONNECTION_CALLBACK_T NativeCallback;
+
+        /// <summary>
+        /// Native pointer to the connection that this object represents.
+        /// </summary>
+        internal MMAL_CONNECTION_T* Ptr { get; set; }
+
         protected MMALConnectionImpl(MMAL_CONNECTION_T* ptr, MMALPortBase output, MMALPortBase input, MMALDownstreamComponent inputComponent, MMALComponentBase outputComponent, bool useCallback)
         {
             this.Ptr = ptr;
@@ -97,6 +97,23 @@ namespace MMALSharp
             {
                 this.OutputPort.SendAllBuffers();
             }
+        }
+
+        public virtual void ManagedConnectionCallback(MMALBufferImpl buffer)
+        {
+            MMALLog.Logger.Debug("Inside Managed connection callback");
+        }
+
+        public override string ToString()
+        {
+            return $"Component connection - Upstream component: {this.UpstreamComponent.Name} on port {this.OutputPort.Name} Downstream component: {this.DownstreamComponent.Name} on port {this.InputPort.Name}";
+        }
+
+        public override void Dispose()
+        {
+            MMALLog.Logger.Debug("Disposing connection.");
+            this.Destroy();
+            base.Dispose();
         }
 
         /// <summary>
@@ -215,24 +232,7 @@ namespace MMALSharp
 
             return (int)connection->Flags;
         }
-
-        public virtual void ManagedConnectionCallback(MMALBufferImpl buffer)
-        {
-            MMALLog.Logger.Debug("Inside Managed connection callback");
-        }
-
-        public override string ToString()
-        {
-            return $"Component connection - Upstream component: {this.UpstreamComponent.Name} on port {this.OutputPort.Name} Downstream component: {this.DownstreamComponent.Name} on port {this.InputPort.Name}";                        
-        }
-
-        public override void Dispose()
-        {
-            MMALLog.Logger.Debug("Disposing connection.");
-            this.Destroy();
-            base.Dispose();
-        }
-
+        
         private void ConfigureConnectionCallback(MMALPortBase output, MMALPortBase input)
         {
             output.SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);

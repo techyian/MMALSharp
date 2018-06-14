@@ -157,6 +157,15 @@ namespace MMALSharp.Components
             base.ManagedOutputCallback(buffer, port);
         }
 
+        /// <summary>
+        /// Prints a summary of the ports and the resolution associated with this component to the console.
+        /// </summary>
+        public override void PrintComponent()
+        {
+            base.PrintComponent();
+            MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
+        }
+
         internal override void InitialiseOutputPort(int outputPort)
         {
             this.Outputs[outputPort] = new MMALVideoPort(this.Outputs[outputPort]);
@@ -251,7 +260,7 @@ namespace MMALSharp.Components
             try
             {
                 MMALCheck(
-                    MMALPort.mmal_port_parameter_set(this.Outputs[outputPort].Ptr, (MMAL_PARAMETER_HEADER_T*) ptr),
+                    MMALPort.mmal_port_parameter_set(this.Outputs[outputPort].Ptr, (MMAL_PARAMETER_HEADER_T*)ptr),
                     "Unable to set video profile.");
             }
             finally
@@ -300,7 +309,7 @@ namespace MMALSharp.Components
 
             MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs[outputPort].Ptr, param.HdrPtr), "Unable to set video intra refresh.");
         }
-
+        
         private DateTime CalculateSplit()
         {
             DateTime tempDt = new DateTime(this.LastSplit.Value.Ticks);
@@ -315,15 +324,6 @@ namespace MMALSharp.Components
                 default:
                     return tempDt.AddMinutes(this.Split.Value);
             }
-        }
-
-        /// <summary>
-        /// Prints a summary of the ports and the resolution associated with this component to the console.
-        /// </summary>
-        public override void PrintComponent()
-        {
-            base.PrintComponent();
-            MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
         }
 
         private class H264VideoLevel

@@ -3,9 +3,6 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using System;
-using System.Linq.Expressions;
-
 namespace MMALSharp
 {
     /// <summary>

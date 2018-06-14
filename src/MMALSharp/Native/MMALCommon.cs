@@ -12,35 +12,34 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_CORE_STATISTICS_T
     {
-        private uint bufferCount, firstBufferTime, lastBufferTime, maxDelay;
+        public uint BufferCount { get; }
 
-        public uint BufferCount => bufferCount;
-        public uint FirstBufferTime => firstBufferTime;
-        public uint LastBufferTime => lastBufferTime;
-        public uint MaxDelay => maxDelay;
+        public uint FirstBufferTime { get; }
+
+        public uint LastBufferTime { get; }
+
+        public uint MaxDelay { get; }
 
         public MMAL_CORE_STATISTICS_T(uint bufferCount, uint firstBufferTime, uint lastBufferTime, uint maxDelay)
         {
-            this.bufferCount = bufferCount;
-            this.firstBufferTime = firstBufferTime;
-            this.lastBufferTime = lastBufferTime;
-            this.maxDelay = maxDelay;
+            this.BufferCount = bufferCount;
+            this.FirstBufferTime = firstBufferTime;
+            this.LastBufferTime = lastBufferTime;
+            this.MaxDelay = maxDelay;
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_CORE_PORT_STATISTICS_T
     {
-        private MMAL_CORE_STATISTICS_T rx, tx;
+        public MMAL_CORE_STATISTICS_T Rx { get; }
 
-        public MMAL_CORE_STATISTICS_T Rx => rx;
-        public MMAL_CORE_STATISTICS_T Tx => tx;
+        public MMAL_CORE_STATISTICS_T Tx { get; }
 
         public MMAL_CORE_PORT_STATISTICS_T(MMAL_CORE_STATISTICS_T rx, MMAL_CORE_STATISTICS_T tx)
         {
-            this.rx = rx;
-            this.tx = tx;
+            this.Rx = rx;
+            this.Tx = tx;
         }
     }
-
 }

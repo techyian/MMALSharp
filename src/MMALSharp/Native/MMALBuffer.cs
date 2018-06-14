@@ -41,28 +41,28 @@ namespace MMALSharp.Native
 
 #pragma warning disable IDE1006 // Naming Styles
         [DllImport("libmmal.so", EntryPoint = "mmal_buffer_header_acquire", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_buffer_header_acquire(MMAL_BUFFER_HEADER_T* header);
+        public static extern unsafe void mmal_buffer_header_acquire(MMAL_BUFFER_HEADER_T* header);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_buffer_header_reset", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_buffer_header_reset(MMAL_BUFFER_HEADER_T* header);
+        public static extern unsafe void mmal_buffer_header_reset(MMAL_BUFFER_HEADER_T* header);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_buffer_header_release", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_buffer_header_release(MMAL_BUFFER_HEADER_T* header);
+        public static extern unsafe void mmal_buffer_header_release(MMAL_BUFFER_HEADER_T* header);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_buffer_header_release_continue", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_buffer_header_release_continue(MMAL_BUFFER_HEADER_T* header);
+        public static extern unsafe void mmal_buffer_header_release_continue(MMAL_BUFFER_HEADER_T* header);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_buffer_header_pre_release_cb_set", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_buffer_header_pre_release_cb_set(MMAL_BUFFER_HEADER_T* header, [MarshalAs(UnmanagedType.FunctionPtr)] MMAL_BH_PRE_RELEASE_CB_T cb, void* userdata);
+        public static extern unsafe void mmal_buffer_header_pre_release_cb_set(MMAL_BUFFER_HEADER_T* header, [MarshalAs(UnmanagedType.FunctionPtr)] MMAL_BH_PRE_RELEASE_CB_T cb, void* userdata);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_buffer_header_replicate", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_buffer_header_replicate(MMAL_BUFFER_HEADER_T* header, MMAL_BUFFER_HEADER_T* header2);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_buffer_header_replicate(MMAL_BUFFER_HEADER_T* header, MMAL_BUFFER_HEADER_T* header2);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_buffer_header_mem_lock", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_buffer_header_mem_lock(MMAL_BUFFER_HEADER_T* header);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_buffer_header_mem_lock(MMAL_BUFFER_HEADER_T* header);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_buffer_header_mem_unlock", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_buffer_header_mem_unlock(MMAL_BUFFER_HEADER_T* header);
+        public static extern unsafe void mmal_buffer_header_mem_unlock(MMAL_BUFFER_HEADER_T* header);
 #pragma warning restore IDE1006 // Naming Styles
     }
 
@@ -71,8 +71,12 @@ namespace MMALSharp.Native
     {
         private uint planes;
 
-        [MarshalAs( UnmanagedType.ByValArray, SizeConst = 4)]
-        private uint[] offset, pitch;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        private uint[] offset;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        private uint[] pitch;
+
         private uint flags;
 
         public uint Planes => this.planes;
@@ -82,7 +86,6 @@ namespace MMALSharp.Native
         public uint[] Pitch => this.pitch;
 
         public uint Flags => this.flags;
-
 
         public MMAL_BUFFER_HEADER_VIDEO_SPECIFIC_T(uint planes, uint[] offset, uint[] pitch, uint flags)
         {
@@ -96,13 +99,11 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_BUFFER_HEADER_TYPE_SPECIFIC_T
     {
-        private MMAL_BUFFER_HEADER_VIDEO_SPECIFIC_T video;
-
-        public MMAL_BUFFER_HEADER_VIDEO_SPECIFIC_T Video => video;
+        public MMAL_BUFFER_HEADER_VIDEO_SPECIFIC_T Video { get; }
 
         public MMAL_BUFFER_HEADER_TYPE_SPECIFIC_T(MMAL_BUFFER_HEADER_VIDEO_SPECIFIC_T video)
         {
-            this.video = video;
+            this.Video = video;
         }
     }
 
@@ -114,50 +115,44 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_BUFFER_HEADER_T
     {
-        private MMAL_BUFFER_HEADER_T* next;
-        private IntPtr priv;
-        private uint cmd;
-        public byte* data;
-        public uint allocSize, length, offset, flags;
-        public long pts, dts;
-        private IntPtr type, userData;
+        public MMAL_BUFFER_HEADER_T* Next { get; }
 
-        public MMAL_BUFFER_HEADER_T* Next => this.next;
+        public IntPtr Priv { get; }
 
-        public IntPtr Priv => this.priv;
+        public uint Cmd { get; }
 
-        public uint Cmd => this.cmd;
+        public byte* Data { get; set; }
 
-        public uint AllocSize => this.allocSize;
+        public uint AllocSize { get; }
 
-        public uint Length => this.length;
+        public uint Length { get; set; }
 
-        public uint Offset => this.offset;
+        public uint Offset { get; set; }
 
-        public uint Flags => this.flags;
+        public uint Flags { get; set; }
 
-        public long Pts => this.pts;
+        public long Pts { get; set; }
 
-        public long Dts => this.dts;
+        public long Dts { get; set; }
 
-        public IntPtr Type => this.type;
+        public IntPtr Type { get; }
 
-        public IntPtr UserData => this.userData;
+        public IntPtr UserData { get; }
 
         public MMAL_BUFFER_HEADER_T(MMAL_BUFFER_HEADER_T* next, IntPtr priv, uint cmd, byte* data, uint allocSize, uint length, uint offset, uint flags, long pts, long dts, IntPtr type, IntPtr userData)
         {
-            this.next = next;
-            this.priv = priv;
-            this.cmd = cmd;
-            this.data = data;
-            this.allocSize = allocSize;
-            this.length = length;
-            this.offset = offset;
-            this.flags = flags;
-            this.pts = pts;
-            this.dts = dts;
-            this.type = type;
-            this.userData = userData;
+            this.Next = next;
+            this.Priv = priv;
+            this.Cmd = cmd;
+            this.Data = data;
+            this.AllocSize = allocSize;
+            this.Length = length;
+            this.Offset = offset;
+            this.Flags = flags;
+            this.Pts = pts;
+            this.Dts = dts;
+            this.Type = type;
+            this.UserData = userData;
         }
     }
 }

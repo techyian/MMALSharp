@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\build\MMALSharp.props" />
   <PropertyGroup>
+	<Description>MMALSharp brings low level access to the Raspberry Pi camera module in C#. Based on the native MMAL library,
+	 MMALSharp allows you to configure a rich set of </Description>
     <AssemblyTitle>MMALSharp</AssemblyTitle>
     <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <AssemblyName>MMALSharp</AssemblyName>
@@ -15,6 +17,12 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
     <DocumentationFile>bin\Release\netstandard2.0\MMALSharp.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+	<CodeAnalysisRuleSet>..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
+    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.3.0" />
@@ -32,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.5.0-rc03" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MMALSharp.Common\MMALSharp.Common.csproj" />

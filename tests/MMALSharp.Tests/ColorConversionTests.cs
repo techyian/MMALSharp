@@ -13,7 +13,7 @@ namespace MMALSharp.Tests
     {        
         [Fact]
         [DisplayTestMethodName]
-        public void FromCIE1960()
+        public void FromCie1960()
         {          
             var cie1960 = MMALColor.RGBToCIE1960(Color.Blue);
             var from1960 = MMALColor.FromCIE1960(cie1960.Item1, cie1960.Item2, cie1960.Item3);
@@ -23,38 +23,38 @@ namespace MMALSharp.Tests
              
         [Fact]
         [DisplayTestMethodName]
-        public void FromCIEXYZ()
+        public void FromCiexyz()
         {           
-            var cieXYZ = MMALColor.RGBToCIEXYZ(Color.Blue);
-            var fromXYZ = MMALColor.FromCieXYZ(cieXYZ.Item1, cieXYZ.Item2, cieXYZ.Item3);
+            var cieXyz = MMALColor.RGBToCIEXYZ(Color.Blue);
+            var fromXyz = MMALColor.FromCieXYZ(cieXyz.Item1, cieXyz.Item2, cieXyz.Item3);
 
-            Assert.True(fromXYZ.R == Color.Blue.R && fromXYZ.G == Color.Blue.G && fromXYZ.B == Color.Blue.B);
+            Assert.True(fromXyz.R == Color.Blue.R && fromXyz.G == Color.Blue.G && fromXyz.B == Color.Blue.B);
         }
                 
         [Fact]
         [DisplayTestMethodName]
-        public void FromYIQ()
+        public void FromYiq()
         {           
             var yiq = MMALColor.RGBToYIQ(Color.Blue);
-            var fromYIQ = MMALColor.FromYIQ(yiq.Item1, yiq.Item2, yiq.Item3);
+            var fromYiq = MMALColor.FromYIQ(yiq.Item1, yiq.Item2, yiq.Item3);
 
-            Assert.True(fromYIQ.R == Color.Blue.R && fromYIQ.G == Color.Blue.G && fromYIQ.B == Color.Blue.B);
+            Assert.True(fromYiq.R == Color.Blue.R && fromYiq.G == Color.Blue.G && fromYiq.B == Color.Blue.B);
         }
                 
         [Fact]
         [DisplayTestMethodName]
-        public void FromYUV()
+        public void FromYuv()
         {
-            var fromYUVBytes = MMALColor.FromYUVBytes(0, 20, 20);
-            var rgbToYUV = MMALColor.RGBToYUV(fromYUVBytes);
-            var fromYUV = MMALColor.FromYUV(rgbToYUV.Item1, rgbToYUV.Item2, rgbToYUV.Item3);
+            var fromYuvBytes = MMALColor.FromYUVBytes(0, 20, 20);
+            var rgbToYuv = MMALColor.RGBToYUV(fromYuvBytes);
+            var fromYuv = MMALColor.FromYUV(rgbToYuv.Item1, rgbToYuv.Item2, rgbToYuv.Item3);
                         
-            Assert.True(fromYUV.Equals(fromYUVBytes));
+            Assert.True(fromYuv.Equals(fromYuvBytes));
         }
 
         [Fact]
         [DisplayTestMethodName]
-        public void RGBToYUVBytes()
+        public void RgbtoYuvBytes()
         {
             var yuvBytes = MMALColor.RGBToYUVBytes(Color.Blue);
             var fromYuvBytes = MMALColor.FromYUVBytes(yuvBytes.Item1, yuvBytes.Item2, yuvBytes.Item3);
@@ -64,22 +64,22 @@ namespace MMALSharp.Tests
 
         [Fact]
         [DisplayTestMethodName]
-        public void FromHLS()
+        public void FromHls()
         {            
             var hls = MMALColor.RGBToHLS(Color.Blue);
-            var fromHLS = MMALColor.FromHLS(hls.Item1, hls.Item2, hls.Item3);
+            var fromHls = MMALColor.FromHLS(hls.Item1, hls.Item2, hls.Item3);
 
-            Assert.True(fromHLS.R == Color.Blue.R && fromHLS.G == Color.Blue.G && fromHLS.B == Color.Blue.B);
+            Assert.True(fromHls.R == Color.Blue.R && fromHls.G == Color.Blue.G && fromHls.B == Color.Blue.B);
         }
                 
         [Fact]
         [DisplayTestMethodName]
-        public void FromHSV()
+        public void FromHsv()
         {            
             var hsv = MMALColor.RGBToHSV(Color.Blue);
-            var fromHSV = MMALColor.FromHSV(hsv.Item1, hsv.Item2, hsv.Item3);
+            var fromHsv = MMALColor.FromHSV(hsv.Item1, hsv.Item2, hsv.Item3);
             
-            Assert.True(fromHSV.R == Color.Blue.R && fromHSV.G == Color.Blue.G && fromHSV.B == Color.Blue.B);
+            Assert.True(fromHsv.R == Color.Blue.R && fromHsv.G == Color.Blue.G && fromHsv.B == Color.Blue.B);
         }        
     }
 }

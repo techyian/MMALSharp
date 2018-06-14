@@ -15,16 +15,18 @@ namespace MMALSharp.Components
     /// </summary>
     public sealed class MMALResizerComponent : MMALDownstreamHandlerComponent
     {
-        private int _width, _height; // Setting both values to 0 results in an EINVAL. Setting both values to 1 crashes the GPU.
+        // Setting both values to 0 results in an EINVAL. Setting both values to 1 crashes the GPU.
         // Using very high values will first lead to an ENOMEM but there might be a point when you get again an EINVAL.
-
+        private int _width;
+        private int _height; 
+        
         /// <summary>
         /// Creates a new instance of the <see cref="MMALResizerComponent"/> class that can be used to change the size
         /// and the pixel format of resulting frames. 
         /// </summary>
         /// <param name="width">The width of the output frames. Value must be greater than 1.</param>
         /// <param name="height">The height of the output frames. Value must be greater than 1.</param>
-        /// <param name="handler"></param>
+        /// <param name="handler">The capture handler associated with this component.</param>
         /// <exception cref="ArgumentOutOfRangeException"/>
         public MMALResizerComponent(int width, int height, ICaptureHandler handler)
             : base(MMAL_COMPONENT_DEFAULT_RESIZER, handler)

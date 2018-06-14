@@ -17,7 +17,8 @@ namespace MMALSharp.Handlers
         /// </summary>
         /// <param name="directory">The directory to save captured videos.</param>
         /// <param name="extension">The filename extension for saving files.</param>
-        public VideoStreamCaptureHandler(string directory, string extension) : base(directory, extension) { }
+        public VideoStreamCaptureHandler(string directory, string extension)
+            : base(directory, extension) { }
         
         /// <summary>
         /// Splits the current file by closing the current stream and opening a new one.

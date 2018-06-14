@@ -163,8 +163,8 @@ namespace MMALSharp.Components
                 }
                 else
                 {
-                    displaySet |= ((int)MMALParametersVideo.MMAL_DISPLAYSET_T.MMAL_DISPLAY_SET_DEST_RECT |
-                                    (int)MMALParametersVideo.MMAL_DISPLAYSET_T.MMAL_DISPLAY_SET_FULLSCREEN);
+                    displaySet |= (int)MMALParametersVideo.MMAL_DISPLAYSET_T.MMAL_DISPLAY_SET_DEST_RECT |
+                                  (int)MMALParametersVideo.MMAL_DISPLAYSET_T.MMAL_DISPLAY_SET_FULLSCREEN;
                 }
 
                 if (this.Configuration.NoAspect)
@@ -347,4 +347,3 @@ namespace MMALSharp.Components
         }
     }
 }
-

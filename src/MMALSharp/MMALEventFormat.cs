@@ -1,15 +1,24 @@
 ﻿using MMALSharp.Native;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMALSharp
 {
     public unsafe class MMALEventFormat
-    {        
+    {
+        public string FourCC => MMALEncodingHelpers.ParseEncoding(this.Format.Encoding).EncodingName;
+        public int Bitrate => this.Format.Bitrate;
+        public int Width => this.Format.Es->Video.Width;
+        public int Height => this.Format.Es->Video.Height;
+        public int CropX => this.Format.Es->Video.Crop.X;
+        public int CropY => this.Format.Es->Video.Crop.Y;
+        public int CropWidth => this.Format.Es->Video.Crop.Width;
+        public int CropHeight => this.Format.Es->Video.Crop.Height;
+        public int ParNum => this.Format.Es->Video.Par.Num;
+        public int ParDen => this.Format.Es->Video.Par.Den;
+        public int FramerateNum => this.Format.Es->Video.Framerate.Num;
+        public int FramerateDen => this.Format.Es->Video.Framerate.Den;
+
         // Dereferenced struct.
         internal MMAL_ES_FORMAT_T Format { get; set; }
 
@@ -18,19 +27,6 @@ namespace MMALSharp
         /// </summary>
         internal MMAL_ES_FORMAT_T* Ptr { get; set; }
 
-        public string FourCC => MMALEncodingHelpers.ParseEncoding(this.Format.encoding).EncodingName;
-        public int Bitrate => this.Format.bitrate;
-        public int Width => this.Format.es->video.width;
-        public int Height => this.Format.es->video.height;
-        public int CropX => this.Format.es->video.crop.X;
-        public int CropY => this.Format.es->video.crop.Y;
-        public int CropWidth => this.Format.es->video.crop.Width;
-        public int CropHeight => this.Format.es->video.crop.Height;
-        public int ParNum => this.Format.es->video.par.Num;
-        public int ParDen => this.Format.es->video.par.Den;
-        public int FramerateNum => this.Format.es->video.frameRate.Num;
-        public int FramerateDen => this.Format.es->video.frameRate.Den;
-        
         public MMALEventFormat(MMAL_ES_FORMAT_T format)
         {
             this.Format = format;

@@ -12,48 +12,46 @@ namespace MMALSharp.Native
     public static class MMALQueue
     {
 #pragma warning disable IDE1006 // Naming Styles
-        //MMAL_QUEUE_T*
+        // MMAL_QUEUE_T*
         [DllImport("libmmal.so", EntryPoint = "mmal_queue_create", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMAL_QUEUE_T* mmal_queue_create();
+        public static extern unsafe MMAL_QUEUE_T* mmal_queue_create();
 
         [DllImport("libmmal.so", EntryPoint = "mmal_queue_put", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_queue_put(MMAL_QUEUE_T* ptr, MMAL_BUFFER_HEADER_T* header);
+        public static extern unsafe void mmal_queue_put(MMAL_QUEUE_T* ptr, MMAL_BUFFER_HEADER_T* header);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_queue_put_back", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_queue_put_back(MMAL_QUEUE_T* ptr, MMAL_BUFFER_HEADER_T* header);
+        public static extern unsafe void mmal_queue_put_back(MMAL_QUEUE_T* ptr, MMAL_BUFFER_HEADER_T* header);
 
-        //MMAL_QUEUE_T*
+        // MMAL_QUEUE_T*
         [DllImport("libmmal.so", EntryPoint = "mmal_queue_get", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMAL_BUFFER_HEADER_T* mmal_queue_get(MMAL_QUEUE_T* ptr);
+        public static extern unsafe MMAL_BUFFER_HEADER_T* mmal_queue_get(MMAL_QUEUE_T* ptr);
 
-        //MMAL_QUEUE_T*
+        // MMAL_QUEUE_T*
         [DllImport("libmmal.so", EntryPoint = "mmal_queue_wait", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMAL_BUFFER_HEADER_T* mmal_queue_wait(MMAL_QUEUE_T* ptr);
+        public static extern unsafe MMAL_BUFFER_HEADER_T* mmal_queue_wait(MMAL_QUEUE_T* ptr);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_queue_length", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern uint mmal_queue_length(MMAL_QUEUE_T* ptr);
+        public static extern unsafe uint mmal_queue_length(MMAL_QUEUE_T* ptr);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_queue_destroy", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_queue_destroy(MMAL_QUEUE_T* ptr);
+        public static extern unsafe void mmal_queue_destroy(MMAL_QUEUE_T* ptr);
 #pragma warning restore IDE1006 // Naming Styles
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_QUEUE_T
     {
-        private uint length;
-        private MMAL_BUFFER_HEADER_T* first;
-        private MMAL_BUFFER_HEADER_T** last;
+        public uint Length { get; }
 
-        public uint Length => length;
-        public MMAL_BUFFER_HEADER_T* First => first;
-        public MMAL_BUFFER_HEADER_T** Last => last;
+        public MMAL_BUFFER_HEADER_T* First { get; }
+
+        public MMAL_BUFFER_HEADER_T** Last { get; }
 
         public MMAL_QUEUE_T(uint length, MMAL_BUFFER_HEADER_T* first, MMAL_BUFFER_HEADER_T** last)
         {
-            this.length = length;
-            this.first = first;
-            this.last = last;
+            this.Length = length;
+            this.First = first;
+            this.Last = last;
         }
     }
 }

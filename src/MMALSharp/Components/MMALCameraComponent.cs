@@ -24,30 +24,37 @@ namespace MMALSharp.Components
         /// Automatic mode (default).
         /// </summary>
         Mode0,
+
         /// <summary>
         /// 1080p cropped mode.
         /// </summary>
         Mode1,
+
         /// <summary>
         /// 4:3 ratio.
         /// </summary>
         Mode2,
+
         /// <summary>
         /// 4:3 ratio (low FPS with OV5647).
         /// </summary>
         Mode3,
+
         /// <summary>
         /// 2x2 binned 4:3.
         /// </summary>
         Mode4,
+
         /// <summary>
         /// 2x2 binned 16:9.
         /// </summary>
         Mode5,
+
         /// <summary>
         /// High FPS. Ratio and resolution depend on camera module.
         /// </summary>
         Mode6,
+
         /// <summary>
         /// VGA high FPS.
         /// </summary>
@@ -63,10 +70,12 @@ namespace MMALSharp.Components
         /// The output port number of the camera's preview port.
         /// </summary>
         public const int MMALCameraPreviewPort = 0;
+
         /// <summary>
         /// The output port number of the camera's video port.
         /// </summary>
         public const int MMALCameraVideoPort = 1;
+
         /// <summary>
         /// The output port number of the camera's still port.
         /// </summary>

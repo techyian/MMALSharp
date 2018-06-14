@@ -15,6 +15,7 @@ namespace MMALSharp.Handlers
         /// </summary>
         /// <param name="directory">The directory to save captured images.</param>
         /// <param name="extension">The filename extension for saving files.</param>
-        public ImageStreamCaptureHandler(string directory, string extension) : base(directory, extension) { }
+        public ImageStreamCaptureHandler(string directory, string extension)
+            : base(directory, extension) { }
     }
 }

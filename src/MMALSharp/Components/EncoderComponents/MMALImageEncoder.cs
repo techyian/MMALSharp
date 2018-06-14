@@ -67,18 +67,14 @@ namespace MMALSharp.Components
         /// <param name="rawBayer">Specifies whether to include raw bayer image data.</param>
         /// <param name="useExif">Specifies whether any EXIF tags should be used.</param>
         /// <param name="exifTags">A collection of custom EXIF tags.</param>
-        public MMALImageEncoder(ICaptureHandler handler, bool rawBayer = false, bool useExif = true, params ExifTag[] exifTags) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER, handler)
+        public MMALImageEncoder(ICaptureHandler handler, bool rawBayer = false, bool useExif = true, params ExifTag[] exifTags)
+            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER, handler)
         {
             this.RawBayer = rawBayer;
             this.UseExif = useExif;
             this.ExifTags = exifTags;
         }
-
-        internal override void InitialiseOutputPort(int outputPort)
-        {
-            this.Outputs[outputPort] = new MMALStillPort(this.Outputs[outputPort]);
-        }
-
+        
         public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
             base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate, false);
@@ -92,6 +88,20 @@ namespace MMALSharp.Components
             {
                 this.AddExifTags(this.ExifTags);
             }            
+        }
+
+        /// <summary>
+        /// Prints a summary of the ports and the resolution associated with this component to the console.
+        /// </summary>
+        public override void PrintComponent()
+        {
+            base.PrintComponent();
+            MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
+        }
+
+        internal override void InitialiseOutputPort(int outputPort)
+        {
+            this.Outputs[outputPort] = new MMALStillPort(this.Outputs[outputPort]);
         }
 
         /// <summary>
@@ -156,22 +166,13 @@ namespace MMALSharp.Components
 
             try
             {
-                MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs[0].Ptr, (MMAL_PARAMETER_HEADER_T*) ptr),
+                MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs[0].Ptr, (MMAL_PARAMETER_HEADER_T*)ptr),
                     $"Unable to set EXIF {formattedExif}");
             }
             finally
             {
                 Marshal.FreeHGlobal(ptr);
             }
-        }
-
-        /// <summary>
-        /// Prints a summary of the ports and the resolution associated with this component to the console.
-        /// </summary>
-        public override void PrintComponent()
-        {
-            base.PrintComponent();
-            MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
         }
     }        
 }

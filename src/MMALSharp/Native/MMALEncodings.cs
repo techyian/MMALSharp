@@ -216,6 +216,7 @@ namespace MMALSharp.Native
         public static readonly MMALEncoding BAYER_SBGGR16 = new MMALEncoding("BYR2", EncodingType.PixelFormat);
         public static readonly MMALEncoding BAYER_SBGGR10DPCM8 = new MMALEncoding("bBA8", EncodingType.PixelFormat);
         public static readonly MMALEncoding YUVUV128 = new MMALEncoding("SAND", EncodingType.PixelFormat);
+
         /// <summary>
         /// An opaque buffer is a Broadcom specific format that references a GPU internal bitmap. It is typed as <see cref="EncodingType.Internal"/>.
         /// </summary>
@@ -275,7 +276,5 @@ namespace MMALSharp.Native
         public static readonly MMALEncoding MMAL_COLOR_SPACE_BT470_2_M = new MMALEncoding("Y__M", EncodingType.PixelFormat);
         public static readonly MMALEncoding MMAL_COLOR_SPACE_BT470_2_BG = new MMALEncoding("Y_BG", EncodingType.PixelFormat);
         public static readonly MMALEncoding MMAL_COLOR_SPACE_JFIF_Y16_255 = new MMALEncoding("YY16", EncodingType.PixelFormat);
-
     }
-
 }

@@ -111,7 +111,7 @@ namespace MMALSharp.Components
 
             this.Inputs[0].Commit();
 
-            if (this.Outputs.Count > 0 && this.Outputs[0].Ptr->Format->type == MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_UNKNOWN)
+            if (this.Outputs.Count > 0 && this.Outputs[0].Ptr->Format->Type == MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_UNKNOWN)
             {
                 throw new PiCameraError("Unable to determine settings for output port.");
             }
@@ -162,7 +162,7 @@ namespace MMALSharp.Components
                 this.Outputs[outputPort].NativeEncodingSubformat = pixelFormat.EncodingVal;
             }
 
-            MMAL_VIDEO_FORMAT_T tempVid = this.Outputs[outputPort].Ptr->Format->es->video;
+            MMAL_VIDEO_FORMAT_T tempVid = this.Outputs[outputPort].Ptr->Format->Es->Video;
 
             try
             {
@@ -172,7 +172,7 @@ namespace MMALSharp.Components
             {
                 // If commit fails using new settings, attempt to reset using old temp MMAL_VIDEO_FORMAT_T.
                 MMALLog.Logger.Warn("Commit of output port failed. Attempting to reset values.");
-                this.Outputs[outputPort].Ptr->Format->es->video = tempVid;
+                this.Outputs[outputPort].Ptr->Format->Es->Video = tempVid;
                 this.Outputs[outputPort].Commit();
             }
 

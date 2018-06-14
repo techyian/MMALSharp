@@ -66,7 +66,7 @@ namespace MMALSharp.Components
                     MMALCheck(MMALPort.mmal_port_parameter_get(this.Control.Ptr, str2),
                         "Unable to get camera info for newer firmware.");
 
-                    var p = (IntPtr) str2;
+                    var p = (IntPtr)str2;
 
                     var s = Marshal.PtrToStructure<MMAL_PARAMETER_CAMERA_INFO_V2_T>(p);
 
