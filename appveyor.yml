@@ -34,9 +34,9 @@ for:
     - dotnet build "src\MMALSharp" -c %CONFIGURATION% --version-suffix %APPVEYOR_BUILD_NUMBER%
     
     after_build:
-    - dotnet pack .\src\MMALSharp\MMALSharp.csproj -c %CONFIGURATION%
-    - dotnet pack .\src\MMALSharp.Common\MMALSharp.Common.csproj -c %CONFIGURATION%
-    - dotnet pack .\src\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj -c %CONFIGURATION%
+    - dotnet pack .\src\MMALSharp\MMALSharp.csproj -c %CONFIGURATION% --version-suffix %APPVEYOR_BUILD_NUMBER%
+    - dotnet pack .\src\MMALSharp.Common\MMALSharp.Common.csproj -c %CONFIGURATION% --version-suffix %APPVEYOR_BUILD_NUMBER%
+    - dotnet pack .\src\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj -c %CONFIGURATION% --version-suffix %APPVEYOR_BUILD_NUMBER%
     
     deploy:
     # MyGet Deployment for builds & releases
