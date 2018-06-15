@@ -89,6 +89,8 @@ namespace MMALSharp.Components
         {
             this.Split = split;
             this.Timeout = timeout;
+            
+            OutputCallbackProvider.RegisterCallback(new VideoOutputCallbackHandler(this.Outputs[0]));
         }
         
         /// <summary>
@@ -103,12 +105,7 @@ namespace MMALSharp.Components
         public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
             base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate, zeroCopy);
-
-            if (OutputCallbackProvider.FindCallback(this.Outputs[outputPort]).GetType() == typeof(DefaultCallbackHandler))
-            {
-                this.Outputs[outputPort].ManagedOutputCallback = new VideoOutputCallbackHandler(this.Outputs[outputPort]);
-            }
-
+            
             ((MMALVideoPort)this.Outputs[outputPort]).Timeout = this.Timeout;
             this.Outputs[outputPort].Ptr->BufferSize = 512 * 1024;
             this.Quality = quality;
@@ -132,39 +129,7 @@ namespace MMALSharp.Components
             this.ConfigureImmutableInput(outputPort);
             this.ConfigureBitrate(outputPort);
         }
-
-        /// <summary>
-        /// Delegate to process the buffer header containing image data.
-        /// </summary>
-        /// <param name="buffer">The buffer header we're currently processing.</param>
-        /// <param name="port">The port we're currently processing on.</param>
-        //public override void ManagedOutputCallback(MMALBufferImpl buffer, MMALPortBase port)
-        //{
-        //    if (this.PrepareSplit && buffer.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))
-        //    {
-        //        ((VideoStreamCaptureHandler)this.Handler).Split();
-        //        this.LastSplit = DateTime.Now;
-        //        this.PrepareSplit = false;
-        //    }
-
-        //    // Ensure that if we need to split then this is done before processing the buffer data.
-        //    if (this.Split != null)
-        //    {
-        //        if (!this.LastSplit.HasValue)
-        //        {
-        //            this.LastSplit = DateTime.Now;
-        //        }
-
-        //        if (DateTime.Now.CompareTo(this.CalculateSplit()) > 0)
-        //        {
-        //            this.PrepareSplit = true;
-        //            port.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_REQUEST_I_FRAME, true);
-        //        }
-        //    }
-
-        //    base.ManagedOutputCallback(buffer, port);
-        //}
-
+        
         /// <summary>
         /// Prints a summary of the ports and the resolution associated with this component to the console.
         /// </summary>
@@ -173,16 +138,7 @@ namespace MMALSharp.Components
             base.PrintComponent();
             MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
         }
-
-        /// <summary>
-        /// Prints a summary of the ports and the resolution associated with this component to the console.
-        /// </summary>
-        public override void PrintComponent()
-        {
-            base.PrintComponent();
-            MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
-        }
-
+        
         internal override void InitialiseOutputPort(int outputPort)
         {
             this.Outputs[outputPort] = new MMALVideoPort(this.Outputs[outputPort]);

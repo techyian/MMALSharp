@@ -15,17 +15,16 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Register a new callback handler with a given port.
         /// </summary>
-        /// <param name="port">The port to register a callback handler with.</param>
         /// <param name="handler">The callback handler.</param>
-        public static void RegisterCallback(MMALPortBase port, ICallbackHandler handler)
+        public static void RegisterCallback(ICallbackHandler handler)
         {
-            if (WorkingHandlers.ContainsKey(port))
+            if (WorkingHandlers.ContainsKey(handler.WorkingPort))
             {
-                WorkingHandlers[port] = handler;
+                WorkingHandlers[handler.WorkingPort] = handler;
             }
             else
             {
-                WorkingHandlers.Add(port, handler);
+                WorkingHandlers.Add(handler.WorkingPort, handler);
             }
         }
 
@@ -34,7 +33,8 @@ namespace MMALSharp.Callbacks
         /// <see cref="DefaultCallbackHandler"/> will be returned.
         /// </summary>
         /// <param name="port">The port we are retrieving the callback handler on.</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="ICallbackHandler"/> for a given port. If no handler is registered, a 
+        /// <see cref="DefaultCallbackHandler"/> will be returned.</returns>
         public static ICallbackHandler FindCallback(MMALPortBase port)
         {
             if (WorkingHandlers.ContainsKey(port))

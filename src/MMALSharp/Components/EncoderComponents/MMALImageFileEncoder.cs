@@ -87,9 +87,9 @@ namespace MMALSharp.Components
             this.Outputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
 
             // Enable control, input and output ports. Input & Output ports should have been pre-configured by user prior to this point.
-            this.Start(this.Control, new Action<MMALBufferImpl, MMALPortBase>(this.ManagedControlCallback));
-            this.Start(this.Inputs[0], this.ManagedInputCallback);
-            this.Start(this.Outputs[outputPort], new Action<MMALBufferImpl, MMALPortBase>(this.ManagedOutputCallback));
+            this.Start(this.Control);
+            this.Start(this.Inputs[0]);
+            this.Start(this.Outputs[outputPort]);
 
             this.EnableComponent();
 
@@ -129,14 +129,13 @@ namespace MMALSharp.Components
                                     buffer.Release();
                                 }
                             }
-
                             continue;
                         }
                         else
                         {
                             if (buffer.Length > 0)
                             {
-                                this.ManagedOutputCallback(buffer, this.Outputs[0]);
+                                this.Outputs[0].ManagedOutputCallback.Callback(buffer);
                             }
                             else
                             {

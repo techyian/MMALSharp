@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MMALSharp.Callbacks
 {
@@ -15,17 +16,21 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Register a new callback handler with a given port.
         /// </summary>
-        /// <param name="port">The port to register a callback handler with.</param>
         /// <param name="handler">The callback handler.</param>
-        public static void RegisterCallback(MMALPortBase port, IInputCallbackHandler handler)
+        public static void RegisterCallback(IInputCallbackHandler handler)
         {
-            if (WorkingHandlers.ContainsKey(port))
+            if (handler == null)
             {
-                WorkingHandlers[port] = handler;
+                throw new ArgumentNullException(nameof(handler));
+            }
+
+            if (WorkingHandlers.ContainsKey(handler.WorkingPort))
+            {
+                WorkingHandlers[handler.WorkingPort] = handler;
             }
             else
             {
-                WorkingHandlers.Add(port, handler);
+                WorkingHandlers.Add(handler.WorkingPort, handler);
             }
         }
 
@@ -34,7 +39,8 @@ namespace MMALSharp.Callbacks
         /// <see cref="DefaultInputCallbackHandler"/> will be returned.
         /// </summary>
         /// <param name="port">The port we are retrieving the callback handler on.</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="IInputCallbackHandler"/> for a given port. If no handler is registered, a 
+        /// <see cref="DefaultInputCallbackHandler"/> will be returned.</returns>
         public static IInputCallbackHandler FindCallback(MMALPortBase port)
         {
             if (WorkingHandlers.ContainsKey(port))

@@ -11,12 +11,12 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// A whitelisted Encoding Type that this callback handler will operate on.
         /// </summary>
-        protected MMALEncoding EncodingType { get; set; }
+        public MMALEncoding EncodingType { get; }
 
         /// <summary>
         /// The port this callback handler is used with.
         /// </summary>
-        protected MMALPortBase WorkingPort { get; set; }
+        public MMALPortBase WorkingPort { get; }
         
         protected CallbackHandlerBase(MMALPortBase port)
         {
@@ -28,7 +28,7 @@ namespace MMALSharp.Callbacks
             this.EncodingType = encodingType;
             this.WorkingPort = port;
         }
-
+        
         /// <summary>
         /// The callback function to carry out.
         /// </summary>

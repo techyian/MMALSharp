@@ -9,7 +9,6 @@ using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
 using MMALSharp.Native;
 using MMALSharp.Components;
-using MMALSharp.Handlers;
 using Nito.AsyncEx;
 using static MMALSharp.MMALCallerHelper;
 
@@ -196,16 +195,16 @@ namespace MMALSharp
         /// Asynchronous trigger which is set when processing has completed on this port.
         /// </summary>
         public AsyncCountdownEvent Trigger { get; set; }
-        
-        /// <summary>
-        /// Delegate to populate native buffer header with user provided image data.
-        /// </summary>
-        public Func<MMALBufferImpl, MMALPortBase, ProcessResult> ManagedInputCallback { get; set; }
 
         /// <summary>
-        /// Delegate we use to do further processing on buffer headers when they're received by the native callback delegate.
+        /// A callback handler for Input ports to populate native buffer header with user provided image data.
         /// </summary>
-        public Action<MMALBufferImpl, MMALPortBase> ManagedOutputCallback { get; set; }
+        public IInputCallbackHandler ManagedInputCallback { get; set; }
+
+        /// <summary>
+        /// A callback handler for Output ports we use to do further processing on buffer headers after they've been received by the native callback delegate.
+        /// </summary>
+        public ICallbackHandler ManagedOutputCallback { get; set; }
 
         /// <summary>
         /// Native pointer that represents the component this port is associated with.
@@ -320,11 +319,11 @@ namespace MMALSharp
         internal virtual void EnableControlPort()
         {
         }
-
+        
         /// <summary>
         /// Provides functionality to enable processing on an output port.
-        /// <param name="sendBuffers">Indicates whether we want to send all the buffers in the port pool or simply create the pool.</param>
         /// </summary>
+        /// <param name="sendBuffers">Indicates whether we want to send all the buffers in the port pool or simply create the pool.</param>
         internal virtual void EnableOutputPort(bool sendBuffers = true)
         {
             if (this.ManagedOutputCallback != null)

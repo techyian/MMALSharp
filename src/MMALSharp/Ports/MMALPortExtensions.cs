@@ -127,27 +127,7 @@ namespace MMALSharp
 
             return string.Empty;
         }
-
-        public static void RegisterCallback(this MMALPortBase port, ICallbackHandler handler)
-        {
-            if (port.PortType != PortType.Output)
-            {
-                throw new ArgumentException($"Cannot register {nameof(ICallbackHandler)} on an Input port.");
-            }
-
-            OutputCallbackProvider.RegisterCallback(port, handler);
-        }
-
-        public static void RegisterCallback(this MMALPortBase port, IInputCallbackHandler handler)
-        {
-            if (port.PortType != PortType.Input)
-            {
-                throw new ArgumentException($"Cannot register {nameof(IInputCallbackHandler)} on an Output port.");
-            }
-
-            InputCallbackProvider.RegisterCallback(port, handler);
-        }
-
+        
         /// <summary>
         /// Provides a facility to set data on the port using the native helper functions.
         /// </summary>
