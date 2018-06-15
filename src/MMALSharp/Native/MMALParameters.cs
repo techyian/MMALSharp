@@ -2037,6 +2037,7 @@ namespace MMALSharp.Native
                 }
             }
         }
+
         public MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T Control => control;
 
         public MMAL_PARAMETER_VIDEO_RATECONTROL_T(MMAL_PARAMETER_HEADER_T hdr, MMALParametersVideo.MMAL_VIDEO_RATECONTROL_T control)
@@ -2112,6 +2113,7 @@ namespace MMALSharp.Native
                 }
             }
         }
+
         public MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T RefreshMode => refreshMode;
         public int AirMbs => airMbs;
         public int AirRef => airRef;

@@ -132,6 +132,7 @@ namespace MMALSharp.Native
                 this.bufferNum = value;
             }
         }
+
         public int BufferSize
         {
             get
@@ -143,6 +144,7 @@ namespace MMALSharp.Native
                 this.bufferSize = value;
             }
         }
+
         public MMAL_COMPONENT_T* Component => component;
         public IntPtr UserData => userData;
         public uint Capabilities => capabilities;

@@ -612,10 +612,12 @@ namespace MMALSharp
             {
                 return 0;
             }
+
             if (this.Width == res.Width && this.Height > res.Height)
             {
                 return 1;
             }
+
             if (this.Width == res.Width && this.Height < res.Height)
             {
                 return -1;

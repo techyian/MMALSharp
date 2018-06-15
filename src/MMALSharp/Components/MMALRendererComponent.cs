@@ -300,6 +300,7 @@ namespace MMALSharp.Components
                         throw new PiCameraError("Unable to determine encoding from image size.");
                     }
                 }
+
                 this.Inputs[0].NativeEncodingType = config.Encoding.EncodingVal;
             }
 

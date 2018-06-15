@@ -128,6 +128,7 @@ namespace MMALSharp.Components
                                     buffer.Release();
                                 }
                             }
+
                             continue;
                         }
                         else

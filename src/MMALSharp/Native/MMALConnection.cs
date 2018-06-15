@@ -69,6 +69,7 @@ namespace MMALSharp.Native
                 this.callback = value;
             }
         }
+
         public uint IsEnabled => isEnabled;
         public uint Flags => flags;
         public MMAL_PORT_T* Input => input;

@@ -7,7 +7,7 @@
     <RootNamespace>MMALSharp.Tests</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
-	<CodeAnalysisRuleSet>$(ProjectDir)\..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSet>..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
 	<PackageReference Include="Nito.AsyncEx" Version="3.0.1" />    

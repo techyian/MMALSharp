@@ -61,6 +61,7 @@ namespace MMALSharp.Components
                 {
                     return MMALCameraConfig.VideoResolution.Width;
                 }
+
                 return _width;
             }
             set { _width = value; }
@@ -74,6 +75,7 @@ namespace MMALSharp.Components
                 {
                     return MMALCameraConfig.VideoResolution.Height;
                 }
+
                 return _height;
             }
             set { _height = value; }

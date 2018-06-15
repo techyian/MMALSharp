@@ -19,7 +19,7 @@
     <DocumentationFile>bin\Release\netstandard2.0\MMALSharp.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
-	<CodeAnalysisRuleSet>$(ProjectDir)\..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSet>..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
     <DocumentationFile></DocumentationFile>

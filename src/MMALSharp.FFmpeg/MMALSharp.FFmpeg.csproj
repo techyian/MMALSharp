@@ -17,7 +17,7 @@
     <DocumentationFile>bin\Release\netstandard2.0\MMALSharp.FFmpeg.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
-	<CodeAnalysisRuleSet>$(ProjectDir)\..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSet>..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <Reference Include="System" />
