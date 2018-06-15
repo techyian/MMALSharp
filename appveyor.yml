@@ -31,7 +31,7 @@ for:
     configuration: Debug
 
     build_script:
-    - dotnet build "src\MMALSharp" -c %CONFIGURATION% --version-suffix "{build}"
+    - dotnet build "src\MMALSharp" -c %CONFIGURATION% --version-suffix $Env:APPVEYOR_BUILD_NUMBER
     
     after_build:
     - dotnet pack .\src\MMALSharp\MMALSharp.csproj -c %CONFIGURATION%
