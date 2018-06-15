@@ -27,10 +27,8 @@ before_build:
   - dotnet restore src\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj
   - dotnet restore tests\MMALSharp.Tests\MMALSharp.Tests.csproj
 
-build:
-  parallel: true                  # enable MSBuild parallel builds
-  project: MMALSharp.sln    # path to Visual Studio solution or project
-
+build_script:
+- dotnet build "src\MMALSharp" -c %CONFIGURATION%
 
 after_build:
   - dotnet pack .\src\MMALSharp\MMALSharp.csproj --configuration Release
