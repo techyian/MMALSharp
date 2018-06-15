@@ -4,12 +4,8 @@
 // </copyright>
 
 using MMALSharp.Handlers;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMALSharp.FFmpeg
 {
@@ -39,7 +35,7 @@ namespace MMALSharp.FFmpeg
             if (result.ProcessedFiles.Count == 0)
                 return;
 
-            //Create temporary directory and copy all files in the capture handler to it.
+            // Create temporary directory and copy all files in the capture handler to it.
             var tempDirectory = result.ProcessedFiles.FirstOrDefault().Directory.TrimEnd('/') + "/mmalsharptemp/";
             var extension = result.ProcessedFiles.FirstOrDefault().Extension;
 
@@ -56,7 +52,7 @@ namespace MMALSharp.FFmpeg
 
                 if (fps == 0)
                 {
-                    //Default to 25fps - FFmpeg defaults to this value if nothing is specified
+                    // Default to 25fps - FFmpeg defaults to this value if nothing is specified
                     fps = 25;
                 }
 
@@ -66,7 +62,7 @@ namespace MMALSharp.FFmpeg
             }
             finally
             {
-                //Make sure we try to cleanup even if error occurs.
+                // Make sure we try to cleanup even if error occurs.
                 if (System.IO.Directory.Exists(tempDirectory))
                 {
                     System.IO.Directory.Delete(tempDirectory, true);

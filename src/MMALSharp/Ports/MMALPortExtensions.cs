@@ -220,7 +220,7 @@ namespace MMALSharp
         internal static unsafe void SetStereoMode(this MMALPortImpl port, StereoMode mode)
         {
             MMAL_PARAMETER_STEREOSCOPIC_MODE_T stereo = new MMAL_PARAMETER_STEREOSCOPIC_MODE_T(
-                new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_STEREOSCOPIC_MODE, Marshal.SizeOf<MMAL_PARAMETER_STEREOSCOPIC_MODE_T>()),
+                new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_STEREOSCOPIC_MODE, Marshal.SizeOf<MMAL_PARAMETER_STEREOSCOPIC_MODE_T>()),
                 mode.Mode,
                 mode.Decimate,
                 mode.SwapEyes);

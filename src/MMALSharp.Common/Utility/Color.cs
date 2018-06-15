@@ -25,8 +25,8 @@ namespace MMALSharp.Utility
         public static Color FromCIE1960(float u, float v, float y)
         {
             // x and y chromaticity values
-            var xc = (3f * u) / (2f * u - 8f * v + 4);
-            var yc = (2f * v) / (2f * u - 8f * v + 4);
+            var xc = (3f * u) / ((2f * u) - (8f * v) + 4);
+            var yc = (2f * v) / ((2f * u) - (8f * v) + 4);
 
             var x = (y / yc) * xc;
             var z = (y / yc) * (1 - xc - yc);
@@ -95,9 +95,9 @@ namespace MMALSharp.Utility
             var g = c.G.ToFloat();
             var b = c.B.ToFloat();
 
-            var y = (float)(0.30 * r + 0.59 * g + 0.11 * b);
-            var i = (float)(0.60 * r - 0.28 * g - 0.32 * b);
-            var q = (float)(0.21 * r - 0.52 * g + 0.31 * b);
+            var y = (float)((0.30 * r) + (0.59 * g) + (0.11 * b));
+            var i = (float)((0.60 * r) - (0.28 * g) - (0.32 * b));
+            var q = (float)((0.21 * r) - (0.52 * g) + (0.31 * b));
 
             return new Tuple<float, float, float>(y.Clamp(0, 1), i.Clamp(-1, 1), q.Clamp(-1, 1));
         }
@@ -219,9 +219,9 @@ namespace MMALSharp.Utility
             var g = c.G.ToFloat();
             var b = c.B.ToFloat();
 
-            var y = 0.299f * r + 0.587f * g + 0.114f * b;
-            var u = -0.147f * r - 0.289f * g + 0.436f * b;
-            var v = 0.615f * r - 0.515f * g - 0.100f * b;
+            var y = (0.299f * r) + (0.587f * g) + (0.114f * b);
+            var u = (-0.147f * r) - (0.289f * g) + (0.436f * b);
+            var v = (0.615f * r) - (0.515f * g) - (0.100f * b);
 
             return new Tuple<float, float, float>(y, u, v);
         }
@@ -234,9 +234,9 @@ namespace MMALSharp.Utility
         /// <returns>A 3 pair <see cref="Tuple"/> of byte values representing the RGB conversion to YUV.</returns>
         public static Tuple<byte, byte, byte> RGBToYUVBytes(Color c)
         {
-            var y = ((66  * c.R + 129 * c.G + 25  * c.B + 128) >> 8) + 16;
-            var u = ((-38 * c.R - 73  * c.G + 112 * c.B + 128) >> 8) + 128;
-            var v = ((112 * c.R - 94  * c.G - 18  * c.B + 128) >> 8) + 128;
+            var y = (((66 * c.R) + (129 * c.G) + (25 * c.B) + 128) >> 8) + 16;
+            var u = (((-38 * c.R) - (73 * c.G) + (112 * c.B) + 128) >> 8) + 128;
+            var v = (((112 * c.R) - (94 * c.G) - (18 * c.B) + 128) >> 8) + 128;
 
             return new Tuple<byte, byte, byte>((byte)y, (byte)u, (byte)v);
         }
@@ -276,9 +276,9 @@ namespace MMALSharp.Utility
             int d = u - 128;
             int e = v - 128;
 
-            int r = ((298 * c + 409 * e + 128) >> 8).Clamp(0, 255);
-            int g = ((298 * c - 100 * d - 208 * e + 128) >> 8).Clamp(0, 255);
-            int b = ((298 * c + 516 * d + 128) >> 8).Clamp(0, 255);
+            int r = (((298 * c) + (409 * e) + 128) >> 8).Clamp(0, 255);
+            int g = (((298 * c) - (100 * d) - (208 * e) + 128) >> 8).Clamp(0, 255);
+            int b = (((298 * c) + (516 * d) + 128) >> 8).Clamp(0, 255);
 
             return Color.FromArgb(255, r, g, b);
         }
@@ -298,9 +298,9 @@ namespace MMALSharp.Utility
             i = i.Clamp(-1, 1);
             q = q.Clamp(-1, 1);
 
-            var r = (y + 0.948262f * i + 0.624013f * q).Clamp(0, 1);
-            var g = (y - 0.276066f * i - 0.639810f * q).Clamp(0, 1);
-            var b = (y - 1.105450f * i + 1.729860f * q).Clamp(0, 1);
+            var r = (y + (0.948262f * i) + (0.624013f * q)).Clamp(0, 1);
+            var g = (y - (0.276066f * i) - (0.639810f * q)).Clamp(0, 1);
+            var b = (y - (1.105450f * i) + (1.729860f * q)).Clamp(0, 1);
 
             return Color.FromArgb(255, r.ToByte(), g.ToByte(), b.ToByte());
         }
@@ -336,7 +336,7 @@ namespace MMALSharp.Utility
                 m2 = l + s - (l * s);
             }
 
-            var m1 = 2.0f * l - m2;
+            var m1 = (2.0f * l) - m2;
 
             var r = HLSConstant(m1, m2, h + (1.0f / 3.0f));
             var g = HLSConstant(m1, m2, h);
@@ -369,7 +369,7 @@ namespace MMALSharp.Utility
             var f = (h * 6.0f) - i;
             var p = v * (1.0f - s);
             var q = v * (1.0f - (s * f));
-            var t = v * (1.0f - s * (1.0f - f));
+            var t = v * (1.0f - (s * (1.0f - f)));
 
             i = i % 6;
 
@@ -410,9 +410,9 @@ namespace MMALSharp.Utility
         /// Returns a new <see cref="Color"/> structure based from CIEXYZ floating point values. Assumes D65 illuminant.
         /// See: https://en.wikipedia.org/wiki/SRGB#The_forward_transformation_(CIE_XYZ_to_sRGB) 
         /// </summary>
-        /// <param name="x">The chrominance X value (0 <= x <= 0.9505).</param>
-        /// <param name="y">The luminance Y value (0 <= y <= 1.0000).</param>
-        /// <param name="z">The chrominance Z value (0 <= z <= 1.0890).</param>
+        /// <param name="x">The chrominance X value (0 &lt;= x &lt;= 0.9505).</param>
+        /// <param name="y">The luminance Y value (0 &lt;= y &lt;= 1.0000).</param>
+        /// <param name="z">The chrominance Z value (0 &lt;= z &lt;= 1.0890).</param>
         /// <returns>A <see cref="Color"/> structure representing the CIEXYZ parameter values.</returns>
         public static Color FromCieXYZ(float x, float y, float z)
         {
@@ -472,11 +472,11 @@ namespace MMALSharp.Utility
             var yn = 1.0f;
             var zn = 1.08883f;
 
-            var uc = 4f * xn / (xn + 15f * yn + 3f * zn);
-            var vc = 9f * yn / (xn + 15f * yn + 3f * zn);
+            var uc = 4f * xn / (xn + (15f * yn) + (3f * zn));
+            var vc = 9f * yn / (xn + (15f * yn) + (3f * zn));
 
-            var upt = u / (13f * l) + uc;
-            var vpt = v / (13f * 1) + vc;
+            var upt = (u / (13f * l)) + uc;
+            var vpt = (v / (13f * 1)) + vc;
 
             float y;
 
@@ -490,7 +490,7 @@ namespace MMALSharp.Utility
             }
 
             var x = y * (9f * upt) / (4f * vpt);
-            var z = y * (12f - 3f * upt - 20f * vpt) / (4f * vpt);
+            var z = y * (12f - (3f * upt) - (20f * vpt)) / (4f * vpt);
 
             return FromCieXYZ(x, y, z);
         }
@@ -513,7 +513,7 @@ namespace MMALSharp.Utility
 
             if (hue < (1f / 6f))
             {
-                return m1 + (m2 - m1) * hue * 6f;
+                return m1 + ((m2 - m1) * hue * 6f);
             }
 
             if (hue < 0.5f)
@@ -523,7 +523,7 @@ namespace MMALSharp.Utility
 
             if (hue < (1f / 3f))
             {
-                return m1 + (m2 - m1) * ((2f / 3f) - hue) * 6f;
+                return m1 + ((m2 - m1) * ((2f / 3f) - hue) * 6f);
             }
 
             return m1;
@@ -536,7 +536,7 @@ namespace MMALSharp.Utility
                 return 12.92f * c;
             }
 
-            return 1.055f * ((float)Math.Pow(c, (1 / 2.4))) - 0.055f;
+            return 1.055f * (((float)Math.Pow(c, 1 / 2.4)) - 0.055f);
         }
 
         private static float ToXYZLinear(float c)

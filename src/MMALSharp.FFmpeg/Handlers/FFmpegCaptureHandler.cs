@@ -128,6 +128,5 @@ namespace MMALSharp.Handlers
         {          
             this._process.Kill();
         }
-
     }
 }

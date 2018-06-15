@@ -9,35 +9,35 @@ using System.Runtime.InteropServices;
 namespace MMALSharp.Native
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable SA1132 // Each field should be declared on its own line
 
     public static class MMALComponent
     {
-        //name: char* * comp: MMAL_COMPONENT_T**    
-
+        // name: char* * comp: MMAL_COMPONENT_T** 
 #pragma warning disable IDE1006 // Naming Styles
         [DllImport("libmmal.so", EntryPoint = "mmal_component_create", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_component_create(string name, IntPtr* comp);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_component_create(string name, IntPtr* comp);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_component_acquire", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_component_acquire(MMAL_COMPONENT_T* comp);
+        public static extern unsafe void mmal_component_acquire(MMAL_COMPONENT_T* comp);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_component_release", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_component_release(MMAL_COMPONENT_T* comp);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_component_release(MMAL_COMPONENT_T* comp);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_component_destroy", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_component_destroy(MMAL_COMPONENT_T* comp);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_component_destroy(MMAL_COMPONENT_T* comp);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_component_enable", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_component_enable(MMAL_COMPONENT_T* comp);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_component_enable(MMAL_COMPONENT_T* comp);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_component_disable", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_component_disable(MMAL_COMPONENT_T* comp);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_component_disable(MMAL_COMPONENT_T* comp);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_wrapper_create", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_wrapper_create(IntPtr* wrapper, string name);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_wrapper_create(IntPtr* wrapper, string name);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_wrapper_destroy", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_wrapper_destroy(IntPtr* wrapper);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_wrapper_destroy(IntPtr* wrapper);
 #pragma warning restore IDE1006 // Naming Styles
     }
 
@@ -168,7 +168,7 @@ namespace MMALSharp.Native
 
         public long TimeDisable => this.timeDisable;
 
-        public MMAL_WRAPPER_T (
+        public MMAL_WRAPPER_T(
                                IntPtr userData,
                                IntPtr callback,
                                MMAL_COMPONENT_T* component,

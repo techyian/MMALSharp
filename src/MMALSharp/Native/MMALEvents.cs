@@ -3,16 +3,12 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable SA1132 // Each field should be declared on its own line
 
     public static class MMALEvents
     {
@@ -23,7 +19,7 @@ namespace MMALSharp.Native
 
 #pragma warning disable IDE1006 // Naming Styles
         [DllImport("libmmal.so", EntryPoint = "mmal_event_format_changed_get", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMAL_EVENT_FORMAT_CHANGED_T* mmal_event_format_changed_get(MMAL_BUFFER_HEADER_T* buffer);
+        public static extern unsafe MMAL_EVENT_FORMAT_CHANGED_T* mmal_event_format_changed_get(MMAL_BUFFER_HEADER_T* buffer);
 #pragma warning restore IDE1006 // Naming Styles
     }
 
@@ -61,7 +57,7 @@ namespace MMALSharp.Native
         public MMAL_ES_FORMAT_T* Format => format;
 
         public MMAL_EVENT_FORMAT_CHANGED_T(uint bufferSizeMin, uint bufferNumMin, uint bufferSizeRecommended, uint bufferNumRecommended,
-                                           MMAL_ES_FORMAT_T* format)
+            MMAL_ES_FORMAT_T* format)
         {
             this.bufferSizeMin = bufferSizeMin;
             this.bufferNumMin = bufferNumMin;

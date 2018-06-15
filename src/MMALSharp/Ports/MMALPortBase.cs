@@ -10,8 +10,8 @@ using MMALSharp.Callbacks;
 using MMALSharp.Native;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
-using static MMALSharp.MMALCallerHelper;
 using Nito.AsyncEx;
+using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
 {
@@ -71,57 +71,12 @@ namespace MMALSharp
         /// </summary>
         public bool ZeroCopy { get; internal set; }
 
-        /// <summary>
-        /// Asynchronous trigger which is set when processing has completed on this port.
-        /// </summary>
-        public AsyncCountdownEvent Trigger { get; set; }
-
-        /// <summary>
-        /// A callback handler for Input ports to populate native buffer header with user provided image data.
-        /// </summary>
-        public IInputCallbackHandler ManagedInputCallback { get; set; }
-
-        /// <summary>
-        /// A callback handler for Output ports we use to do further processing on buffer headers after they've been received by the native callback delegate.
-        /// </summary>
-        public ICallbackHandler ManagedOutputCallback { get; set; }
-
-        /// <summary>
-        /// Monitor lock for input port callback method.
-        /// </summary>
-        internal static object InputLock = new object();
-
-        /// <summary>
-        /// Monitor lock for output port callback method.
-        /// </summary>
-        internal static object OutputLock = new object();
-
-        /// <summary>
-        /// Native pointer to the native callback function.
-        /// </summary>
-        internal IntPtr PtrCallback { get; set; }
-
-        /// <summary>
-        /// Delegate for native port callback.
-        /// </summary>
-        internal MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
-
-        /// <summary>
-        /// Native pointer that represents this port.
-        /// </summary>
-        internal MMAL_PORT_T* Ptr { get; set; }
-
-        /// <summary>
-        /// Native pointer that represents the component this port is associated with.
-        /// </summary>
-        internal MMAL_COMPONENT_T* Comp { get; set; }
-        
         #region Native properties
 
         /// <summary>
         /// Native name of port.
         /// </summary>
-        public string Name => Marshal.PtrToStringAnsi((IntPtr)(this.Ptr->Name));
+        public string Name => Marshal.PtrToStringAnsi((IntPtr)this.Ptr->Name);
 
         /// <summary>
         /// Indicates whether this port is enabled.
@@ -181,11 +136,11 @@ namespace MMALSharp
         /// </summary>
         public Resolution Resolution
         {
-            get => new Resolution(this.Ptr->Format->es->video.width, this.Ptr->Format->es->video.height);
+            get => new Resolution(this.Ptr->Format->Es->Video.Width, this.Ptr->Format->Es->Video.Height);
             internal set
             {
-                this.Ptr->Format->es->video.width = value.Width;
-                this.Ptr->Format->es->video.height = value.Height;
+                this.Ptr->Format->Es->Video.Width = value.Width;
+                this.Ptr->Format->Es->Video.Height = value.Height;
             }
         }
 
@@ -194,8 +149,8 @@ namespace MMALSharp
         /// </summary>
         public Rectangle Crop
         {
-            get => new Rectangle(this.Ptr->Format->es->video.crop.X, this.Ptr->Format->es->video.crop.Y, this.Ptr->Format->es->video.crop.Width, this.Ptr->Format->es->video.crop.Height);
-            internal set => this.Ptr->Format->es->video.crop = new MMAL_RECT_T(value.X, value.Y, value.Width, value.Height);
+            get => new Rectangle(this.Ptr->Format->Es->Video.Crop.X, this.Ptr->Format->Es->Video.Crop.Y, this.Ptr->Format->Es->Video.Crop.Width, this.Ptr->Format->Es->Video.Crop.Height);
+            internal set => this.Ptr->Format->Es->Video.Crop = new MMAL_RECT_T(value.X, value.Y, value.Width, value.Height);
         }
 
         /// <summary>
@@ -203,27 +158,27 @@ namespace MMALSharp
         /// </summary>
         public MMAL_RATIONAL_T FrameRate
         {
-            get => this.Ptr->Format->es->video.frameRate;
-            internal set => this.Ptr->Format->es->video.frameRate = new MMAL_RATIONAL_T(value.Num, value.Den);
+            get => this.Ptr->Format->Es->Video.FrameRate;
+            internal set => this.Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(value.Num, value.Den);
         }
         
         /// <summary>
         /// The Region of Interest width that this port will process data in.
         /// </summary>
-        public int CropWidth => this.Ptr->Format->es->video.crop.Width;
+        public int CropWidth => this.Ptr->Format->Es->Video.Crop.Width;
 
         /// <summary>
         /// The Region of Interest height that this port will process data in.
         /// </summary>
-        public int CropHeight => this.Ptr->Format->es->video.crop.Height;
+        public int CropHeight => this.Ptr->Format->Es->Video.Crop.Height;
 
         /// <summary>
         /// The encoding type that this port will process data in.
         /// </summary>
         public int NativeEncodingType
         {
-            get => this.Ptr->Format->encoding;
-            internal set => this.Ptr->Format->encoding = value;
+            get => this.Ptr->Format->Encoding;
+            internal set => this.Ptr->Format->Encoding = value;
         }
 
         /// <summary>
@@ -231,12 +186,57 @@ namespace MMALSharp
         /// </summary>
         public int NativeEncodingSubformat
         {
-            get => this.Ptr->Format->encodingVariant;
-            internal set => this.Ptr->Format->encodingVariant = value;
+            get => this.Ptr->Format->EncodingVariant;
+            internal set => this.Ptr->Format->EncodingVariant = value;
         } 
 
         #endregion
         
+        /// <summary>
+        /// Asynchronous trigger which is set when processing has completed on this port.
+        /// </summary>
+        public AsyncCountdownEvent Trigger { get; set; }
+        
+        /// <summary>
+        /// Delegate to populate native buffer header with user provided image data.
+        /// </summary>
+        public Func<MMALBufferImpl, MMALPortBase, ProcessResult> ManagedInputCallback { get; set; }
+
+        /// <summary>
+        /// Delegate we use to do further processing on buffer headers when they're received by the native callback delegate.
+        /// </summary>
+        public Action<MMALBufferImpl, MMALPortBase> ManagedOutputCallback { get; set; }
+
+        /// <summary>
+        /// Native pointer that represents the component this port is associated with.
+        /// </summary>
+        internal MMAL_COMPONENT_T* Comp { get; set; }
+
+        /// <summary>
+        /// Native pointer that represents this port.
+        /// </summary>
+        internal MMAL_PORT_T* Ptr { get; set; }
+
+        /// <summary>
+        /// Monitor lock for input port callback method.
+        /// </summary>
+        internal static object InputLock = new object();
+
+        /// <summary>
+        /// Monitor lock for output port callback method.
+        /// </summary>
+        internal static object OutputLock = new object();
+
+        /// <summary>
+        /// Native pointer to the native callback function.
+        /// </summary>
+        internal IntPtr PtrCallback { get; set; }
+
+        /// <summary>
+        /// Delegate for native port callback.
+        /// </summary>
+        internal MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
+
         /// <summary>
         /// Creates a new managed reference to a MMAL Component Port.
         /// </summary>
@@ -380,6 +380,7 @@ namespace MMALSharp
         /// <summary>
         /// Commit format changes on this port.
         /// </summary>
+        /// <exception cref="MMALException"/>
         internal void Commit()
         {
             MMALLog.Logger.Debug("Committing port format changes");
@@ -504,7 +505,6 @@ namespace MMALSharp
                     {
                         break;
                     }
-
                 }
                 
                 // Populate the new input buffer with user provided image data.
@@ -543,6 +543,7 @@ namespace MMALSharp
         /// Release an output port buffer, get a new one from the queue and send it for processing.
         /// </summary>
         /// <param name="bufferImpl">A managed buffer object.</param>
+        /// <param name="eos">End of stream. Disables sending the next buffer after releasing the old one.</param>
         internal void ReleaseOutputBuffer(MMALBufferImpl bufferImpl, bool eos)
         {
             bufferImpl.Release();

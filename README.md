@@ -23,6 +23,15 @@ MMALSharp supports the following runtimes:
 1. Mono 4.x 
 2. .NET Standard 2.0
 
+## Installation
+
+MMALSharp NuGet package:
+[![NuGet version](https://badge.fury.io/nu/MMALSharp.svg)](https://badge.fury.io/nu/MMALSharp)
+
+```
+PM> Install-Package MMALSharp
+```
+
 ## Documentation
 
 For full installation instructions for Mono 4.x and .NET Core, including configuration and examples - please visit the [Wiki](https://github.com/techyian/MMALSharp/wiki) site.
@@ -87,4 +96,4 @@ Thank you very much.
 
 ### Contributors
 
-**Daniel Lerch** @daniel-lerch
+**Daniel Lerch** [@daniel-lerch](https://github.com/daniel-lerch)

@@ -14,15 +14,17 @@ namespace MMALSharp.Native
     {
         public delegate void mmal_pool_allocator_alloc_t(IntPtr ptr, uint value);
         public delegate void mmal_pool_allocator_free_t(IntPtr ptr, IntPtr ptr2);
-        //typedef - Pointer to MMAL_POOL_T struct * Pointer to MMAL_BUFFER_HEADER_T struct * Pointer to void -> Returns MMAL_BOOL_T struct
+
+        // typedef - Pointer to MMAL_POOL_T struct * Pointer to MMAL_BUFFER_HEADER_T struct * Pointer to void -> Returns MMAL_BOOL_T struct
         public unsafe delegate int MMAL_POOL_BH_CB_T(MMAL_POOL_T* pool, MMAL_BUFFER_HEADER_T* buffer);
 
 #pragma warning disable IDE1006 // Naming Styles
-        //MMAL_POOL_T*
+
+        // MMAL_POOL_T*
         [DllImport("libmmal.so", EntryPoint = "mmal_pool_create", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr mmal_pool_create(uint bufferNum, uint bufferSize);
 
-        //MMAL_POOL_T*
+        // MMAL_POOL_T*
         [DllImport("libmmal.so", EntryPoint = "mmal_pool_create_with_allocator", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr mmal_pool_create_with_allocator(uint headers,
                                                             uint payload_size,
@@ -31,16 +33,16 @@ namespace MMALSharp.Native
                                                             mmal_pool_allocator_free_t allocator_free);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_pool_destroy", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_pool_destroy(MMAL_POOL_T* pool);
+        public static extern unsafe void mmal_pool_destroy(MMAL_POOL_T* pool);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_pool_resize", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_pool_resize(MMAL_POOL_T* pool, uint headers, uint payload_size);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_pool_resize(MMAL_POOL_T* pool, uint headers, uint payload_size);
                 
         [DllImport("libmmal.so", EntryPoint = "mmal_pool_callback_set", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_pool_callback_set(MMAL_POOL_T* pool, [MarshalAs(UnmanagedType.FunctionPtr)] MMAL_POOL_BH_CB_T cb, IntPtr userdata);
+        public static extern unsafe void mmal_pool_callback_set(MMAL_POOL_T* pool, [MarshalAs(UnmanagedType.FunctionPtr)] MMAL_POOL_BH_CB_T cb, IntPtr userdata);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_pool_pre_release_callback_set", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_pool_pre_release_callback_set(MMAL_POOL_T* pool, [MarshalAs(UnmanagedType.FunctionPtr)] MMAL_POOL_BH_CB_T cb, IntPtr userdata);
+        public static extern unsafe void mmal_pool_pre_release_callback_set(MMAL_POOL_T* pool, [MarshalAs(UnmanagedType.FunctionPtr)] MMAL_POOL_BH_CB_T cb, IntPtr userdata);
 #pragma warning restore IDE1006 // Naming Styles
     }
 

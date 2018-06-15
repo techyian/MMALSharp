@@ -53,7 +53,7 @@ namespace MMALSharp
         /// Configure the light sensitivity of the sensor.
         /// </summary> 
         public static int ISO { get; set; }
-        
+
         /// <summary>
         /// Configure the exposure compensation of the camera. Doing so will produce a lighter/darker image beyond the recommended exposure.
         /// </summary>
@@ -127,7 +127,7 @@ namespace MMALSharp
         /// Displays the exposure, analogue and digital gains, and AWB settings used.
         /// </summary>
         public static bool StatsPass { get; set; }
-                
+
         /// <summary>
         /// Allows fine tuning of annotation options.
         /// </summary>
@@ -164,7 +164,7 @@ namespace MMALSharp
         /// The pixel format to use with the Preview renderer.
         /// </summary>
         public static MMALEncoding PreviewSubformat { get; set; } = MMALEncoding.I420;
-        
+
         /*
          * -----------------------------------------------------------------------------------------------------------
          * Camera video port specific properties.
@@ -185,7 +185,7 @@ namespace MMALSharp
         /// The Resolution to use for Video captures.
         /// </summary>
         public static Resolution VideoResolution { get; set; } = Resolution.As1080p;
-        
+
         /// <summary>
         /// Enable video stabilisation.
         /// </summary> 
@@ -200,7 +200,7 @@ namespace MMALSharp
         /// Specifies the number of frames after which a new I-frame is inserted in to the stream.
         /// </summary>
         public static int IntraPeriod { get; set; } = -1;
-                
+
         /// <summary>
         /// Represents the H.264 video profile you wish to use.
         /// </summary>
@@ -211,6 +211,10 @@ namespace MMALSharp
         /// </summary>
         public static MMALParametersVideo.MMAL_VIDEO_LEVEL_T VideoLevel { get; set; } = MMALParametersVideo.MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4;
 
+        /// <summary>
+        /// Requires the video encoder not to modify the input images. 
+        /// </summary>
+        /// <remarks>http://www.jvcref.com/files/PI/documentation/ilcomponents/prop.html#OMX_IndexParamBrcmImmutableInput</remarks>
         public static bool ImmutableInput { get; set; } = true;
 
         /// <summary>
@@ -255,30 +259,27 @@ namespace MMALSharp
         /// The Resolution to use for Still captures.
         /// </summary>
         public static Resolution StillResolution { get; set; } = Resolution.As5MPixel;
-        
+
         /// <summary>
         /// The frame rate to use for Still captures.
         /// </summary>
-        public static MMAL_RATIONAL_T StillFramerate { get; set; } = new MMAL_RATIONAL_T(0, 1);        
+        public static MMAL_RATIONAL_T StillFramerate { get; set; } = new MMAL_RATIONAL_T(0, 1);
     }
-    
+
     /// <summary>
     /// Allows a user to adjust the colour of outputted frames.
     /// </summary>
     public struct ColourEffects
     {
-        private bool _enable;
-        private Color _color;
-
         /// <summary>
         /// Enable the Colour Effects functionality.
         /// </summary>
-        public bool Enable => _enable;
+        public bool Enable { get; }
 
         /// <summary>
         /// The <see cref="Color"/> to use.
         /// </summary>
-        public Color Color => _color;
+        public Color Color { get; }
 
         /// <summary>
         /// Initialises a new <see cref="ColourEffects"/> struct.
@@ -287,8 +288,8 @@ namespace MMALSharp
         /// <param name="color">The <see cref="Color"/> to use.</param>
         public ColourEffects(bool enable, Color color)
         {
-            _enable = enable;
-            _color = color;
+            Enable = enable;
+            Color = color;
         }
     }
 
@@ -297,27 +298,25 @@ namespace MMALSharp
     /// </summary>
     public struct Zoom
     {
-        private double _x, _y, _width, _height;
-
         /// <summary>
         /// The X coordinate between 0 - 1.0.
         /// </summary>
-        public double X => _x;
+        public double X { get; }
 
         /// <summary>
         /// The Y coordinate between 0 - 1.0.
         /// </summary>
-        public double Y => _y;
+        public double Y { get; }
 
         /// <summary>
         /// The Width value between 0 - 1.0.
         /// </summary>
-        public double Width => _width;
+        public double Width { get; }
 
         /// <summary>
         /// The Height value between 0 - 1.0.
         /// </summary>
-        public double Height => _height;
+        public double Height { get; }
 
         /// <summary>
         /// Intialises a new <see cref="Zoom"/> struct.
@@ -328,23 +327,38 @@ namespace MMALSharp
         /// <param name="height">The Height value.</param>
         public Zoom(double x, double y, double width, double height)
         {
-            _x = x;
-            _y = y;
-            _width = width;
-            _height = height;
+            X = x;
+            Y = y;
+            Width = width;
+            Height = height;
         }
     }
 
     /// <summary>
-    /// The Stereoscopic mode code has mainly been added for completeness. It requires a Raspberry Pi Compute Module with two cameras connected. This functionality has not been tested.
+    /// The Stereoscopic mode code has mainly been added for completeness.
+    /// It requires a Raspberry Pi Compute Module with two cameras connected.
+    /// This functionality has not been tested.
     /// </summary>
     public class StereoMode
     {
+        /// <summary>
+        /// Gets or sets the stereoscopic mode.
+        /// </summary>
         public MMAL_STEREOSCOPIC_MODE_T Mode { get; set; } = MMAL_STEREOSCOPIC_MODE_T.MMAL_STEREOSCOPIC_MODE_NONE;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to half the width and height of a stereoscopic image.
+        /// </summary>
+        /// <remarks>https://github.com/raspberrypi/userland/blob/master/host_applications/linux/apps/raspicam/RaspiCamControl.c#L204</remarks>
         public int Decimate { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating a swap of camera order for stereoscopic mode.
+        /// </summary>
+        /// <remarks>https://github.com/raspberrypi/userland/blob/master/host_applications/linux/apps/raspicam/RaspiCamControl.c#L205</remarks>
         public int SwapEyes { get; set; }
     }
-    
+
     /// <summary>
     /// Represents an Exif tag for use with JPEG still captures.
     /// </summary>
@@ -387,7 +401,7 @@ namespace MMALSharp
     /// This will produce a textual overlay on image stills depending on the options enabled.
     /// </summary>
     public class AnnotateImage
-    {   
+    {
         /// <summary>
         /// Custom text to overlay on the stills capture.
         /// </summary>
@@ -469,16 +483,27 @@ namespace MMALSharp
         /// <summary>
         /// The <see cref="TimelapseMode"/> mode to use.
         /// </summary>
-        public TimelapseMode Mode { get; set; }        
+        public TimelapseMode Mode { get; set; }
     }
 
     /// <summary>
     /// The unit of time to use.
     /// </summary>
     public enum TimelapseMode
-    {        
+    {
+        /// <summary>
+        /// Uses milliseconds as unit of time. One hour equals 3'600'000 milliseconds.
+        /// </summary>
         Millisecond,
+
+        /// <summary>
+        /// Uses seconds as unit of time. One hour equals 3'600 seconds.
+        /// </summary>
         Second,
+
+        /// <summary>
+        /// Uses minutes as unit of time. One hour equals 60 minutes.
+        /// </summary>
         Minute
     }
 
@@ -487,17 +512,15 @@ namespace MMALSharp
     /// </summary>
     public struct Resolution : IComparable<Resolution>
     {
-        private int _width, _height;
-
         /// <summary>
         /// The width of the <see cref="Resolution"/> object.
         /// </summary>
-        public int Width => _width;
+        public int Width { get; }
 
         /// <summary>
         /// The height of the <see cref="Resolution"/> object.
         /// </summary>
-        public int Height => _height;
+        public int Height { get; }
 
         /// <summary>
         /// Creates a new instance of the <see cref="Resolution"/> class with the specified width and height.
@@ -506,8 +529,8 @@ namespace MMALSharp
         /// <param name="height"></param>
         public Resolution(int width, int height)
         {
-            _width = width;
-            _height = height;
+            Width = width;
+            Height = height;
         }
 
         /*
@@ -589,15 +612,17 @@ namespace MMALSharp
             {
                 return 0;
             }
+
             if (this.Width == res.Width && this.Height > res.Height)
             {
                 return 1;
             }
+
             if (this.Width == res.Width && this.Height < res.Height)
             {
                 return -1;
             }
-            
+
             if (this.Width > res.Width)
                 return 1;
 
@@ -613,59 +638,72 @@ namespace MMALSharp
         public Resolution Pad(int width = 32, int height = 16)
         {
             return new Resolution(MMALUtil.VCOS_ALIGN_UP(this.Width, width),
-                                  MMALUtil.VCOS_ALIGN_UP(this.Height, height));            
+                                  MMALUtil.VCOS_ALIGN_UP(this.Height, height));
         }
     }
 
+    /// <summary>
+    /// Defines the settings for a <see cref="MMALVideoRenderer"/> component.
+    /// </summary>
     public class PreviewConfiguration
     {
         /// <summary>
         /// Indicates whether to use full screen or windowed mode.
         /// </summary>
         public bool FullScreen { get; set; } = true;
+
         /// <summary>
         /// If set to true, indicates that any display scaling should disregard the aspect ratio of the frame region being displayed.
         /// </summary>
         public bool NoAspect { get; set; }
+
         /// <summary>
         /// Enable copy protection. 
         /// Note: Doesn't appear to be supported by the firmware.
         /// </summary>
         public bool CopyProtect { get; set; }
+
         /// <summary>
         /// Specifies where the preview overlay should be drawn on the screen.
         /// </summary>
         public Rectangle PreviewWindow { get; set; } = new Rectangle(0, 0, 1024, 768);
+
         /// <summary>
         /// Opacity of the preview windows. Value between 1 (fully invisible) - 255 (fully opaque).
         /// Note: If RGBA encoding is used with the preview component then the alpha channel will be ignored.
         /// </summary>
         public int Opacity { get; set; } = 255;
+
         /// <summary>
         /// Sets the relative depth of the images, with greater values being in front of smaller values.
         /// </summary>
         public int Layer { get; set; } = 2;
+
         /// <summary>
         /// Indicates whether any flipping or rotation should be used on the overlay.
         /// </summary>
         public MMALParametersVideo.MMAL_DISPLAYTRANSFORM_T DisplayTransform { get; set; }
+
         /// <summary>
         /// Indicates how the image should be scaled to fit the display.
         /// </summary>
         public MMALParametersVideo.MMAL_DISPLAYMODE_T DisplayMode { get; set; }
     }
 
+    /// <summary>
+    /// Defines the settings for a <see cref="MMALOverlayRenderer"/> component.
+    /// </summary>
     public class PreviewOverlayConfiguration : PreviewConfiguration
     {
         /// <summary>
         /// Specifies the resolution of the static resource to be used with this Preview Overlay. If this is null then the parent renderer's resolution will be used instead.
         /// </summary>
         public Resolution Resolution { get; set; }
+
         /// <summary>
         /// The encoding of the static resource. Can be one of the following: YUV, RGB, RGBA, BGR, BGRA.
         /// If left null, we will try to work out the encoding based on the size of the image (3 bytes for RGB, 4 bytes for RGBA).
         /// </summary>
         public MMALEncoding Encoding { get; set; }
     }
-
 }

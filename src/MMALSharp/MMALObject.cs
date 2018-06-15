@@ -35,6 +35,5 @@ namespace MMALSharp
         {            
             Objects.Remove(reference);
         }
-
     }
 }

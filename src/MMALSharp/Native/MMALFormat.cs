@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 namespace MMALSharp.Native
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable SA1132 // Each field should be declared on its own line
 
     public static class MMALFormat
     {
@@ -36,44 +37,43 @@ namespace MMALSharp.Native
 
 #pragma warning disable IDE1006 // Naming Styles
         [DllImport("libmmal.so", EntryPoint = "mmal_format_alloc", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMAL_ES_FORMAT_T* mmal_format_alloc();
+        public static extern unsafe MMAL_ES_FORMAT_T* mmal_format_alloc();
 
         [DllImport("libmmal.so", EntryPoint = "mmal_format_free", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_format_free(MMAL_ES_FORMAT_T* format);
+        public static extern unsafe void mmal_format_free(MMAL_ES_FORMAT_T* format);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_format_extradata_alloc", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_format_extradata_alloc(MMAL_ES_FORMAT_T* format, UInt32 extradata_size);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_format_extradata_alloc(MMAL_ES_FORMAT_T* format, uint extradata_size);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_format_copy", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_format_copy(MMAL_ES_FORMAT_T* fmt_dst, MMAL_ES_FORMAT_T* fmt_src);
+        public static extern unsafe void mmal_format_copy(MMAL_ES_FORMAT_T* fmt_dst, MMAL_ES_FORMAT_T* fmt_src);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_format_full_copy", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_format_full_copy(MMAL_ES_FORMAT_T* fmt_dst, MMAL_ES_FORMAT_T* fmt_src);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_format_full_copy(MMAL_ES_FORMAT_T* fmt_dst, MMAL_ES_FORMAT_T* fmt_src);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_format_compare", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern uint mmal_format_compare(MMAL_ES_FORMAT_T* ptr, MMAL_ES_FORMAT_T* ptr2);
+        public static extern unsafe uint mmal_format_compare(MMAL_ES_FORMAT_T* ptr, MMAL_ES_FORMAT_T* ptr2);
 #pragma warning restore IDE1006 // Naming Styles
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_VIDEO_FORMAT_T
     {
-        public int width, height;
-        public MMAL_RECT_T crop;
-        public MMAL_RATIONAL_T frameRate, par;
-        public int colorSpace;
-        
+        public int Width, Height;
+        public MMAL_RECT_T Crop;
+        public MMAL_RATIONAL_T FrameRate, Par;
+        public int ColorSpace;
+
         public MMAL_VIDEO_FORMAT_T(int width, int height, MMAL_RECT_T crop, MMAL_RATIONAL_T frameRate,
                                     MMAL_RATIONAL_T par, int colorSpace)
         {
-            this.width = width;
-            this.height = height;
-            this.crop = crop;
-            this.frameRate = frameRate;
-            this.par = par;
-            this.colorSpace = colorSpace;
+            this.Width = width;
+            this.Height = height;
+            this.Crop = crop;
+            this.FrameRate = frameRate;
+            this.Par = par;
+            this.ColorSpace = colorSpace;
         }
-        
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -110,48 +110,48 @@ namespace MMALSharp.Native
         }
     }
 
-    //Union type.
+    // Union type.
     [StructLayout(LayoutKind.Explicit)]
     public struct MMAL_ES_SPECIFIC_FORMAT_T
     {
         [FieldOffset(0)]
-        public MMAL_AUDIO_FORMAT_T audio;
+        public MMAL_AUDIO_FORMAT_T Audio;
         [FieldOffset(0)]
-        public MMAL_VIDEO_FORMAT_T video;
+        public MMAL_VIDEO_FORMAT_T Video;
         [FieldOffset(0)]
-        public MMAL_SUBPICTURE_FORMAT_T subpicture;
-        
+        public MMAL_SUBPICTURE_FORMAT_T Subpicture;
+
         public MMAL_ES_SPECIFIC_FORMAT_T(MMAL_AUDIO_FORMAT_T audio, MMAL_VIDEO_FORMAT_T video, MMAL_SUBPICTURE_FORMAT_T subpicture)
         {
-            this.audio = audio;
-            this.video = video;
-            this.subpicture = subpicture;
+            this.Audio = audio;
+            this.Video = video;
+            this.Subpicture = subpicture;
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_ES_FORMAT_T
     {
-        public MMALFormat.MMAL_ES_TYPE_T type;
-        public int encoding, encodingVariant;
-        public MMAL_ES_SPECIFIC_FORMAT_T* es;
-        public int bitrate, flags, extraDataSize;
-        
-        //byte*
-        public IntPtr extraData;
-        
+        public MMALFormat.MMAL_ES_TYPE_T Type;
+        public int Encoding, EncodingVariant;
+        public MMAL_ES_SPECIFIC_FORMAT_T* Es;
+        public int Bitrate, Flags, ExtraDataSize;
+
+        // byte*
+        public IntPtr ExtraData;
+
         public MMAL_ES_FORMAT_T(MMALFormat.MMAL_ES_TYPE_T type, int encoding, int encodingVariant,
                                 MMAL_ES_SPECIFIC_FORMAT_T* es, int bitrate, int flags, int extraDataSize,
                                 IntPtr extraData)
         {
-            this.type = type;
-            this.encoding = encoding;
-            this.encodingVariant = encodingVariant;
-            this.es = es;
-            this.bitrate = bitrate;
-            this.flags = flags;
-            this.extraDataSize = extraDataSize;
-            this.extraData = extraData;
+            this.Type = type;
+            this.Encoding = encoding;
+            this.EncodingVariant = encodingVariant;
+            this.Es = es;
+            this.Bitrate = bitrate;
+            this.Flags = flags;
+            this.ExtraDataSize = extraDataSize;
+            this.ExtraData = extraData;
         }
     }
 }

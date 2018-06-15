@@ -62,6 +62,7 @@ namespace MMALSharp.Components
                 {
                     return MMALCameraConfig.VideoResolution.Width;
                 }
+
                 return _width;
             }
             set { _width = value; }
@@ -75,6 +76,7 @@ namespace MMALSharp.Components
                 {
                     return MMALCameraConfig.VideoResolution.Height;
                 }
+
                 return _height;
             }
             set { _height = value; }
@@ -162,6 +164,15 @@ namespace MMALSharp.Components
 
         //    base.ManagedOutputCallback(buffer, port);
         //}
+
+        /// <summary>
+        /// Prints a summary of the ports and the resolution associated with this component to the console.
+        /// </summary>
+        public override void PrintComponent()
+        {
+            base.PrintComponent();
+            MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
+        }
 
         /// <summary>
         /// Prints a summary of the ports and the resolution associated with this component to the console.
@@ -266,7 +277,7 @@ namespace MMALSharp.Components
             try
             {
                 MMALCheck(
-                    MMALPort.mmal_port_parameter_set(this.Outputs[outputPort].Ptr, (MMAL_PARAMETER_HEADER_T*) ptr),
+                    MMALPort.mmal_port_parameter_set(this.Outputs[outputPort].Ptr, (MMAL_PARAMETER_HEADER_T*)ptr),
                     "Unable to set video profile.");
             }
             finally

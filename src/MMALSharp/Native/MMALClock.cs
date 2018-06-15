@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 namespace MMALSharp.Native
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable SA1132 // Each field should be declared on its own line
 
     public static class MMALClock
     {

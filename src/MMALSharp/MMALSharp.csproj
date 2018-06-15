@@ -1,11 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\..\build\MMALSharp.props" />
   <PropertyGroup>
+	<Description>MMALSharp brings low level access to the Raspberry Pi camera module in C#. Based on the native MMAL library,
+ MMALSharp allows you to configure a rich set of camera/sensor related settings via an easy to use asynchronous API.</Description>
     <AssemblyTitle>MMALSharp</AssemblyTitle>
     <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <AssemblyName>MMALSharp</AssemblyName>
     <PackageId>MMALSharp</PackageId>
     <RootNamespace>MMALSharp</RootNamespace>
+	<Copyright>Ian Auty (c) 2016-2018</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Authors>Ian Auty</Authors>
+    <PackageTags>raspberry-pi</PackageTags>    
+    <PackageProjectUrl>https://github.com/techyian/MMALSharp</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/techyian/MMALSharp/blob/dev/LICENSE.txt</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/techyian/MMALSharp</RepositoryUrl>
+	<VersionPrefix>0.4.0</VersionPrefix>
+	<CodeAnalysisRuleSet>..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
@@ -15,6 +26,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
     <DocumentationFile>bin\Release\netstandard2.0\MMALSharp.xml</DocumentationFile>
+  </PropertyGroup>  
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
+    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.3.0" />
@@ -32,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.5.0-rc03" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MMALSharp.Common\MMALSharp.Common.csproj" />

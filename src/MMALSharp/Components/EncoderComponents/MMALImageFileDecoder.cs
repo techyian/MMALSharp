@@ -23,14 +23,14 @@ namespace MMALSharp.Components
 
             if (encodingType != null)
             {
-                this.Inputs[0].Ptr->Format->encoding = encodingType.EncodingVal;
+                this.Inputs[0].Ptr->Format->Encoding = encodingType.EncodingVal;
             }
                         
-            this.Inputs[0].Ptr->Format->type = MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_VIDEO;
-            this.Inputs[0].Ptr->Format->es->video.height = 0;
-            this.Inputs[0].Ptr->Format->es->video.width = 0;
-            this.Inputs[0].Ptr->Format->es->video.frameRate = new MMAL_RATIONAL_T(0, 1);
-            this.Inputs[0].Ptr->Format->es->video.par = new MMAL_RATIONAL_T(1, 1);
+            this.Inputs[0].Ptr->Format->Type = MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_VIDEO;
+            this.Inputs[0].Ptr->Format->Es->Video.Height = 0;
+            this.Inputs[0].Ptr->Format->Es->Video.Width = 0;
+            this.Inputs[0].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(0, 1);
+            this.Inputs[0].Ptr->Format->Es->Video.Par = new MMAL_RATIONAL_T(1, 1);
             
             this.Inputs[0].EncodingType = encodingType;
 
@@ -47,7 +47,7 @@ namespace MMALSharp.Components
                        
             if (encodingType != null)
             {
-                this.Outputs[outputPort].Ptr->Format->encoding = encodingType.EncodingVal;
+                this.Outputs[outputPort].Ptr->Format->Encoding = encodingType.EncodingVal;
             }
 
             if (zeroCopy)
@@ -65,11 +65,121 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].ManagedOutputCallback = OutputCallbackProvider.FindCallback(this.Outputs[outputPort]);
         }
 
+        public async Task WaitForTriggers(int outputPort = 0)
+        {
+            MMALLog.Logger.Debug("Waiting for trigger signal");
+
+            // Wait until the process is complete.
+            while (this.Inputs[0].Trigger.CurrentCount > 0 && this.Outputs[outputPort].Trigger.CurrentCount > 0)
+            {
+                MMALLog.Logger.Info("Awaiting...");
+                await Task.Delay(2000);
+                break;
+            }
+
+            MMALLog.Logger.Debug("Setting countdown events");
+            this.Inputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+            this.Outputs[outputPort].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+        }
+
+        /// <summary>
+        /// Encodes/decodes user provided image data.
+        /// </summary>
+        /// <param name="outputPort">The output port to begin processing on. Usually will be 0.</param>
+        /// <returns>An awaitable task.</returns>
+        public virtual async Task Convert(int outputPort = 0)
+        {
+            MMALLog.Logger.Debug("Beginning Image decode from filestream. Please note, this process may take some time depending on the size of the input image.");
+
+            this.Inputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+            this.Outputs[outputPort].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+
+            // Enable control, input and output ports. Input & Output ports should have been pre-configured by user prior to this point.
+            this.Start(this.Control, new Action<MMALBufferImpl, MMALPortBase>(this.ManagedControlCallback));
+            this.Start(this.Inputs[0], this.ManagedInputCallback);
+            this.Start(this.Outputs[outputPort], new Action<MMALBufferImpl, MMALPortBase>(this.ManagedOutputCallback));
+
+            this.EnableComponent();
+
+            WorkingQueue = MMALQueueImpl.Create();
+
+            var eosReceived = false;
+
+            while (!eosReceived)
+            {
+                await this.WaitForTriggers();
+
+                this.GetAndSendInputBuffer();
+
+                MMALLog.Logger.Debug("Getting processed output pool buffer");
+                while (true)
+                {
+                    MMALBufferImpl buffer;
+                    lock (MMALPortBase.OutputLock)
+                    {
+                        buffer = WorkingQueue.GetBuffer();
+                    }
+
+                    if (buffer != null)
+                    {
+                        eosReceived = ((int)buffer.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
+
+                        if (buffer.Cmd > 0)
+                        {
+                            if (buffer.Cmd == MMALEvents.MMAL_EVENT_FORMAT_CHANGED)
+                            {
+                                this.ProcessFormatChangedEvent(buffer);
+                            }
+                            else
+                            {
+                                lock (MMALPortBase.OutputLock)
+                                {
+                                    buffer.Release();
+                                }
+                            }
+
+                            continue;
+                        }
+                        else
+                        {
+                            if (buffer.Length > 0)
+                            {
+                                this.ManagedOutputCallback(buffer, this.Outputs[outputPort]);
+                            }
+                            else
+                            {
+                                MMALLog.Logger.Debug("Buffer length empty.");
+                            }
+
+                            // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.                    
+                            lock (MMALPortBase.OutputLock)
+                            {
+                                buffer.Release();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MMALLog.Logger.Debug("Buffer null.");
+                        break;
+                    }
+                }
+
+                this.GetAndSendOutputBuffer();
+            }
+
+            MMALLog.Logger.Info("Received EOS. Exiting.");
+
+            this.DisableComponent();
+            this.CleanPortPools();
+            WorkingQueue.Dispose();
+        }
+
         internal unsafe void ConfigureOutputPortWithoutInit(int outputPort, MMALEncoding encodingType)
         {
             if (encodingType != null)
             {
-                this.Outputs[outputPort].Ptr->Format->encoding = encodingType.EncodingVal;
+                this.Outputs[outputPort].Ptr->Format->Encoding = encodingType.EncodingVal;
             }
                                     
             this.Outputs[outputPort].EncodingType = encodingType;
@@ -118,27 +228,10 @@ namespace MMALSharp.Components
             
             MMALLog.Logger.Info(sb.ToString());
         }
-
-        public async Task WaitForTriggers(int outputPort = 0)
-        {
-            MMALLog.Logger.Debug("Waiting for trigger signal");
-            // Wait until the process is complete.
-
-            while (this.Inputs[0].Trigger.CurrentCount > 0 && this.Outputs[outputPort].Trigger.CurrentCount > 0)
-            {
-                MMALLog.Logger.Info("Awaiting...");
-                await Task.Delay(2000);
-                break;
-            }
-
-            MMALLog.Logger.Debug("Setting countdown events");
-            this.Inputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            this.Outputs[outputPort].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-        }
-
+        
         internal void GetAndSendInputBuffer()
         {
-            //Get buffer from input port pool                
+            // Get buffer from input port pool                
             MMALBufferImpl inputBuffer;
             lock (MMALPortBase.InputLock)
             {                
@@ -219,98 +312,6 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].EnableOutputPort(false);            
         }
         
-        /// <summary>
-        /// Encodes/decodes user provided image data.
-        /// </summary>
-        /// <param name="outputPort">The output port to begin processing on. Usually will be 0.</param>
-        /// <returns>An awaitable task.</returns>
-        public virtual async Task Convert(int outputPort = 0)
-        {
-            MMALLog.Logger.Debug("Beginning Image decode from filestream. Please note, this process may take some time depending on the size of the input image.");
-
-            this.Inputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            this.Outputs[outputPort].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-
-            // Enable control, input and output ports. Input & Output ports should have been pre-configured by user prior to this point.
-            this.Start(this.Control);
-            this.Start(this.Inputs[0]);
-            this.Start(this.Outputs[outputPort]);
-                        
-            this.EnableComponent();
-
-            WorkingQueue = MMALQueueImpl.Create();
-
-            var eosReceived = false;
-
-            while (!eosReceived)
-            {
-                await this.WaitForTriggers();
-
-                this.GetAndSendInputBuffer();
-      
-                MMALLog.Logger.Debug("Getting processed output pool buffer");
-                while (true)
-                {
-                    MMALBufferImpl buffer;
-                    lock (MMALPortBase.OutputLock)
-                    {
-                        buffer = WorkingQueue.GetBuffer();
-                    }
-                                        
-                    if (buffer != null)
-                    {                                                
-                        eosReceived = ((int)buffer.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
-
-                        if (buffer.Cmd > 0)
-                        {
-                            if (buffer.Cmd == MMALEvents.MMAL_EVENT_FORMAT_CHANGED)
-                            {
-                                this.ProcessFormatChangedEvent(buffer);                                
-                            }
-                            else
-                            {
-                                lock (MMALPortBase.OutputLock)
-                                {
-                                    buffer.Release();
-                                }
-                            }
-                            continue;
-                        }
-                        else
-                        {
-                            if (buffer.Length > 0)
-                            {
-                                this.Outputs[outputPort].ManagedOutputCallback.Callback(buffer);
-                            }
-                            else
-                            {
-                                MMALLog.Logger.Debug("Buffer length empty.");
-                            }
-
-                            // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.                    
-                            lock (MMALPortBase.OutputLock)
-                            {
-                                buffer.Release();
-                            }
-                        }                        
-                    }
-                    else
-                    {
-                        MMALLog.Logger.Debug("Buffer null.");
-                        break;
-                    }
-                }
-
-                this.GetAndSendOutputBuffer();                                     
-            }
-
-            MMALLog.Logger.Info("Received EOS. Exiting.");
-
-            this.DisableComponent();
-            this.CleanPortPools();
-            WorkingQueue.Dispose();
-        }
-
         internal override unsafe void InitialiseInputPort(int inputPort)
         {
             this.Inputs[inputPort] = new MMALStillDecodeConvertPort(&(*this.Ptr->Input[inputPort]), this, PortType.Input);

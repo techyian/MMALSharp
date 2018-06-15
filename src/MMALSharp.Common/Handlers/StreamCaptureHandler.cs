@@ -15,20 +15,10 @@ namespace MMALSharp.Handlers
     public abstract class StreamCaptureHandler : ICaptureHandler
     {
         /// <summary>
-        /// A Stream instance that we can process image data to.
-        /// </summary>
-        protected Stream CurrentStream { get; set; }
-
-        /// <summary>
         /// A list of files that have been processed by this capture handler.
         /// </summary>
         public List<ProcessedFileResult> ProcessedFiles { get; set; } = new List<ProcessedFileResult>();
-
-        /// <summary>
-        /// The total size of data that has been processed by this capture handler.
-        /// </summary>
-        protected int Processed { get; set; }
-
+        
         /// <summary>
         /// The directory to save to (if applicable).
         /// </summary>
@@ -40,7 +30,17 @@ namespace MMALSharp.Handlers
         public string Extension { get; protected set; }
 
         /// <summary>
-        /// Creates a new instance of the StreamCaptureHandler class with the specified directory and filename extension.
+        /// A Stream instance that we can process image data to.
+        /// </summary>
+        protected Stream CurrentStream { get; set; }
+
+        /// <summary>
+        /// The total size of data that has been processed by this capture handler.
+        /// </summary>
+        protected int Processed { get; set; }
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="StreamCaptureHandler"/> class with the specified directory and filename extension.
         /// </summary>
         /// <param name="directory">The directory to save captured data.</param>
         /// <param name="extension">The filename extension for saving files.</param>
@@ -73,6 +73,11 @@ namespace MMALSharp.Handlers
             this.CurrentStream = File.Create(filename);
         }
 
+        /// <summary>
+        /// When overridden in a derived class, returns user provided image data.
+        /// </summary>
+        /// <param name="allocSize">The count of bytes to return at most in the <see cref="ProcessResult"/>.</param>
+        /// <returns>A <see cref="ProcessResult"/> object containing the user provided image data.</returns>
         public virtual ProcessResult Process(uint allocSize)
         {
             return new ProcessResult();
@@ -127,9 +132,9 @@ namespace MMALSharp.Handlers
         }
 
         /// <summary>
-        /// Gets the filepath that a FileStream points to
+        /// Gets the filepath that a FileStream points to.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The filepath.</returns>
         public string GetFilepath()
         {
             if (this.CurrentStream.GetType() == typeof(FileStream))
@@ -147,6 +152,5 @@ namespace MMALSharp.Handlers
         {
             CurrentStream?.Dispose();
         }
-                        
     }
 }

@@ -6,6 +6,9 @@
     <PackageId>MMALSharp.Tests</PackageId>
     <RootNamespace>MMALSharp.Tests</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup>
+	<CodeAnalysisRuleSet>..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
 	<PackageReference Include="Nito.AsyncEx" Version="3.0.1" />    
 	<PackageReference Include="xunit" Version="2.2.0" />    
@@ -22,6 +25,9 @@
   <ItemGroup>
     <Folder Include="Properties\" />
     <Folder Include="Properties\" />
+  </ItemGroup>    	
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MMALSharp.Common\MMALSharp.Common.csproj" />

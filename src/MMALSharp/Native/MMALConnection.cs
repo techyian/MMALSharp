@@ -4,15 +4,12 @@
 // </copyright>
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable SA1132 // Each field should be declared on its own line
 
     public static class MMALConnection
     {
@@ -22,30 +19,30 @@ namespace MMALSharp.Native
         public const uint MMAL_CONNECTION_FLAG_KEEP_BUFFER_REQUIREMENTS = 0x8u;
         public const uint MMAL_CONNECTION_FLAG_DIRECT = 0x10u;
 
-        //typedef - Pointer to MMAL_CONNECTION_T -> Returns MMAL_BOOL_T
+        // typedef - Pointer to MMAL_CONNECTION_T -> Returns MMAL_BOOL_T
         public unsafe delegate int MMAL_CONNECTION_CALLBACK_T(MMAL_CONNECTION_T* conn);
 
 #pragma warning disable IDE1006 // Naming Styles
         [DllImport("libmmal.so", EntryPoint = "mmal_connection_create", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_connection_create(IntPtr* connection, MMAL_PORT_T* output, MMAL_PORT_T* input, uint flags);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_connection_create(IntPtr* connection, MMAL_PORT_T* output, MMAL_PORT_T* input, uint flags);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_connection_acquire", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void mmal_connection_acquire(MMAL_CONNECTION_T* connection);
+        public static extern unsafe void mmal_connection_acquire(MMAL_CONNECTION_T* connection);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_connection_release", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_connection_release(MMAL_CONNECTION_T* connection);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_connection_release(MMAL_CONNECTION_T* connection);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_connection_destroy", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_connection_destroy(MMAL_CONNECTION_T* connection);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_connection_destroy(MMAL_CONNECTION_T* connection);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_connection_enable", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_connection_enable(MMAL_CONNECTION_T* connection);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_connection_enable(MMAL_CONNECTION_T* connection);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_connection_disable", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_connection_disable(MMAL_CONNECTION_T* connection);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_connection_disable(MMAL_CONNECTION_T* connection);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_connection_event_format_changed", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern MMALUtil.MMAL_STATUS_T mmal_connection_event_format_changed(MMAL_CONNECTION_T* connection, MMAL_BUFFER_HEADER_T* buffer);
+        public static extern unsafe MMALUtil.MMAL_STATUS_T mmal_connection_event_format_changed(MMAL_CONNECTION_T* connection, MMAL_BUFFER_HEADER_T* buffer);
 #pragma warning restore IDE1006 // Naming Styles
     }
 
@@ -72,6 +69,7 @@ namespace MMALSharp.Native
                 this.callback = value;
             }
         }
+
         public uint IsEnabled => isEnabled;
         public uint Flags => flags;
         public MMAL_PORT_T* Input => input;
@@ -84,7 +82,7 @@ namespace MMALSharp.Native
         public long TimeDisable => timeDisable;
 
         public MMAL_CONNECTION_T(IntPtr userData, IntPtr callback, uint isEnabled, uint flags, MMAL_PORT_T* input, MMAL_PORT_T* output,
-                                 MMAL_POOL_T* pool, MMAL_QUEUE_T* queue, char* name, long timeSetup, long timeEnable, long timeDisable)
+            MMAL_POOL_T* pool, MMAL_QUEUE_T* queue, char* name, long timeSetup, long timeEnable, long timeDisable)
         {
             this.userData = userData;
             this.callback = callback;
@@ -100,5 +98,4 @@ namespace MMALSharp.Native
             this.timeDisable = timeDisable;
         }
     }
-
 }

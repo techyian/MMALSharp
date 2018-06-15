@@ -28,30 +28,22 @@ namespace MMALSharp.Components
         private int _width;
         private int _height;
 
+        /// <summary>
+        /// Gets or sets the width of the resulting image. If not specified, the camera's still resolution is used.
+        /// </summary>
         public override int Width
         {
-            get
-            {
-                if (_width == 0)
-                {
-                    return MMALCameraConfig.StillResolution.Width;
-                }
-                return _width;
-            }
-            set { _width = value; }
+            get => _width == 0 ? MMALCameraConfig.StillResolution.Width : _width;
+            set => _width = value;
         }
 
+        /// <summary>
+        /// Gets or sets the height of the resulting image. If not specified, the camera's still resolution is used.
+        /// </summary>
         public override int Height
         {
-            get
-            {
-                if (_height == 0)
-                {
-                    return MMALCameraConfig.StillResolution.Height;
-                }
-                return _height;
-            }
-            set { _height = value; }
+            get => _height == 0 ? MMALCameraConfig.StillResolution.Height : _height;
+            set => _height = value;
         }
 
         /// <summary>
@@ -69,18 +61,21 @@ namespace MMALSharp.Components
         /// </summary>
         public ExifTag[] ExifTags { get; set; }
         
-        public MMALImageEncoder(ICaptureHandler handler, bool rawBayer = false, bool useExif = true, params ExifTag[] exifTags) : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER, handler)
+        /// <summary>
+        /// Creates a new instance of the <see cref="MMALImageEncoder"/> class with the specified handler.
+        /// </summary>
+        /// <param name="handler">A handler to receive the encoded image data.</param>
+        /// <param name="rawBayer">Specifies whether to include raw bayer image data.</param>
+        /// <param name="useExif">Specifies whether any EXIF tags should be used.</param>
+        /// <param name="exifTags">A collection of custom EXIF tags.</param>
+        public MMALImageEncoder(ICaptureHandler handler, bool rawBayer = false, bool useExif = true, params ExifTag[] exifTags)
+            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER, handler)
         {
             this.RawBayer = rawBayer;
             this.UseExif = useExif;
             this.ExifTags = exifTags;
         }
-
-        internal override void InitialiseOutputPort(int outputPort)
-        {
-            this.Outputs[outputPort] = new MMALStillPort(this.Outputs[outputPort]);
-        }
-
+        
         public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
             base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate, zeroCopy);
@@ -94,6 +89,20 @@ namespace MMALSharp.Components
             {
                 this.AddExifTags(this.ExifTags);
             }            
+        }
+
+        /// <summary>
+        /// Prints a summary of the ports and the resolution associated with this component to the console.
+        /// </summary>
+        public override void PrintComponent()
+        {
+            base.PrintComponent();
+            MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
+        }
+
+        internal override void InitialiseOutputPort(int outputPort)
+        {
+            this.Outputs[outputPort] = new MMALStillPort(this.Outputs[outputPort]);
         }
 
         /// <summary>
@@ -158,22 +167,13 @@ namespace MMALSharp.Components
 
             try
             {
-                MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs[0].Ptr, (MMAL_PARAMETER_HEADER_T*) ptr),
+                MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs[0].Ptr, (MMAL_PARAMETER_HEADER_T*)ptr),
                     $"Unable to set EXIF {formattedExif}");
             }
             finally
             {
                 Marshal.FreeHGlobal(ptr);
             }
-        }
-
-        /// <summary>
-        /// Prints a summary of the ports and the resolution associated with this component to the console.
-        /// </summary>
-        public override void PrintComponent()
-        {
-            base.PrintComponent();
-            MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
         }
     }        
 }

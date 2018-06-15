@@ -23,8 +23,7 @@ namespace MMALSharp.Tests
     }
 
     [CollectionDefinition("MMALCollection")]
-    public class MMALCollection : ICollectionFixture<MMALFixture>
+    public class MmalCollection : ICollectionFixture<MMALFixture>
     {
-
     }
 }

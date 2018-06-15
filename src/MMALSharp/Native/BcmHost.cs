@@ -3,12 +3,7 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMALSharp.Native
 {
@@ -27,6 +22,6 @@ namespace MMALSharp.Native
         public static extern void bcm_host_deinit();
 
         [DllImport("libbcm_host.so", EntryPoint = "graphics_get_display_size", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern int graphics_get_display_size(ushort display_number, uint* width, uint* height);
+        public static extern unsafe int graphics_get_display_size(ushort display_number, uint* width, uint* height);
     }
 }

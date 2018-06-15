@@ -44,12 +44,7 @@ namespace MMALSharp
         /// Reference to all ports associated with this component.
         /// </summary>
         public List<MMALPortImpl> Ports { get; internal set; }
-
-        /// <summary>
-        /// Native pointer to the component this object represents.
-        /// </summary>
-        internal MMAL_COMPONENT_T* Ptr { get; set; }
-
+        
         /// <summary>
         /// Name of the component
         /// </summary>
@@ -64,6 +59,11 @@ namespace MMALSharp
         /// The handler to process the final data.
         /// </summary>
         public ICaptureHandler Handler { get; set; }
+
+        /// <summary>
+        /// Native pointer to the component this object represents.
+        /// </summary>
+        internal MMAL_COMPONENT_T* Ptr { get; set; }
 
         /// <summary>
         /// Creates the MMAL Component by the given name.
@@ -198,22 +198,7 @@ namespace MMALSharp
 
             base.Dispose();
         }
-
-        /// <summary>
-        /// Provides a facility to create a component with a given name.
-        /// </summary>
-        /// <param name="name">The name of the component to create.</param>
-        /// <returns>A pointer to the new component struct.</returns>
-        private static MMAL_COMPONENT_T* CreateComponent(string name)
-        {
-            IntPtr ptr = IntPtr.Zero;
-            MMALCheck(MMALComponent.mmal_component_create(name, &ptr), "Unable to create component");
-
-            var compPtr = (MMAL_COMPONENT_T*)ptr.ToPointer();
-
-            return compPtr;
-        }
-
+        
         /// <summary>
         /// Acquire a reference on a component. Acquiring a reference on a component will prevent a component from being destroyed until the 
         /// acquired reference is released (by a call to mmal_component_destroy). References are internally counted so all acquired references 
@@ -357,6 +342,21 @@ namespace MMALSharp
                     port.BufferPool = null;
                 }
             }
+        }
+
+        /// <summary>
+        /// Provides a facility to create a component with a given name.
+        /// </summary>
+        /// <param name="name">The name of the component to create.</param>
+        /// <returns>A pointer to the new component struct.</returns>
+        private static MMAL_COMPONENT_T* CreateComponent(string name)
+        {
+            IntPtr ptr = IntPtr.Zero;
+            MMALCheck(MMALComponent.mmal_component_create(name, &ptr), "Unable to create component");
+
+            var compPtr = (MMAL_COMPONENT_T*)ptr.ToPointer();
+
+            return compPtr;
         }
     }
 }
