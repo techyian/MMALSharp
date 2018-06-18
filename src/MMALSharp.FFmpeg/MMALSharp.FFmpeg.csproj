@@ -14,7 +14,7 @@
     <PackageLicenseUrl>https://github.com/techyian/MMALSharp/blob/dev/LICENSE.txt</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/techyian/MMALSharp</RepositoryUrl>
-	<VersionPrefix>0.4.0</VersionPrefix>
+	<VersionPrefix>0.4.1</VersionPrefix>
 	<CodeAnalysisRuleSet>..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
