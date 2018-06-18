@@ -39,8 +39,10 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.5.0-rc03" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
+    <PackageReference Include="NLog" Version="4.5.6" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
+		<PrivateAssets>All</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="System.Numerics.Vectors" Version="4.4.0" />
   </ItemGroup>
 </Project>
