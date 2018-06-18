@@ -6,7 +6,6 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
-using MMALSharp.Callbacks;
 using MMALSharp.Native;
 using static MMALSharp.MMALCallerHelper;
 using static MMALSharp.Native.MMALParametersCamera;
@@ -75,8 +74,8 @@ namespace MMALSharp
         /// <summary>
         /// Gets a value indicating whether to include raw Bayer image data on this port.
         /// </summary>
-        /// <param name="port"></param>
-        /// <returns></returns>
+        /// <param name="port">The port you are querying.</param>
+        /// <returns>True if raw Bayer image data will be returned.</returns>
         public static bool GetRawCapture(this MMALPortImpl port)
         {
             return port.GetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE);

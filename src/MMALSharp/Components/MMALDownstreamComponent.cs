@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using MMALSharp.Callbacks;
+using MMALSharp.Callbacks.Providers;
 using MMALSharp.Native;
 
 namespace MMALSharp.Components

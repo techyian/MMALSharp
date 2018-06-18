@@ -4,7 +4,7 @@ using MMALSharp.Common.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using System.Text;
-using MMALSharp.Callbacks;
+using MMALSharp.Callbacks.Providers;
 
 namespace MMALSharp.Components
 {
@@ -313,12 +313,12 @@ namespace MMALSharp.Components
         
         internal override unsafe void InitialiseInputPort(int inputPort)
         {
-            this.Inputs[inputPort] = new MMALStillDecodeConvertPort(&(*this.Ptr->Input[inputPort]), this, PortType.Input);
+            this.Inputs[inputPort] = new MMALStillDecodeConvertPort(this.Inputs[inputPort]);
         }
 
         internal override unsafe void InitialiseOutputPort(int outputPort)
         {
-            this.Outputs[outputPort] = new MMALStillDecodeConvertPort(&(*this.Ptr->Output[outputPort]), this, PortType.Output);
+            this.Outputs[outputPort] = new MMALStillDecodeConvertPort(this.Outputs[outputPort]);
         }
     }
 }

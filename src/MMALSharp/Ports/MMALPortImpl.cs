@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
+using MMALSharp.Callbacks.Providers;
 using MMALSharp.Native;
 using static MMALSharp.MMALCallerHelper;
 
@@ -23,8 +24,8 @@ namespace MMALSharp
         /// <param name="ptr">The native pointer to the component port.</param>
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port this is.</param>
-        public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
-            : base(ptr, comp, type)
+        public MMALPortImpl(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
+            : base(ptr, comp, type, guid)
         {
         }
 

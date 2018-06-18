@@ -305,12 +305,12 @@ namespace MMALSharp.Components
         
         internal override unsafe void InitialiseInputPort(int inputPort)
         {
-            this.Inputs[inputPort] = new MMALStillEncodeConvertPort(&(*this.Ptr->Input[inputPort]), this, PortType.Input);
+            this.Inputs[inputPort] = new MMALStillEncodeConvertPort(this.Inputs[inputPort]);
         }
 
         internal override unsafe void InitialiseOutputPort(int outputPort)
         {
-            this.Outputs[outputPort] = new MMALStillEncodeConvertPort(&(*this.Ptr->Output[outputPort]), this, PortType.Output);
+            this.Outputs[outputPort] = new MMALStillEncodeConvertPort(this.Outputs[outputPort]);
         }
     }
 }

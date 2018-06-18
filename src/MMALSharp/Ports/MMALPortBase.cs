@@ -51,7 +51,7 @@ namespace MMALSharp
         /// <summary>
         /// Managed name given to this object (user defined).
         /// </summary>
-        public string ObjName { get; set; }
+        public Guid Guid { get; set; }
 
         /// <summary>
         /// The MMALEncoding encoding type that this port will process data in. Helpful for retrieving encoding name/FourCC value.
@@ -242,12 +242,13 @@ namespace MMALSharp
         /// <param name="ptr">The native pointer to the component port.</param>
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port this is.</param>
-        protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
+        protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
         {
             this.Ptr = ptr;
             this.Comp = ptr->Component;
             this.ComponentReference = comp;
             this.PortType = type;
+            this.Guid = guid;
         }
 
         /// <summary>

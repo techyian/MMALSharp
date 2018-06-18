@@ -6,6 +6,7 @@
 using System;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
+using MMALSharp.Callbacks.Providers;
 using MMALSharp.Native;
 using static MMALSharp.MMALCallerHelper;
 
@@ -16,8 +17,8 @@ namespace MMALSharp.Ports
     /// </summary>
     public unsafe class MMALControlPort : MMALPortImpl
     {
-        public MMALControlPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
-            : base(ptr, comp, type)
+        public MMALControlPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
+            : base(ptr, comp, type, guid)
         {
         }
 

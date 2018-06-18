@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using MMALSharp.Callbacks;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
@@ -68,7 +67,7 @@ namespace MMALSharp
         /// <summary>
         /// Creates the MMAL Component by the given name.
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">The native MMAL name of the component you want to create.</param>
         protected MMALComponentBase(string name)
         {
             this.Ptr = CreateComponent(name);
@@ -78,26 +77,26 @@ namespace MMALSharp
             this.Clocks = new List<MMALPortImpl>();
             this.Ports = new List<MMALPortImpl>();
 
-            this.Control = new MMALControlPort(this.Ptr->Control, this, PortType.Control);
+            this.Control = new MMALControlPort(this.Ptr->Control, this, PortType.Control, Guid.NewGuid());
 
             for (int i = 0; i < this.Ptr->InputNum; i++)
             {
-                this.Inputs.Add(new MMALPortImpl(&(*this.Ptr->Input[i]), this, PortType.Input));
+                this.Inputs.Add(new MMALPortImpl(&(*this.Ptr->Input[i]), this, PortType.Input, Guid.NewGuid()));
             }
 
             for (int i = 0; i < this.Ptr->OutputNum; i++)
             {
-                this.Outputs.Add(new MMALPortImpl(&(*this.Ptr->Output[i]), this, PortType.Output));
+                this.Outputs.Add(new MMALPortImpl(&(*this.Ptr->Output[i]), this, PortType.Output, Guid.NewGuid()));
             }
 
             for (int i = 0; i < this.Ptr->ClockNum; i++)
             {
-                this.Clocks.Add(new MMALPortImpl(&(*this.Ptr->Clock[i]), this, PortType.Clock));
+                this.Clocks.Add(new MMALPortImpl(&(*this.Ptr->Clock[i]), this, PortType.Clock, Guid.NewGuid()));
             }
 
             for (int i = 0; i < this.Ptr->PortNum; i++)
             {
-                this.Ports.Add(new MMALPortImpl(&(*this.Ptr->Port[i]), this, PortType.Unknown));
+                this.Ports.Add(new MMALPortImpl(&(*this.Ptr->Port[i]), this, PortType.Unknown, Guid.NewGuid()));
             }
         }
         
@@ -253,7 +252,6 @@ namespace MMALSharp
         /// Enable the port with the specified port number.
         /// </summary>
         /// <param name="outputPortNumber">The output port number.</param>
-        /// <param name="managedCallback">The managed method to callback to from the native callback.</param>
         internal void Start(int outputPortNumber)
         {
             this.Start(this.Outputs[outputPortNumber]);
@@ -263,7 +261,6 @@ namespace MMALSharp
         /// Enable the port specified.
         /// </summary>
         /// <param name="port">The output port.</param>
-        /// <param name="managedCallback">The managed method to callback to from the native callback.</param>
         internal void Start(MMALPortBase port)
         {
             switch (port.PortType)

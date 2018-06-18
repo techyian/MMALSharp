@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MMALSharp.Callbacks
+namespace MMALSharp.Callbacks.Providers
 {
     /// <summary>
     /// Provides a facility to retrieve callback handlers for Output and Control ports.
