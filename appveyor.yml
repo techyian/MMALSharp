@@ -69,12 +69,19 @@ for:
 
     deploy:
     # NuGet deployment
-     - provider: NuGet   
+    - provider: NuGet   
        server:   
        api_key:
          secure: NpGo4b3x7b399YTd8IrsTiCVQ+e8gnefOo7nAQwGLOW4B5eighq7fOJDYpVLd9pv
        artifact: /.*\.nupkg/
        on:
          branch: master
-
+    - provider: NuGet
+       server: https://www.myget.org/F/mmalsharp/api/v2/package
+       symbol_server: https://www.myget.org/F/mmalsharp/symbols/api/v2/package
+       api_key:
+         secure: xii3+2rue3Dhi6r46YYK4ZkMRBRgoWEkN14JuXY6Eb0VbC61P883hwTR2xZUYY06
+       artifact: /.*\.nupkg/
+       on:
+         branch: master
      
