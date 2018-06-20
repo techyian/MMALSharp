@@ -90,8 +90,6 @@ namespace MMALSharp.Components
         {
             this.Split = split;
             this.Timeout = timeout;
-            
-            OutputCallbackProvider.RegisterCallback(new VideoOutputCallbackHandler(this.Outputs[0]));
         }
         
         /// <summary>
@@ -129,6 +127,8 @@ namespace MMALSharp.Components
 
             this.ConfigureImmutableInput(outputPort);
             this.ConfigureBitrate(outputPort);
+
+            this.RegisterOutputCallback(outputPort, new VideoOutputCallbackHandler());
         }
         
         /// <summary>

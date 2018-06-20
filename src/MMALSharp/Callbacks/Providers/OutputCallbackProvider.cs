@@ -1,23 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MMALSharp.Callbacks.Providers
 {
     /// <summary>
-    /// Provides a facility to retrieve callback handlers for Output and Control ports.
+    /// Provides a facility to retrieve callback handlers for Output ports.
     /// </summary>
-    public static class OutputCallbackProvider
+    internal static class OutputCallbackProvider
     {
         /// <summary>
         /// The list of active callback handlers.
         /// </summary>
-        public static Dictionary<MMALPortBase, ICallbackHandler> WorkingHandlers { get; private set; } = new Dictionary<MMALPortBase, ICallbackHandler>();
+        public static Dictionary<MMALPortBase, CallbackHandlerBase> WorkingHandlers { get; private set; } = new Dictionary<MMALPortBase, CallbackHandlerBase>();
 
         /// <summary>
         /// Register a new callback handler with a given port.
         /// </summary>
         /// <param name="handler">The callback handler.</param>
-        public static void RegisterCallback(ICallbackHandler handler)
+        public static void RegisterCallback(CallbackHandlerBase handler)
         {
+            if (handler?.WorkingPort == null)
+            {
+                throw new NullReferenceException("Callback handler not configured correctly.");
+            }
+
             if (WorkingHandlers.ContainsKey(handler.WorkingPort))
             {
                 WorkingHandlers[handler.WorkingPort] = handler;
@@ -42,7 +48,12 @@ namespace MMALSharp.Callbacks.Providers
                 return WorkingHandlers[port];
             }
 
-            return new DefaultCallbackHandler(port);
+            var defaultHandler = new DefaultCallbackHandler
+            {
+                WorkingPort = port
+            };
+
+            return defaultHandler;
         }
 
         /// <summary>

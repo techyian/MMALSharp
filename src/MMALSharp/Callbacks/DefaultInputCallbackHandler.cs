@@ -7,13 +7,12 @@ namespace MMALSharp.Callbacks
     /// </summary>
     public class DefaultInputCallbackHandler : InputCallbackHandlerBase
     {
-        public DefaultInputCallbackHandler(MMALPortBase port)
-            : base(port)
+        public DefaultInputCallbackHandler()
         {
         }
 
-        public DefaultInputCallbackHandler(MMALEncoding encodingType, MMALPortBase port)
-            : base(encodingType, port)
+        public DefaultInputCallbackHandler(MMALEncoding encodingType)
+            : base(encodingType)
         {
         }
     }

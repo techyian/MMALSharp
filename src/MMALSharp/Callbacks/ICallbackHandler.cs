@@ -2,7 +2,6 @@
 {
     public interface ICallbackHandler
     {
-        MMALPortBase WorkingPort { get; }
         void Callback(MMALBufferImpl buffer);
     }
 }

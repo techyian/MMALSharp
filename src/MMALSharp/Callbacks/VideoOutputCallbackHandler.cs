@@ -11,13 +11,12 @@ namespace MMALSharp.Callbacks
     /// </summary>
     public class VideoOutputCallbackHandler : DefaultCallbackHandler
     {
-        public VideoOutputCallbackHandler(MMALPortBase port)
-            : base(port)
+        public VideoOutputCallbackHandler()
         {
         }
 
-        public VideoOutputCallbackHandler(MMALEncoding encoding, MMALPortBase port)
-            : base(encoding, port)
+        public VideoOutputCallbackHandler(MMALEncoding encoding)
+            : base(encoding)
         {
         }
 

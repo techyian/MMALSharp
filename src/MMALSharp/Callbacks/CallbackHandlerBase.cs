@@ -4,7 +4,7 @@ using MMALSharp.Native;
 namespace MMALSharp.Callbacks
 {
     /// <summary>
-    /// The base class for Output and Control port callback handlers.
+    /// The base class for Output port callback handlers.
     /// </summary>
     public abstract class CallbackHandlerBase : ICallbackHandler
     {
@@ -16,17 +16,15 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// The port this callback handler is used with.
         /// </summary>
-        public MMALPortBase WorkingPort { get; }
+        public MMALPortBase WorkingPort { get; internal set; }
         
-        protected CallbackHandlerBase(MMALPortBase port)
+        protected CallbackHandlerBase()
         {
-            this.WorkingPort = port;
         }
 
-        protected CallbackHandlerBase(MMALEncoding encodingType, MMALPortBase port)
+        protected CallbackHandlerBase(MMALEncoding encodingType)
         {
             this.EncodingType = encodingType;
-            this.WorkingPort = port;
         }
         
         /// <summary>

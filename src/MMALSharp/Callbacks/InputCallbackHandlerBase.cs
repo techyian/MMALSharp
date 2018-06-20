@@ -14,17 +14,15 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// The port this callback handler is used with.
         /// </summary>
-        public MMALPortBase WorkingPort { get; }
+        public MMALPortBase WorkingPort { get; internal set; }
 
-        protected InputCallbackHandlerBase(MMALPortBase port)
+        protected InputCallbackHandlerBase()
         {
-            this.WorkingPort = port;
         }
 
-        protected InputCallbackHandlerBase(MMALEncoding encodingType, MMALPortBase port)
+        protected InputCallbackHandlerBase(MMALEncoding encodingType)
         {
             this.EncodingType = encodingType;
-            this.WorkingPort = port;
         }
 
         /// <summary>

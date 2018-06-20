@@ -6,22 +6,22 @@ namespace MMALSharp.Callbacks.Providers
     /// <summary>
     /// Provides a facility to retrieve callback handlers for Input ports.
     /// </summary>
-    public static class InputCallbackProvider
+    internal static class InputCallbackProvider
     {
         /// <summary>
         /// The list of active callback handlers.
         /// </summary>
-        public static Dictionary<MMALPortBase, IInputCallbackHandler> WorkingHandlers { get; private set; } = new Dictionary<MMALPortBase, IInputCallbackHandler>();
+        public static Dictionary<MMALPortBase, InputCallbackHandlerBase> WorkingHandlers { get; private set; } = new Dictionary<MMALPortBase, InputCallbackHandlerBase>();
 
         /// <summary>
         /// Register a new callback handler with a given port.
         /// </summary>
         /// <param name="handler">The callback handler.</param>
-        public static void RegisterCallback(IInputCallbackHandler handler)
+        public static void RegisterCallback(InputCallbackHandlerBase handler)
         {
-            if (handler == null)
+            if (handler?.WorkingPort == null)
             {
-                throw new ArgumentNullException(nameof(handler));
+                throw new NullReferenceException("Callback handler not configured correctly.");
             }
 
             if (WorkingHandlers.ContainsKey(handler.WorkingPort))
@@ -48,7 +48,12 @@ namespace MMALSharp.Callbacks.Providers
                 return WorkingHandlers[port];
             }
 
-            return new DefaultInputCallbackHandler(port);
+            var defaultHandler = new DefaultInputCallbackHandler
+            {
+                WorkingPort = port
+            };
+
+            return defaultHandler;
         }
 
         /// <summary>
