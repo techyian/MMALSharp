@@ -18,7 +18,7 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// A Stream instance that we can process image data to.
         /// </summary>
-        protected T CurrentStream { get; set; }
+        public T CurrentStream { get; protected set; }
 
         /// <summary>
         /// The total size of data that has been processed by this capture handler.
