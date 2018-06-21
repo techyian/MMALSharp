@@ -117,16 +117,9 @@ namespace MMALSharp.Components
                 throw new PiCameraError("Camera doesn't have any output ports.");
             }
 
-            this.Control.ObjName = "Control port";
-
             this.PreviewPort = this.Outputs[MMALCameraPreviewPort];
-            this.PreviewPort.ObjName = "Preview port";
-
             this.VideoPort = this.Outputs[MMALCameraVideoPort];
-            this.VideoPort.ObjName = "Video port";
-
             this.StillPort = this.Outputs[MMALCameraStillPort];
-            this.StillPort.ObjName = "Still port";
 
             /*
              * Stereoscopic mode is only supported with the compute module as it requires two camera modules to work.
@@ -229,7 +222,7 @@ namespace MMALSharp.Components
 
             MMALLog.Logger.Debug("Camera config set");
 
-            this.Control.EnablePort((Action<MMALBufferImpl, MMALPortBase>)this.CameraControlCallback);
+            this.Control.EnableControlPort();
 
             MMALLog.Logger.Debug("Configuring camera parameters.");
 

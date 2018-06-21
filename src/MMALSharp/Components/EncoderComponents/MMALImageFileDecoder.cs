@@ -4,6 +4,7 @@ using MMALSharp.Common.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using System.Text;
+using MMALSharp.Callbacks.Providers;
 
 namespace MMALSharp.Components
 {
@@ -36,7 +37,7 @@ namespace MMALSharp.Components
             this.Inputs[0].Commit();
             
             this.Inputs[0].Ptr->BufferNum = Math.Max(this.Inputs[0].Ptr->BufferNumRecommended, this.Inputs[0].Ptr->BufferNumMin);
-            this.Inputs[0].Ptr->BufferSize = Math.Max(this.Inputs[0].Ptr->BufferSizeRecommended, this.Inputs[0].Ptr->BufferSizeMin);            
+            this.Inputs[0].Ptr->BufferSize = Math.Max(this.Inputs[0].Ptr->BufferSizeRecommended, this.Inputs[0].Ptr->BufferSizeMin);
         }
 
         public override unsafe void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
@@ -60,7 +61,8 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].EncodingType = encodingType;
 
             this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
-            this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);                        
+            this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
+            this.Outputs[outputPort].ManagedOutputCallback = OutputCallbackProvider.FindCallback(this.Outputs[outputPort]);
         }
 
         public async Task WaitForTriggers(int outputPort = 0)
@@ -87,15 +89,15 @@ namespace MMALSharp.Components
         /// <returns>An awaitable task.</returns>
         public virtual async Task Convert(int outputPort = 0)
         {
-            MMALLog.Logger.Debug("Beginning Image decode from filestream. Please note, this process may take some time depending on the size of the input image.");
+            MMALLog.Logger.Debug("Beginning Image encode from filestream. Please note, this process may take some time depending on the size of the input image.");
 
             this.Inputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            this.Outputs[outputPort].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+            this.Outputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
 
             // Enable control, input and output ports. Input & Output ports should have been pre-configured by user prior to this point.
-            this.Start(this.Control, new Action<MMALBufferImpl, MMALPortBase>(this.ManagedControlCallback));
-            this.Start(this.Inputs[0], this.ManagedInputCallback);
-            this.Start(this.Outputs[outputPort], new Action<MMALBufferImpl, MMALPortBase>(this.ManagedOutputCallback));
+            this.Start(this.Control);
+            this.Start(this.Inputs[0]);
+            this.Start(this.Outputs[outputPort]);
 
             this.EnableComponent();
 
@@ -135,14 +137,13 @@ namespace MMALSharp.Components
                                     buffer.Release();
                                 }
                             }
-
                             continue;
                         }
                         else
                         {
                             if (buffer.Length > 0)
                             {
-                                this.ManagedOutputCallback(buffer, this.Outputs[outputPort]);
+                                this.Outputs[0].ManagedOutputCallback.Callback(buffer);
                             }
                             else
                             {
@@ -238,7 +239,7 @@ namespace MMALSharp.Components
                 if (inputBuffer != null)
                 {
                     // Populate the new input buffer with user provided image data.
-                    var result = this.ManagedInputCallback(inputBuffer, this.Inputs[0]);
+                    var result = this.Inputs[0].ManagedInputCallback.Callback(inputBuffer);
                     inputBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
 
                     this.Inputs[0].SendBuffer(inputBuffer);
@@ -281,8 +282,8 @@ namespace MMALSharp.Components
             this.LogFormat(ev, null);
 
             // Port format changed
-            this.ManagedOutputCallback(buffer, this.Outputs[outputPort]);
-
+            this.Outputs[outputPort].ManagedOutputCallback.Callback(buffer);
+            
             lock (MMALPortBase.OutputLock)
             {                
                 buffer.Release();
@@ -307,17 +308,17 @@ namespace MMALSharp.Components
                         
             this.ConfigureOutputPortWithoutInit(0, this.Outputs[outputPort].EncodingType);
                         
-            this.Outputs[outputPort].EnablePort(this.ManagedOutputCallback, false);            
+            this.Outputs[outputPort].EnableOutputPort(false);            
         }
         
         internal override unsafe void InitialiseInputPort(int inputPort)
         {
-            this.Inputs[inputPort] = new MMALStillDecodeConvertPort(&(*this.Ptr->Input[inputPort]), this, PortType.Input);
+            this.Inputs[inputPort] = new MMALStillDecodeConvertPort(this.Inputs[inputPort]);
         }
 
         internal override unsafe void InitialiseOutputPort(int outputPort)
         {
-            this.Outputs[outputPort] = new MMALStillDecodeConvertPort(&(*this.Ptr->Output[outputPort]), this, PortType.Output);
+            this.Outputs[outputPort] = new MMALStillDecodeConvertPort(this.Outputs[outputPort]);
         }
     }
 }

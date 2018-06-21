@@ -12,10 +12,15 @@ namespace MMALSharp.Ports
     /// <summary>
     /// A custom port definition used specifically when using encoder conversion functionality.
     /// </summary>
-    public unsafe class MMALStillDecodeConvertPort : MMALStillPort
+    public unsafe class MMALStillDecodeConvertPort : MMALPortImpl
     {
-        public MMALStillDecodeConvertPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
-            : base(ptr, comp, type)
+        public MMALStillDecodeConvertPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
+            : base(ptr, comp, type, guid)
+        {
+        }
+
+        public MMALStillDecodeConvertPort(MMALPortImpl copyFrom)
+            : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
         {
         }
 

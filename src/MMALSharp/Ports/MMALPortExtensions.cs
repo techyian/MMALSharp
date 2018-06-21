@@ -74,8 +74,8 @@ namespace MMALSharp
         /// <summary>
         /// Gets a value indicating whether to include raw Bayer image data on this port.
         /// </summary>
-        /// <param name="port"></param>
-        /// <returns></returns>
+        /// <param name="port">The port you are querying.</param>
+        /// <returns>True if raw Bayer image data will be returned.</returns>
         public static bool GetRawCapture(this MMALPortImpl port)
         {
             return port.GetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE);
@@ -110,6 +110,23 @@ namespace MMALSharp
             }
         }
 
+        public static string GetPortType(this PortType type)
+        {
+            switch (type)
+            {
+                case PortType.Input:
+                    return "Input";
+                case PortType.Output:
+                    return "Output";
+                case PortType.Clock:
+                    return "Clock";
+                case PortType.Control:
+                    return "Control";
+            }
+
+            return string.Empty;
+        }
+        
         /// <summary>
         /// Provides a facility to set data on the port using the native helper functions.
         /// </summary>

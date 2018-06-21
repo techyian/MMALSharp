@@ -4,6 +4,7 @@ using MMALSharp.Common.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using System.Text;
+using MMALSharp.Callbacks;
 
 namespace MMALSharp.Components
 {
@@ -86,9 +87,9 @@ namespace MMALSharp.Components
             this.Outputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
 
             // Enable control, input and output ports. Input & Output ports should have been pre-configured by user prior to this point.
-            this.Start(this.Control, new Action<MMALBufferImpl, MMALPortBase>(this.ManagedControlCallback));
-            this.Start(this.Inputs[0], this.ManagedInputCallback);
-            this.Start(this.Outputs[outputPort], new Action<MMALBufferImpl, MMALPortBase>(this.ManagedOutputCallback));
+            this.Start(this.Control);
+            this.Start(this.Inputs[0]);
+            this.Start(this.Outputs[outputPort]);
 
             this.EnableComponent();
 
@@ -128,14 +129,13 @@ namespace MMALSharp.Components
                                     buffer.Release();
                                 }
                             }
-
                             continue;
                         }
                         else
                         {
                             if (buffer.Length > 0)
                             {
-                                this.ManagedOutputCallback(buffer, this.Outputs[0]);
+                                this.Outputs[0].ManagedOutputCallback.Callback(buffer);
                             }
                             else
                             {
@@ -231,7 +231,7 @@ namespace MMALSharp.Components
                 if (inputBuffer != null)
                 {
                     // Populate the new input buffer with user provided image data.
-                    var result = this.ManagedInputCallback(inputBuffer, this.Inputs[0]);
+                    var result = this.Inputs[0].ManagedInputCallback.Callback(inputBuffer);
                     inputBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
 
                     this.Inputs[0].SendBuffer(inputBuffer);
@@ -274,8 +274,8 @@ namespace MMALSharp.Components
             this.LogFormat(ev, null);
 
             // Port format changed
-            this.ManagedOutputCallback(buffer, this.Outputs[0]);
-
+            this.Outputs[0].ManagedOutputCallback.Callback(buffer);
+            
             lock (MMALPortBase.OutputLock)
             {
                 buffer.Release();
@@ -300,17 +300,17 @@ namespace MMALSharp.Components
 
             this.ConfigureOutputPortWithoutInit(0, this.Outputs[0].EncodingType);
 
-            this.Outputs[0].EnablePort(this.ManagedOutputCallback, false);
+            this.Outputs[0].EnableOutputPort(false);
         }
         
         internal override unsafe void InitialiseInputPort(int inputPort)
         {
-            this.Inputs[inputPort] = new MMALStillEncodeConvertPort(&(*this.Ptr->Input[inputPort]), this, PortType.Input);
+            this.Inputs[inputPort] = new MMALStillEncodeConvertPort(this.Inputs[inputPort]);
         }
 
         internal override unsafe void InitialiseOutputPort(int outputPort)
         {
-            this.Outputs[outputPort] = new MMALStillEncodeConvertPort(&(*this.Ptr->Output[outputPort]), this, PortType.Output);
+            this.Outputs[outputPort] = new MMALStillEncodeConvertPort(this.Outputs[outputPort]);
         }
     }
 }

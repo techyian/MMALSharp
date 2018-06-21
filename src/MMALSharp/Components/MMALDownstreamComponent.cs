@@ -6,6 +6,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using MMALSharp.Callbacks;
+using MMALSharp.Callbacks.Providers;
 using MMALSharp.Native;
 
 namespace MMALSharp.Components
@@ -32,6 +34,39 @@ namespace MMALSharp.Components
         public abstract int Height { get; set; }
 
         public List<int> ProcessingPorts { get; set; }
+
+        /// <summary>
+        /// Registers a <see cref="IInputCallbackHandler"/> with the input port of this component.
+        /// </summary>
+        /// <param name="handler">The input handler.</param>
+        public void RegisterInputCallback(InputCallbackHandlerBase handler)
+        {
+            handler.WorkingPort = this.Inputs[0];
+            InputCallbackProvider.RegisterCallback(handler);
+        }
+
+        /// <summary>
+        /// If it exists, removes a <see cref="IInputCallbackHandler"/> on this component's input port.
+        /// </summary>
+        public void RemoveInputCallback() => InputCallbackProvider.RemoveCallback(this.Inputs[0]);
+        
+        /// <summary>
+        /// Registers a <see cref="ICallbackHandler"/> with the output port specified.
+        /// </summary>
+        /// <param name="outputPort">The output port number to register with.</param>
+        /// <param name="handler">The output handler.</param>
+        public void RegisterOutputCallback(int outputPort, CallbackHandlerBase handler)
+        {
+            handler.WorkingPort = this.Outputs[outputPort];
+            OutputCallbackProvider.RegisterCallback(handler);
+        }
+
+        /// <summary>
+        /// If it exists, removes a <see cref="ICallbackHandler"/> on the port specified.
+        /// </summary>
+        /// <param name="outputPort">The output port number.</param>
+        public void RemoveOutputCallback(int outputPort) =>
+            OutputCallbackProvider.RemoveCallback(this.Outputs[outputPort]);
 
         /// <summary>
         /// Configures a specific input port on a downstream component. This method will perform a shallow copy of the output
@@ -135,7 +170,7 @@ namespace MMALSharp.Components
         {
             this.ConfigureOutputPort(0, encodingType, pixelFormat, quality, bitrate, zeroCopy);
         }
-
+        
         /// <summary>
         /// Call to configure changes on an Downstream component output port.
         /// </summary>
@@ -198,6 +233,8 @@ namespace MMALSharp.Components
 
             this.Outputs[outputPort].BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
             this.Outputs[outputPort].BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
+            
+            this.Outputs[outputPort].ManagedOutputCallback = OutputCallbackProvider.FindCallback(this.Outputs[outputPort]);
         }
 
         /// <summary>

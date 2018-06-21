@@ -3,6 +3,7 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using System;
 using System.IO;
 
 namespace MMALSharp.Handlers
@@ -10,7 +11,7 @@ namespace MMALSharp.Handlers
     /// <summary>
     /// Processes the video data to a stream.
     /// </summary>
-    public class VideoStreamCaptureHandler : StreamCaptureHandler
+    public class VideoStreamCaptureHandler : FileStreamCaptureHandler
     {
         /// <summary>
         /// Creates a new instance of the <see cref="VideoStreamCaptureHandler"/> class with the specified directory and filename extension.
@@ -23,12 +24,6 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// Splits the current file by closing the current stream and opening a new one.
         /// </summary>
-        public void Split()
-        {
-            if (this.CurrentStream.GetType() == typeof(FileStream))
-            {                
-                this.NewFile();
-            }
-        }
+        public void Split() => this.NewFile();
     }
 }

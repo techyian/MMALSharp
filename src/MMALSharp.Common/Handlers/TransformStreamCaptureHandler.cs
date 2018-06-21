@@ -11,7 +11,7 @@ namespace MMALSharp.Common.Handlers
     /// <summary>
     /// Reads data from a stream, processes this data and writes the result data on another stream.
     /// </summary>
-    public class TransformStreamCaptureHandler : StreamCaptureHandler
+    public class TransformStreamCaptureHandler : FileStreamCaptureHandler
     {
         /// <summary>
         /// Gets or sets the stream to retrieve input data from.

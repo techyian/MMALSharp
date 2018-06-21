@@ -67,7 +67,7 @@ namespace MMALSharp
         /// <summary>
         /// Creates the MMAL Component by the given name.
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">The native MMAL name of the component you want to create.</param>
         protected MMALComponentBase(string name)
         {
             this.Ptr = CreateComponent(name);
@@ -77,63 +77,29 @@ namespace MMALSharp
             this.Clocks = new List<MMALPortImpl>();
             this.Ports = new List<MMALPortImpl>();
 
-            this.Control = new MMALControlPort(this.Ptr->Control, this, PortType.Control);
+            this.Control = new MMALControlPort(this.Ptr->Control, this, PortType.Control, Guid.NewGuid());
 
             for (int i = 0; i < this.Ptr->InputNum; i++)
             {
-                this.Inputs.Add(new MMALPortImpl(&(*this.Ptr->Input[i]), this, PortType.Input));
+                this.Inputs.Add(new MMALPortImpl(&(*this.Ptr->Input[i]), this, PortType.Input, Guid.NewGuid()));
             }
 
             for (int i = 0; i < this.Ptr->OutputNum; i++)
             {
-                this.Outputs.Add(new MMALPortImpl(&(*this.Ptr->Output[i]), this, PortType.Output));
+                this.Outputs.Add(new MMALPortImpl(&(*this.Ptr->Output[i]), this, PortType.Output, Guid.NewGuid()));
             }
 
             for (int i = 0; i < this.Ptr->ClockNum; i++)
             {
-                this.Clocks.Add(new MMALPortImpl(&(*this.Ptr->Clock[i]), this, PortType.Clock));
+                this.Clocks.Add(new MMALPortImpl(&(*this.Ptr->Clock[i]), this, PortType.Clock, Guid.NewGuid()));
             }
 
             for (int i = 0; i < this.Ptr->PortNum; i++)
             {
-                this.Ports.Add(new MMALPortImpl(&(*this.Ptr->Port[i]), this, PortType.Unknown));
+                this.Ports.Add(new MMALPortImpl(&(*this.Ptr->Port[i]), this, PortType.Unknown, Guid.NewGuid()));
             }
         }
-
-        /// <summary>
-        /// Delegate to process the buffer header containing image data.
-        /// </summary>
-        /// <param name="buffer">The current buffer header being processed.</param>
-        /// <param name="port">The port we're currently processing on.</param>
-        /// <returns>A process result containing user fed image data.</returns>
-        public virtual ProcessResult ManagedInputCallback(MMALBufferImpl buffer, MMALPortBase port)
-        {
-            MMALLog.Logger.Debug("In managed input callback");
-            return this.Handler?.Process(buffer.AllocSize);
-        }
-
-        /// <summary>
-        /// Delegate to process the buffer header containing image data.
-        /// </summary>
-        /// <param name="buffer">The current buffer header being processed.</param>
-        /// <param name="port">The port we're currently processing on.</param>
-        public virtual void ManagedOutputCallback(MMALBufferImpl buffer, MMALPortBase port)
-        {
-            MMALLog.Logger.Debug("In managed output callback");
-            var data = buffer.GetBufferData();
-            this.Handler?.Process(data);
-        }
-
-        /// <summary>
-        /// Delegate to process any information sent to the component's control port.
-        /// </summary>
-        /// <param name="buffer">The current buffer header being processed.</param>
-        /// <param name="port">The port we're currently processing on.</param>
-        public virtual void ManagedControlCallback(MMALBufferImpl buffer, MMALPortBase port)
-        {
-            MMALLog.Logger.Debug("In managed control callback");                        
-        }
-
+        
         /// <summary>
         /// Enables any connections associated with this component, traversing down the pipeline to enable those connections
         /// also.
@@ -286,47 +252,38 @@ namespace MMALSharp
         /// Enable the port with the specified port number.
         /// </summary>
         /// <param name="outputPortNumber">The output port number.</param>
-        /// <param name="managedCallback">The managed method to callback to from the native callback.</param>
-        internal void Start(int outputPortNumber, Action<MMALBufferImpl, MMALPortBase> managedCallback)
+        internal void Start(int outputPortNumber)
         {
-            this.Start(this.Outputs[outputPortNumber], managedCallback);
+            this.Start(this.Outputs[outputPortNumber]);
         }
-
-        /// <summary>
-        /// Enable the port with the specified port number.
-        /// </summary>
-        /// <param name="outputPortNumber">The output port number.</param>
-        /// <param name="managedCallback">The managed method to callback to from the native callback.</param>
-        internal void Start(int outputPortNumber, Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback)
-        {
-            this.Start(this.Outputs[outputPortNumber], managedCallback);
-        }
-
+        
         /// <summary>
         /// Enable the port specified.
         /// </summary>
         /// <param name="port">The output port.</param>
-        /// <param name="managedCallback">The managed method to callback to from the native callback.</param>
-        internal void Start(MMALPortBase port, Action<MMALBufferImpl, MMALPortBase> managedCallback)
+        internal void Start(MMALPortBase port)
         {
-            if (this.Handler != null && this.Handler.GetType().GetTypeInfo().IsSubclassOf(typeof(StreamCaptureHandler)))
+            switch (port.PortType)
             {
-                ((StreamCaptureHandler)this.Handler).NewFile();
+                case PortType.Input:
+                    port.EnableInputPort();
+                    break;
+                case PortType.Output:
+                    if (this.Handler != null && this.Handler.GetType().GetTypeInfo().IsSubclassOf(typeof(FileStreamCaptureHandler)))
+                    {
+                        ((FileStreamCaptureHandler)this.Handler).NewFile();
+                    }
+                    port.EnableOutputPort();
+                    break;
+                case PortType.Control:
+                    port.EnableControlPort();
+                    break;
+                default:
+                    port.EnableOutputPort();
+                    break;
             }
-
-            port.EnablePort(managedCallback);
         }
-
-        /// <summary>
-        /// Enable the port specified.
-        /// </summary>
-        /// <param name="port">The output port.</param>
-        /// <param name="managedCallback">The managed method to callback to from the native callback.</param>
-        internal void Start(MMALPortBase port, Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback)
-        {
-            port.EnablePort(managedCallback);
-        }
-
+        
         /// <summary>
         /// Disable the port with the specified port number.
         /// </summary>

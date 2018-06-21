@@ -73,7 +73,7 @@ namespace MMALSharp.Tests
                 {
                     _fixture.MMALCamera.ConfigureCameraSettings();
 
-                    imgEncoder.ConfigureOutputPort(0, encodingType, pixelFormat, 90);
+                    imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, 90);
 
                     // Create our component pipeline.         
                     _fixture.MMALCamera.Camera.StillPort
@@ -117,7 +117,7 @@ namespace MMALSharp.Tests
                 {
                     _fixture.MMALCamera.ConfigureCameraSettings();
 
-                    imgEncoder.ConfigureOutputPort(0, encodingType, pixelFormat, 90);
+                    imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, 90);
 
                     // Create our component pipeline.         
                     _fixture.MMALCamera.Camera.StillPort
@@ -291,7 +291,7 @@ namespace MMALSharp.Tests
                 {
                     _fixture.MMALCamera.ConfigureCameraSettings();
 
-                    imgEncoder.ConfigureOutputPort(0, MMALEncoding.JPEG, MMALEncoding.I420, 90);
+                    imgEncoder.ConfigureOutputPort(MMALEncoding.JPEG, MMALEncoding.I420, 90);
 
                     // Create our component pipeline.         
                     _fixture.MMALCamera.Camera.StillPort
@@ -320,7 +320,7 @@ namespace MMALSharp.Tests
                 using (var preview = new MMALNullSinkComponent())
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
-                    imgEncoder.ConfigureOutputPort(0, MMALEncoding.BMP, MMALEncoding.I420, 90);
+                    imgEncoder.ConfigureOutputPort(MMALEncoding.BMP, MMALEncoding.I420, 90);
 
                     // Create our component pipeline.         
                     _fixture.MMALCamera.Camera.StillPort

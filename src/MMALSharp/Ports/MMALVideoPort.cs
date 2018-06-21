@@ -19,13 +19,13 @@ namespace MMALSharp.Ports
         /// </summary>
         public DateTime? Timeout { get; set; }
 
-        public MMALVideoPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
-            : base(ptr, comp, type)
+        public MMALVideoPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
+            : base(ptr, comp, type, guid)
         {
         }
 
         public MMALVideoPort(MMALPortImpl copyFrom)
-            : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType)
+            : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
         {
         }
 
@@ -52,7 +52,7 @@ namespace MMALSharp.Ports
 
                 if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero && bufferImpl.Length > 0)
                 {
-                    this.ManagedOutputCallback(bufferImpl, this);
+                    this.ManagedOutputCallback.Callback(bufferImpl);
                 }
 
                 var eos = this.Timeout.HasValue && DateTime.Now.CompareTo(this.Timeout.Value) > 0;

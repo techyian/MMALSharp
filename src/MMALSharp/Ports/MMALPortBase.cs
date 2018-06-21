@@ -6,9 +6,9 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using MMALSharp.Callbacks;
 using MMALSharp.Native;
 using MMALSharp.Components;
-using MMALSharp.Handlers;
 using Nito.AsyncEx;
 using static MMALSharp.MMALCallerHelper;
 
@@ -51,7 +51,7 @@ namespace MMALSharp
         /// <summary>
         /// Managed name given to this object (user defined).
         /// </summary>
-        public string ObjName { get; set; }
+        public Guid Guid { get; set; }
 
         /// <summary>
         /// The MMALEncoding encoding type that this port will process data in. Helpful for retrieving encoding name/FourCC value.
@@ -190,21 +190,21 @@ namespace MMALSharp
         } 
 
         #endregion
-
+        
         /// <summary>
         /// Asynchronous trigger which is set when processing has completed on this port.
         /// </summary>
         public AsyncCountdownEvent Trigger { get; set; }
-        
-        /// <summary>
-        /// Delegate to populate native buffer header with user provided image data.
-        /// </summary>
-        public Func<MMALBufferImpl, MMALPortBase, ProcessResult> ManagedInputCallback { get; set; }
 
         /// <summary>
-        /// Delegate we use to do further processing on buffer headers when they're received by the native callback delegate.
+        /// A callback handler for Input ports to populate native buffer header with user provided image data.
         /// </summary>
-        public Action<MMALBufferImpl, MMALPortBase> ManagedOutputCallback { get; set; }
+        public InputCallbackHandlerBase ManagedInputCallback { get; set; }
+
+        /// <summary>
+        /// A callback handler for Output ports we use to do further processing on buffer headers after they've been received by the native callback delegate.
+        /// </summary>
+        public CallbackHandlerBase ManagedOutputCallback { get; set; }
 
         /// <summary>
         /// Native pointer that represents the component this port is associated with.
@@ -242,12 +242,13 @@ namespace MMALSharp
         /// <param name="ptr">The native pointer to the component port.</param>
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port this is.</param>
-        protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
+        protected MMALPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
         {
             this.Ptr = ptr;
             this.Comp = ptr->Component;
             this.ComponentReference = comp;
             this.PortType = type;
+            this.Guid = guid;
         }
 
         /// <summary>
@@ -314,13 +315,19 @@ namespace MMALSharp
         }
 
         /// <summary>
+        /// Provides functionality to enable processing on a control port.
+        /// </summary>
+        internal virtual void EnableControlPort()
+        {
+        }
+        
+        /// <summary>
         /// Provides functionality to enable processing on an output port.
         /// </summary>
-        /// <param name="managedCallback">Delegate for managed output port callback.</param>
         /// <param name="sendBuffers">Indicates whether we want to send all the buffers in the port pool or simply create the pool.</param>
-        internal virtual void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, bool sendBuffers = true)
+        internal virtual void EnableOutputPort(bool sendBuffers = true)
         {
-            if (managedCallback != null)
+            if (this.ManagedOutputCallback != null)
             {
                 this.SendAllBuffers(sendBuffers);
             }
@@ -329,37 +336,8 @@ namespace MMALSharp
         /// <summary>
         /// Provides functionality to enable processing on an input port.
         /// </summary>
-        /// <param name="managedCallback">Delegate for managed input port callback.</param>
-        internal virtual void EnablePort(Func<MMALBufferImpl, MMALPortBase, ProcessResult> managedCallback)
-        {            
-            if (!this.Enabled)
-            {
-                this.ManagedInputCallback = managedCallback;
-
-                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeInputPortCallback);
-
-                IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
-
-                MMALLog.Logger.Debug("Enabling input port.");
-
-                if (managedCallback == null)
-                {
-                    MMALLog.Logger.Warn("Callback null");
-
-                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
-                }
-                else
-                {
-                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
-                }
-
-                this.InitialiseBufferPool();
-            }
-
-            if (!this.Enabled)
-            {
-                throw new PiCameraError("Unknown error occurred whilst enabling port");
-            }
+        internal virtual void EnableInputPort()
+        {
         }
 
         /// <summary>
@@ -530,7 +508,7 @@ namespace MMALSharp
                 }
                 
                 // Populate the new input buffer with user provided image data.
-                var result = this.ManagedInputCallback(newBuffer, this);
+                var result = this.ManagedInputCallback.Callback(newBuffer);
                 newBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
 
                 try

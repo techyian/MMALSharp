@@ -5,6 +5,8 @@
 
 using System;
 using System.Runtime.InteropServices;
+using MMALSharp.Callbacks;
+using MMALSharp.Callbacks.Providers;
 using MMALSharp.Native;
 using static MMALSharp.MMALCallerHelper;
 
@@ -15,15 +17,15 @@ namespace MMALSharp.Ports
     /// </summary>
     public unsafe class MMALControlPort : MMALPortImpl
     {
-        public MMALControlPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type)
-            : base(ptr, comp, type)
+        public MMALControlPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
+            : base(ptr, comp, type, guid)
         {
         }
 
         /// <summary>
-        /// Managed Control port callback delegate.
+        /// A callback handler for Control ports we use to do further processing on buffer headers after they've been received by the native callback delegate.
         /// </summary>
-        public Action<MMALBufferImpl, MMALPortBase> ManagedControlCallback { get; set; }
+        public CallbackHandlerBase ManagedControlCallback { get; set; }
 
         /// <summary>
         /// Monitor lock for control port callback method.
@@ -33,16 +35,11 @@ namespace MMALSharp.Ports
         /// <summary>
         /// Enables processing on a port.
         /// </summary>
-        /// <param name="managedCallback">A managed callback method we can do further processing on.</param>
-        /// <param name="sendBuffers">
-        /// Indicates whether we want to send all the buffers in the port pool or simply create the pool.
-        /// This parameter has no effect for <see cref="MMALControlPort"/>.
-        /// </param>
-        internal override void EnablePort(Action<MMALBufferImpl, MMALPortBase> managedCallback, bool sendBuffers = true)
+        internal override void EnableControlPort()
         {
             if (!this.Enabled)
             {
-                this.ManagedControlCallback = managedCallback;
+                this.ManagedControlCallback = OutputCallbackProvider.FindCallback(this);
 
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeControlPortCallback);
 
@@ -50,7 +47,7 @@ namespace MMALSharp.Ports
 
                 MMALLog.Logger.Debug("Enabling control port.");
 
-                if (managedCallback == null)
+                if (this.ManagedControlCallback == null)
                 {
                     MMALLog.Logger.Debug("Callback null");
 
@@ -87,7 +84,7 @@ namespace MMALSharp.Ports
                         bufferImpl.PrintProperties();
                     }
 
-                    this.ManagedControlCallback(bufferImpl, this);
+                    this.ManagedControlCallback.Callback(bufferImpl);
 
                     if (MMALCameraConfig.Debug)
                     {
