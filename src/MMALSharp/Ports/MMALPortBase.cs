@@ -199,12 +199,12 @@ namespace MMALSharp
         /// <summary>
         /// A callback handler for Input ports to populate native buffer header with user provided image data.
         /// </summary>
-        public IInputCallbackHandler ManagedInputCallback { get; set; }
+        public InputCallbackHandlerBase ManagedInputCallback { get; set; }
 
         /// <summary>
         /// A callback handler for Output ports we use to do further processing on buffer headers after they've been received by the native callback delegate.
         /// </summary>
-        public ICallbackHandler ManagedOutputCallback { get; set; }
+        public CallbackHandlerBase ManagedOutputCallback { get; set; }
 
         /// <summary>
         /// Native pointer that represents the component this port is associated with.

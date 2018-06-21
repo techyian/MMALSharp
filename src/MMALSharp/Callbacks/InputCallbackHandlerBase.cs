@@ -4,7 +4,7 @@ using MMALSharp.Native;
 
 namespace MMALSharp.Callbacks
 {
-    public abstract class InputCallbackHandlerBase : IInputCallbackHandler
+    public abstract class InputCallbackHandlerBase
     {
         /// <summary>
         /// A whitelisted Encoding Type that this callback handler will operate on.

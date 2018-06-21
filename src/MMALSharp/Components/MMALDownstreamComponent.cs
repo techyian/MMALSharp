@@ -39,11 +39,10 @@ namespace MMALSharp.Components
         /// Registers a <see cref="IInputCallbackHandler"/> with the input port of this component.
         /// </summary>
         /// <param name="handler">The input handler.</param>
-        public void RegisterInputCallback(IInputCallbackHandler handler)
+        public void RegisterInputCallback(InputCallbackHandlerBase handler)
         {
-            var callbackHandler = (InputCallbackHandlerBase)handler;
-            callbackHandler.WorkingPort = this.Inputs[0];
-            InputCallbackProvider.RegisterCallback(callbackHandler);
+            handler.WorkingPort = this.Inputs[0];
+            InputCallbackProvider.RegisterCallback(handler);
         }
 
         /// <summary>
@@ -56,11 +55,10 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="outputPort">The output port number to register with.</param>
         /// <param name="handler">The output handler.</param>
-        public void RegisterOutputCallback(int outputPort, ICallbackHandler handler)
+        public void RegisterOutputCallback(int outputPort, CallbackHandlerBase handler)
         {
-            var callbackHandler = (CallbackHandlerBase) handler;
-            callbackHandler.WorkingPort = this.Outputs[outputPort];
-            OutputCallbackProvider.RegisterCallback(callbackHandler);
+            handler.WorkingPort = this.Outputs[outputPort];
+            OutputCallbackProvider.RegisterCallback(handler);
         }
 
         /// <summary>

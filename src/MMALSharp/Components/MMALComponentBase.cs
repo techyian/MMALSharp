@@ -269,9 +269,9 @@ namespace MMALSharp
                     port.EnableInputPort();
                     break;
                 case PortType.Output:
-                    if (this.Handler != null && this.Handler.GetType().GetTypeInfo().IsSubclassOf(typeof(StreamCaptureHandler)))
+                    if (this.Handler != null && this.Handler.GetType().GetTypeInfo().IsSubclassOf(typeof(FileStreamCaptureHandler)))
                     {
-                        ((StreamCaptureHandler)this.Handler).NewFile();
+                        ((FileStreamCaptureHandler)this.Handler).NewFile();
                     }
                     port.EnableOutputPort();
                     break;

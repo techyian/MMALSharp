@@ -41,7 +41,7 @@ namespace MMALSharp.Callbacks.Providers
         /// <param name="port">The port we are retrieving the callback handler on.</param>
         /// <returns>A <see cref="IInputCallbackHandler"/> for a given port. If no handler is registered, a 
         /// <see cref="DefaultInputCallbackHandler"/> will be returned.</returns>
-        public static IInputCallbackHandler FindCallback(MMALPortBase port)
+        public static InputCallbackHandlerBase FindCallback(MMALPortBase port)
         {
             if (WorkingHandlers.ContainsKey(port))
             {

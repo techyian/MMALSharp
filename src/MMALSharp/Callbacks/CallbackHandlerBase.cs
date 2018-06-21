@@ -6,7 +6,7 @@ namespace MMALSharp.Callbacks
     /// <summary>
     /// The base class for Output port callback handlers.
     /// </summary>
-    public abstract class CallbackHandlerBase : ICallbackHandler
+    public abstract class CallbackHandlerBase
     {
         /// <summary>
         /// A whitelisted Encoding Type that this callback handler will operate on.
