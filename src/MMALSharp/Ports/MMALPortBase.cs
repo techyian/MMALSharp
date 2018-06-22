@@ -347,33 +347,36 @@ namespace MMALSharp
         /// </summary>
         internal void DisablePort()
         {
-            if (this.Enabled)
+            lock (MMALPortBase.OutputLock)
             {
-                MMALLog.Logger.Debug("Disabling port");
-
-                if (this.BufferPool != null)
+                if (this.Enabled)
                 {
-                    var length = this.BufferPool.HeadersNum;
-
-                    MMALLog.Logger.Debug($"Releasing {length} buffers from queue.");
-                                        
-                    for (int i = 0; i < length; i++)
+                    MMALLog.Logger.Debug("Disabling port");
+                    
+                    if (this.BufferPool != null)
                     {
-                        MMALLog.Logger.Debug("Releasing active buffer");
-                        var buffer = this.BufferPool.Queue.GetBuffer();
+                        var length = this.BufferPool.HeadersNum;
 
-                        if (buffer != null)
+                        MMALLog.Logger.Debug($"Releasing {length} buffers from queue.");
+
+                        for (int i = 0; i < length; i++)
                         {
-                            buffer.Release();
-                        }              
-                        else
-                        {
-                            MMALLog.Logger.Warn("Retrieved buffer invalid.");
+                            MMALLog.Logger.Debug("Releasing active buffer");
+                            var buffer = this.BufferPool.Queue.GetBuffer();
+
+                            if (buffer != null)
+                            {
+                                buffer.Release();
+                            }
+                            else
+                            {
+                                MMALLog.Logger.Warn("Retrieved buffer invalid.");
+                            }
                         }
                     }
-                }
 
-                MMALCheck(MMALPort.mmal_port_disable(this.Ptr), "Unable to disable port.");
+                    MMALCheck(MMALPort.mmal_port_disable(this.Ptr), "Unable to disable port.");
+                }
             }
         }
 

@@ -293,6 +293,8 @@ namespace MMALSharp
         {
             var handlerComponents = this.PopulateProcessingList();
 
+            List<Task> tasks = new List<Task>();
+
             // Enable all connections associated with these components
             foreach (var component in handlerComponents)
             {
@@ -304,42 +306,40 @@ namespace MMALSharp
                     {
                         component.Start(portNum);
                         component.Outputs[portNum].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+                        tasks.Add(component.Outputs[portNum].Trigger.WaitAsync());
                     }
                 }
             }
 
             // We now begin capturing on the camera, processing will commence based on the pipeline configured.
             this.StartCapture(cameraPort);
-
-            List<Task> tasks = new List<Task>();
-
-            // Wait until the process is complete.
-            foreach (var component in handlerComponents)
-            {
-                foreach (var portNum in component.ProcessingPorts)
-                {
-                    if (component.Outputs[portNum].ConnectedReference == null)
-                    {
-                        tasks.Add(component.Outputs[portNum].Trigger.WaitAsync());
-                    }
-                }
-            }
-
+            
             if (cancellationToken == CancellationToken.None)
             {
                 await Task.WhenAll(tasks);
             }
             else
             {
-                tasks.Add(cancellationToken.AsTask());
-                await Task.WhenAny(tasks);
+                await Task.WhenAny(Task.WhenAll(tasks), cancellationToken.AsTask()).ContinueWith(c =>
+                {
+                    foreach (var component in handlerComponents)
+                    {
+                        foreach (var portNum in component.ProcessingPorts)
+                        {
+                            if (component.Outputs[portNum].Trigger.CurrentCount == 1)
+                            {
+                                component.Outputs[portNum].Trigger.Signal();
+                            }
+                        }
+                    }
+                });
             }
             
             this.StopCapture(cameraPort);
 
             // If taking raw image, the camera component will hold the handler
             this.Camera.Handler?.PostProcess();
-
+            
             // Disable the image encoder output port.
             foreach (var component in handlerComponents)
             {
