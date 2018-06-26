@@ -64,6 +64,8 @@ namespace MMALSharp
         /// </summary>
         internal MMAL_COMPONENT_T* Ptr { get; set; }
 
+        internal bool ForceStopProcessing { get; set; }
+
         /// <summary>
         /// Creates the MMAL Component by the given name.
         /// </summary>
@@ -312,13 +314,9 @@ namespace MMALSharp
             {
                 if (port.BufferPool != null)
                 {
-                    MMALLog.Logger.Debug("Destroying port pool");
-
-                    if (port.Enabled)
-                    {
-                        port.DisablePort();
-                    }
-
+                    MMALLog.Logger.Debug("Destroying input port pool.");
+                    
+                    port.DisablePort();
                     port.DestroyPortPool();
                     port.BufferPool = null;
                 }
@@ -328,13 +326,9 @@ namespace MMALSharp
             {
                 if (port.BufferPool != null)
                 {
-                    MMALLog.Logger.Debug("Destroying port pool");
-
-                    if (port.Enabled)
-                    {
-                        port.DisablePort();
-                    }
-
+                    MMALLog.Logger.Debug("Destroying output port pool.");
+                    
+                    port.DisablePort();
                     port.DestroyPortPool();
                     port.BufferPool = null;
                 }

@@ -6,6 +6,7 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading;
 using MMALSharp.Callbacks;
 using MMALSharp.Native;
 using MMALSharp.Components;
@@ -347,36 +348,34 @@ namespace MMALSharp
         /// </summary>
         internal void DisablePort()
         {
-            lock (MMALPortBase.OutputLock)
+            if (this.Enabled)
             {
-                if (this.Enabled)
+                MMALLog.Logger.Debug("Disabling port");
+
+                if (this.BufferPool != null)
                 {
-                    MMALLog.Logger.Debug("Disabling port");
-                    
-                    if (this.BufferPool != null)
+                    var length = this.BufferPool.HeadersNum;
+
+                    MMALLog.Logger.Debug($"Releasing {length} buffers from queue.");
+
+                    for (int i = 0; i < length; i++)
                     {
-                        var length = this.BufferPool.HeadersNum;
-
-                        MMALLog.Logger.Debug($"Releasing {length} buffers from queue.");
-
-                        for (int i = 0; i < length; i++)
+                        MMALLog.Logger.Debug("Releasing active buffer");
+                        var buffer = this.BufferPool.Queue.GetBuffer();
+                        
+                        if (buffer != null)
                         {
-                            MMALLog.Logger.Debug("Releasing active buffer");
-                            var buffer = this.BufferPool.Queue.GetBuffer();
-
-                            if (buffer != null)
-                            {
-                                buffer.Release();
-                            }
-                            else
-                            {
-                                MMALLog.Logger.Warn("Retrieved buffer invalid.");
-                            }
+                            buffer.Release();
+                        }
+                        else
+                        {
+                            MMALLog.Logger.Warn("Retrieved buffer invalid. Waiting for disable...");
+                            Thread.Sleep(1000);
                         }
                     }
-
-                    MMALCheck(MMALPort.mmal_port_disable(this.Ptr), "Unable to disable port.");
                 }
+
+                MMALCheck(MMALPort.mmal_port_disable(this.Ptr), "Unable to disable port.");
             }
         }
 
@@ -481,11 +480,7 @@ namespace MMALSharp
         {
             if (this.BufferPool != null)
             {
-                if (this.Enabled)
-                {
-                    this.DisablePort();
-                }
-
+                this.DisablePort();
                 MMALUtil.mmal_port_pool_destroy(this.Ptr, this.BufferPool.Ptr);
             }
         }
@@ -546,8 +541,7 @@ namespace MMALSharp
         /// Release an output port buffer, get a new one from the queue and send it for processing.
         /// </summary>
         /// <param name="bufferImpl">A managed buffer object.</param>
-        /// <param name="eos">End of stream. Disables sending the next buffer after releasing the old one.</param>
-        internal void ReleaseOutputBuffer(MMALBufferImpl bufferImpl, bool eos)
+        internal void ReleaseOutputBuffer(MMALBufferImpl bufferImpl)
         {
             bufferImpl.Release();
             bufferImpl.Dispose();
@@ -563,7 +557,7 @@ namespace MMALSharp
                     MMALLog.Logger.Warn("Buffer pool null.");
                 }
 
-                if (this.Enabled && this.BufferPool != null && !eos)
+                if (this.Enabled && this.BufferPool != null)
                 {
                     var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
 
@@ -580,7 +574,6 @@ namespace MMALSharp
             catch (Exception e)
             {
                 MMALLog.Logger.Warn($"Unable to send buffer header. {e.Message}");
-                throw;
             }
         }
 

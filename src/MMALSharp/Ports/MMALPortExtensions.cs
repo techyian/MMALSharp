@@ -32,6 +32,8 @@ namespace MMALSharp
                 throw new PiCameraError($"Could not find parameter {key}");
             }
 
+            MMALLog.Logger.Debug($"Getting parameter {t.ParamName}");
+
             try
             {
                 switch (t.ParamType.Name)

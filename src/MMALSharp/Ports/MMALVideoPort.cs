@@ -50,21 +50,22 @@ namespace MMALSharp.Ports
                     bufferImpl.PrintProperties();
                 }
 
-                if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero && bufferImpl.Length > 0)
+                var triggered = this.Trigger != null && this.Trigger.CurrentCount == 0;
+                var eos = (this.Timeout.HasValue && DateTime.Now.CompareTo(this.Timeout.Value) > 0) || this.ComponentReference.ForceStopProcessing;
+
+                if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero && bufferImpl.Length > 0 && !eos && !triggered)
                 {
                     this.ManagedOutputCallback.Callback(bufferImpl);
                 }
-
-                var eos = (this.Timeout.HasValue && DateTime.Now.CompareTo(this.Timeout.Value) > 0) || (this.Trigger != null && this.Trigger.CurrentCount == 0);
-
+                
                 // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
-                this.ReleaseOutputBuffer(bufferImpl, eos);
+                this.ReleaseOutputBuffer(bufferImpl);
 
                 if (eos)
                 {
-                    MMALLog.Logger.Debug("Timeout exceeded, triggering signal.");
                     if (this.Trigger != null && this.Trigger.CurrentCount > 0)
                     {
+                        MMALLog.Logger.Debug("Timeout exceeded, triggering signal.");
                         this.Trigger.Signal();
                     }
                 }

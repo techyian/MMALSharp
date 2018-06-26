@@ -150,25 +150,25 @@ namespace MMALSharp
                     bufferImpl.PrintProperties();
                 }
 
-                if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero && bufferImpl.Length > 0)
+                var triggered = this.Trigger != null && this.Trigger.CurrentCount == 0;
+                var eos = bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END ||
+                                                         c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED ||
+                                                         c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) || this.ComponentReference.ForceStopProcessing;
+
+                if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero && bufferImpl.Length > 0 && !eos && !triggered)
                 {
                     this.ManagedOutputCallback.Callback(bufferImpl);
                 }
-
-                var eos = bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END ||
-                                                    c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED ||
-                                                    c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) || (this.Trigger != null && this.Trigger.CurrentCount == 0);
-
+                
                 // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
-                this.ReleaseOutputBuffer(bufferImpl, eos);
+                this.ReleaseOutputBuffer(bufferImpl);
 
                 // If this buffer signals the end of data stream, allow waiting thread to continue.
                 if (eos)
                 {
-                    MMALLog.Logger.Debug("End of stream. Signaling completion...");
-
                     if (this.Trigger != null && this.Trigger.CurrentCount > 0)
                     {
+                        MMALLog.Logger.Debug("End of stream. Signaling completion...");
                         this.Trigger.Signal();
                     }
                 }

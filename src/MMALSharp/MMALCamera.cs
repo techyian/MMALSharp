@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MMALSharp.Components;
@@ -276,25 +277,14 @@ namespace MMALSharp
         /// Cleans up resources upon finish.
         /// </summary>
         /// <param name="cameraPort">The camera port which image data is coming from.</param>
-        /// <returns>The awaitable Task.</returns>
-        public Task ProcessAsync(MMALPortImpl cameraPort)
-        {
-            return this.ProcessAsync(cameraPort, CancellationToken.None); // we can directly forward this Task
-        }
-
-        /// <summary>
-        /// Helper method to begin processing image data. Starts the Camera port and awaits until processing is complete.
-        /// Cleans up resources upon finish.
-        /// </summary>
-        /// <param name="cameraPort">The camera port which image data is coming from.</param>
         /// <param name="cancellationToken">A CancellationToken to observe while waiting for a task to complete.</param>
         /// <returns>The awaitable Task.</returns>
-        public async Task ProcessAsync(MMALPortImpl cameraPort, CancellationToken cancellationToken)
+        public async Task ProcessAsync(MMALPortImpl cameraPort, CancellationToken cancellationToken = default(CancellationToken))
         {
             var handlerComponents = this.PopulateProcessingList();
-
+            
             List<Task> tasks = new List<Task>();
-
+            
             // Enable all connections associated with these components
             foreach (var component in handlerComponents)
             {
@@ -320,45 +310,29 @@ namespace MMALSharp
             }
             else
             {
-                await Task.WhenAny(Task.WhenAll(tasks), cancellationToken.AsTask()).ContinueWith(c =>
+                await Task.WhenAny(Task.WhenAll(tasks), cancellationToken.AsTask());
+
+                foreach (var component in handlerComponents)
                 {
-                    foreach (var component in handlerComponents)
-                    {
-                        foreach (var portNum in component.ProcessingPorts)
-                        {
-                            if (component.Outputs[portNum].Trigger.CurrentCount == 1)
-                            {
-                                component.Outputs[portNum].Trigger.Signal();
-                            }
-                        }
-                    }
-                });
+                    component.ForceStopProcessing = true;
+                }
+
+                await Task.WhenAll(tasks);
             }
             
-            this.StopCapture(cameraPort);
-
             // If taking raw image, the camera component will hold the handler
             this.Camera.Handler?.PostProcess();
-            
+
             // Disable the image encoder output port.
             foreach (var component in handlerComponents)
             {
                 // Apply any final processing on each component
                 component.Handler?.PostProcess();
-
-                foreach (var portNum in component.ProcessingPorts)
-                {
-                    if (component.Outputs[portNum].ConnectedReference == null)
-                    {
-                        component.Stop(portNum);
-                    }
-                }
-
-                // Close open connections.
-                component.DisableConnections();
-
                 component.CleanPortPools();
+                component.DisableConnections();
             }
+
+            this.StopCapture(cameraPort);
         }
 
         /// <summary>
