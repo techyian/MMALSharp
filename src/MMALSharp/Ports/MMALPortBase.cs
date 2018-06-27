@@ -370,7 +370,6 @@ namespace MMALSharp
                         else
                         {
                             MMALLog.Logger.Warn("Retrieved buffer invalid. Waiting for disable...");
-                            Thread.Sleep(1000);
                         }
                     }
                 }

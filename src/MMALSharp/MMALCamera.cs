@@ -322,12 +322,22 @@ namespace MMALSharp
             
             // If taking raw image, the camera component will hold the handler
             this.Camera.Handler?.PostProcess();
-
+            
             // Disable the image encoder output port.
             foreach (var component in handlerComponents)
             {
                 // Apply any final processing on each component
                 component.Handler?.PostProcess();
+
+                foreach (var portNum in component.ProcessingPorts)
+                {
+                    await Task.Delay(100);
+                    if (component.Outputs[portNum].ConnectedReference == null)
+                    {
+                        component.Stop(portNum);
+                    }
+                }
+                
                 component.CleanPortPools();
                 component.DisableConnections();
             }
