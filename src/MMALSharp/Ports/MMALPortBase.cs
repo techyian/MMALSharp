@@ -6,7 +6,6 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Threading;
 using MMALSharp.Callbacks;
 using MMALSharp.Native;
 using MMALSharp.Components;
@@ -205,7 +204,7 @@ namespace MMALSharp
         /// <summary>
         /// A callback handler for Output ports we use to do further processing on buffer headers after they've been received by the native callback delegate.
         /// </summary>
-        public CallbackHandlerBase ManagedOutputCallback { get; set; }
+        public OutputCallbackHandlerBase ManagedOutputCallback { get; set; }
 
         /// <summary>
         /// Native pointer that represents the component this port is associated with.
@@ -444,12 +443,15 @@ namespace MMALSharp
         /// <param name="buffer">A managed buffer object.</param>
         internal void SendBuffer(MMALBufferImpl buffer)
         {
-            if (MMALCameraConfig.Debug)
+            if (this.Enabled)
             {
-                MMALLog.Logger.Debug("Sending buffer");
-            }
+                if (MMALCameraConfig.Debug)
+                {
+                    MMALLog.Logger.Debug("Sending buffer");
+                }
 
-            MMALCheck(MMALPort.mmal_port_send_buffer(this.Ptr, buffer.Ptr), "Unable to send buffer header.");
+                MMALCheck(MMALPort.mmal_port_send_buffer(this.Ptr, buffer.Ptr), "Unable to send buffer header.");
+            }
         }
 
         internal void SendAllBuffers(bool sendBuffers = true)
@@ -469,6 +471,20 @@ namespace MMALSharp
                     this.SendBuffer(buffer);
                 }
             }            
+        }
+
+        internal void SendAllBuffers(MMALPoolImpl pool)
+        {
+            var length = pool.Queue.QueueLength();
+
+            for (int i = 0; i < length; i++)
+            {
+                var buffer = pool.Queue.GetBuffer();
+
+                MMALLog.Logger.Debug($"Sending buffer to output port: Length {buffer.Length}");
+
+                this.SendBuffer(buffer);
+            }
         }
 
         /// <summary>
@@ -535,7 +551,7 @@ namespace MMALSharp
                 }
             }
         }
-
+        
         /// <summary>
         /// Release an output port buffer, get a new one from the queue and send it for processing.
         /// </summary>

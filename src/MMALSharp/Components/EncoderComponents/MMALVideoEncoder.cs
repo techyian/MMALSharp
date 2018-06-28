@@ -128,7 +128,7 @@ namespace MMALSharp.Components
             this.ConfigureImmutableInput(outputPort);
             this.ConfigureBitrate(outputPort);
 
-            this.RegisterOutputCallback(outputPort, new VideoOutputCallbackHandler());
+            this.RegisterOutputCallback(new VideoOutputCallbackHandler(this.Outputs[outputPort]));
         }
         
         /// <summary>

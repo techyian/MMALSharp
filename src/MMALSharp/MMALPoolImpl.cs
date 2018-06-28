@@ -25,6 +25,10 @@ namespace MMALSharp
         /// </summary>
         internal MMAL_POOL_T* Ptr { get; set; }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="MMALPoolImpl"/> based on a port.
+        /// </summary>
+        /// <param name="port">The port.</param>
         public MMALPoolImpl(MMALPortBase port)
         {            
             MMALLog.Logger.Debug($"Creating buffer pool with {port.BufferNum} buffers of size {port.BufferSize}");
@@ -33,6 +37,18 @@ namespace MMALSharp
             this.Queue = new MMALQueueImpl((*this.Ptr).Queue);
         }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="MMALPoolImpl"/> based on an existing <see cref="MMAL_POOL_T"/> pointer.
+        /// </summary>
+        /// <param name="ptr">The <see cref="MMAL_POOL_T"/> pointer.</param>
+        public MMALPoolImpl(MMAL_POOL_T* ptr)
+        {
+            MMALLog.Logger.Debug($"Creating buffer pool from existing instance.");
+
+            this.Ptr = ptr;
+            this.Queue = new MMALQueueImpl((*this.Ptr).Queue);
+        }
+        
         public override void Dispose()
         {
             MMALLog.Logger.Debug("Disposing pool.");

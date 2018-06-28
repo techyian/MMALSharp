@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="OutputCallbackProvider.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 
 namespace MMALSharp.Callbacks.Providers
@@ -11,13 +16,13 @@ namespace MMALSharp.Callbacks.Providers
         /// <summary>
         /// The list of active callback handlers.
         /// </summary>
-        public static Dictionary<MMALPortBase, CallbackHandlerBase> WorkingHandlers { get; private set; } = new Dictionary<MMALPortBase, CallbackHandlerBase>();
+        public static Dictionary<MMALPortBase, OutputCallbackHandlerBase> WorkingHandlers { get; private set; } = new Dictionary<MMALPortBase, OutputCallbackHandlerBase>();
 
         /// <summary>
-        /// Register a new callback handler with a given port.
+        /// Register a new <see cref="OutputCallbackHandlerBase"/>.
         /// </summary>
         /// <param name="handler">The callback handler.</param>
-        public static void RegisterCallback(CallbackHandlerBase handler)
+        public static void RegisterCallback(OutputCallbackHandlerBase handler)
         {
             if (handler?.WorkingPort == null)
             {
@@ -35,25 +40,20 @@ namespace MMALSharp.Callbacks.Providers
         }
 
         /// <summary>
-        /// Finds and returns a <see cref="ICallbackHandler"/> for a given port. If no handler is registered, a 
-        /// <see cref="DefaultCallbackHandler"/> will be returned.
+        /// Finds and returns a <see cref="OutputCallbackHandlerBase"/> for a given port. If no handler is registered, a 
+        /// <see cref="DefaultOutputCallbackHandler"/> will be returned.
         /// </summary>
         /// <param name="port">The port we are retrieving the callback handler on.</param>
-        /// <returns>A <see cref="ICallbackHandler"/> for a given port. If no handler is registered, a 
-        /// <see cref="DefaultCallbackHandler"/> will be returned.</returns>
-        public static CallbackHandlerBase FindCallback(MMALPortBase port)
+        /// <returns>A <see cref="OutputCallbackHandlerBase"/> for a given port. If no handler is registered, a 
+        /// <see cref="DefaultOutputCallbackHandler"/> will be returned.</returns>
+        public static OutputCallbackHandlerBase FindCallback(MMALPortBase port)
         {
             if (WorkingHandlers.ContainsKey(port))
             {
                 return WorkingHandlers[port];
             }
-
-            var defaultHandler = new DefaultCallbackHandler
-            {
-                WorkingPort = port
-            };
-
-            return defaultHandler;
+            
+            return new DefaultOutputCallbackHandler(port);
         }
 
         /// <summary>

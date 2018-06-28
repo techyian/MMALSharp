@@ -1,18 +1,24 @@
-﻿using MMALSharp.Native;
+﻿// <copyright file="DefaultOutputCallbackHandler.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using MMALSharp.Native;
 
 namespace MMALSharp.Callbacks
 {
     /// <summary>
     /// A default callback handler for Output and Control ports.
     /// </summary>
-    public class DefaultCallbackHandler : CallbackHandlerBase
+    public class DefaultOutputCallbackHandler : OutputCallbackHandlerBase
     {
-        public DefaultCallbackHandler()
+        public DefaultOutputCallbackHandler(MMALPortBase port)
+            : base(port)
         {
         }
 
-        public DefaultCallbackHandler(MMALEncoding encodingType)
-            : base(encodingType)
+        public DefaultOutputCallbackHandler(MMALPortBase port, MMALEncoding encodingType)
+            : base(port, encodingType)
         {
         }
 

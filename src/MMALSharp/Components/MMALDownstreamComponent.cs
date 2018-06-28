@@ -36,14 +36,10 @@ namespace MMALSharp.Components
         public List<int> ProcessingPorts { get; set; }
         
         /// <summary>
-        /// Registers a <see cref="IInputCallbackHandler"/> with the input port of this component.
+        /// Registers a <see cref="IInputCallbackHandler"/>.
         /// </summary>
         /// <param name="handler">The input handler.</param>
-        public void RegisterInputCallback(InputCallbackHandlerBase handler)
-        {
-            handler.WorkingPort = this.Inputs[0];
-            InputCallbackProvider.RegisterCallback(handler);
-        }
+        public void RegisterInputCallback(InputCallbackHandlerBase handler) => InputCallbackProvider.RegisterCallback(handler);
 
         /// <summary>
         /// If it exists, removes a <see cref="IInputCallbackHandler"/> on this component's input port.
@@ -51,15 +47,10 @@ namespace MMALSharp.Components
         public void RemoveInputCallback() => InputCallbackProvider.RemoveCallback(this.Inputs[0]);
         
         /// <summary>
-        /// Registers a <see cref="ICallbackHandler"/> with the output port specified.
+        /// Registers a <see cref="OutputCallbackHandlerBase"/>.
         /// </summary>
-        /// <param name="outputPort">The output port number to register with.</param>
         /// <param name="handler">The output handler.</param>
-        public void RegisterOutputCallback(int outputPort, CallbackHandlerBase handler)
-        {
-            handler.WorkingPort = this.Outputs[outputPort];
-            OutputCallbackProvider.RegisterCallback(handler);
-        }
+        public void RegisterOutputCallback(OutputCallbackHandlerBase handler) => OutputCallbackProvider.RegisterCallback(handler);
 
         /// <summary>
         /// If it exists, removes a <see cref="ICallbackHandler"/> on the port specified.
@@ -67,6 +58,19 @@ namespace MMALSharp.Components
         /// <param name="outputPort">The output port number.</param>
         public void RemoveOutputCallback(int outputPort) =>
             OutputCallbackProvider.RemoveCallback(this.Outputs[outputPort]);
+
+        /// <summary>
+        /// Registers a <see cref="ConnectionCallbackHandlerBase"/>.
+        /// </summary>
+        /// <param name="handler">The output handler.</param>
+        public void RegisterConnectionCallback(ConnectionCallbackHandlerBase handler) => ConnectionCallbackProvider.RegisterCallback(handler);
+
+        /// <summary>
+        /// If it exists, removes a <see cref="ConnectionCallbackHandlerBase"/> on the port specified.
+        /// </summary>
+        /// <param name="port">The port with a created connection.</param>
+        public void RemoveConnectionCallback(MMALPortBase port) =>
+            ConnectionCallbackProvider.RemoveCallback(port.ConnectedReference);
 
         /// <summary>
         /// Configures a specific input port on a downstream component. This method will perform a shallow copy of the output

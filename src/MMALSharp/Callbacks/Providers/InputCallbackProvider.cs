@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="InputCallbackProvider.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 
 namespace MMALSharp.Callbacks.Providers
@@ -14,7 +19,7 @@ namespace MMALSharp.Callbacks.Providers
         public static Dictionary<MMALPortBase, InputCallbackHandlerBase> WorkingHandlers { get; private set; } = new Dictionary<MMALPortBase, InputCallbackHandlerBase>();
 
         /// <summary>
-        /// Register a new callback handler with a given port.
+        /// Register a new <see cref="InputCallbackHandlerBase"/>.
         /// </summary>
         /// <param name="handler">The callback handler.</param>
         public static void RegisterCallback(InputCallbackHandlerBase handler)
@@ -35,11 +40,11 @@ namespace MMALSharp.Callbacks.Providers
         }
 
         /// <summary>
-        /// Finds and returns a <see cref="IInputCallbackHandler"/> for a given port. If no handler is registered, a 
+        /// Finds and returns a <see cref="InputCallbackHandlerBase"/> for a given port. If no handler is registered, a 
         /// <see cref="DefaultInputCallbackHandler"/> will be returned.
         /// </summary>
         /// <param name="port">The port we are retrieving the callback handler on.</param>
-        /// <returns>A <see cref="IInputCallbackHandler"/> for a given port. If no handler is registered, a 
+        /// <returns>A <see cref="InputCallbackHandlerBase"/> for a given port. If no handler is registered, a 
         /// <see cref="DefaultInputCallbackHandler"/> will be returned.</returns>
         public static InputCallbackHandlerBase FindCallback(MMALPortBase port)
         {
@@ -47,13 +52,8 @@ namespace MMALSharp.Callbacks.Providers
             {
                 return WorkingHandlers[port];
             }
-
-            var defaultHandler = new DefaultInputCallbackHandler
-            {
-                WorkingPort = port
-            };
-
-            return defaultHandler;
+            
+            return new DefaultInputCallbackHandler(port);
         }
 
         /// <summary>

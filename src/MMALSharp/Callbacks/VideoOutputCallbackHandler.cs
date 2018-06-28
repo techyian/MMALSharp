@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="VideoOutputCallbackHandler.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using System.Linq;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
@@ -9,14 +14,15 @@ namespace MMALSharp.Callbacks
     /// <summary>
     /// Represents a callback handler specifically for <see cref="MMALVideoEncoder"/> components.
     /// </summary>
-    public class VideoOutputCallbackHandler : DefaultCallbackHandler
+    public class VideoOutputCallbackHandler : DefaultOutputCallbackHandler
     {
-        public VideoOutputCallbackHandler()
+        public VideoOutputCallbackHandler(MMALPortBase port) 
+            : base(port)
         {
         }
 
-        public VideoOutputCallbackHandler(MMALEncoding encoding)
-            : base(encoding)
+        public VideoOutputCallbackHandler(MMALPortBase port, MMALEncoding encoding)
+            : base(port, encoding)
         {
         }
 

@@ -5,6 +5,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using MMALSharp.Callbacks.Providers;
 using MMALSharp.Components;
 using MMALSharp.Native;
 using static MMALSharp.MMALCallerHelper;
@@ -95,7 +96,7 @@ namespace MMALSharp
 
             if (useCallback)
             {
-                this.OutputPort.SendAllBuffers();
+                this.OutputPort.SendAllBuffers(this.ConnectionPool);
             }
         }
 
@@ -173,7 +174,7 @@ namespace MMALSharp
             // Cleaning port pools for sanity.
             this.UpstreamComponent.CleanPortPools();
             this.DownstreamComponent.CleanPortPools();
-
+            
             MMALCheck(MMALConnection.mmal_connection_destroy(this.Ptr), "Unable to destroy connection");
         }
 
@@ -185,8 +186,11 @@ namespace MMALSharp
         {
             lock (MMALConnectionImpl.ConnectionLock)
             {
-                MMALLog.Logger.Debug("Inside native connection callback");
-
+                if (MMALCameraConfig.Debug)
+                {
+                    MMALLog.Logger.Debug("Inside native connection callback");
+                }
+                
                 var queue = new MMALQueueImpl(connection->Queue);
                 var bufferImpl = queue.GetBuffer();
 
@@ -199,7 +203,7 @@ namespace MMALSharp
 
                     if (bufferImpl.Length > 0)
                     {
-                        this.ManagedConnectionCallback(bufferImpl);
+                        ConnectionCallbackProvider.FindCallback(this).InputCallback(bufferImpl);
                     }
 
                     this.InputPort.SendBuffer(bufferImpl);
@@ -218,7 +222,7 @@ namespace MMALSharp
 
                         if (bufferImpl.Length > 0)
                         {
-                            this.ManagedConnectionCallback(bufferImpl);
+                            ConnectionCallbackProvider.FindCallback(this).OutputCallback(bufferImpl);
                         }
 
                         this.OutputPort.SendBuffer(bufferImpl);
@@ -243,10 +247,7 @@ namespace MMALSharp
 
             this.Ptr->Callback = ptrCallback;
 
-            if (output.BufferPool == null)
-            {
-                output.BufferPool = new MMALPoolImpl(output);
-            }
+            this.ConnectionPool = new MMALPoolImpl(this.Ptr->Pool);
         }
     }
 }

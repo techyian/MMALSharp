@@ -1,4 +1,9 @@
-﻿using MMALSharp.Native;
+﻿// <copyright file="DefaultInputCallbackHandler.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using MMALSharp.Native;
 
 namespace MMALSharp.Callbacks
 {
@@ -7,12 +12,13 @@ namespace MMALSharp.Callbacks
     /// </summary>
     public class DefaultInputCallbackHandler : InputCallbackHandlerBase
     {
-        public DefaultInputCallbackHandler()
+        public DefaultInputCallbackHandler(MMALPortBase port) 
+            : base(port)
         {
         }
 
-        public DefaultInputCallbackHandler(MMALEncoding encodingType)
-            : base(encodingType)
+        public DefaultInputCallbackHandler(MMALPortBase port, MMALEncoding encodingType)
+            : base(port, encodingType)
         {
         }
     }
