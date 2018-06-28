@@ -234,7 +234,11 @@ namespace MMALSharp
         {
             if (this.CheckState())
             {
-                MMALLog.Logger.Debug("Releasing buffer.");
+                if (MMALCameraConfig.Debug)
+                {
+                    MMALLog.Logger.Debug("Releasing buffer.");
+                }
+                
                 MMALBuffer.mmal_buffer_header_release(this.Ptr);
             }
             else
