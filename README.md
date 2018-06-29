@@ -4,20 +4,6 @@
 
 MMALSharp is an unofficial C# API for the Raspberry Pi camera. Under the hood, MMALSharp makes use of the native MMAL interface designed by Broadcom.
 
-Please see the status of each component below:
-
-- [x] Camera
-- [x] Camera Info
-- [x] Renderers (Null sink & Video)
-- [x] Resizer
-- [x] Splitter
-- [x] Image Encoder
-- [x] Image Encoder (from FileStream)
-- [x] Image Decoder
-- [x] Image Decoder (from FileStream)
-- [x] Video Encoder
-- [x] Video Decoder (Partial - see known issues)
-
 MMALSharp supports the following runtimes:
 
 1. Mono 4.x 
@@ -32,44 +18,53 @@ MMALSharp NuGet package:
 PM> Install-Package MMALSharp
 ```
 
+## Basic Examples
+
+Take a JPEG image using YUV420 encoding:
+
+```csharp
+static void Main(string[] args)
+{                        
+    MMALCamera cam = MMALCamera.Instance;
+
+    AsyncContext.Run(async () =>
+    {                
+        using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/", "jpg"))        
+        {            
+            await cam.TakePicture(imgCaptureHandler, MMALEncoding.JPEG, MMALEncoding.I420);
+        }
+    });
+
+    cam.Cleanup();
+}
+```
+
+Take a H.264 video using YUV420 encoding at 30 fps:
+
+```csharp
+static void Main(string[] args)
+{                        
+    MMALCamera cam = MMALCamera.Instance;
+
+    AsyncContext.Run(async () =>
+    {                
+        using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/", "avi"))        
+        {    
+            var cts = new CancellationTokenSource(TimeSpan.FromMinutes(3));
+            //Take video for 3 minutes.
+            await cam.TakeVideo(vidCaptureHandler, cts.Token);
+        }
+    });
+
+    cam.Cleanup();
+}
+```
+
+
 ## Documentation
 
 For full installation instructions for Mono 4.x and .NET Core, including configuration and examples - please visit the [Wiki](https://github.com/techyian/MMALSharp/wiki) site.
 
-## Status
-
-So far, the library has been tested on the following Raspberry Pi devices:
-
-* Raspberry Pi 1 Model B (512mb)
-* Raspberry Pi Zero
-* Raspberry Pi 2 Model B
-
-Both the SUNNY and Sony IMX219 camera modules are working as expected.
-
-Tested image 'still' features:
-
-- [x] Image width/height
-- [x] Image encoding
-- [x] Brightness
-- [x] Contrast
-- [x] Saturation
-- [x] Sharpness
-- [x] Shutter speed
-- [x] ISO
-- [x] Exposure compensation
-- [x] Exposure mode
-- [x] Exposure metering mode
-- [x] Raspistill supported image effects
-- [x] Rotation
-- [x] Flips
-- [x] Annotate
-- [x] Dynamic range compression
-- [x] Stats Pass
-- [x] Colour effects
-- [x] Crop
-- [x] Auto white balance mode/gains
-- [x] EXIF tags
-- [x] Raw capture
 
 ## Notes & Known issues
 
@@ -85,7 +80,7 @@ some more investigating and see whether it's an issue with MMALSharp specificall
 
 MIT license 
 
-Copyright (c) 2017 Ian Auty
+Copyright (c) 2016-2018 Ian Auty
 
 Raspberry Pi is a trademark of the Raspberry Pi Foundation
 
