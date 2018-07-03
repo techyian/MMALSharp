@@ -45,7 +45,7 @@ namespace MMALSharp.FFmpeg
 
                 foreach (var tuple in result.ProcessedFiles)
                 {
-                    System.IO.File.Copy(tuple.Directory.TrimEnd('/') + "/" + tuple.Filename.TrimEnd('.') + tuple.Extension, tempDirectory + tuple.Filename.TrimEnd('.') + tuple.Extension);
+                    System.IO.File.Copy($"{tuple.Directory.TrimEnd('/')}/{tuple.Filename.TrimEnd('.')}.{tuple.Extension}", $"{tempDirectory}{tuple.Filename.TrimEnd('.')}.{tuple.Extension}");
                 }
 
                 targetDirectory.TrimEnd('/');
@@ -56,7 +56,7 @@ namespace MMALSharp.FFmpeg
                     fps = 25;
                 }
 
-                process.StartInfo.Arguments = $"-framerate {fps} -f image2 -pattern_type glob -i {tempDirectory + "'*" + extension + "'"} {targetDirectory}/out.avi";
+                process.StartInfo.Arguments = $"-framerate {fps} -f image2 -pattern_type glob -y -i {tempDirectory + "'*." + extension + "'"} {targetDirectory}/out.avi";
                 process.Start();
                 process.WaitForExit();
             }
