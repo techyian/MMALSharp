@@ -126,6 +126,7 @@ namespace MMALSharp.Components
         /// Creates a new instance of a Video renderer component. This component is intended to be connected to the Camera's preview port
         /// and is used to measure exposure. It also produces real-time video to the Pi's HDMI output from the camera.
         /// </summary>
+        /// <param name="config">The configuration object for this renderer.</param>
         public MMALVideoRenderer(PreviewConfiguration config)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_RENDERER)
         {
@@ -133,6 +134,16 @@ namespace MMALSharp.Components
             this.Configuration = config;
         }
 
+        /// <summary>
+        /// Removes a <see cref="MMALOverlayRenderer"/> from this renderer's overlays if it exists.
+        /// </summary>
+        /// <param name="renderer">The overlay renderer to remove.</param>
+        public void RemoveOverlay(MMALOverlayRenderer renderer)
+        {
+            this.Overlays.Remove(renderer);
+            renderer.Dispose();
+        }
+            
         /// <summary>
         /// Commits all changes made to the configuration.
         /// </summary>
@@ -209,11 +220,15 @@ namespace MMALSharp.Components
         }
 
         /// <summary>
-        /// Disposes off the component, and frees any native resources still in use by it.
+        /// Disposes the component, and frees any native resources still in use by it.
         /// </summary>
         public override void Dispose()
         {
-            Overlays.ForEach(c => c.Dispose());
+            if (this.GetType() == typeof(MMALVideoRenderer))
+            {
+                Overlays.ForEach(c => c.Dispose());
+            }
+            
             base.Dispose();
         }
     }

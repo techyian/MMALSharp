@@ -416,11 +416,8 @@ namespace MMALSharp
         /// <param name="source">A reference to the current stream being used in the overlay.</param>
         /// <returns>The created <see cref="MMALOverlayRenderer"/> object.</returns>
         public MMALOverlayRenderer AddOverlay(MMALVideoRenderer parent, PreviewOverlayConfiguration config, byte[] source)
-        {
-            var overlay = new MMALOverlayRenderer(parent, config, source);
-            return overlay;
-        }
-
+            => new MMALOverlayRenderer(parent, config, source);
+        
         /// <summary>
         /// Cleans up any unmanaged resources. It is intended for this method to be run when no more activity is to be done on the camera.
         /// </summary>

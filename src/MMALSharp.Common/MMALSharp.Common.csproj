@@ -28,7 +28,10 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <None Remove="Resources\characters.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\characters.bmp" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.5.6" />
@@ -36,5 +39,8 @@
 		<PrivateAssets>All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="System.Numerics.Vectors" Version="4.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
