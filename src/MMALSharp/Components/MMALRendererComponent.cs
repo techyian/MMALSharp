@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp.Components
@@ -280,7 +281,9 @@ namespace MMALSharp.Components
             this.ParentRenderer = parent;
             this.OverlayConfiguration = config;
             parent.Overlays.Add(this);
-
+            
+            this.Inputs[0] = new MMALOverlayPort(this.Inputs[0]);
+            
             if (config != null)
             {
                 if (config.Resolution.Width > 0 && config.Resolution.Height > 0)
@@ -325,10 +328,7 @@ namespace MMALSharp.Components
             }
 
             this.Inputs[0].Commit();
-
-            this.Inputs[0].BufferNum = 1;
-            this.Inputs[0].BufferSize = Math.Max(this.Source.Length, this.Inputs[0].BufferSizeMin);
-
+            
             this.Start(this.Control);
             this.Start(this.Inputs[0]);
         }
@@ -356,7 +356,7 @@ namespace MMALSharp.Components
                     MMALLog.Logger.Warn("Received null buffer when updating overlay.");
                     return;
                 }
-
+                
                 buffer.ReadIntoBuffer(imageData, imageData.Length, false);
                 this.Inputs[0].SendBuffer(buffer);
             }
