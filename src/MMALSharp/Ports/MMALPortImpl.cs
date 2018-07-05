@@ -151,11 +151,11 @@ namespace MMALSharp
                 }
 
                 var triggered = this.Trigger != null && this.Trigger.CurrentCount == 0;
+                var failed = bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
                 var eos = bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END ||
-                                                         c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED ||
                                                          c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) || this.ComponentReference.ForceStopProcessing;
 
-                if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero && bufferImpl.Length > 0 && !eos && !triggered)
+                if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !failed && !triggered) || (eos && !triggered))
                 {
                     this.ManagedOutputCallback.Callback(bufferImpl);
                 }

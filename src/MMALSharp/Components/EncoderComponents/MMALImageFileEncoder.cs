@@ -81,7 +81,7 @@ namespace MMALSharp.Components
         /// <returns>An awaitable task.</returns>
         public virtual async Task Convert(int outputPort = 0)
         {
-            MMALLog.Logger.Debug("Beginning Image encode from filestream. Please note, this process may take some time depending on the size of the input image.");
+            MMALLog.Logger.Info("Beginning Image encode from filestream. Please note, this process may take some time depending on the size of the input image.");
 
             this.Inputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
             this.Outputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
