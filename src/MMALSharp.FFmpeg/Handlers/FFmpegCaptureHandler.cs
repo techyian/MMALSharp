@@ -15,13 +15,13 @@ namespace MMALSharp.Handlers
     public class FFmpegCaptureHandler : ICaptureHandler
     {
         private Process _process;
-                    
+        
         /// <summary>
         /// Streams video from the standard output stream via FFmpeg to an RTMP server.
         /// </summary>
         /// <param name="streamName">The meta name of the stream.</param>
         /// <param name="streamUrl">The url of your RTMP server - the url to stream to.</param>
-        /// <returns></returns>
+        /// <returns>A new instance of <see cref="FFmpegCaptureHandler"/> with process arguments to push to an RTMP stream.</returns>
         public static FFmpegCaptureHandler RTMPStreamer(string streamName, string streamUrl)
         {
             return new FFmpegCaptureHandler($"-i - -vcodec copy -an -f flv -metadata streamName={streamName} {streamUrl}");
@@ -32,13 +32,18 @@ namespace MMALSharp.Handlers
         /// </summary>
         /// <param name="directory">The directory to store the output video file.</param>
         /// <param name="filename">The name of the video file.</param>
-        /// <returns></returns>
+        /// <returns>A new instance of <see cref="FFmpegCaptureHandler"/> with process arguments to convert raw video into a compatible AVI container.</returns>
         public static FFmpegCaptureHandler RawVideoToAvi(string directory, string filename)
         {            
             System.IO.Directory.CreateDirectory(directory);                        
+            
             return new FFmpegCaptureHandler($"-re -i - -c:v copy -an -f avi {directory.TrimEnd()}/{filename}.avi");
         }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="FFmpegCaptureHandler"/> with the specified process arguments.
+        /// </summary>
+        /// <param name="argument">The <see cref="ProcessStartInfo"/> argument.</param>
         public FFmpegCaptureHandler(string argument)
         {
             var processStartInfo = new ProcessStartInfo
@@ -105,6 +110,10 @@ namespace MMALSharp.Handlers
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Writes frame data to the StandardInput stream to be processed by FFmpeg.
+        /// </summary>
+        /// <param name="data">The frame data to push to FFmpeg.</param>
         public void Process(byte[] data)
         {
             try
@@ -118,7 +127,7 @@ namespace MMALSharp.Handlers
                 throw;         
             }            
         }
-
+        
         public void Split()
         {
             throw new NotImplementedException();

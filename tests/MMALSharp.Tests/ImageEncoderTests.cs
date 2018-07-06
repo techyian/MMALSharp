@@ -9,6 +9,7 @@ using MMALSharp.Native;
 using Nito.AsyncEx;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -35,9 +36,12 @@ namespace MMALSharp.Tests
                 yield return new object[] { TestData.JpegEncoderData.Cast<object[]>() };
                 yield return new object[] { TestData.GifEncoderData.Cast<object[]>() };
                 yield return new object[] { TestData.PngEncoderData.Cast<object[]>() };
+                yield return new object[] { TestData.BmpEncoderData.Cast<object[]>() };
+
+                // TGA/PPM support is enabled by performing a firmware update "sudo rpi-update".
+                // See: https://github.com/techyian/MMALSharp/issues/23
                 //yield return new object[] { TestData.TgaEncoderData.Cast<object[]>() };
                 //yield return new object[] { TestData.PpmEncoderData.Cast<object[]>() };
-                yield return new object[] { TestData.BmpEncoderData.Cast<object[]>() };                
             }
         }
 
@@ -64,10 +68,9 @@ namespace MMALSharp.Tests
 
             AsyncContext.Run(async () =>
             {
-                var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", extension);
-                
                 TestHelper.CleanDirectory("/home/pi/images/tests");
-
+                
+                using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", extension))
                 using (var preview = new MMALNullSinkComponent())
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
@@ -85,16 +88,16 @@ namespace MMALSharp.Tests
                     await Task.Delay(2000);
 
                     await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.StillPort);
-                }
 
-                if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
-                {
-                    var length = new System.IO.FileInfo(imgCaptureHandler.GetFilepath()).Length;
-                    Assert.True(length > 0);
-                }
-                else
-                {
-                    Assert.True(false, $"File {imgCaptureHandler.GetFilepath()} was not created");
+                    if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
+                    {
+                        var length = new System.IO.FileInfo(imgCaptureHandler.GetFilepath()).Length;
+                        Assert.True(length > 0);
+                    }
+                    else
+                    {
+                        Assert.True(false, $"File {imgCaptureHandler.GetFilepath()} was not created");
+                    }
                 }
             });
         }
@@ -108,10 +111,9 @@ namespace MMALSharp.Tests
 
             AsyncContext.Run(async () =>
             {
-                var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", extension);
-
                 TestHelper.CleanDirectory("/home/pi/images/tests");
 
+                using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", extension))
                 using (var preview = new MMALNullSinkComponent())
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler, true))
                 {
@@ -129,16 +131,16 @@ namespace MMALSharp.Tests
                     await Task.Delay(2000);
 
                     await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.StillPort);
-                }
 
-                if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
-                {
-                    var length = new System.IO.FileInfo(imgCaptureHandler.GetFilepath()).Length;
-                    Assert.True(length > 0);
-                }
-                else
-                {
-                    Assert.True(false, $"File {imgCaptureHandler.GetFilepath()} was not created");
+                    if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
+                    {
+                        var length = new System.IO.FileInfo(imgCaptureHandler.GetFilepath()).Length;
+                        Assert.True(length > 0);
+                    }
+                    else
+                    {
+                        Assert.True(false, $"File {imgCaptureHandler.GetFilepath()} was not created");
+                    }
                 }
             });
         }
@@ -152,26 +154,27 @@ namespace MMALSharp.Tests
 
             AsyncContext.Run(async () =>
             {
-                var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", extension);
-
-                TestHelper.CleanDirectory("/home/pi/images/tests");
-
-                await _fixture.MMALCamera.TakeRawPicture(imgCaptureHandler);
-
-                var encodings = _fixture.MMALCamera.Camera.StillPort.GetSupportedEncodings();
-
-                if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
+                using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", extension))
                 {
-                    var length = new System.IO.FileInfo(imgCaptureHandler.GetFilepath()).Length;
+                    TestHelper.CleanDirectory("/home/pi/images/tests");
 
-                    if (encodings.Contains(encodingType.EncodingVal))
+                    await _fixture.MMALCamera.TakeRawPicture(imgCaptureHandler);
+
+                    var encodings = _fixture.MMALCamera.Camera.StillPort.GetSupportedEncodings();
+
+                    if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
                     {
-                        Assert.True(length > 1);
+                        var length = new System.IO.FileInfo(imgCaptureHandler.GetFilepath()).Length;
+
+                        if (encodings.Contains(encodingType.EncodingVal))
+                        {
+                            Assert.True(length > 1);
+                        }
                     }
-                }
-                else
-                {
-                    Assert.True(false, $"File {imgCaptureHandler.GetFilepath()} was not created");
+                    else
+                    {
+                        Assert.True(false, $"File {imgCaptureHandler.GetFilepath()} was not created");
+                    }
                 }
             });
         }
@@ -184,10 +187,9 @@ namespace MMALSharp.Tests
             
             AsyncContext.Run(async () =>
             {
-                var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests/split_tests", "jpg");
-
                 TestHelper.CleanDirectory("/home/pi/images/tests/split_tests");
 
+                using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests/split_tests", "jpg"))
                 using (var preview = new MMALNullSinkComponent())
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
@@ -220,19 +222,19 @@ namespace MMALSharp.Tests
                         
                         await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.StillPort);
                     }
-                }
 
-                DirectoryInfo info = new DirectoryInfo(imgCaptureHandler.Directory);
+                    DirectoryInfo info = new DirectoryInfo(imgCaptureHandler.Directory);
 
-                if (info.Exists)
-                {
-                    var files = info.EnumerateFiles();
+                    if (info.Exists)
+                    {
+                        var files = info.EnumerateFiles();
 
-                    Assert.True(files != null && files.Count() == 6);
-                }
-                else
-                {
-                    Assert.True(false, $"File {imgCaptureHandler.GetFilepath()} was not created");
+                        Assert.True(files != null && files.Count() == 6);
+                    }
+                    else
+                    {
+                        Assert.True(false, $"File {imgCaptureHandler.GetFilepath()} was not created");
+                    }
                 }
             });
         }
@@ -245,10 +247,9 @@ namespace MMALSharp.Tests
 
             AsyncContext.Run(async () =>
             {
-                var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests/split_tests", "jpg");
-
                 TestHelper.CleanDirectory("/home/pi/images/tests/split_tests");
 
+                using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests/split_tests", "jpg"))
                 using (var preview = new MMALNullSinkComponent())
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
@@ -282,10 +283,9 @@ namespace MMALSharp.Tests
 
             AsyncContext.Run(async () =>
             {
-                var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "jpg");
-
                 TestHelper.CleanDirectory("/home/pi/images/tests");
 
+                using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "jpg"))
                 using (var preview = new MMALNullSinkComponent())
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
@@ -303,20 +303,11 @@ namespace MMALSharp.Tests
                     await Task.Delay(2000);
 
                     await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.StillPort);
-                }
 
-                if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
-                {
-                    var length = new System.IO.FileInfo(imgCaptureHandler.GetFilepath()).Length;
-                    Assert.True(length > 0);
+                    _fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
                 }
-                else
-                {
-                    Assert.True(false, $"File {imgCaptureHandler.GetFilepath()} was not created");
-                }
-
-                imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "bmp");
-
+                
+                using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "bmp"))
                 using (var preview = new MMALNullSinkComponent())
                 using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
                 {
@@ -329,16 +320,87 @@ namespace MMALSharp.Tests
                         .ConnectTo(preview);
                     
                     await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.StillPort);
-                }
 
-                if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
-                {
-                    var length = new System.IO.FileInfo(imgCaptureHandler.GetFilepath()).Length;
-                    Assert.True(length > 0);
+                    _fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
                 }
-                else
+            });
+        }
+
+        [Fact]
+        public void StaticOverlay()
+        {
+            TestHelper.BeginTest("StaticOverlay");
+            TestHelper.SetConfigurationDefaults();
+
+            MMALCameraConfig.StillResolution = Resolution.As03MPixel;
+            MMALCameraConfig.StillEncoding = MMALEncoding.I420;
+            MMALCameraConfig.StillSubFormat = MMALEncoding.I420;
+
+            AsyncContext.Run(async () =>
+            {
+                var filename = string.Empty;
+
+                using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests/staticoverlay", "raw"))
                 {
-                    Assert.True(false, $"File {imgCaptureHandler.GetFilepath()} was not created");
+                    TestHelper.CleanDirectory("/home/pi/images/tests");
+                    TestHelper.CleanDirectory("/home/pi/images/tests/staticoverlay");
+
+                    await _fixture.MMALCamera.TakeRawPicture(imgCaptureHandler);
+
+                    filename = imgCaptureHandler.GetFilepath();
+                }
+                
+                PreviewConfiguration previewConfig = new PreviewConfiguration
+                {
+                    FullScreen = false,
+                    PreviewWindow = new Rectangle(160, 0, 640, 480),
+                    Layer = 2,
+                    Opacity = 1
+                };
+
+                MMALCameraConfig.StillResolution = Resolution.As1080p;
+                MMALCameraConfig.StillEncoding = MMALEncoding.OPAQUE;
+                
+                using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "jpg"))
+                using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
+                using (var video = new MMALVideoRenderer(previewConfig))
+                {
+                    _fixture.MMALCamera.ConfigureCameraSettings();
+                    video.ConfigureRenderer();
+
+                    PreviewOverlayConfiguration overlayConfig = new PreviewOverlayConfiguration
+                    {
+                        FullScreen = true,
+                        PreviewWindow = new Rectangle(50, 0, 640, 480),
+                        Layer = 1,
+                        Resolution = new Resolution(640, 480),
+                        Encoding = MMALEncoding.I420,
+                        Opacity = 255
+                    };
+
+                    var overlay = _fixture.MMALCamera.AddOverlay(video, overlayConfig, File.ReadAllBytes(filename));
+                    overlay.ConfigureRenderer();
+                    overlay.UpdateOverlay();
+
+                    // Create our component pipeline.
+                    imgEncoder.ConfigureOutputPort(0, MMALEncoding.JPEG, MMALEncoding.I420, 90);
+
+                    _fixture.MMALCamera.Camera.StillPort.ConnectTo(imgEncoder);
+                    _fixture.MMALCamera.Camera.PreviewPort.ConnectTo(video);
+
+                    _fixture.MMALCamera.PrintPipeline();
+
+                    await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.StillPort);
+
+                    if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
+                    {
+                        var length = new System.IO.FileInfo(imgCaptureHandler.GetFilepath()).Length;
+                        Assert.True(length > 0);
+                    }
+                    else
+                    {
+                        Assert.True(false, $"File {imgCaptureHandler.GetFilepath()} was not created");
+                    }
                 }
             });
         }

@@ -16,10 +16,20 @@ namespace MMALSharp.Tests
         {
         }
 
-        public void Dispose()
+        public void CheckAndAssertFilepath(string filepath)
         {
-            this.MMALCamera.Cleanup();
+            if (System.IO.File.Exists(filepath))
+            {
+                var length = new System.IO.FileInfo(filepath).Length;
+                Assert.True(length > 0);
+            }
+            else
+            {
+                Assert.True(false, $"File {filepath} was not created");
+            }
         }
+
+        public void Dispose() => this.MMALCamera.Cleanup();
     }
 
     [CollectionDefinition("MMALCollection")]

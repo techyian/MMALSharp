@@ -525,8 +525,8 @@ namespace MMALSharp
         /// <summary>
         /// Creates a new instance of the <see cref="Resolution"/> class with the specified width and height.
         /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
+        /// <param name="width">The width to assign this resolution with.</param>
+        /// <param name="height">The height to assign this resolution with.</param>
         public Resolution(int width, int height)
         {
             Width = width;
@@ -604,7 +604,7 @@ namespace MMALSharp
         /// <summary>
         /// Compares this Resolution instance against the Resolution passed in. 
         /// </summary>
-        /// <param name="res"></param>
+        /// <param name="res">The resolution we are comparing to.</param>
         /// <returns>0 if width and height are same. 1 if source width is greater than target. -1 if target greater than source.</returns>
         public int CompareTo(Resolution res)
         {
@@ -634,7 +634,7 @@ namespace MMALSharp
         /// </summary>
         /// <param name="width">The width to be padded to.</param>
         /// <param name="height">The height to be padded to.</param>
-        /// <returns></returns>
+        /// <returns>A new <see cref="Resolution"/> struct, padded to the required width/height.</returns>
         public Resolution Pad(int width = 32, int height = 16)
         {
             return new Resolution(MMALUtil.VCOS_ALIGN_UP(this.Width, width),

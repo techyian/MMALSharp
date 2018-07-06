@@ -164,7 +164,7 @@ namespace MMALSharp
                 this.ReleaseOutputBuffer(bufferImpl);
 
                 // If this buffer signals the end of data stream, allow waiting thread to continue.
-                if (eos)
+                if (eos || failed)
                 {
                     if (this.Trigger != null && this.Trigger.CurrentCount > 0)
                     {
