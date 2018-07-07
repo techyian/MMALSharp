@@ -50,9 +50,9 @@ namespace MMALSharp.Tests
                     // Camera warm up time
                     await Task.Delay(2000);
 
-                    var cts = new CancellationTokenSource(TimeSpan.FromMinutes(3));
+                    var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1));
 
-                    // Take video for 3 minutes.
+                    // Take video for 1 minute.
                     await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.VideoPort, cts.Token);
 
                     _fixture.CheckAndAssertFilepath("/home/pi/videos/tests/testing1234.avi");
@@ -72,7 +72,7 @@ namespace MMALSharp.Tests
                 TestHelper.CleanDirectory("/home/pi/images/tests");
 
                 // This example will take an image every 5 seconds for 1 minute.
-                using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/", "jpg"))
+                using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "jpg"))
                 {
                     var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1));
 

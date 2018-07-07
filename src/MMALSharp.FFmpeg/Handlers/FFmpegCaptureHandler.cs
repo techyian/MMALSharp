@@ -37,7 +37,7 @@ namespace MMALSharp.Handlers
         {            
             System.IO.Directory.CreateDirectory(directory);                        
             
-            return new FFmpegCaptureHandler($"-re -i - -c:v copy -an -f avi {directory.TrimEnd()}/{filename}.avi");
+            return new FFmpegCaptureHandler($"-re -i - -c:v copy -an -f avi -y {directory.TrimEnd()}/{filename}.avi");
         }
 
         /// <summary>
@@ -57,15 +57,15 @@ namespace MMALSharp.Handlers
                 Arguments = argument
             };
 
-            this._process = new Process();
-            this._process.StartInfo = processStartInfo;
+            _process = new Process();
+            _process.StartInfo = processStartInfo;
             
             try
             {
                 Console.InputEncoding = Encoding.ASCII;
                 
-                this._process.EnableRaisingEvents = true;
-                this._process.OutputDataReceived += (object sendingProcess, DataReceivedEventArgs e) =>
+                _process.EnableRaisingEvents = true;
+                _process.OutputDataReceived += (object sendingProcess, DataReceivedEventArgs e) =>
                 {
                     if (e.Data != null)
                     {                        
@@ -73,7 +73,7 @@ namespace MMALSharp.Handlers
                     }
                 };
 
-                this._process.ErrorDataReceived += (object sendingProcess, DataReceivedEventArgs e) =>
+                _process.ErrorDataReceived += (object sendingProcess, DataReceivedEventArgs e) =>
                 {
                     if (e.Data != null)
                     {
@@ -81,10 +81,10 @@ namespace MMALSharp.Handlers
                     }
                 };
                 
-                this._process.Start();
+                _process.Start();
 
-                this._process.BeginOutputReadLine();
-                this._process.BeginErrorReadLine();                                
+                _process.BeginOutputReadLine();
+                _process.BeginErrorReadLine();                                
             }
             catch (Exception e)
             {
@@ -118,12 +118,12 @@ namespace MMALSharp.Handlers
         {
             try
             {
-                this._process.StandardInput.BaseStream.Write(data, 0, data.Length);
-                this._process.StandardInput.BaseStream.Flush();
+                _process.StandardInput.BaseStream.Write(data, 0, data.Length);
+                _process.StandardInput.BaseStream.Flush();
             }
             catch
             {
-                this._process.Kill();             
+                _process.Kill();             
                 throw;         
             }            
         }
@@ -134,8 +134,11 @@ namespace MMALSharp.Handlers
         }
 
         public void Dispose()
-        {          
-            this._process.Kill();
+        {
+            if (!_process.HasExited)
+            {
+                _process.Kill();
+            }
         }
     }
 }

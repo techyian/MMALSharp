@@ -33,15 +33,20 @@ namespace MMALSharp.Tests
         {
             get
             {
-                yield return new object[] { TestData.JpegEncoderData.Cast<object[]>() };
-                yield return new object[] { TestData.GifEncoderData.Cast<object[]>() };
-                yield return new object[] { TestData.PngEncoderData.Cast<object[]>() };
-                yield return new object[] { TestData.BmpEncoderData.Cast<object[]>() };
+                var list = new List<object[]>();
+
+                list.AddRange(TestData.JpegEncoderData);
+                list.AddRange(TestData.GifEncoderData);
+                list.AddRange(TestData.PngEncoderData);
+                list.AddRange(TestData.BmpEncoderData);
 
                 // TGA/PPM support is enabled by performing a firmware update "sudo rpi-update".
                 // See: https://github.com/techyian/MMALSharp/issues/23
-                //yield return new object[] { TestData.TgaEncoderData.Cast<object[]>() };
-                //yield return new object[] { TestData.PpmEncoderData.Cast<object[]>() };
+
+                //list.AddRange(TestData.TgaEncoderData);
+                //list.AddRange(TestData.PpmEncoderData);
+
+                return list;
             }
         }
 
@@ -49,15 +54,15 @@ namespace MMALSharp.Tests
         {
             get
             {
-                yield return new object[] { TestData.Yuv420EncoderData.Cast<object[]>() };
-                yield return new object[] { TestData.Yuv422EncoderData.Cast<object[]>() };
-                yield return new object[] { TestData.Rgb24EncoderData.Cast<object[]>() };
-                yield return new object[] { TestData.Rgb24EncoderData.Cast<object[]>() };
-                yield return new object[] { TestData.RgbaEncoderData.Cast<object[]>() };                
+                yield return TestData.Yuv420EncoderData;
+                yield return TestData.Yuv422EncoderData;
+                yield return TestData.Rgb24EncoderData;
+                yield return TestData.Rgb24EncoderData;
+                yield return TestData.RgbaEncoderData;                
             }
         }
 
-        public static IEnumerable<object[]> TakePictureDataJpeg => TestData.JpegEncoderData.Cast<object[]>().ToList();
+        public static IEnumerable<object[]> TakePictureDataJpeg => TestData.JpegEncoderData;
 
         [Theory]
         [MemberData(nameof(TakePictureData))]

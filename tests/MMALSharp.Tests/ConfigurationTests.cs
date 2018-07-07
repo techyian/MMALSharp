@@ -235,11 +235,11 @@ namespace MMALSharp.Tests
             MMALCameraConfig.ColourFx = colFx;
             _fixture.MMALCamera.ConfigureCameraSettings();
 
-            var uv = MMALColor.RGBToYUV(_fixture.MMALCamera.Camera.GetColourFx().Color);
-
+            var uv = MMALColor.RGBToYUVBytes(_fixture.MMALCamera.Camera.GetColourFx().Color);
+            
             Assert.True(_fixture.MMALCamera.Camera.GetColourFx().Enable == enable &&
-                        uv.Item1 == u &&
-                        uv.Item2 == v);
+                        uv.Item2 == u &&
+                        uv.Item3 == v);
         }
 
         [Theory]
@@ -308,6 +308,9 @@ namespace MMALSharp.Tests
         {            
             TestHelper.SetConfigurationDefaults();
 
+            MMALCameraConfig.StillFramerate = new MMAL_RATIONAL_T(0, 0);
+            MMALCameraConfig.SensorMode = MMALSensorMode.Mode1;
+            MMALCameraConfig.AwbMode = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_OFF;
             MMALCameraConfig.ShutterSpeed = shutterSpeed;
             _fixture.MMALCamera.ConfigureCameraSettings();
 

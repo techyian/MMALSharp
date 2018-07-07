@@ -70,9 +70,7 @@ namespace MMALSharp.Tests
             AsyncContext.Run(async () =>
             {
                 TestHelper.CleanDirectory("/home/pi/videos/tests");
-
-                CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
-
+                
                 using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests", extension))
                 using (var preview = new MMALVideoRenderer())
                 using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler))
@@ -86,9 +84,11 @@ namespace MMALSharp.Tests
                         .ConnectTo(vidEncoder);
                     _fixture.MMALCamera.Camera.PreviewPort
                         .ConnectTo(preview);
-
+                    
                     // Camera warm up time
                     await Task.Delay(2000);
+
+                    CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
 
                     // Record video for 20 seconds
                     await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.VideoPort, cts.Token);
@@ -109,9 +109,7 @@ namespace MMALSharp.Tests
             AsyncContext.Run(async () =>
             {
                 TestHelper.CleanDirectory("/home/pi/videos/tests/split_test");
-
-                CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-
+                
                 using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests/split_test", "avi"))
                 using (var preview = new MMALVideoRenderer())
                 using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, null, new Split { Mode = TimelapseMode.Second, Value = 15 }))
@@ -128,6 +126,8 @@ namespace MMALSharp.Tests
 
                     // Camera warm up time
                     await Task.Delay(2000);
+
+                    CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
 
                     // 2 files should be created from this test. 
                     await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.VideoPort, cts.Token);
@@ -146,9 +146,7 @@ namespace MMALSharp.Tests
             AsyncContext.Run(async () =>
             {
                 TestHelper.CleanDirectory("/home/pi/videos/tests");
-
-                CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
-
+                
                 using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "avi"))
                 using (var preview = new MMALVideoRenderer())
                 using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler))
@@ -166,14 +164,14 @@ namespace MMALSharp.Tests
                     // Camera warm up time
                     await Task.Delay(2000);
 
+                    CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+
                     // Record video for 20 seconds
                     await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.VideoPort, cts.Token);
 
                     _fixture.CheckAndAssertFilepath(vidCaptureHandler.GetFilepath());
                 }
                 
-                cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
-
                 using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "mjpeg"))
                 using (var preview = new MMALVideoRenderer())
                 using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler))
@@ -187,7 +185,9 @@ namespace MMALSharp.Tests
                         .ConnectTo(vidEncoder);
                     _fixture.MMALCamera.Camera.PreviewPort
                         .ConnectTo(preview);
-                    
+
+                    CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+
                     // Record video for 20 seconds
                     await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.VideoPort, cts.Token);
 
