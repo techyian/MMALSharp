@@ -1,4 +1,4 @@
-# MMALSharp
+# MMALSharp - C#/.NET API for the Raspberry Pi camera
 
 [![Build status](https://ci.appveyor.com/api/projects/status/r3o4bqxektnulw7l?svg=true)](https://ci.appveyor.com/project/techyian/mmalsharp)
 
