@@ -226,9 +226,24 @@ namespace MMALSharp
                 this.Camera.StillPort.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_BURST_CAPTURE, true);
             }
 
-            while (!cancellationToken.IsCancellationRequested)
+            using (var imgEncoder = new MMALImageEncoder(handler))
+            using (var renderer = new MMALNullSinkComponent())
             {
-                await this.TakePicture(handler, encodingType, pixelFormat);
+                this.ConfigureCameraSettings();
+
+                imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, 90);
+
+                // Create our component pipeline.
+                this.Camera.StillPort.ConnectTo(imgEncoder);
+                this.Camera.PreviewPort.ConnectTo(renderer);
+
+                // Camera warm up time
+                await Task.Delay(2000);
+
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await this.ProcessAsync(this.Camera.StillPort);
+                }
             }
         }
         
@@ -251,24 +266,42 @@ namespace MMALSharp
                 throw new ArgumentNullException(nameof(timelapse), "Timelapse object null. This must be initialized for Timelapse mode");
             }
 
-            while (!timelapse.CancellationToken.IsCancellationRequested)
+            using (var imgEncoder = new MMALImageEncoder(handler))
+            using (var renderer = new MMALNullSinkComponent())
             {
-                switch (timelapse.Mode)
+                this.ConfigureCameraSettings();
+
+                imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, 90);
+
+                // Create our component pipeline.
+                this.Camera.StillPort.ConnectTo(imgEncoder);
+                this.Camera.PreviewPort.ConnectTo(renderer);
+
+                // Camera warm up time
+                await Task.Delay(2000);
+
+                while (!timelapse.CancellationToken.IsCancellationRequested)
                 {
-                    case TimelapseMode.Millisecond:
-                        interval = timelapse.Value;
-                        break;
-                    case TimelapseMode.Second:
-                        interval = timelapse.Value * 1000;
-                        break;
-                    case TimelapseMode.Minute:
-                        interval = (timelapse.Value * 60) * 1000;
-                        break;
+                    switch (timelapse.Mode)
+                    {
+                        case TimelapseMode.Millisecond:
+                            interval = timelapse.Value;
+                            break;
+                        case TimelapseMode.Second:
+                            interval = timelapse.Value * 1000;
+                            break;
+                        case TimelapseMode.Minute:
+                            interval = (timelapse.Value * 60) * 1000;
+                            break;
+                    }
+
+                    await Task.Delay(interval);
+
+                    MMALLog.Logger.Info($"Preparing to take picture. Resolution: {imgEncoder.Width} x {imgEncoder.Height}. " +
+                                        $"Encoder: {encodingType.EncodingName}. Pixel Format: {pixelFormat.EncodingName}.");
+
+                    await this.ProcessAsync(this.Camera.StillPort);
                 }
-
-                await Task.Delay(interval);
-
-                await this.TakePicture(handler, encodingType, pixelFormat);
             }
         }
 

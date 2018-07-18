@@ -179,6 +179,10 @@ namespace MMALSharp.Components
                     this.Bitrate = MaxBitrateMJPEG;
                 }
             }
+            
+            this.Outputs[outputPort].Ptr->Format->Bitrate = this.Bitrate;
+            this.Outputs[outputPort].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(0, 1);
+            this.Outputs[outputPort].Commit();
         }
 
         internal void ConfigureRateControl(int outputPort)
