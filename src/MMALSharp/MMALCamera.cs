@@ -113,9 +113,9 @@ namespace MMALSharp
                                     $"Encoder: {vidEncoder.Outputs[0].EncodingType.EncodingName}. Pixel Format: {vidEncoder.Outputs[0].PixelFormat.EncodingName}.");
 
                 // Camera warm up time
-                await Task.Delay(2000);
+                await Task.Delay(2000).ConfigureAwait(false);
 
-                await this.ProcessAsync(this.Camera.VideoPort, cancellationToken);
+                await this.ProcessAsync(this.Camera.VideoPort, cancellationToken).ConfigureAwait(false);
             }
         }
         
@@ -148,7 +148,7 @@ namespace MMALSharp
                                       $"Encoder: {MMALCameraConfig.StillEncoding.EncodingName}. Pixel Format: {MMALCameraConfig.StillSubFormat.EncodingName}.");
 
                     // Camera warm up time
-                    await Task.Delay(2000);
+                    await Task.Delay(2000).ConfigureAwait(false);
                     
                     this.Camera.Start(this.Camera.StillPort);
                     this.Camera.StillPort.Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
@@ -156,7 +156,7 @@ namespace MMALSharp
                     this.StartCapture(this.Camera.StillPort);
 
                     // Wait until the process is complete.
-                    await this.Camera.StillPort.Trigger.WaitAsync();
+                    await this.Camera.StillPort.Trigger.WaitAsync().ConfigureAwait(false);
 
                     // Stop capturing on the camera still port.
                     this.StopCapture(this.Camera.StillPort);
@@ -203,9 +203,9 @@ namespace MMALSharp
                                     $"Encoder: {encodingType.EncodingName}. Pixel Format: {pixelFormat.EncodingName}.");
 
                 // Camera warm up time
-                await Task.Delay(2000);
+                await Task.Delay(2000).ConfigureAwait(false);
 
-                await this.ProcessAsync(this.Camera.StillPort);
+                await this.ProcessAsync(this.Camera.StillPort).ConfigureAwait(false);
             }
         }
 
@@ -238,11 +238,11 @@ namespace MMALSharp
                 this.Camera.PreviewPort.ConnectTo(renderer);
 
                 // Camera warm up time
-                await Task.Delay(2000);
+                await Task.Delay(2000).ConfigureAwait(false);
 
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    await this.ProcessAsync(this.Camera.StillPort);
+                    await this.ProcessAsync(this.Camera.StillPort).ConfigureAwait(false);
                 }
             }
         }
@@ -278,7 +278,7 @@ namespace MMALSharp
                 this.Camera.PreviewPort.ConnectTo(renderer);
 
                 // Camera warm up time
-                await Task.Delay(2000);
+                await Task.Delay(2000).ConfigureAwait(false);
 
                 while (!timelapse.CancellationToken.IsCancellationRequested)
                 {
@@ -295,12 +295,12 @@ namespace MMALSharp
                             break;
                     }
 
-                    await Task.Delay(interval);
+                    await Task.Delay(interval).ConfigureAwait(false);
 
                     MMALLog.Logger.Info($"Preparing to take picture. Resolution: {imgEncoder.Width} x {imgEncoder.Height}. " +
                                         $"Encoder: {encodingType.EncodingName}. Pixel Format: {pixelFormat.EncodingName}.");
 
-                    await this.ProcessAsync(this.Camera.StillPort);
+                    await this.ProcessAsync(this.Camera.StillPort).ConfigureAwait(false);
                 }
             }
         }
@@ -339,18 +339,18 @@ namespace MMALSharp
             
             if (cancellationToken == CancellationToken.None)
             {
-                await Task.WhenAll(tasks);
+                await Task.WhenAll(tasks).ConfigureAwait(false);
             }
             else
             {
-                await Task.WhenAny(Task.WhenAll(tasks), cancellationToken.AsTask());
+                await Task.WhenAny(Task.WhenAll(tasks), cancellationToken.AsTask()).ConfigureAwait(false);
 
                 foreach (var component in handlerComponents)
                 {
                     component.ForceStopProcessing = true;
                 }
 
-                await Task.WhenAll(tasks);
+                await Task.WhenAll(tasks).ConfigureAwait(false);
             }
             
             // If taking raw image, the camera component will hold the handler
@@ -364,7 +364,7 @@ namespace MMALSharp
 
                 foreach (var portNum in component.ProcessingPorts)
                 {
-                    await Task.Delay(100);
+                    await Task.Delay(100).ConfigureAwait(false);
                     if (component.Outputs[portNum].ConnectedReference == null)
                     {
                         component.Stop(portNum);

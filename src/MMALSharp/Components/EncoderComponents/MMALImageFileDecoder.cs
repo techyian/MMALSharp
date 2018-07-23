@@ -73,7 +73,7 @@ namespace MMALSharp.Components
             while (this.Inputs[0].Trigger.CurrentCount > 0 && this.Outputs[outputPort].Trigger.CurrentCount > 0)
             {
                 MMALLog.Logger.Info("Awaiting...");
-                await Task.Delay(2000);
+                await Task.Delay(2000).ConfigureAwait(false);
                 break;
             }
 
@@ -107,7 +107,7 @@ namespace MMALSharp.Components
 
             while (!eosReceived)
             {
-                await this.WaitForTriggers();
+                await this.WaitForTriggers().ConfigureAwait(false);
 
                 this.GetAndSendInputBuffer();
 
