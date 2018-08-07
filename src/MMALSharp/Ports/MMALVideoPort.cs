@@ -36,7 +36,7 @@ namespace MMALSharp.Ports
         /// <param name="buffer">The buffer header.</param>
         internal override void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
-            lock (MMALPortBase.OutputLock)
+            lock (OutputLock)
             {
                 if (MMALCameraConfig.Debug)
                 {
@@ -49,11 +49,10 @@ namespace MMALSharp.Ports
                 {
                     bufferImpl.PrintProperties();
                 }
-
-                var triggered = this.Trigger != null && this.Trigger.CurrentCount == 0;
+                
                 var eos = (this.Timeout.HasValue && DateTime.Now.CompareTo(this.Timeout.Value) > 0) || this.ComponentReference.ForceStopProcessing;
 
-                if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero && bufferImpl.Length > 0 && !eos && !triggered)
+                if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero && bufferImpl.Length > 0 && !eos && !this.Trigger)
                 {
                     this.ManagedOutputCallback.Callback(bufferImpl);
                 }
@@ -63,10 +62,10 @@ namespace MMALSharp.Ports
 
                 if (eos)
                 {
-                    if (this.Trigger != null && this.Trigger.CurrentCount > 0)
+                    if (!this.Trigger)
                     {
                         MMALLog.Logger.Debug("Timeout exceeded, triggering signal.");
-                        this.Trigger.Signal();
+                        this.Trigger = true;
                     }
                 }
             }

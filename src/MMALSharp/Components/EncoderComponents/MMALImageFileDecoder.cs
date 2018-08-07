@@ -43,7 +43,7 @@ namespace MMALSharp.Components
         public override unsafe void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
             this.InitialiseOutputPort(outputPort);
-            this.ProcessingPorts.Add(outputPort);
+            this.ProcessingPorts.Add(this.Outputs[outputPort]);
                        
             if (encodingType != null)
             {
@@ -70,16 +70,12 @@ namespace MMALSharp.Components
             MMALLog.Logger.Debug("Waiting for trigger signal");
 
             // Wait until the process is complete.
-            while (this.Inputs[0].Trigger.CurrentCount > 0 && this.Outputs[outputPort].Trigger.CurrentCount > 0)
+            while (!this.Inputs[0].Trigger)
             {
                 MMALLog.Logger.Info("Awaiting...");
                 await Task.Delay(2000).ConfigureAwait(false);
                 break;
             }
-
-            MMALLog.Logger.Debug("Setting countdown events");
-            this.Inputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            this.Outputs[outputPort].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
         }
 
         /// <summary>
@@ -90,9 +86,6 @@ namespace MMALSharp.Components
         public virtual async Task Convert(int outputPort = 0)
         {
             MMALLog.Logger.Info("Beginning Image decode from filestream. Please note, this process may take some time depending on the size of the input image.");
-
-            this.Inputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            this.Outputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
 
             // Enable control, input and output ports. Input & Output ports should have been pre-configured by user prior to this point.
             this.Start(this.Control);

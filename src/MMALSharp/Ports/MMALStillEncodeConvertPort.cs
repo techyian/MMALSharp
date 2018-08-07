@@ -36,9 +36,9 @@ namespace MMALSharp.Ports
                 var bufferImpl = new MMALBufferImpl(buffer);
                 bufferImpl.Release();
 
-                if (this.Trigger != null && this.Trigger.CurrentCount > 0)
+                if (!this.Trigger)
                 {
-                    this.Trigger.Signal();
+                    this.Trigger = true;
                 }
             }
         }
@@ -60,9 +60,9 @@ namespace MMALSharp.Ports
                 var bufferImpl = new MMALBufferImpl(buffer);
                 MMALImageFileEncoder.WorkingQueue.Put(bufferImpl);
 
-                if (this.Trigger != null && this.Trigger.CurrentCount > 0)
+                if (!this.Trigger)
                 {
-                    this.Trigger.Signal();
+                    this.Trigger = true;
                 }
             }
         }

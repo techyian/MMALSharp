@@ -16,6 +16,7 @@ namespace MMALSharp.Tests
     {
         public static void SetConfigurationDefaults()
         {
+            MMALCameraConfig.Debug = true;
             MMALCameraConfig.Brightness = 50;
             MMALCameraConfig.Sharpness = 0;
             MMALCameraConfig.Contrast = 0;
@@ -56,7 +57,9 @@ namespace MMALSharp.Tests
         }
         
         public static void BeginTest(string name) => MMALLog.Logger.Info($"Running test: {name}.");
-        public static void BeginTest(string name, string encodingType, string pixelFormat) => MMALLog.Logger.Info($"Running test: {name}. Encoding type: {encodingType}. Pixel format: {pixelFormat}.");
+        
+        public static void BeginTest(string name, string encodingType, string pixelFormat) => 
+            MMALLog.Logger.Info($"Running test: {name}. Encoding type: {encodingType}. Pixel format: {pixelFormat}.");
     }
 
     public class TestData

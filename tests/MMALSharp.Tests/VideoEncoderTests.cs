@@ -27,21 +27,19 @@ namespace MMALSharp.Tests
             TestData.Fixture = fixture;
         }
         
-        public static IEnumerable<object[]> TakeVideoData
+        private static IEnumerable<object[]> TakeVideoData
         {
             get
             {
                 var list = new List<object[]>();
 
-                list.AddRange(TestData.H264EncoderData.Cast<object[]>().ToList());
-                list.AddRange(TestData.MjpegEncoderData.Cast<object[]>().ToList());
+                list.AddRange(TestData.H264EncoderData);
+                list.AddRange(TestData.MjpegEncoderData);
 
                 return list;
             }
         }
-
-        public static IEnumerable<object[]> TakeVideoDataH264 => TestData.H264EncoderData.Cast<object[]>().ToList();
-
+        
         #region Configuration tests
 
         [Theory]

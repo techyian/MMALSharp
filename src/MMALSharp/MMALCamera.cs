@@ -21,7 +21,7 @@ namespace MMALSharp
     public sealed class MMALCamera
     {
         /// <summary>
-        /// Gets the singleton instance of the MMAL Camera.
+        /// Gets the singleton instance of the MMAL Camera. Call to initialise the camera for first use.
         /// </summary>
         public static MMALCamera Instance => Lazy.Value;
 
@@ -77,10 +77,7 @@ namespace MMALSharp
         /// <param name="port">The capture port.</param>
         public void ForceStop(MMALPortImpl port)
         {
-            if (port.Trigger.CurrentCount > 0)
-            {
-                port.Trigger.Signal();
-            }
+            port.Trigger = true;
         }
 
         /// <summary>
@@ -151,12 +148,12 @@ namespace MMALSharp
                     await Task.Delay(2000).ConfigureAwait(false);
                     
                     this.Camera.Start(this.Camera.StillPort);
-                    this.Camera.StillPort.Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+                    //this.Camera.StillPort.Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
 
                     this.StartCapture(this.Camera.StillPort);
 
                     // Wait until the process is complete.
-                    await this.Camera.StillPort.Trigger.WaitAsync().ConfigureAwait(false);
+                    //await this.Camera.StillPort.Trigger.WaitAsync().ConfigureAwait(false);
 
                     // Stop capturing on the camera still port.
                     this.StopCapture(this.Camera.StillPort);
@@ -315,7 +312,7 @@ namespace MMALSharp
         public async Task ProcessAsync(MMALPortImpl cameraPort, CancellationToken cancellationToken = default(CancellationToken))
         {
             var handlerComponents = this.PopulateProcessingList();
-            
+
             List<Task> tasks = new List<Task>();
             
             // Enable all connections associated with these components
@@ -323,17 +320,23 @@ namespace MMALSharp
             {
                 component.EnableConnections();
 
-                foreach (var portNum in component.ProcessingPorts)
+                foreach (var port in component.ProcessingPorts)
                 {
-                    if (component.Outputs[portNum].ConnectedReference == null)
+                    if (port.ConnectedReference == null)
                     {
-                        component.Start(portNum);
-                        component.Outputs[portNum].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-                        tasks.Add(component.Outputs[portNum].Trigger.WaitAsync());
+                        tasks.Add(Task.Run(async () =>
+                        {
+                            while (!port.Trigger)
+                            {
+                                await Task.Delay(50);
+                            }
+                        }, cancellationToken));
+                        
+                        component.Start(port);
                     }
                 }
             }
-
+            
             // We now begin capturing on the camera, processing will commence based on the pipeline configured.
             this.StartCapture(cameraPort);
             
@@ -362,12 +365,11 @@ namespace MMALSharp
                 // Apply any final processing on each component
                 component.Handler?.PostProcess();
 
-                foreach (var portNum in component.ProcessingPorts)
+                foreach (var port in component.ProcessingPorts)
                 {
-                    await Task.Delay(100).ConfigureAwait(false);
-                    if (component.Outputs[portNum].ConnectedReference == null)
+                    if (port.ConnectedReference == null)
                     {
-                        component.Stop(portNum);
+                        component.Stop(port);
                     }
                 }
                 
