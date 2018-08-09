@@ -32,11 +32,7 @@ namespace MMALSharp.Components
 
                 return this._width;
             }
-
-            set
-            {
-                this._width = value;
-            }
+            set => this._width = value;
         }
 
         public override int Height
@@ -50,11 +46,7 @@ namespace MMALSharp.Components
 
                 return this._height;
             }
-
-            set
-            {
-                this._height = value;
-            }
+            set => this._height = value;
         }
 
         /// <summary>

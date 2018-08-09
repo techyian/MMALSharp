@@ -80,7 +80,7 @@ namespace MMALSharp.Components
         /// <param name="pixelFormat">The pixel format the input port shall be expecting.</param>
         /// <param name="copyPort">The output port we are copying format data from.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        public virtual void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, MMALPortImpl copyPort, bool zeroCopy = false)
+        public virtual MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, MMALPortImpl copyPort, bool zeroCopy = false)
         {
             this.InitialiseInputPort(0);
 
@@ -106,6 +106,8 @@ namespace MMALSharp.Components
                 this.Inputs[0].ZeroCopy = true;
                 this.Inputs[0].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
             }
+
+            return this;
         }
 
         /// <summary>
@@ -115,9 +117,9 @@ namespace MMALSharp.Components
         /// <param name="encodingType">The encoding type the input port will expect data in.</param>
         /// <param name="pixelFormat">The pixel format the input port will expect data in.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        public virtual void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, bool zeroCopy = false)
+        public virtual MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, bool zeroCopy = false)
         {
-            this.ConfigureInputPort(encodingType, pixelFormat, 0, 0, zeroCopy);
+            return this.ConfigureInputPort(encodingType, pixelFormat, 0, 0, zeroCopy);
         }
 
         /// <summary>
@@ -129,7 +131,7 @@ namespace MMALSharp.Components
         /// <param name="width">The width of the incoming frame.</param>
         /// <param name="height">The height of the incoming frame.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        public virtual unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, bool zeroCopy = false)
+        public virtual unsafe MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, bool zeroCopy = false)
         {
             this.InitialiseInputPort(0);
 
@@ -160,6 +162,8 @@ namespace MMALSharp.Components
                 this.Inputs[0].ZeroCopy = true;
                 this.Inputs[0].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
             }
+
+            return this;
         }
 
         /// <summary>
@@ -170,9 +174,9 @@ namespace MMALSharp.Components
         /// <param name="quality">The quality of our outputted data.</param>
         /// <param name="bitrate">The bitrate we are sending data at.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        public virtual void ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
+        public virtual MMALDownstreamComponent ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
-            this.ConfigureOutputPort(0, encodingType, pixelFormat, quality, bitrate, zeroCopy);
+            return this.ConfigureOutputPort(0, encodingType, pixelFormat, quality, bitrate, zeroCopy);
         }
         
         /// <summary>
@@ -184,7 +188,7 @@ namespace MMALSharp.Components
         /// <param name="quality">The quality of our outputted data.</param>
         /// <param name="bitrate">The bitrate we are sending data at.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        public virtual unsafe void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
+        public virtual unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
             this.InitialiseOutputPort(outputPort);
             this.ProcessingPorts.Add(this.Outputs[outputPort]);
@@ -239,6 +243,8 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
             
             this.Outputs[outputPort].ManagedOutputCallback = OutputCallbackProvider.FindCallback(this.Outputs[outputPort]);
+
+            return this;
         }
 
         /// <summary>

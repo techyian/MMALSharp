@@ -328,7 +328,7 @@ namespace MMALSharp
                         {
                             while (!port.Trigger)
                             {
-                                await Task.Delay(50);
+                                await Task.Delay(50).ConfigureAwait(false);
                             }
                         }, cancellationToken));
                         

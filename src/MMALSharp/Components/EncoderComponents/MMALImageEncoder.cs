@@ -76,7 +76,8 @@ namespace MMALSharp.Components
             this.ExifTags = exifTags;
         }
         
-        public override void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
+        /// <inheritdoc />>
+        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
             base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate, zeroCopy);
 
@@ -88,7 +89,9 @@ namespace MMALSharp.Components
             if (this.UseExif)
             {
                 this.AddExifTags(this.ExifTags);
-            }            
+            }
+
+            return this;
         }
 
         /// <summary>
@@ -109,7 +112,7 @@ namespace MMALSharp.Components
         /// Adds EXIF tags to the resulting image.
         /// </summary>
         /// <param name="exifTags">A list of user defined EXIF tags.</param>
-        internal void AddExifTags(params ExifTag[] exifTags)
+        private void AddExifTags(params ExifTag[] exifTags)
         {
             // Add the same defaults as per Raspistill.c
             List<ExifTag> defaultTags = new List<ExifTag>
@@ -141,7 +144,7 @@ namespace MMALSharp.Components
         /// Provides a facility to add an EXIF tag to the image. 
         /// </summary>
         /// <param name="exifTag">The EXIF tag to add to.</param>
-        internal void AddExifTag(ExifTag exifTag)
+        private void AddExifTag(ExifTag exifTag)
         {            
             var formattedExif = exifTag.Key + "=" + exifTag.Value + char.MinValue;
 

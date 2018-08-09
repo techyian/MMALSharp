@@ -10,7 +10,6 @@ using MMALSharp.Components;
 using MMALSharp.FFmpeg;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
-using Nito.AsyncEx;
 using Xunit;
 
 namespace MMALSharp.Tests
