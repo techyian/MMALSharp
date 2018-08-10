@@ -16,8 +16,8 @@ namespace MMALSharp.Utility
         /// <summary>
         /// Returns a <see cref="Task"/> whose state will be set to <see cref="TaskStatus.Canceled"/> when this <see cref="CancellationToken"/> is canceled.
         /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The task.</returns>
         public static Task AsTask(this CancellationToken cancellationToken)
         {
             var tcs = new TaskCompletionSource<object>();

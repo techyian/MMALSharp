@@ -3,10 +3,12 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using System.IO;
+
 namespace MMALSharp.Handlers
 {
     /// <summary>
-    /// Processes the image data to a stream.
+    /// Processes Image data to a <see cref="FileStream"/>.
     /// </summary>
     public class ImageStreamCaptureHandler : FileStreamCaptureHandler
     {

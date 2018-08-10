@@ -1,10 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">  
-  <PropertyGroup>
-	<Description>FFmpeg support library for MMALSharp.</Description>
-    <AssemblyTitle>MMALSharp.FFmpeg</AssemblyTitle>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>    
+	<Description>Image Processing library for MMALSharp.</Description>
+    <AssemblyTitle>MMALSharp.Processing</AssemblyTitle>
     <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
-    <AssemblyName>MMALSharp.FFmpeg</AssemblyName>
-    <PackageId>MMALSharp.FFmpeg</PackageId>	
+    <AssemblyName>MMALSharp.Processing</AssemblyName>
+    <PackageId>MMALSharp.Processing</PackageId>	
     <RootNamespace>MMALSharp</RootNamespace>
 	<Copyright>Ian Auty (c) 2016-2018</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -18,26 +19,15 @@
 	<CodeAnalysisRuleSet>..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>	
 	<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-  </PropertyGroup>  
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
 		<PrivateAssets>All</PrivateAssets>
     </PackageReference>
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\MMALSharp.Common\MMALSharp.Common.csproj" />
-    <ProjectReference Include="..\MMALSharp.Processing\MMALSharp.Processing.csproj" />
   </ItemGroup>
+  
 </Project>

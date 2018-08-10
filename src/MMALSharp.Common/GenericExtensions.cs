@@ -15,11 +15,11 @@ namespace MMALSharp
         /// <summary>
         /// Returns a representation of this object that is in the specified range. Too large values will be dreceased to max; too small values will be increased to min.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="val"></param>
+        /// <typeparam name="T">The type of the value to be clamped.</typeparam>
+        /// <param name="val">The value to be clamped.</param>
         /// <param name="min">The mininum inclusive value.</param>
         /// <param name="max">The maximum inclusive value.</param>
-        /// <returns></returns>
+        /// <returns>A clamped representation of the initial value.</returns>
         public static T Clamp<T>(this T val, T min, T max) 
             where T : IComparable<T>
         {
@@ -39,8 +39,8 @@ namespace MMALSharp
         /// <summary>
         /// Converts a <see cref="byte"/> value to a <see cref="float"/> value from 0.0 to 1.0.
         /// </summary>
-        /// <param name="val"></param>
-        /// <returns></returns>
+        /// <param name="val">The byte value to convert.</param>
+        /// <returns>The converted float value.</returns>
         public static float ToFloat(this byte val)
         {
             return val / 255.0f;
@@ -49,9 +49,9 @@ namespace MMALSharp
         /// <summary>
         /// Converts a <see cref="float"/> value (0.0 to 1.0) to a <see cref="byte"/> value from 0 to 255.
         /// </summary>
-        /// <param name="val"></param>
+        /// <param name="val">The float value to convert.</param>
         /// <remarks>https://stackoverflow.com/questions/1914115/converting-color-value-from-float-0-1-to-byte-0-255</remarks>
-        /// <returns></returns>
+        /// <returns>The converted byte value.</returns>
         public static byte ToByte(this float val)
         {
             return (byte)(val * 255.999f);

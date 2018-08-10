@@ -13,6 +13,8 @@ namespace MMALSharp
         /// <summary>
         /// Converts the count of bytes to megabytes in the format "0.00mb".
         /// </summary>
+        /// <param name="bytes">The number of bytes.</param>
+        /// <returns>A string representing the byte-megabyte conversion.</returns>
         public static string ConvertBytesToMegabytes(long bytes)
         {
             return ((bytes / 1024f) / 1024f).ToString("0.00mb");

@@ -3,13 +3,12 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using System;
 using System.IO;
 
 namespace MMALSharp.Handlers
 {
     /// <summary>
-    /// Processes the video data to a stream.
+    /// Processes Video data to a <see cref="FileStream"/>.
     /// </summary>
     public class VideoStreamCaptureHandler : FileStreamCaptureHandler
     {

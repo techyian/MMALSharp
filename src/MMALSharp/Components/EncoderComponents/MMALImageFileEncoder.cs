@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using MMALSharp.Common.Handlers;
+﻿using System.Threading.Tasks;
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using System.Text;
-using MMALSharp.Callbacks;
+using MMALSharp.Handlers;
 
 namespace MMALSharp.Components
 {

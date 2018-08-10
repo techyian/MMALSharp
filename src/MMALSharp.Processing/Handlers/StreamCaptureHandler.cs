@@ -5,6 +5,7 @@
 
 using System;
 using System.IO;
+using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers
 {
@@ -24,10 +25,6 @@ namespace MMALSharp.Handlers
         /// The total size of data that has been processed by this capture handler.
         /// </summary>
         protected int Processed { get; set; }
-        
-        protected StreamCaptureHandler()
-        {
-        }
         
         /// <summary>
         /// When overridden in a derived class, returns user provided image data.
@@ -67,7 +64,33 @@ namespace MMALSharp.Handlers
                 MMALLog.Logger.Warn($"Something went wrong while processing stream: {e.Message}");                
             }                   
         }
-        
+
+        /// <summary>
+        /// Manipulates the data in the backing store with a specified operation.
+        /// </summary>
+        /// <param name="process">A <see cref="IManipulate"/> operation.</param>
+        public void Manipulate(IManipulate process)
+        {
+            byte[] arr = null;
+
+            if (this.CurrentStream != null && this.CurrentStream.Length > 0)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    this.CurrentStream.Position = 0;
+                    this.CurrentStream.CopyTo(ms);
+
+                    arr = ms.ToArray();
+                    process.Apply(arr);
+                }
+
+                using (var ms = new MemoryStream(arr))
+                {
+                    ms.WriteTo(this.CurrentStream);
+                }
+            }
+        }
+
         /// <summary>
         /// Releases the underlying stream.
         /// </summary>

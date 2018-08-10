@@ -6,6 +6,7 @@
 using System;
 using System.Diagnostics;
 using System.Text;
+using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers
 {
@@ -97,13 +98,18 @@ namespace MMALSharp.Handlers
         {
             return false;
         }
-
+        
         public string GetDirectory()
         {
             throw new NotImplementedException();
         }
 
         public void PostProcess() { }
+
+        public void Manipulate(IManipulate process)
+        {
+            throw new NotImplementedException();
+        }
 
         public ProcessResult Process(uint allocSize)
         {

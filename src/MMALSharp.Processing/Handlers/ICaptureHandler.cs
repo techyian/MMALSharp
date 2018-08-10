@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers
 {
@@ -29,5 +30,11 @@ namespace MMALSharp.Handlers
         /// Used for any further processing once we have completed capture.
         /// </summary>
         void PostProcess();
+
+        /// <summary>
+        /// Manipulate the frame data stored in the backing store.
+        /// </summary>
+        /// <param name="process">The process to carry out.</param>
+        void Manipulate(IManipulate process);
     }
 }

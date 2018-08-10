@@ -4,9 +4,8 @@
 // </copyright>
 
 using System.IO;
-using MMALSharp.Handlers;
 
-namespace MMALSharp.Common.Handlers
+namespace MMALSharp.Handlers
 {
     /// <summary>
     /// Reads data from a stream, processes this data and writes the result data on another stream.
