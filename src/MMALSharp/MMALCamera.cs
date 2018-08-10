@@ -319,9 +319,11 @@ namespace MMALSharp
             foreach (var component in handlerComponents)
             {
                 component.EnableConnections();
+                component.ForceStopProcessing = false;
 
-                foreach (var port in component.ProcessingPorts)
+                foreach (var port in component.ProcessingPorts.Values)
                 {
+                    port.Trigger = false;
                     if (port.ConnectedReference == null)
                     {
                         tasks.Add(Task.Run(async () =>
@@ -365,7 +367,7 @@ namespace MMALSharp
                 // Apply any final processing on each component
                 component.Handler?.PostProcess();
 
-                foreach (var port in component.ProcessingPorts)
+                foreach (var port in component.ProcessingPorts.Values)
                 {
                     if (port.ConnectedReference == null)
                     {

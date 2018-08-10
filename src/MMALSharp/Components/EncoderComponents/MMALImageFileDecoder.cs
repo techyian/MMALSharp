@@ -47,8 +47,14 @@ namespace MMALSharp.Components
         public override unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
             this.InitialiseOutputPort(outputPort);
-            this.ProcessingPorts.Add(this.Outputs[outputPort]);
-                       
+
+            if (this.ProcessingPorts.ContainsKey(outputPort))
+            {
+                this.ProcessingPorts.Remove(outputPort);
+            }
+            
+            this.ProcessingPorts.Add(outputPort, this.Outputs[outputPort]);
+            
             if (encodingType != null)
             {
                 this.Outputs[outputPort].Ptr->Format->Encoding = encodingType.EncodingVal;

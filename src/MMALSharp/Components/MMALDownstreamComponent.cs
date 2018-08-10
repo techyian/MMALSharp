@@ -26,14 +26,14 @@ namespace MMALSharp.Components
             : base(name)
         {
             MMALCamera.Instance.DownstreamComponents.Add(this);
-            this.ProcessingPorts = new List<MMALPortImpl>();
+            this.ProcessingPorts = new Dictionary<int, MMALPortImpl>();
         }
 
         public abstract int Width { get; set; }
 
         public abstract int Height { get; set; }
 
-        public List<MMALPortImpl> ProcessingPorts { get; set; }
+        public Dictionary<int, MMALPortImpl> ProcessingPorts { get; set; }
         
         /// <summary>
         /// Registers a <see cref="IInputCallbackHandler"/>.
@@ -191,8 +191,14 @@ namespace MMALSharp.Components
         public virtual unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
             this.InitialiseOutputPort(outputPort);
-            this.ProcessingPorts.Add(this.Outputs[outputPort]);
 
+            if (this.ProcessingPorts.ContainsKey(outputPort))
+            {
+                this.ProcessingPorts.Remove(outputPort);
+            }
+            
+            this.ProcessingPorts.Add(outputPort, this.Outputs[outputPort]);
+            
             this.Inputs[0].ShallowCopy(this.Outputs[outputPort]);
 
             if (encodingType != null)
