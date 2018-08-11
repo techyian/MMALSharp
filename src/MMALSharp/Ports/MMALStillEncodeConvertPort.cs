@@ -60,7 +60,7 @@ namespace MMALSharp.Ports
                 var bufferImpl = new MMALBufferImpl(buffer);
                 MMALImageFileEncoder.WorkingQueue.Put(bufferImpl);
 
-                if (!this.Trigger)
+                if (port->IsEnabled == 1 && !this.Trigger)
                 {
                     this.Trigger = true;
                 }

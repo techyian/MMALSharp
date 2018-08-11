@@ -88,6 +88,10 @@ namespace MMALSharp.Components
                 await Task.Delay(2000).ConfigureAwait(false);
                 break;
             }
+            
+            MMALLog.Logger.Debug("Resetting trigger state.");
+            this.Inputs[0].Trigger = false;
+            this.Outputs[outputPort].Trigger = false;
         }
 
         /// <summary>
@@ -125,7 +129,7 @@ namespace MMALSharp.Components
                         buffer = WorkingQueue.GetBuffer();
                     }
 
-                    if (buffer != null)
+                    if (buffer.CheckState())
                     {
                         eosReceived = ((int)buffer.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
 
@@ -241,7 +245,7 @@ namespace MMALSharp.Components
             {                
                 inputBuffer = this.Inputs[0].BufferPool.Queue.GetBuffer();
 
-                if (inputBuffer != null)
+                if (inputBuffer.CheckState())
                 {
                     // Populate the new input buffer with user provided image data.
                     var result = this.Inputs[0].ManagedInputCallback.Callback(inputBuffer);
@@ -260,7 +264,7 @@ namespace MMALSharp.Components
                 {
                     var tempBuf2 = this.Outputs[outputPort].BufferPool.Queue.GetBuffer();
 
-                    if (tempBuf2 != null)
+                    if (tempBuf2.CheckState())
                     {
                         // Send empty buffers to the output port of the decoder                                          
                         this.Outputs[outputPort].SendBuffer(tempBuf2);

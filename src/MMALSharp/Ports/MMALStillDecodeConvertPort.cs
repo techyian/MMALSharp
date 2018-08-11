@@ -70,7 +70,7 @@ namespace MMALSharp.Ports
                     MMALLog.Logger.Debug($"Invalid output buffer received");
                 }
 
-                if (!this.Trigger)
+                if (port->IsEnabled == 1 && !this.Trigger)
                 {
                     this.Trigger = true;
                 }
