@@ -68,8 +68,8 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// Manipulates the data in the backing store with a specified operation.
         /// </summary>
-        /// <param name="process">A <see cref="IManipulate"/> operation.</param>
-        public void Manipulate(IManipulate process)
+        /// <param name="process">A <see cref="IFrameProcessor"/> operation.</param>
+        public void Manipulate(IFrameProcessor process)
         {
             byte[] arr = null;
 

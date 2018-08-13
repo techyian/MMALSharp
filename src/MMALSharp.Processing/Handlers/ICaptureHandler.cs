@@ -35,6 +35,6 @@ namespace MMALSharp.Handlers
         /// Manipulate the frame data stored in the backing store.
         /// </summary>
         /// <param name="process">The process to carry out.</param>
-        void Manipulate(IManipulate process);
+        void Manipulate(IFrameProcessor process);
     }
 }

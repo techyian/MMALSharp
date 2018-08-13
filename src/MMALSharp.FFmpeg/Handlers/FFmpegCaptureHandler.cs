@@ -106,7 +106,7 @@ namespace MMALSharp.Handlers
 
         public void PostProcess() { }
 
-        public void Manipulate(IManipulate process)
+        public void Manipulate(IFrameProcessor process)
         {
             throw new NotImplementedException();
         }

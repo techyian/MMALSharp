@@ -1,6 +1,6 @@
 ﻿namespace MMALSharp.Processors
 {
-    public interface IManipulate
+    public interface IFrameProcessor
     {
         void Apply(byte[] store);
     }
