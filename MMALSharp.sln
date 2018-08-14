@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMALSharp.Tests", "tests\MM
 		{D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8} = {D8CA0BC9-CA3B-4EC1-9898-542A6F5346F8}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMALSharp.Demo", "src\MMALSharp.Demo\MMALSharp.Demo.csproj", "{E85C6E08-9410-4A32-BC31-B57E407A77CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

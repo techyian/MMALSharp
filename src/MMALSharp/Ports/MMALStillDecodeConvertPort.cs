@@ -37,9 +37,9 @@ namespace MMALSharp.Ports
                 var bufferImpl = new MMALBufferImpl(buffer);
                 bufferImpl.Release();
 
-                if (this.Trigger != null && this.Trigger.CurrentCount > 0)
+                if (!this.Trigger)
                 {
-                    this.Trigger.Signal();
+                    this.Trigger = true;
                 }
             }
         }
@@ -71,9 +71,9 @@ namespace MMALSharp.Ports
                     MMALLog.Logger.Debug($"Invalid output buffer received");
                 }
 
-                if (this.Trigger != null && this.Trigger.CurrentCount > 0)
+                if (port->IsEnabled == 1 && !this.Trigger)
                 {
-                    this.Trigger.Signal();
+                    this.Trigger = true;
                 }
             }
         }

@@ -244,3 +244,6 @@ ModelManifest.xml
 .fake/
 
 _site/
+
+# Jetbrains Rider
+.idea/

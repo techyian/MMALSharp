@@ -3,9 +3,11 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace MMALSharp.Native
 {
@@ -128,11 +130,21 @@ namespace MMALSharp.Native
         /// <summary>
         /// Parses an integer encoding value to an MMALEncoding object.
         /// </summary>
-        /// <param name="encodingType">The encoding type value</param>
+        /// <param name="encodingType">The encoding type value.</param>
         /// <returns>The MMALEncoding object</returns>
         public static MMALEncoding ParseEncoding(this int encodingType)
         {
-            return EncodingList.Where(c => c.EncodingVal == encodingType).FirstOrDefault();
+            return EncodingList.FirstOrDefault(c => c.EncodingVal == encodingType);
+        }
+
+        /// <summary>
+        /// Parses a string encoding name to an MMALEncoding object.
+        /// </summary>
+        /// <param name="encodingName">The encoding type name.</param>
+        /// <returns>The MMALEncoding object</returns>
+        public static MMALEncoding ParseEncoding(this string encodingName)
+        {
+            return EncodingList.FirstOrDefault(c => c.EncodingName.TrimEnd().Equals(encodingName, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 
@@ -153,6 +165,32 @@ namespace MMALSharp.Native
 
         public EncodingType EncType { get; }
 
+        public override string ToString()
+        {
+            var type = string.Empty;
+            
+            switch (this.EncType)
+            {
+                case EncodingType.Audio:
+                    type = "Audio";
+                    break;
+                case EncodingType.Image:
+                    type = "Image";
+                    break;
+                case EncodingType.Internal:
+                    type = "Internal";
+                    break;
+                case EncodingType.PixelFormat:
+                    type = "Pixel Format";
+                    break;
+                case EncodingType.Video:
+                    type = "Video";
+                    break;
+            }
+            
+            return $"Name: {this.EncodingName}. FourCC: {this.EncodingVal}. Type: {type}";
+        }
+            
         private MMALEncoding(string s, EncodingType type)
         {
             this.EncodingVal = MMALUtil.MMAL_FOURCC(s);

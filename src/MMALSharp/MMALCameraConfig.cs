@@ -251,7 +251,7 @@ namespace MMALSharp
         public static MMALEncoding StillEncoding { get; set; } = MMALEncoding.OPAQUE;
 
         /// <summary>
-        /// The pixel format to use for Still captures. Irrelavent when not using OPAQUE mode.
+        /// The pixel format to use for Still captures. Irrelavent when not using OPAQUE encoding.
         /// </summary>
         public static MMALEncoding StillSubFormat { get; set; } = MMALEncoding.I420;
 

@@ -71,7 +71,7 @@ namespace MMALSharp
         {           
             var ptr = MMALQueue.mmal_queue_get(this.Ptr);
 
-            if (ptr == null || (IntPtr)ptr == IntPtr.Zero)
+            if (!this.CheckState())
             {
                 return null;                
             }

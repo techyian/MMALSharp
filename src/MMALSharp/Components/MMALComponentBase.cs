@@ -23,27 +23,27 @@ namespace MMALSharp
         /// <summary>
         /// Reference to the Control port of this component.
         /// </summary>
-        public MMALControlPort Control { get; internal set; }
+        public MMALControlPort Control { get; }
 
         /// <summary>
         /// Reference to all input ports associated with this component.
         /// </summary>
-        public List<MMALPortImpl> Inputs { get; internal set; }
+        public List<MMALPortImpl> Inputs { get; }
 
         /// <summary>
         /// Reference to all output ports associated with this component.
         /// </summary>
-        public List<MMALPortImpl> Outputs { get; internal set; }
+        public List<MMALPortImpl> Outputs { get; }
 
         /// <summary>
         /// Reference to all clock ports associated with this component.
         /// </summary>
-        public List<MMALPortImpl> Clocks { get; internal set; }
+        public List<MMALPortImpl> Clocks { get; }
 
         /// <summary>
         /// Reference to all ports associated with this component.
         /// </summary>
-        public List<MMALPortImpl> Ports { get; internal set; }
+        public List<MMALPortImpl> Ports { get; }
         
         /// <summary>
         /// Name of the component
@@ -63,7 +63,7 @@ namespace MMALSharp
         /// <summary>
         /// Native pointer to the component this object represents.
         /// </summary>
-        internal MMAL_COMPONENT_T* Ptr { get; set; }
+        private MMAL_COMPONENT_T* Ptr { get; }
 
         internal bool ForceStopProcessing { get; set; }
 

@@ -23,41 +23,45 @@ PM> Install-Package MMALSharp
 Take a JPEG image using YUV420 encoding:
 
 ```csharp
-static void Main(string[] args)
-{                        
+
+public void TakePicture()
+{
+    // Singleton initialized lazily. Reference once in your application.
     MMALCamera cam = MMALCamera.Instance;
 
-    AsyncContext.Run(async () =>
-    {                
-        using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/", "jpg"))        
-        {            
-            await cam.TakePicture(imgCaptureHandler, MMALEncoding.JPEG, MMALEncoding.I420);
-        }
-    });
-
+    using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/", "jpg"))        
+    {            
+        await cam.TakePicture(imgCaptureHandler, MMALEncoding.JPEG, MMALEncoding.I420);
+    }
+    
+    // Cleanup disposes all unmanaged resources and unloads Broadcom library. To be called when no more processing is to be done
+    // on the camera.
     cam.Cleanup();
 }
+
 ```
 
 Take a H.264 video using YUV420 encoding at 30 fps:
 
 ```csharp
-static void Main(string[] args)
-{                        
+
+public void TakeVideo()
+{
+    // Singleton initialized lazily. Reference once in your application.
     MMALCamera cam = MMALCamera.Instance;
 
-    AsyncContext.Run(async () =>
-    {                
-        using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/", "avi"))        
-        {    
-            var cts = new CancellationTokenSource(TimeSpan.FromMinutes(3));
-            //Take video for 3 minutes.
-            await cam.TakeVideo(vidCaptureHandler, cts.Token);
-        }
-    });
+    using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/", "avi"))        
+    {    
+        var cts = new CancellationTokenSource(TimeSpan.FromMinutes(3));
+                
+        await cam.TakeVideo(vidCaptureHandler, cts.Token);
+    }   
 
+    // Cleanup disposes all unmanaged resources and unloads Broadcom library. To be called when no more processing is to be done
+    // on the camera.
     cam.Cleanup();
 }
+
 ```
 
 
@@ -65,16 +69,6 @@ static void Main(string[] args)
 
 For full installation instructions for Mono 4.x and .NET Core, including configuration and examples - please visit the [Wiki](https://github.com/techyian/MMALSharp/wiki) site.
 
-
-## Notes & Known issues
-
-When using more resource intensive encoders such as MMAL_ENCODING_BMP and the Sony IMX219 module, I've found it necessary to increase the memory split
-to around 200mb or otherwise you'll receive an ENOSPC error due to insufficient resources.
-
-Video decoder issue - I've tested a working pipeline as follows:
-
-H264 YUV420 encode -> YUV420 decode -> MJPEG YUV420 encode does work, however the bitrate appears to be extremely low and the resulting video is very pixelated. I'm going to do 
-some more investigating and see whether it's an issue with MMALSharp specifically or the native framework.
 
 ## License
 

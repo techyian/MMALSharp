@@ -18,7 +18,8 @@ namespace MMALSharp.Components
 
         public static MMALQueueImpl WorkingQueue { get; set; }
 
-        public override unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, bool zeroCopy = false)
+        /// <inheritdoc />>
+        public override unsafe MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, bool zeroCopy = false)
         {
             this.InitialiseInputPort(0);
 
@@ -39,13 +40,22 @@ namespace MMALSharp.Components
             
             this.Inputs[0].Ptr->BufferNum = Math.Max(this.Inputs[0].Ptr->BufferNumRecommended, this.Inputs[0].Ptr->BufferNumMin);
             this.Inputs[0].Ptr->BufferSize = Math.Max(this.Inputs[0].Ptr->BufferSizeRecommended, this.Inputs[0].Ptr->BufferSizeMin);
+
+            return this;
         }
 
-        public override unsafe void ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
+        /// <inheritdoc />>
+        public override unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
             this.InitialiseOutputPort(outputPort);
-            this.ProcessingPorts.Add(outputPort);
-                       
+
+            if (this.ProcessingPorts.ContainsKey(outputPort))
+            {
+                this.ProcessingPorts.Remove(outputPort);
+            }
+            
+            this.ProcessingPorts.Add(outputPort, this.Outputs[outputPort]);
+            
             if (encodingType != null)
             {
                 this.Outputs[outputPort].Ptr->Format->Encoding = encodingType.EncodingVal;
@@ -64,6 +74,8 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
             this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
             this.Outputs[outputPort].ManagedOutputCallback = OutputCallbackProvider.FindCallback(this.Outputs[outputPort]);
+
+            return this;
         }
 
         public async Task WaitForTriggers(int outputPort = 0)
@@ -71,16 +83,16 @@ namespace MMALSharp.Components
             MMALLog.Logger.Debug("Waiting for trigger signal");
 
             // Wait until the process is complete.
-            while (this.Inputs[0].Trigger.CurrentCount > 0 && this.Outputs[outputPort].Trigger.CurrentCount > 0)
+            while (!this.Inputs[0].Trigger)
             {
                 MMALLog.Logger.Info("Awaiting...");
                 await Task.Delay(2000).ConfigureAwait(false);
                 break;
             }
-
-            MMALLog.Logger.Debug("Setting countdown events");
-            this.Inputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            this.Outputs[outputPort].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+            
+            MMALLog.Logger.Debug("Resetting trigger state.");
+            this.Inputs[0].Trigger = false;
+            this.Outputs[outputPort].Trigger = false;
         }
 
         /// <summary>
@@ -91,9 +103,6 @@ namespace MMALSharp.Components
         public virtual async Task Convert(int outputPort = 0)
         {
             MMALLog.Logger.Info("Beginning Image decode from filestream. Please note, this process may take some time depending on the size of the input image.");
-
-            this.Inputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            this.Outputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
 
             // Enable control, input and output ports. Input & Output ports should have been pre-configured by user prior to this point.
             this.Start(this.Control);
@@ -121,7 +130,7 @@ namespace MMALSharp.Components
                         buffer = WorkingQueue.GetBuffer();
                     }
 
-                    if (buffer != null)
+                    if (buffer.CheckState())
                     {
                         eosReceived = ((int)buffer.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
 
@@ -237,7 +246,7 @@ namespace MMALSharp.Components
             {                
                 inputBuffer = this.Inputs[0].BufferPool.Queue.GetBuffer();
 
-                if (inputBuffer != null)
+                if (inputBuffer.CheckState())
                 {
                     // Populate the new input buffer with user provided image data.
                     var result = this.Inputs[0].ManagedInputCallback.Callback(inputBuffer);
@@ -256,7 +265,7 @@ namespace MMALSharp.Components
                 {
                     var tempBuf2 = this.Outputs[outputPort].BufferPool.Queue.GetBuffer();
 
-                    if (tempBuf2 != null)
+                    if (tempBuf2.CheckState())
                     {
                         // Send empty buffers to the output port of the decoder                                          
                         this.Outputs[outputPort].SendBuffer(tempBuf2);

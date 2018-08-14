@@ -10,7 +10,6 @@ using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 using MMALSharp.Components;
-using Nito.AsyncEx;
 using static MMALSharp.MMALCallerHelper;
 
 namespace MMALSharp
@@ -195,8 +194,8 @@ namespace MMALSharp
         /// <summary>
         /// Asynchronous trigger which is set when processing has completed on this port.
         /// </summary>
-        public AsyncCountdownEvent Trigger { get; set; }
-
+        public bool Trigger { get; set; }
+        
         /// <summary>
         /// A callback handler for Input ports to populate native buffer header with user provided image data.
         /// </summary>
@@ -350,30 +349,7 @@ namespace MMALSharp
         {
             if (this.Enabled)
             {
-                MMALLog.Logger.Debug("Disabling port");
-
-                if (this.BufferPool != null)
-                {
-                    var length = this.BufferPool.HeadersNum;
-
-                    MMALLog.Logger.Debug($"Releasing {length} buffers from queue.");
-
-                    for (int i = 0; i < length; i++)
-                    {
-                        MMALLog.Logger.Debug("Releasing active buffer");
-                        var buffer = this.BufferPool.Queue.GetBuffer();
-                        
-                        if (buffer != null)
-                        {
-                            buffer.Release();
-                        }
-                        else
-                        {
-                            MMALLog.Logger.Warn("Retrieved buffer invalid. Waiting for disable...");
-                        }
-                    }
-                }
-
+                MMALLog.Logger.Debug($"Disabling port {this.Name}");
                 MMALCheck(MMALPort.mmal_port_disable(this.Ptr), "Unable to disable port.");
             }
         }
@@ -527,13 +503,13 @@ namespace MMALSharp
 
                 try
                 {
-                    if (this.Trigger != null && this.Trigger.CurrentCount > 0 && result.EOF)
+                    if (!this.Trigger && result.EOF)
                     {
                         MMALLog.Logger.Debug("Received EOF. Releasing.");
-
-                        this.Trigger.Signal();
+                        
                         newBuffer.Release();                        
                         newBuffer = null;
+                        this.Trigger = true;
                     }
 
                     if (newBuffer != null)

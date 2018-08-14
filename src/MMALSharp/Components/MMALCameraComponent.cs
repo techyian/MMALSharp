@@ -163,12 +163,7 @@ namespace MMALSharp.Components
             MMALLog.Logger.Info($"    Video Width: {this.VideoPort.Resolution.Width}. Video Height: {this.VideoPort.Resolution.Height}");
             MMALLog.Logger.Info($"    Max Width: {this.CameraInfo.MaxWidth}. Video Height: {this.CameraInfo.MaxHeight}");
         }
-
-        internal void SetSensorDefaults()
-        {
-            this.CameraInfo = new MMALCameraInfoComponent();
-        }
-
+        
         /// <summary>
         /// This is the camera's control port callback function. The callback is used if
         /// MMALCameraConfig.SetChangeEventRequest is set to true.
@@ -238,10 +233,15 @@ namespace MMALSharp.Components
             MMALLog.Logger.Debug("Camera component configured.");
         }
 
+        private void SetSensorDefaults()
+        {
+            this.CameraInfo = new MMALCameraInfoComponent();
+        }
+        
         /// <summary>
         /// Initialises the camera's preview component using the user defined width/height for the video port.
         /// </summary>
-        internal void InitialisePreview()
+        private void InitialisePreview()
         {
             this.PreviewPort.Resolution = new Resolution(MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height).Pad();
             this.PreviewPort.Crop = new Rectangle(0, 0, MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height);
@@ -265,7 +265,7 @@ namespace MMALSharp.Components
         /// <summary>
         /// Initialises the camera's video port using the width, height and encoding as specified by the user.
         /// </summary>
-        internal void InitialiseVideo()
+        private void InitialiseVideo()
         {
             int currentWidth = MMALCameraConfig.VideoResolution.Width;
             int currentHeight = MMALCameraConfig.VideoResolution.Height;
@@ -303,7 +303,7 @@ namespace MMALSharp.Components
         /// <summary>
         /// Initialises the camera's still port using the width, height and encoding as specified by the user.
         /// </summary>
-        internal void InitialiseStill()
+        private void InitialiseStill()
         {
             int currentWidth = MMALCameraConfig.StillResolution.Width;
             int currentHeight = MMALCameraConfig.StillResolution.Height;
@@ -376,7 +376,7 @@ namespace MMALSharp.Components
                 this.StillPort.BufferSizeMin);
         }
 
-        internal void SetCameraParameters()
+        private void SetCameraParameters()
         {
             this.SetSensorMode(MMALCameraConfig.SensorMode);
             this.SetSaturation(MMALCameraConfig.Saturation);

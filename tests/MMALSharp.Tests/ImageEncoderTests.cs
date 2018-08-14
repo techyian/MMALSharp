@@ -28,7 +28,7 @@ namespace MMALSharp.Tests
             TestData.Fixture = fixture;
         }
 
-        public static IEnumerable<object[]> TakePictureData
+        private static IEnumerable<object[]> TakePictureData
         {
             get
             {
@@ -49,7 +49,7 @@ namespace MMALSharp.Tests
             }
         }
 
-        public static IEnumerable<object[]> TakeRawPictureData
+        private static IEnumerable<object[]> TakeRawPictureData
         {
             get
             {
@@ -61,7 +61,7 @@ namespace MMALSharp.Tests
             }
         }
 
-        public static IEnumerable<object[]> TakePictureDataJpeg => TestData.JpegEncoderData;
+        private static IEnumerable<object[]> TakePictureDataJpeg => TestData.JpegEncoderData;
 
         [Theory]
         [MemberData(nameof(TakePictureData))]
@@ -90,9 +90,9 @@ namespace MMALSharp.Tests
 
                 await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.StillPort);
 
-                if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
+                if (File.Exists(imgCaptureHandler.GetFilepath()))
                 {
-                    var length = new System.IO.FileInfo(imgCaptureHandler.GetFilepath()).Length;
+                    var length = new FileInfo(imgCaptureHandler.GetFilepath()).Length;
                     Assert.True(length > 0);
                 }
                 else
@@ -130,9 +130,9 @@ namespace MMALSharp.Tests
 
                 await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.StillPort);
 
-                if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
+                if (File.Exists(imgCaptureHandler.GetFilepath()))
                 {
-                    var length = new System.IO.FileInfo(imgCaptureHandler.GetFilepath()).Length;
+                    var length = new FileInfo(imgCaptureHandler.GetFilepath()).Length;
                     Assert.True(length > 0);
                 }
                 else
@@ -157,9 +157,9 @@ namespace MMALSharp.Tests
 
                 var encodings = _fixture.MMALCamera.Camera.StillPort.GetSupportedEncodings();
 
-                if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
+                if (File.Exists(imgCaptureHandler.GetFilepath()))
                 {
-                    var length = new System.IO.FileInfo(imgCaptureHandler.GetFilepath()).Length;
+                    var length = new FileInfo(imgCaptureHandler.GetFilepath()).Length;
 
                     if (encodings.Contains(encodingType.EncodingVal))
                     {
@@ -374,9 +374,9 @@ namespace MMALSharp.Tests
 
                 await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.StillPort);
 
-                if (System.IO.File.Exists(imgCaptureHandler.GetFilepath()))
+                if (File.Exists(imgCaptureHandler.GetFilepath()))
                 {
-                    var length = new System.IO.FileInfo(imgCaptureHandler.GetFilepath()).Length;
+                    var length = new FileInfo(imgCaptureHandler.GetFilepath()).Length;
                     Assert.True(length > 0);
                 }
                 else

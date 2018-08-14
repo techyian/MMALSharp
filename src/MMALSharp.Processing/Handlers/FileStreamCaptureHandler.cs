@@ -18,12 +18,12 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// The directory to save to (if applicable).
         /// </summary>
-        public string Directory { get; protected set; }
+        public string Directory { get; set; }
 
         /// <summary>
         /// The extension of the file (if applicable).
         /// </summary>
-        public string Extension { get; protected set; }
+        public string Extension { get; set; }
 
         /// <summary>
         /// Creates a new instance of the <see cref="FileStreamCaptureHandler"/> class with the specified directory and filename extension.

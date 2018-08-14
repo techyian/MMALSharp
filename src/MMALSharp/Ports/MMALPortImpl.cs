@@ -6,7 +6,6 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
-using MMALSharp.Callbacks;
 using MMALSharp.Callbacks.Providers;
 using MMALSharp.Common.Utility;
 using MMALSharp.Native;
@@ -137,26 +136,25 @@ namespace MMALSharp
         /// <param name="buffer">The buffer header.</param>
         internal override void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
-            lock (MMALPortBase.OutputLock)
+            lock (OutputLock)
             {
                 if (MMALCameraConfig.Debug)
                 {
                     MMALLog.Logger.Debug("In native output callback");
                 }
-
+                
                 var bufferImpl = new MMALBufferImpl(buffer);
 
                 if (MMALCameraConfig.Debug)
                 {
                     bufferImpl.PrintProperties();
                 }
-
-                var triggered = this.Trigger != null && this.Trigger.CurrentCount == 0;
+                
                 var failed = bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
                 var eos = bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END ||
                                                          c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) || this.ComponentReference.ForceStopProcessing;
 
-                if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !failed && !triggered) || (eos && !triggered))
+                if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !failed && !this.Trigger) || (eos && !this.Trigger))
                 {
                     this.ManagedOutputCallback.Callback(bufferImpl);
                 }
@@ -167,11 +165,8 @@ namespace MMALSharp
                 // If this buffer signals the end of data stream, allow waiting thread to continue.
                 if (eos || failed)
                 {
-                    if (this.Trigger != null && this.Trigger.CurrentCount > 0)
-                    {
-                        MMALLog.Logger.Debug("End of stream. Signaling completion...");
-                        this.Trigger.Signal();
-                    }
+                    MMALLog.Logger.Debug("End of stream. Signaling completion...");
+                    this.Trigger = true;
                 }
             }
         }

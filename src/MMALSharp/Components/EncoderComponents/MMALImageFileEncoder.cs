@@ -16,7 +16,8 @@ namespace MMALSharp.Components
 
         public static MMALQueueImpl WorkingQueue { get; set; }
 
-        public override unsafe void ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, bool zeroCopy = false)
+        /// <inheritdoc />>
+        public override unsafe MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, bool zeroCopy = false)
         {
             this.InitialiseInputPort(0);
 
@@ -54,6 +55,8 @@ namespace MMALSharp.Components
                 this.Inputs[0].ZeroCopy = true;
                 this.Inputs[0].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
             }
+
+            return this;
         }
 
         public async Task WaitForTriggers()
@@ -61,16 +64,16 @@ namespace MMALSharp.Components
             MMALLog.Logger.Debug("Waiting for trigger signal");
 
             // Wait until the process is complete.
-            while (this.Inputs[0].Trigger.CurrentCount > 0 && this.Outputs[0].Trigger.CurrentCount > 0)
+            while (!this.Inputs[0].Trigger)
             {
                 MMALLog.Logger.Info("Awaiting...");
                 await Task.Delay(2000).ConfigureAwait(false);
                 break;
             }
-
-            MMALLog.Logger.Debug("Setting countdown events");
-            this.Inputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            this.Outputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
+            
+            MMALLog.Logger.Debug("Resetting trigger state.");
+            this.Inputs[0].Trigger = false;
+            this.Outputs[0].Trigger = false;
         }
 
         /// <summary>
@@ -81,9 +84,6 @@ namespace MMALSharp.Components
         public virtual async Task Convert(int outputPort = 0)
         {
             MMALLog.Logger.Info("Beginning Image encode from filestream. Please note, this process may take some time depending on the size of the input image.");
-
-            this.Inputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
-            this.Outputs[0].Trigger = new Nito.AsyncEx.AsyncCountdownEvent(1);
 
             // Enable control, input and output ports. Input & Output ports should have been pre-configured by user prior to this point.
             this.Start(this.Control);
@@ -111,7 +111,7 @@ namespace MMALSharp.Components
                         buffer = WorkingQueue.GetBuffer();
                     }
 
-                    if (buffer != null)
+                    if (buffer.CheckState())
                     {
                         eosReceived = ((int)buffer.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
 
@@ -227,7 +227,7 @@ namespace MMALSharp.Components
             {
                 inputBuffer = this.Inputs[0].BufferPool.Queue.GetBuffer();
 
-                if (inputBuffer != null)
+                if (inputBuffer.CheckState())
                 {
                     // Populate the new input buffer with user provided image data.
                     var result = this.Inputs[0].ManagedInputCallback.Callback(inputBuffer);
@@ -246,7 +246,7 @@ namespace MMALSharp.Components
                 {
                     var tempBuf2 = this.Outputs[0].BufferPool.Queue.GetBuffer();
 
-                    if (tempBuf2 != null)
+                    if (tempBuf2.CheckState())
                     {
                         // Send empty buffers to the output port of the decoder                                          
                         this.Outputs[0].SendBuffer(tempBuf2);
