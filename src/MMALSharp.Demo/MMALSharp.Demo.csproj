@@ -6,6 +6,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MMALSharp.Common\MMALSharp.Common.csproj" />
     <ProjectReference Include="..\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj" />
+    <ProjectReference Include="..\MMALSharp.Processing\MMALSharp.Processing.csproj" />
     <ProjectReference Include="..\MMALSharp\MMALSharp.csproj" />
   </ItemGroup>
 </Project>
