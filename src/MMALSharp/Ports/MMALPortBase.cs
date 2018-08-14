@@ -7,6 +7,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
+using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 using MMALSharp.Components;
 using Nito.AsyncEx;

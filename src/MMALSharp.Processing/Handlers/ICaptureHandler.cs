@@ -32,9 +32,9 @@ namespace MMALSharp.Handlers
         void PostProcess();
 
         /// <summary>
-        /// Manipulate the frame data stored in the backing store.
+        /// Allows manipulating of the image frame.
         /// </summary>
-        /// <param name="process">The process to carry out.</param>
-        void Manipulate(IFrameProcessor process);
+        /// <param name="context">A delegate to the manipulation you wish to carry out.</param>
+        void Manipulate(Action<IFrameProcessingContext> context);
     }
 }

@@ -6,7 +6,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MMALSharp.Utility
+namespace MMALSharp.Common.Utility
 {
     /// <summary>
     /// This class provides extensions for <see cref="CancellationToken"/>s.

@@ -7,7 +7,7 @@ using NLog;
 using NLog.Config;
 using NLog.Targets;
 
-namespace MMALSharp
+namespace MMALSharp.Common.Utility
 {
     /// <summary>
     /// Provides static access to the global logger.

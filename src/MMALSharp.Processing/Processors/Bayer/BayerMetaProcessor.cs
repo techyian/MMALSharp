@@ -1,21 +1,19 @@
 ﻿using System;
-using System.IO;
 using System.Text;
+using MMALSharp.Common;
 
 namespace MMALSharp.Processors
 {
-    public class BayerHandler : IFrameProcessor
+    public class BayerMetaProcessor : IFrameProcessor
     {
         public CameraVersion CameraVersion { get; }
-        public Stream WorkingStream { get; }
         
         private const int BayerMetaLengthV1 = 6404096;
         private const int BayerMetaLengthV2 = 10270208;
         
-        public BayerHandler(CameraVersion camVersion, Stream stream)
+        public BayerMetaProcessor(CameraVersion camVersion)
         {
             this.CameraVersion = camVersion;
-            this.WorkingStream = stream;
         }
 
         public void Apply(byte[] store)
@@ -42,7 +40,8 @@ namespace MMALSharp.Processors
                 throw new Exception("Could not find Bayer metadata in header");
             }
 
-            this.WorkingStream.Write(array, 0, array.Length);
+            store = new byte[array.Length];
+            Array.Copy(array, store, array.Length);
         }
     }
 }

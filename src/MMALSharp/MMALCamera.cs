@@ -5,13 +5,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
-using MMALSharp.Utility;
 
 namespace MMALSharp
 {

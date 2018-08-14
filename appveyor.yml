@@ -18,8 +18,6 @@ before_build:
   - dotnet restore tests\MMALSharp.Tests\MMALSharp.Tests.csproj
 
 test: off
-  
-for:
 
 #Dev
 -

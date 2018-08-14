@@ -4,9 +4,9 @@
 // </copyright>
 
 using System;
+using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Native;
-using MMALSharp.Utility;
 using Xunit;
 
 namespace MMALSharp.Tests

@@ -5,6 +5,7 @@
 
 using MMALSharp.Handlers;
 using System;
+using MMALSharp.Common.Utility;
 using static MMALSharp.Native.MMALParameters;
 
 namespace MMALSharp.Components

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 
 namespace MMALSharp.Tests

@@ -1,4 +1,4 @@
-﻿namespace MMALSharp
+﻿namespace MMALSharp.Common
 {
     public enum CameraVersion
     {

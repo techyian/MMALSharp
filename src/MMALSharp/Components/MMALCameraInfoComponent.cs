@@ -5,6 +5,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 using static MMALSharp.MMALCallerHelper;
 

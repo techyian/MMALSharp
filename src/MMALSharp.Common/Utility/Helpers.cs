@@ -3,7 +3,7 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-namespace MMALSharp
+namespace MMALSharp.Common.Utility
 {
     /// <summary>
     /// Provides general helper methods.

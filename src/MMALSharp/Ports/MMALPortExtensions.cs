@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 using static MMALSharp.MMALCallerHelper;
 using static MMALSharp.Native.MMALParametersCamera;

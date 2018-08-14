@@ -5,6 +5,7 @@
 
 using System;
 using System.IO;
+using MMALSharp.Common.Utility;
 using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers
@@ -20,7 +21,7 @@ namespace MMALSharp.Handlers
         /// A Stream instance that we can process image data to.
         /// </summary>
         public T CurrentStream { get; protected set; }
-
+        
         /// <summary>
         /// The total size of data that has been processed by this capture handler.
         /// </summary>
@@ -62,26 +63,27 @@ namespace MMALSharp.Handlers
             catch(Exception e)
             {
                 MMALLog.Logger.Warn($"Something went wrong while processing stream: {e.Message}");                
-            }                   
+            }
         }
 
         /// <summary>
-        /// Manipulates the data in the backing store with a specified operation.
+        /// Allows manipulating of the image frame.
         /// </summary>
-        /// <param name="process">A <see cref="IFrameProcessor"/> operation.</param>
-        public void Manipulate(IFrameProcessor process)
+        /// <param name="action">A delegate to the manipulation you wish to carry out.</param>
+        public void Manipulate(Action<IFrameProcessingContext> action)
         {
-            byte[] arr = null;
-
             if (this.CurrentStream != null && this.CurrentStream.Length > 0)
             {
+                byte[] arr = null;
+
                 using (var ms = new MemoryStream())
                 {
                     this.CurrentStream.Position = 0;
                     this.CurrentStream.CopyTo(ms);
 
                     arr = ms.ToArray();
-                    process.Apply(arr);
+
+                    action(new FrameProcessingContext(arr));
                 }
 
                 using (var ms = new MemoryStream(arr))

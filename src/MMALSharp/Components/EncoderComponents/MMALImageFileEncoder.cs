@@ -2,6 +2,7 @@
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using System.Text;
+using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 
 namespace MMALSharp.Components

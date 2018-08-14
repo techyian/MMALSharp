@@ -4,11 +4,11 @@ using System.Drawing;
 namespace MMALSharp.Processors
 {
     // TODO Parse OpenType fonts.
-    public class DrawFont : IFrameProcessor
+    public class FontProcessor : IFrameProcessor
     {
         public string Text { get; }
 
-        public DrawFont(string text, Color fontColour)
+        public FontProcessor(string text, Color fontColour)
         {
             this.Text = text;
         }

@@ -5,7 +5,7 @@
 
 using System;
 
-namespace MMALSharp
+namespace MMALSharp.Common
 {
     /// <summary>
     /// Provides extension methods for mathematical operations.

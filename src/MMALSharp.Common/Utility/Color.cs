@@ -7,7 +7,7 @@ using System;
 using System.Drawing;
 using System.Numerics;
 
-namespace MMALSharp.Utility
+namespace MMALSharp.Common.Utility
 {
     /// <summary>
     /// Provides useful methods to convert from various colour spaces to RGB.

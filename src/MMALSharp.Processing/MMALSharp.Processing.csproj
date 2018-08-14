@@ -29,5 +29,9 @@
   <ItemGroup>
     <ProjectReference Include="..\MMALSharp.Common\MMALSharp.Common.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Processors\Drawing\" />
+  </ItemGroup>
   
 </Project>

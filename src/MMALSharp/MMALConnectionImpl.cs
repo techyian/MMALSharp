@@ -6,6 +6,7 @@
 using System;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks.Providers;
+using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Native;
 using static MMALSharp.MMALCallerHelper;
