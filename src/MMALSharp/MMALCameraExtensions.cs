@@ -846,7 +846,30 @@ namespace MMALSharp
         /// </summary>
         /// <param name="camera">The camera component.</param>
         /// <returns>The Flips value.</returns>
-        public static MMAL_PARAM_MIRROR_T GetFlips(this MMALCameraComponent camera)
+        public static MMAL_PARAM_MIRROR_T GetFlips(this MMALCameraComponent camera) => GetStillFlips(camera);
+
+        /// <summary>
+        /// Gets the Flips value currently being used by the video port.
+        /// </summary>
+        /// <param name="camera">The camera component.</param>
+        /// <returns>The Flips value.</returns>
+        public static MMAL_PARAM_MIRROR_T GetVideoFlips(this MMALCameraComponent camera)
+        {
+            MMAL_PARAMETER_MIRROR_T mirror = new MMAL_PARAMETER_MIRROR_T(
+                new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_MIRROR, Marshal.SizeOf<MMAL_PARAMETER_MIRROR_T>()),
+                MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE);
+
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.VideoPort.Ptr, &mirror.Hdr), "Unable to get flips");
+
+            return mirror.Value;
+        }
+
+        /// <summary>
+        /// Gets the Flips value currently being used by the still port.
+        /// </summary>
+        /// <param name="camera">The camera component.</param>
+        /// <returns>The Flips value.</returns>
+        public static MMAL_PARAM_MIRROR_T GetStillFlips(this MMALCameraComponent camera)
         {
             MMAL_PARAMETER_MIRROR_T mirror = new MMAL_PARAMETER_MIRROR_T(
                 new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_MIRROR, Marshal.SizeOf<MMAL_PARAMETER_MIRROR_T>()),
@@ -864,6 +887,7 @@ namespace MMALSharp
                 flips);
 
             MMALCheck(MMALPort.mmal_port_parameter_set(camera.StillPort.Ptr, &mirror.Hdr), "Unable to set flips");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.VideoPort.Ptr, &mirror.Hdr), "Unable to set flips");
         }
 
         /// <summary>
