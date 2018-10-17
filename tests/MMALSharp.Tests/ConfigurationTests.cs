@@ -270,7 +270,9 @@ namespace MMALSharp.Tests
 
             MMALCameraConfig.Flips = flips;
             _fixture.MMALCamera.ConfigureCameraSettings();
-            Assert.True(_fixture.MMALCamera.Camera.GetFlips() == flips);
+            Assert.True(_fixture.MMALCamera.Camera.GetFlips() == flips &&
+                        _fixture.MMALCamera.Camera.GetStillFlips() == flips &&
+                        _fixture.MMALCamera.Camera.GetVideoFlips() == flips);
         }
 
         [Theory]
