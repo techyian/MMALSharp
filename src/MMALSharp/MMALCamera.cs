@@ -87,7 +87,7 @@ namespace MMALSharp
         /// <param name="cancellationToken">A cancellationToken to signal when to stop video capture.</param>
         /// <param name="split">Used for Segmented video mode.</param>
         /// <returns>The awaitable Task.</returns>
-        public async Task TakeVideo(VideoStreamCaptureHandler handler, CancellationToken cancellationToken, Split split = null)
+        public async Task TakeVideo(ICaptureHandler handler, CancellationToken cancellationToken, Split split = null)
         {
             if (split != null && !MMALCameraConfig.InlineHeaders)
             {
