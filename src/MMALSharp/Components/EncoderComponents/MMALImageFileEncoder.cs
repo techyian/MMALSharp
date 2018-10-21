@@ -5,12 +5,13 @@ using MMALSharp.Native;
 using MMALSharp.Ports;
 using System.Text;
 using MMALSharp.Callbacks;
+using MMALSharp.Handlers;
 
 namespace MMALSharp.Components
 {
     public class MMALImageFileEncoder : MMALImageEncoder, IMMALConvert
     {
-        public unsafe MMALImageFileEncoder(TransformStreamCaptureHandler handler)
+        public unsafe MMALImageFileEncoder(ICaptureHandler handler)
             : base(handler)
         {
         }

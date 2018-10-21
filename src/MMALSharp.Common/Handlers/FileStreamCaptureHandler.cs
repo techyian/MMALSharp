@@ -49,7 +49,7 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// Creates a new File (FileStream), assigns it to the Stream instance of this class and disposes of any existing stream. 
         /// </summary>
-        public void NewFile()
+        public virtual void NewFile()
         {
             this.CurrentStream?.Dispose();
 
