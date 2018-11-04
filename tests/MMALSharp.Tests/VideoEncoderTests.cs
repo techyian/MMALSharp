@@ -27,19 +27,6 @@ namespace MMALSharp.Tests
             TestData.Fixture = fixture;
         }
         
-        private static IEnumerable<object[]> TakeVideoData
-        {
-            get
-            {
-                var list = new List<object[]>();
-
-                list.AddRange(TestData.H264EncoderData);
-                list.AddRange(TestData.MjpegEncoderData);
-
-                return list;
-            }
-        }
-        
         #region Configuration tests
 
         [Theory]
@@ -58,7 +45,7 @@ namespace MMALSharp.Tests
         #endregion
 
         [Theory]
-        [MemberData(nameof(TakeVideoData))]
+        [MemberData("Data", MemberType = typeof(VideoData))]
         public async Task TakeVideo(string extension, MMALEncoding encodingType, MMALEncoding pixelFormat)
         {
             TestHelper.BeginTest("TakeVideo", encodingType.EncodingName, pixelFormat.EncodingName);

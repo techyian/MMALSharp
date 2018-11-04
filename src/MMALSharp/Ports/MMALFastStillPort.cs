@@ -1,34 +1,25 @@
-﻿// <copyright file="MMALVideoPort.cs" company="Techyian">
+// <copyright file="MMALFastStillPort.cs" company="Techyian">
 // Copyright (c) Ian Auty. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
 using System;
+using System.Linq;
 using MMALSharp.Native;
 
 namespace MMALSharp.Ports
 {
-    /// <summary>
-    /// Represents a video encode/decode port
-    /// </summary>
-    public unsafe class MMALVideoPort : MMALPortImpl
+    public unsafe class MMALFastStillPort : MMALPortImpl
     {
-        /// <summary>
-        /// This is used when the user provides a timeout DateTime and
-        /// will signal an end to video recording.
-        /// </summary>
-        public DateTime? Timeout { get; set; }
-
-        public MMALVideoPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
-            : base(ptr, comp, type, guid)
+        public MMALFastStillPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid) : base(ptr, comp, type, guid)
         {
         }
-
-        public MMALVideoPort(MMALPortImpl copyFrom)
+        
+        public MMALFastStillPort(MMALPortImpl copyFrom)
             : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
         {
         }
-
+        
         /// <summary>
         /// The native callback MMAL passes buffer headers to.
         /// </summary>
@@ -42,7 +33,7 @@ namespace MMALSharp.Ports
                 {
                     MMALLog.Logger.Debug("In native output callback");
                 }
-
+                
                 var bufferImpl = new MMALBufferImpl(buffer);
 
                 if (MMALCameraConfig.Debug)
@@ -50,9 +41,10 @@ namespace MMALSharp.Ports
                     bufferImpl.PrintProperties();
                 }
                 
-                var eos = (this.Timeout.HasValue && DateTime.Now.CompareTo(this.Timeout.Value) > 0) || this.ComponentReference.ForceStopProcessing;
-
-                if (bufferImpl.Ptr != null && (IntPtr)bufferImpl.Ptr != IntPtr.Zero && bufferImpl.Length > 0 && !eos && !this.Trigger)
+                var failed = bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
+                
+                if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !this.ComponentReference.ForceStopProcessing && !failed && !this.Trigger) || 
+                    (this.ComponentReference.ForceStopProcessing && !this.Trigger))
                 {
                     this.ManagedOutputCallback.Callback(bufferImpl);
                 }
@@ -60,13 +52,11 @@ namespace MMALSharp.Ports
                 // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
                 this.ReleaseOutputBuffer(bufferImpl);
 
-                if (eos)
+                // If this buffer signals the end of data stream, allow waiting thread to continue.
+                if (this.ComponentReference.ForceStopProcessing || failed)
                 {
-                    if (!this.Trigger)
-                    {
-                        MMALLog.Logger.Debug($"{this.ComponentReference.Name} {this.Name} Timeout exceeded, triggering signal.");
-                        this.Trigger = true;
-                    }
+                    MMALLog.Logger.Debug($"{this.ComponentReference.Name} {this.Name} Signaling completion of continuous still frame capture...");
+                    this.Trigger = true;
                 }
             }
         }

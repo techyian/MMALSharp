@@ -61,6 +61,8 @@ namespace MMALSharp.Components
         /// </summary>
         public ExifTag[] ExifTags { get; set; }
         
+        public bool ContinuousCapture { get; set; }
+        
         /// <summary>
         /// Creates a new instance of the <see cref="MMALImageEncoder"/> class with the specified handler.
         /// </summary>
@@ -68,12 +70,13 @@ namespace MMALSharp.Components
         /// <param name="rawBayer">Specifies whether to include raw bayer image data.</param>
         /// <param name="useExif">Specifies whether any EXIF tags should be used.</param>
         /// <param name="exifTags">A collection of custom EXIF tags.</param>
-        public MMALImageEncoder(ICaptureHandler handler, bool rawBayer = false, bool useExif = true, params ExifTag[] exifTags)
+        public MMALImageEncoder(ICaptureHandler handler, bool rawBayer = false, bool useExif = true, bool continuousCapture = false, params ExifTag[] exifTags)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER, handler)
         {
             this.RawBayer = rawBayer;
             this.UseExif = useExif;
             this.ExifTags = exifTags;
+            this.ContinuousCapture = continuousCapture;
         }
         
         /// <inheritdoc />>
@@ -90,6 +93,8 @@ namespace MMALSharp.Components
             {
                 this.AddExifTags(this.ExifTags);
             }
+            
+            this.RegisterOutputCallback(new ImageOutputCallbackHandler(this.Outputs[outputPort]));
 
             return this;
         }
@@ -105,7 +110,14 @@ namespace MMALSharp.Components
 
         internal override void InitialiseOutputPort(int outputPort)
         {
-            this.Outputs[outputPort] = new MMALStillPort(this.Outputs[outputPort]);
+            if (this.ContinuousCapture)
+            {
+                this.Outputs[outputPort] = new MMALFastStillPort(this.Outputs[outputPort]);
+            }
+            else
+            {
+                this.Outputs[outputPort] = new MMALStillPort(this.Outputs[outputPort]);    
+            }
         }
 
         /// <summary>

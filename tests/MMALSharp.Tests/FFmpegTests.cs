@@ -55,7 +55,7 @@ namespace MMALSharp.Tests
             }
         }
 
-        [Fact]
+        /*[Fact]
         public async Task ImagesToVideo()
         {
             TestHelper.BeginTest("ImagesToVideo");
@@ -76,6 +76,6 @@ namespace MMALSharp.Tests
 
                 _fixture.CheckAndAssertFilepath("/home/pi/videos/tests/out.avi");
             }
-        }
+        }*/
     }
 }

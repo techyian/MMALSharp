@@ -320,12 +320,12 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].EnableOutputPort(false);            
         }
         
-        internal override unsafe void InitialiseInputPort(int inputPort)
+        internal override void InitialiseInputPort(int inputPort)
         {
             this.Inputs[inputPort] = new MMALStillDecodeConvertPort(this.Inputs[inputPort]);
         }
 
-        internal override unsafe void InitialiseOutputPort(int outputPort)
+        internal override void InitialiseOutputPort(int outputPort)
         {
             this.Outputs[outputPort] = new MMALStillDecodeConvertPort(this.Outputs[outputPort]);
         }

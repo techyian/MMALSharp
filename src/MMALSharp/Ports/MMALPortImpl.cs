@@ -164,7 +164,7 @@ namespace MMALSharp
                 // If this buffer signals the end of data stream, allow waiting thread to continue.
                 if (eos || failed)
                 {
-                    MMALLog.Logger.Debug("End of stream. Signaling completion...");
+                    MMALLog.Logger.Debug($"{this.ComponentReference.Name} {this.Name} End of stream. Signaling completion...");
                     this.Trigger = true;
                 }
             }

@@ -265,6 +265,7 @@ namespace MMALSharp
         /// <param name="port">The output port.</param>
         internal void Start(MMALPortBase port)
         {
+            MMALLog.Logger.Debug($"Starting port {port.Name}");
             switch (port.PortType)
             {
                 case PortType.Input:
