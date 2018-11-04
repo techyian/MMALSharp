@@ -87,7 +87,7 @@ namespace MMALSharp
         /// <param name="cancellationToken">A cancellationToken to signal when to stop video capture.</param>
         /// <param name="split">Used for Segmented video mode.</param>
         /// <returns>The awaitable Task.</returns>
-        public async Task TakeVideo(VideoStreamCaptureHandler handler, CancellationToken cancellationToken, Split split = null)
+        public async Task TakeVideo(ICaptureHandler handler, CancellationToken cancellationToken, Split split = null)
         {
             if (split != null && !MMALCameraConfig.InlineHeaders)
             {
@@ -182,7 +182,7 @@ namespace MMALSharp
         /// <param name="encodingType">The image encoding type e.g. JPEG, BMP.</param>
         /// <param name="pixelFormat">The pixel format to use with the encoder e.g. I420 (YUV420).</param>
         /// <returns>The awaitable Task.</returns>
-        public async Task TakePicture(ImageStreamCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat)
+        public async Task TakePicture(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat)
         {
             using (var imgEncoder = new MMALImageEncoder(handler))
             using (var renderer = new MMALNullSinkComponent())
@@ -216,7 +216,7 @@ namespace MMALSharp
         /// <param name="cancellationToken">A cancellationToken to trigger stop capturing.</param>
         /// <param name="burstMode">When enabled, burst mode will increase the rate at which images are taken, at the expense of quality.</param>
         /// <returns>The awaitable Task.</returns>
-        public async Task TakePictureTimeout(ImageStreamCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, CancellationToken cancellationToken, bool burstMode = false)
+        public async Task TakePictureTimeout(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, CancellationToken cancellationToken, bool burstMode = false)
         {
             if (burstMode)
             {
@@ -254,7 +254,7 @@ namespace MMALSharp
         /// <param name="timelapse">A Timelapse object which specifies the timeout and rate at which images should be taken.</param>
         /// <returns>The awaitable Task.</returns>
         /// <exception cref="ArgumentNullException"/>
-        public async Task TakePictureTimelapse(ImageStreamCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, Timelapse timelapse)
+        public async Task TakePictureTimelapse(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, Timelapse timelapse)
         {
             int interval = 0;
 
