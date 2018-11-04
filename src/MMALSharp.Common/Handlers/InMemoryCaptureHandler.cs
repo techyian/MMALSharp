@@ -25,13 +25,10 @@ namespace MMALSharp.Handlers
         public virtual void Process(byte[] data)
         {
             this.WorkingData.AddRange(data);
-            
-            Console.WriteLine($"Total data processed: {this.WorkingData.Count}");
         }
 
         public virtual void PostProcess()
         {
-            Console.WriteLine("Finishing up....");
         }
     }
 }
