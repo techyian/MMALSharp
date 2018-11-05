@@ -16,8 +16,7 @@ using Xunit;
 
 namespace MMALSharp.Tests
 {
-    [Collection("MMALCollection")]
-    public class VideoEncoderTests
+    public class VideoEncoderTests : IClassFixture<MMALFixture>
     {
         private readonly MMALFixture _fixture;
 
@@ -76,7 +75,6 @@ namespace MMALSharp.Tests
 
                 _fixture.CheckAndAssertFilepath(vidCaptureHandler.GetFilepath());
             }
-           
         }
 
         [Fact]
@@ -112,7 +110,6 @@ namespace MMALSharp.Tests
                     
                 Assert.True(Directory.GetFiles("/home/pi/videos/tests/split_test").Length == 2);
             }
-            
         }
 
         [Fact]
@@ -168,7 +165,6 @@ namespace MMALSharp.Tests
 
                 _fixture.CheckAndAssertFilepath(vidCaptureHandler.GetFilepath());
             }
-           
         }
 
         [Fact]
@@ -228,7 +224,6 @@ namespace MMALSharp.Tests
                 _fixture.CheckAndAssertFilepath(handler3.GetFilepath());
                 _fixture.CheckAndAssertFilepath(handler4.GetFilepath());
             }
-            
         }
     }
 }

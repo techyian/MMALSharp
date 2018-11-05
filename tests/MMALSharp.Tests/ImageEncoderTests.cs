@@ -17,8 +17,7 @@ using Xunit;
 
 namespace MMALSharp.Tests
 {
-    [Collection("MMALCollection")]
-    public class ImageEncoderTests
+    public class ImageEncoderTests : IClassFixture<MMALFixture>
     {
         private readonly MMALFixture _fixture;
 
@@ -55,17 +54,8 @@ namespace MMALSharp.Tests
 
                 await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.StillPort);
 
-                if (File.Exists(imgCaptureHandler.GetFilepath()))
-                {
-                    var length = new FileInfo(imgCaptureHandler.GetFilepath()).Length;
-                    Assert.True(length > 0);
-                }
-                else
-                {
-                    Assert.True(false, $"File {imgCaptureHandler.GetFilepath()} was not created");
-                }
+                _fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
             }
-           
         }
 
         [Theory]
@@ -95,15 +85,7 @@ namespace MMALSharp.Tests
 
                 await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.StillPort);
 
-                if (File.Exists(imgCaptureHandler.GetFilepath()))
-                {
-                    var length = new FileInfo(imgCaptureHandler.GetFilepath()).Length;
-                    Assert.True(length > 0);
-                }
-                else
-                {
-                    Assert.True(false, $"File {imgCaptureHandler.GetFilepath()} was not created");
-                }
+                _fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
             }
         }
 
@@ -168,16 +150,10 @@ namespace MMALSharp.Tests
                 var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
                 
                 await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.VideoPort, cts.Token);
+                
+                DirectoryInfo info = new DirectoryInfo(imgCaptureHandler.Directory);
 
-                if (File.Exists(imgCaptureHandler.GetFilepath()))
-                {
-                    var length = new FileInfo(imgCaptureHandler.GetFilepath()).Length;
-                    Assert.True(length > 0);
-                }
-                else
-                {
-                    Assert.True(false, $"File {imgCaptureHandler.GetFilepath()} was not created");
-                }
+                _fixture.CheckAndAssertDirectory(imgCaptureHandler.Directory);
             }
         }
 
@@ -201,7 +177,10 @@ namespace MMALSharp.Tests
                     .ConnectTo(imgEncoder);
                 _fixture.MMALCamera.Camera.PreviewPort
                     .ConnectTo(preview);
-                                        
+                  
+                // Camera warm up time
+                await Task.Delay(2000);
+
                 CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
                 Timelapse tl = new Timelapse
                 {
@@ -209,10 +188,7 @@ namespace MMALSharp.Tests
                     CancellationToken = cts.Token,
                     Value = 5
                 };
-
-                // Camera warm up time
-                await Task.Delay(2000);
-
+                
                 while (!tl.CancellationToken.IsCancellationRequested)
                 {
                     int interval = tl.Value * 1000;
@@ -222,18 +198,7 @@ namespace MMALSharp.Tests
                     await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.StillPort);
                 }
 
-                DirectoryInfo info = new DirectoryInfo(imgCaptureHandler.Directory);
-
-                if (info.Exists)
-                {
-                    var files = info.EnumerateFiles();
-
-                    Assert.True(files != null && files.Count() == 6);
-                }
-                else
-                {
-                    Assert.True(false, $"File {imgCaptureHandler.GetFilepath()} was not created");
-                }
+                _fixture.CheckAndAssertDirectory(imgCaptureHandler.Directory);
             }
         }
 
@@ -266,8 +231,9 @@ namespace MMALSharp.Tests
                 {
                     await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.StillPort);
                 }
+
+                _fixture.CheckAndAssertDirectory(imgCaptureHandler.Directory);
             }
-            
         }
 
         [Fact]
@@ -295,10 +261,10 @@ namespace MMALSharp.Tests
                 await Task.Delay(2000);
 
                 await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.StillPort);
-
+                
                 _fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
             }
-                
+            
             using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "bmp"))
             using (var preview = new MMALNullSinkComponent())
             using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
@@ -312,9 +278,9 @@ namespace MMALSharp.Tests
                     .ConnectTo(preview);
                     
                 await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.StillPort);
-
-                _fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
             }
+            
+            _fixture.CheckAndAssertDirectory("/home/pi/images/tests");
         }
 
         [Fact]
@@ -398,7 +364,6 @@ namespace MMALSharp.Tests
         {
             TestHelper.BeginTest("TakePictureWithInMemoryHandler");
             TestHelper.SetConfigurationDefaults();
-            TestHelper.CleanDirectory("/home/pi/images/tests");
             
             var imgCaptureHandler = new InMemoryCaptureHandler();
             using (var preview = new MMALNullSinkComponent())

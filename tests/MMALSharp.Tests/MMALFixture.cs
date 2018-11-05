@@ -4,6 +4,8 @@
 // </copyright>
 
 using System;
+using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace MMALSharp.Tests
@@ -21,7 +23,7 @@ namespace MMALSharp.Tests
             if (System.IO.File.Exists(filepath))
             {
                 var length = new System.IO.FileInfo(filepath).Length;
-                Assert.True(length > 0);
+                Assert.True(length > 0, $"File {filepath} has 0 bytes.");
             }
             else
             {
@@ -29,11 +31,22 @@ namespace MMALSharp.Tests
             }
         }
 
-        public void Dispose() => this.MMALCamera.Cleanup();
-    }
+        public void CheckAndAssertDirectory(string directory)
+        {
+            DirectoryInfo info = new DirectoryInfo(directory);
 
-    [CollectionDefinition("MMALCollection")]
-    public class MmalCollection : ICollectionFixture<MMALFixture>
-    {
+            if (info.Exists)
+            {
+                var files = info.EnumerateFiles();
+
+                Assert.True(files != null && files.Any());
+            }
+            else
+            {
+                Assert.True(false, $"Directory {directory} was not created");
+            }
+        }
+
+        public void Dispose() => this.MMALCamera.Cleanup();
     }
 }

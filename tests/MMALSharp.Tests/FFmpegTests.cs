@@ -14,8 +14,7 @@ using Xunit;
 
 namespace MMALSharp.Tests
 {
-    [Collection("MMALCollection")]
-    public class FFmpegTests
+    public class FFmpegTests : IClassFixture<MMALFixture>
     {
         private readonly MMALFixture _fixture;
 

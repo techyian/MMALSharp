@@ -93,9 +93,12 @@ namespace MMALSharp.Components
             {
                 this.AddExifTags(this.ExifTags);
             }
-            
-            this.RegisterOutputCallback(new ImageOutputCallbackHandler(this.Outputs[outputPort]));
 
+            if (this.ContinuousCapture)
+            {
+                this.RegisterOutputCallback(new ImageOutputCallbackHandler(this.Outputs[outputPort]));    
+            }
+            
             return this;
         }
 
