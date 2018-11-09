@@ -15,10 +15,10 @@ namespace MMALSharp.Tests
             {
                 var list = new List<object[]>();
 
-                list.AddRange(TestData.JpegEncoderData);
-                list.AddRange(TestData.GifEncoderData);
-                list.AddRange(TestData.PngEncoderData);
-                list.AddRange(TestData.BmpEncoderData);
+                list.AddRange(TestBase.JpegEncoderData);
+                list.AddRange(TestBase.GifEncoderData);
+                list.AddRange(TestBase.PngEncoderData);
+                list.AddRange(TestBase.BmpEncoderData);
 
                 // TGA/PPM support is enabled by performing a firmware update "sudo rpi-update".
                 // See: https://github.com/techyian/MMALSharp/issues/23

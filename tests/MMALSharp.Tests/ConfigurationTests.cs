@@ -11,17 +11,8 @@ using Xunit;
 
 namespace MMALSharp.Tests
 {
-    [Collection("MMALCollection")]
-    public class ConfigurationTests
+    public class ConfigurationTests : TestBase
     {
-        private readonly MMALFixture _fixture;
-
-        public ConfigurationTests(MMALFixture fixture)
-        {
-            _fixture = fixture;
-            TestData.Fixture = fixture;
-        }
-        
         [Theory]
         [InlineData(MMALSensorMode.Mode0)]
         [InlineData(MMALSensorMode.Mode2)]
@@ -32,8 +23,8 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
             MMALCameraConfig.SensorMode = mode;
 
-            _fixture.MMALCamera.ConfigureCameraSettings();
-            Assert.True(_fixture.MMALCamera.Camera.GetSensorMode() == mode);
+            Fixture.MMALCamera.ConfigureCameraSettings();
+            Assert.True(Fixture.MMALCamera.Camera.GetSensorMode() == mode);
         }
 
         [Theory]
@@ -48,13 +39,13 @@ namespace MMALSharp.Tests
 
             if (brightness >= 0 && brightness <= 100)
             {
-                _fixture.MMALCamera.ConfigureCameraSettings();
+                Fixture.MMALCamera.ConfigureCameraSettings();
 
-                Assert.True(_fixture.MMALCamera.Camera.GetBrightness() == brightness / 100);
+                Assert.True(Fixture.MMALCamera.Camera.GetBrightness() == brightness / 100);
             }
             else
             {
-                Assert.ThrowsAny<Exception>(() => _fixture.MMALCamera.ConfigureCameraSettings());
+                Assert.ThrowsAny<Exception>(() => Fixture.MMALCamera.ConfigureCameraSettings());
             }
         }
 
@@ -70,13 +61,13 @@ namespace MMALSharp.Tests
 
             if (sharpness >= -100 && sharpness <= 100)
             {
-                _fixture.MMALCamera.ConfigureCameraSettings();
+                Fixture.MMALCamera.ConfigureCameraSettings();
 
-                Assert.True(_fixture.MMALCamera.Camera.GetSharpness() == sharpness / 100);
+                Assert.True(Fixture.MMALCamera.Camera.GetSharpness() == sharpness / 100);
             }
             else
             {
-                Assert.ThrowsAny<Exception>(() => _fixture.MMALCamera.ConfigureCameraSettings());
+                Assert.ThrowsAny<Exception>(() => Fixture.MMALCamera.ConfigureCameraSettings());
             }
         }
 
@@ -92,13 +83,13 @@ namespace MMALSharp.Tests
 
             if (contrast >= -100 && contrast <= 100)
             {
-                _fixture.MMALCamera.ConfigureCameraSettings();
+                Fixture.MMALCamera.ConfigureCameraSettings();
 
-                Assert.True(_fixture.MMALCamera.Camera.GetContrast() == contrast / 100);
+                Assert.True(Fixture.MMALCamera.Camera.GetContrast() == contrast / 100);
             }
             else
             {
-                Assert.ThrowsAny<Exception>(() => _fixture.MMALCamera.ConfigureCameraSettings());
+                Assert.ThrowsAny<Exception>(() => Fixture.MMALCamera.ConfigureCameraSettings());
             }
         }
 
@@ -112,9 +103,9 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.Saturation = saturation;
-            _fixture.MMALCamera.ConfigureCameraSettings();
+            Fixture.MMALCamera.ConfigureCameraSettings();
 
-            Assert.True(_fixture.MMALCamera.Camera.GetSaturation() == saturation / 100);
+            Assert.True(Fixture.MMALCamera.Camera.GetSaturation() == saturation / 100);
         }
 
         [Theory]
@@ -129,13 +120,13 @@ namespace MMALSharp.Tests
 
             if ((iso >= 100 && iso <= 800) || iso == 0)
             {
-                _fixture.MMALCamera.ConfigureCameraSettings();
+                Fixture.MMALCamera.ConfigureCameraSettings();
 
-                Assert.True(_fixture.MMALCamera.Camera.GetISO() == iso);
+                Assert.True(Fixture.MMALCamera.Camera.GetISO() == iso);
             }
             else
             {
-                Assert.ThrowsAny<Exception>(() => _fixture.MMALCamera.ConfigureCameraSettings());
+                Assert.ThrowsAny<Exception>(() => Fixture.MMALCamera.ConfigureCameraSettings());
             }
         }
 
@@ -151,12 +142,12 @@ namespace MMALSharp.Tests
 
             if (expCompensation >= -10 && expCompensation <= 10)
             {
-                _fixture.MMALCamera.ConfigureCameraSettings();
-                Assert.True(_fixture.MMALCamera.Camera.GetExposureCompensation() == expCompensation);
+                Fixture.MMALCamera.ConfigureCameraSettings();
+                Assert.True(Fixture.MMALCamera.Camera.GetExposureCompensation() == expCompensation);
             }
             else
             {
-                Assert.ThrowsAny<Exception>(() => _fixture.MMALCamera.ConfigureCameraSettings());
+                Assert.ThrowsAny<Exception>(() => Fixture.MMALCamera.ConfigureCameraSettings());
             }
         }
 
@@ -170,9 +161,9 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.ExposureMode = expMode;
-            _fixture.MMALCamera.ConfigureCameraSettings();
+            Fixture.MMALCamera.ConfigureCameraSettings();
 
-            Assert.True(_fixture.MMALCamera.Camera.GetExposureMode() == expMode);
+            Assert.True(Fixture.MMALCamera.Camera.GetExposureMode() == expMode);
         }
 
         [Theory]
@@ -185,9 +176,9 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.ExposureMeterMode = expMetMode;
-            _fixture.MMALCamera.ConfigureCameraSettings();
+            Fixture.MMALCamera.ConfigureCameraSettings();
 
-            Assert.True(_fixture.MMALCamera.Camera.GetExposureMeteringMode() == expMetMode);
+            Assert.True(Fixture.MMALCamera.Camera.GetExposureMeteringMode() == expMetMode);
         }
 
         [Theory]
@@ -200,9 +191,9 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.AwbMode = awbMode;
-            _fixture.MMALCamera.ConfigureCameraSettings();
+            Fixture.MMALCamera.ConfigureCameraSettings();
 
-            Assert.True(_fixture.MMALCamera.Camera.GetAwbMode() == awbMode);
+            Assert.True(Fixture.MMALCamera.Camera.GetAwbMode() == awbMode);
         }
 
         [Theory]
@@ -215,8 +206,8 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.ImageFx = imgFx;
-            _fixture.MMALCamera.ConfigureCameraSettings();
-            Assert.True(_fixture.MMALCamera.Camera.GetImageFx() == imgFx);
+            Fixture.MMALCamera.ConfigureCameraSettings();
+            Assert.True(Fixture.MMALCamera.Camera.GetImageFx() == imgFx);
         }
 
         [Theory]
@@ -233,11 +224,11 @@ namespace MMALSharp.Tests
             var colFx = new ColourEffects(enable, color);
 
             MMALCameraConfig.ColourFx = colFx;
-            _fixture.MMALCamera.ConfigureCameraSettings();
+            Fixture.MMALCamera.ConfigureCameraSettings();
 
-            var uv = MMALColor.RGBToYUVBytes(_fixture.MMALCamera.Camera.GetColourFx().Color);
+            var uv = MMALColor.RGBToYUVBytes(Fixture.MMALCamera.Camera.GetColourFx().Color);
             
-            Assert.True(_fixture.MMALCamera.Camera.GetColourFx().Enable == enable &&
+            Assert.True(Fixture.MMALCamera.Camera.GetColourFx().Enable == enable &&
                         uv.Item2 == u &&
                         uv.Item3 == v);
         }
@@ -254,9 +245,9 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.Rotation = rotation;
-            _fixture.MMALCamera.ConfigureCameraSettings();
+            Fixture.MMALCamera.ConfigureCameraSettings();
 
-            Assert.True(_fixture.MMALCamera.Camera.GetRotation() == expectedResult);
+            Assert.True(Fixture.MMALCamera.Camera.GetRotation() == expectedResult);
         }
 
         [Theory]
@@ -269,10 +260,10 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.Flips = flips;
-            _fixture.MMALCamera.ConfigureCameraSettings();
-            Assert.True(_fixture.MMALCamera.Camera.GetFlips() == flips &&
-                        _fixture.MMALCamera.Camera.GetStillFlips() == flips &&
-                        _fixture.MMALCamera.Camera.GetVideoFlips() == flips);
+            Fixture.MMALCamera.ConfigureCameraSettings();
+            Assert.True(Fixture.MMALCamera.Camera.GetFlips() == flips &&
+                        Fixture.MMALCamera.Camera.GetStillFlips() == flips &&
+                        Fixture.MMALCamera.Camera.GetVideoFlips() == flips);
         }
 
         [Theory]
@@ -290,16 +281,16 @@ namespace MMALSharp.Tests
 
             if (x <= 1.0 && y <= 1.0 && height <= 1.0 && width <= 1.0)
             {
-                _fixture.MMALCamera.ConfigureCameraSettings();
+                Fixture.MMALCamera.ConfigureCameraSettings();
 
-                Assert.True(_fixture.MMALCamera.Camera.GetZoom().Height == Convert.ToInt32(height * 65536) &&
-                            _fixture.MMALCamera.Camera.GetZoom().Width == Convert.ToInt32(width * 65536) &&
-                            _fixture.MMALCamera.Camera.GetZoom().X == Convert.ToInt32(x * 65536) &&
-                            _fixture.MMALCamera.Camera.GetZoom().Y == Convert.ToInt32(y * 65536));
+                Assert.True(Fixture.MMALCamera.Camera.GetZoom().Height == Convert.ToInt32(height * 65536) &&
+                            Fixture.MMALCamera.Camera.GetZoom().Width == Convert.ToInt32(width * 65536) &&
+                            Fixture.MMALCamera.Camera.GetZoom().X == Convert.ToInt32(x * 65536) &&
+                            Fixture.MMALCamera.Camera.GetZoom().Y == Convert.ToInt32(y * 65536));
             }
             else
             {
-                Assert.ThrowsAny<Exception>(() => _fixture.MMALCamera.ConfigureCameraSettings());
+                Assert.ThrowsAny<Exception>(() => Fixture.MMALCamera.ConfigureCameraSettings());
             }
         }
 
@@ -314,9 +305,9 @@ namespace MMALSharp.Tests
             MMALCameraConfig.SensorMode = MMALSensorMode.Mode1;
             MMALCameraConfig.AwbMode = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_OFF;
             MMALCameraConfig.ShutterSpeed = shutterSpeed;
-            _fixture.MMALCamera.ConfigureCameraSettings();
+            Fixture.MMALCamera.ConfigureCameraSettings();
 
-            Assert.True(_fixture.MMALCamera.Camera.GetShutterSpeed() == shutterSpeed);
+            Assert.True(Fixture.MMALCamera.Camera.GetShutterSpeed() == shutterSpeed);
         }
 
         [Theory]
@@ -329,8 +320,8 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.DrcLevel = drc;
-            _fixture.MMALCamera.ConfigureCameraSettings();
-            Assert.True(_fixture.MMALCamera.Camera.GetDRC() == drc);
+            Fixture.MMALCamera.ConfigureCameraSettings();
+            Assert.True(Fixture.MMALCamera.Camera.GetDRC() == drc);
         }
 
         [Theory]
@@ -342,8 +333,8 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
 
             MMALCameraConfig.StatsPass = statsPass;
-            _fixture.MMALCamera.ConfigureCameraSettings();
-            Assert.True(_fixture.MMALCamera.Camera.GetStatsPass() == statsPass);
+            Fixture.MMALCamera.ConfigureCameraSettings();
+            Assert.True(Fixture.MMALCamera.Camera.GetStatsPass() == statsPass);
         }
     }
 }

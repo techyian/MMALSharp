@@ -14,16 +14,8 @@ using Xunit;
 
 namespace MMALSharp.Tests
 {
-    public class FFmpegTests : IClassFixture<MMALFixture>
+    public class FFmpegTests : TestBase
     {
-        private readonly MMALFixture _fixture;
-
-        public FFmpegTests(MMALFixture fixture)
-        {
-            _fixture = fixture;
-            TestData.Fixture = fixture;
-        }
-
         [Fact]
         public async Task RawVideoConvert()
         {
@@ -35,12 +27,12 @@ namespace MMALSharp.Tests
             using (var vidEncoder = new MMALVideoEncoder(ffCaptureHandler))
             using (var renderer = new MMALVideoRenderer())
             {
-                _fixture.MMALCamera.ConfigureCameraSettings();
+                Fixture.MMALCamera.ConfigureCameraSettings();
 
                 vidEncoder.ConfigureOutputPort(0, MMALEncoding.H264, MMALEncoding.I420, 0, 25000000);
 
-                _fixture.MMALCamera.Camera.VideoPort.ConnectTo(vidEncoder);
-                _fixture.MMALCamera.Camera.PreviewPort.ConnectTo(renderer);
+                Fixture.MMALCamera.Camera.VideoPort.ConnectTo(vidEncoder);
+                Fixture.MMALCamera.Camera.PreviewPort.ConnectTo(renderer);
 
                 // Camera warm up time
                 await Task.Delay(2000);
@@ -48,9 +40,9 @@ namespace MMALSharp.Tests
                 var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1));
 
                 // Take video for 1 minute.
-                await _fixture.MMALCamera.ProcessAsync(_fixture.MMALCamera.Camera.VideoPort, cts.Token);
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.VideoPort, cts.Token);
 
-                _fixture.CheckAndAssertFilepath("/home/pi/videos/tests/testing1234.avi");
+                Fixture.CheckAndAssertFilepath("/home/pi/videos/tests/testing1234.avi");
             }
         }
 
@@ -68,12 +60,12 @@ namespace MMALSharp.Tests
                 var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1));
 
                 var tl = new Timelapse { Mode = TimelapseMode.Second, CancellationToken = cts.Token, Value = 5 };
-                await _fixture.MMALCamera.TakePictureTimelapse(imgCaptureHandler, MMALEncoding.JPEG, MMALEncoding.I420, tl);
+                await Fixture.MMALCamera.TakePictureTimelapse(imgCaptureHandler, MMALEncoding.JPEG, MMALEncoding.I420, tl);
 
                 // Process all images captured into a video at 2fps.
                 imgCaptureHandler.ImagesToVideo("/home/pi/videos/tests", 2);
 
-                _fixture.CheckAndAssertFilepath("/home/pi/videos/tests/out.avi");
+                Fixture.CheckAndAssertFilepath("/home/pi/videos/tests/out.avi");
             }
         }*/
     }

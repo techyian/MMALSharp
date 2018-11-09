@@ -13,11 +13,11 @@ namespace MMALSharp.Tests
         {
             get
             {
-                yield return TestData.Yuv420EncoderData;
-                yield return TestData.Yuv422EncoderData;
-                yield return TestData.Rgb24EncoderData;
-                yield return TestData.Rgb24EncoderData;
-                yield return TestData.RgbaEncoderData;                
+                yield return TestBase.Yuv420EncoderData;
+                yield return TestBase.Yuv422EncoderData;
+                yield return TestBase.Rgb24EncoderData;
+                yield return TestBase.Rgb24EncoderData;
+                yield return TestBase.RgbaEncoderData;                
             }
         }
     }

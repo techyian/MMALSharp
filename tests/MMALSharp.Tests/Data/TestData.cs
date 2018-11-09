@@ -6,28 +6,47 @@
 using MMALSharp.Native;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using MMALSharp.Components;
+using Xunit;
 
 namespace MMALSharp.Tests
 {
-    public class TestData
+    public class TestBase : IClassFixture<MMALFixture>
     {
-        public static MMALFixture Fixture { get; set; }
+        private static MMALFixture _fixture;
+        public static MMALFixture Fixture
+        {
+            get
+            {
+                if (_fixture == null)
+                {
+                    _fixture = new MMALFixture();
+                }
+
+                return _fixture;
+            }
+            set => _fixture = value;
+        }
+        
+        public TestBase() {}
+
+        public TestBase(MMALFixture fixture)
+        {
+            Fixture = fixture;
+        }
         
         public static List<MMALEncoding> PixelFormats = MMALEncodingHelpers.EncodingList.Where(c => c.EncType == MMALEncoding.EncodingType.PixelFormat).ToList();
 
         private static IEnumerable<object[]> GetVideoEncoderData(MMALEncoding encodingType, string extension)
         {
             var supportedEncodings = Fixture.MMALCamera.Camera.VideoPort.GetSupportedEncodings();
-            return PixelFormats.Where(c => supportedEncodings.Contains(c.EncodingVal)).Select(pixFormat => new object[] { extension, encodingType, pixFormat }).ToList();
+            return PixelFormats.Where(c => supportedEncodings.Contains(c.EncodingVal) && c != MMALEncoding.OPAQUE).Select(pixFormat => new object[] { extension, encodingType, pixFormat }).ToList();
         }
 
         private static IEnumerable<object[]> GetImageEncoderData(MMALEncoding encodingType, string extension)
         {
             var supportedEncodings = Fixture.MMALCamera.Camera.StillPort.GetSupportedEncodings();
-            return PixelFormats.Where(c => supportedEncodings.Contains(c.EncodingVal)).Select(pixFormat => new object[] { extension, encodingType, pixFormat }).ToList();
+            return PixelFormats.Where(c => supportedEncodings.Contains(c.EncodingVal) && c != MMALEncoding.OPAQUE).Select(pixFormat => new object[] { extension, encodingType, pixFormat }).ToList();
         }
         
         private static object[] GetEncoderData(MMALEncoding encodingType, MMALEncoding pixelFormat, string extension)

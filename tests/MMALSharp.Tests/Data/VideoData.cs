@@ -15,8 +15,8 @@ namespace MMALSharp.Tests
             {
                 var list = new List<object[]>();
 
-                list.AddRange(TestData.H264EncoderData);
-                list.AddRange(TestData.MjpegEncoderData);
+                list.AddRange(TestBase.H264EncoderData);
+                list.AddRange(TestBase.MjpegEncoderData);
 
                 return list;
             }

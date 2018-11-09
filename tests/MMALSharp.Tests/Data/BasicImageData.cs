@@ -15,7 +15,7 @@ namespace MMALSharp.Tests
             {
                 var list = new List<object[]>();
 
-                list.AddRange(TestData.JpegEncoderData);
+                list.AddRange(TestBase.JpegEncoderData);
               
                 return list;
             }
