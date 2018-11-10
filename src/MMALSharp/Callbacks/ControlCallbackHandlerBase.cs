@@ -12,7 +12,7 @@ namespace MMALSharp.Callbacks
     /// <summary>
     /// The base class for Output port callback handlers.
     /// </summary>
-    public abstract class OutputCallbackHandlerBase
+    public abstract class ControlCallbackHandlerBase
     {
         /// <summary>
         /// A whitelisted Encoding Type that this callback handler will operate on.
@@ -22,14 +22,14 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// The port this callback handler is used with.
         /// </summary>
-        public IOutputPort WorkingPort { get; internal set; }
+        public IControlPort WorkingPort { get; internal set; }
         
-        protected OutputCallbackHandlerBase(IOutputPort port)
+        protected ControlCallbackHandlerBase(IControlPort port)
         {
             this.WorkingPort = port;
         }
 
-        protected OutputCallbackHandlerBase(IOutputPort port, MMALEncoding encodingType)
+        protected ControlCallbackHandlerBase(IControlPort port, MMALEncoding encodingType)
         {
             this.WorkingPort = port;
             this.EncodingType = encodingType;

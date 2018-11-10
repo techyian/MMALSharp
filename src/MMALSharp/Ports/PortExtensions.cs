@@ -1,4 +1,4 @@
-﻿// <copyright file="MMALPortExtensions.cs" company="Techyian">
+﻿// <copyright file="PortExtensions.cs" company="Techyian">
 // Copyright (c) Ian Auty. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
@@ -7,7 +7,8 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using MMALSharp.Native;
-using static MMALSharp.MMALCallerHelper;
+using MMALSharp.Ports;
+using static MMALSharp.MMALNativeExceptionHelper;
 using static MMALSharp.Native.MMALParametersCamera;
 
 namespace MMALSharp
@@ -15,7 +16,7 @@ namespace MMALSharp
     /// <summary>
     /// Provides extension methods to obtain and change the configuration of a port.
     /// </summary>
-    public static class MMALPortExtensions
+    public static class PortExtensions
     {
         /// <summary>
         /// Provides a facility to get data from the port using the native helper functions.
@@ -23,7 +24,7 @@ namespace MMALSharp
         /// <param name="port">The port to get the parameter from.</param>
         /// <param name="key">The unique key for the parameter.</param>
         /// <returns>Dynamic parameter based on key parameter.</returns>
-        public static unsafe dynamic GetParameter(this MMALPortBase port, int key)
+        public static unsafe dynamic GetParameter(this IPort port, int key)
         {
             var t = MMALParameterHelpers.ParameterHelper.Where(c => c.ParamValue == key).FirstOrDefault();
 
@@ -78,7 +79,7 @@ namespace MMALSharp
         /// </summary>
         /// <param name="port">The port you are querying.</param>
         /// <returns>True if raw Bayer image data will be returned.</returns>
-        public static bool GetRawCapture(this MMALPortImpl port)
+        public static bool GetRawCapture(this IPort port)
         {
             return port.GetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE);
         }
@@ -88,7 +89,7 @@ namespace MMALSharp
         /// </summary>
         /// <param name="port">The port we are getting supported encodings for.</param>
         /// <returns>An array of FourCC integers.</returns>
-        public static unsafe int[] GetSupportedEncodings(this MMALPortImpl port)
+        public static unsafe int[] GetSupportedEncodings(this IPort port)
         {
             IntPtr ptr1 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_ENCODING_T>() + 20);
             var str1 = (MMAL_PARAMETER_HEADER_T*)ptr1;
@@ -135,7 +136,7 @@ namespace MMALSharp
         /// <param name="port">The port we want to set the parameter on.</param>
         /// <param name="key">The unique key of the parameter.</param>
         /// <param name="value">The value of the parameter.</param>
-        internal static unsafe void SetParameter(this MMALPortBase port, int key, dynamic value)
+        internal static unsafe void SetParameter(this IPort port, int key, dynamic value)
         {
             var t = MMALParameterHelpers.ParameterHelper.Where(c => c.ParamValue == key).FirstOrDefault();
 
@@ -188,17 +189,17 @@ namespace MMALSharp
         /// </summary>
         /// <param name="port"></param>
         /// <param name="enable"></param>
-        internal static void SetImageCapture(this MMALPortImpl port, bool enable)
+        internal static void SetImageCapture(this IPort port, bool enable)
         {
             port.SetParameter(MMAL_PARAMETER_CAPTURE, enable);
         }
 
-        internal static void SetRawCapture(this MMALPortImpl port, bool raw)
+        internal static void SetRawCapture(this IPort port, bool raw)
         {
             port.SetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE, raw);
         }
 
-        internal static unsafe void SetStereoMode(this MMALPortImpl port, StereoMode mode)
+        internal static unsafe void SetStereoMode(this IPort port, StereoMode mode)
         {
             MMAL_PARAMETER_STEREOSCOPIC_MODE_T stereo = new MMAL_PARAMETER_STEREOSCOPIC_MODE_T(
                 new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_STEREOSCOPIC_MODE, Marshal.SizeOf<MMAL_PARAMETER_STEREOSCOPIC_MODE_T>()),
@@ -209,7 +210,7 @@ namespace MMALSharp
             MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &stereo.Hdr), "Unable to set Stereo mode");
         }
 
-        internal static void CheckSupportedEncoding(this MMALPortImpl port, MMALEncoding encoding)
+        internal static void CheckSupportedEncoding(this IPort port, MMALEncoding encoding)
         {
             var encodings = port.GetSupportedEncodings();
 
@@ -219,7 +220,7 @@ namespace MMALSharp
             }
         }
 
-        internal static bool RgbOrderFixed(this MMALPortImpl port)
+        internal static bool RgbOrderFixed(this IPort port)
         {
             int newFirmware = 0;
             var encodings = port.GetSupportedEncodings();

@@ -4,6 +4,7 @@
 // </copyright>
 
 using MMALSharp.Native;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Callbacks
 {
@@ -12,12 +13,12 @@ namespace MMALSharp.Callbacks
     /// </summary>
     public class DefaultInputCallbackHandler : InputCallbackHandlerBase
     {
-        public DefaultInputCallbackHandler(MMALPortBase port) 
+        public DefaultInputCallbackHandler(IInputPort port) 
             : base(port)
         {
         }
 
-        public DefaultInputCallbackHandler(MMALPortBase port, MMALEncoding encodingType)
+        public DefaultInputCallbackHandler(IInputPort port, MMALEncoding encodingType)
             : base(port, encodingType)
         {
         }

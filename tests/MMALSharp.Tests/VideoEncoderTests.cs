@@ -24,11 +24,9 @@ namespace MMALSharp.Tests
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
+        [MMALTestsAttribute]
         public void SetThenGetVideoStabilisation(bool vstab)
         {
-            TestHelper.BeginTest("SetThenGetVideoStabilisation");
-            TestHelper.SetConfigurationDefaults();
-
             MMALCameraConfig.VideoStabilisation = vstab;
             Fixture.MMALCamera.ConfigureCameraSettings();
             Assert.True(Fixture.MMALCamera.Camera.GetVideoStabilisation() == vstab);

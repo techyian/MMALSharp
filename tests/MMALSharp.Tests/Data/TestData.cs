@@ -117,7 +117,8 @@ namespace MMALSharp.Tests
 
         public static object[] Yuv420EncoderData => GetEncoderData(MMALEncoding.I420, MMALEncoding.I420, "i420");
         public static object[] Yuv422EncoderData => GetEncoderData(MMALEncoding.I422, MMALEncoding.I422, "i422");
-        public static object[] Rgb24EncoderData => GetEncoderData(MMALEncoding.RGB24, MMALEncoding.RGB24, "rgb");
+        public static object[] Rgb16EncoderData => GetEncoderData(MMALEncoding.RGB16, MMALEncoding.RGB16, "rgb16");
+        public static object[] Rgb24EncoderData => GetEncoderData(MMALEncoding.RGB24, MMALEncoding.RGB24, "rgb24");
         public static object[] RgbaEncoderData => GetEncoderData(MMALEncoding.RGBA, MMALEncoding.RGBA, "rgba");
         
         #endregion

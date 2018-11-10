@@ -12,18 +12,18 @@ namespace MMALSharp.Callbacks.Providers
     /// <summary>
     /// Provides a facility to retrieve callback handlers for Output ports.
     /// </summary>
-    internal static class OutputCallbackProvider
+    internal static class ControlCallbackProvider
     {
         /// <summary>
         /// The list of active callback handlers.
         /// </summary>
-        public static Dictionary<IOutputPort, OutputCallbackHandlerBase> WorkingHandlers { get; private set; } = new Dictionary<IOutputPort, OutputCallbackHandlerBase>();
+        public static Dictionary<IControlPort, ControlCallbackHandlerBase> WorkingHandlers { get; private set; } = new Dictionary<IControlPort, ControlCallbackHandlerBase>();
 
         /// <summary>
-        /// Register a new <see cref="OutputCallbackHandlerBase"/>.
+        /// Register a new <see cref="ControlCallbackHandlerBase"/>.
         /// </summary>
         /// <param name="handler">The callback handler.</param>
-        public static void RegisterCallback(OutputCallbackHandlerBase handler)
+        public static void RegisterCallback(ControlCallbackHandlerBase handler)
         {
             if (handler?.WorkingPort == null)
             {
@@ -41,27 +41,27 @@ namespace MMALSharp.Callbacks.Providers
         }
 
         /// <summary>
-        /// Finds and returns a <see cref="OutputCallbackHandlerBase"/> for a given port. If no handler is registered, a 
-        /// <see cref="DefaultOutputCallbackHandler"/> will be returned.
+        /// Finds and returns a <see cref="ControlCallbackHandlerBase"/> for a given port. If no handler is registered, a 
+        /// <see cref="DefaultControlCallbackHandler"/> will be returned.
         /// </summary>
         /// <param name="port">The port we are retrieving the callback handler on.</param>
-        /// <returns>A <see cref="OutputCallbackHandlerBase"/> for a given port. If no handler is registered, a 
-        /// <see cref="DefaultOutputCallbackHandler"/> will be returned.</returns>
-        public static OutputCallbackHandlerBase FindCallback(IOutputPort port)
+        /// <returns>A <see cref="ControlCallbackHandlerBase"/> for a given port. If no handler is registered, a 
+        /// <see cref="DefaultControlCallbackHandler"/> will be returned.</returns>
+        public static ControlCallbackHandlerBase FindCallback(IControlPort port)
         {
             if (WorkingHandlers.ContainsKey(port))
             {
                 return WorkingHandlers[port];
             }
             
-            return new DefaultOutputCallbackHandler(port);
+            return new DefaultControlCallbackHandler(port);
         }
 
         /// <summary>
         /// Remove a callback handler for a given port.
         /// </summary>
         /// <param name="port">The port we are removing the callback handler on.</param>
-        public static void RemoveCallback(IOutputPort port)
+        public static void RemoveCallback(IControlPort port)
         {
             if (WorkingHandlers.ContainsKey(port))
             {

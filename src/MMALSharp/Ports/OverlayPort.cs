@@ -1,4 +1,4 @@
-﻿// <copyright file="MMALOverlayPort.cs" company="Techyian">
+﻿// <copyright file="OverlayPort.cs" company="Techyian">
 // Copyright (c) Ian Auty. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
@@ -12,13 +12,13 @@ namespace MMALSharp.Ports
     /// Represents port behaviour especially for the static overlay renderer functionality. This object overrides <see cref="NativeInputPortCallback"/>
     /// forcing it to do nothing when it receives a callback from the component.
     /// </summary>
-    public unsafe class MMALOverlayPort : MMALPortImpl
+    public unsafe class OverlayPort : InputPort
     {
-        public MMALOverlayPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid) : base(ptr, comp, type, guid)
+        public OverlayPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid) : base(ptr, comp, type, guid)
         {
         }
 
-        public MMALOverlayPort(MMALPortImpl copyFrom)
+        public OverlayPort(IPort copyFrom)
             : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
         {
         }

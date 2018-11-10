@@ -8,17 +8,18 @@ using System.Linq;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Callbacks
 {
     public class ImageOutputCallbackHandler : DefaultOutputCallbackHandler
     {
-        public ImageOutputCallbackHandler(MMALPortBase port)
+        public ImageOutputCallbackHandler(IOutputPort port)
             : base(port)
         {
         }
 
-        public ImageOutputCallbackHandler(MMALPortBase port, MMALEncoding encoding)
+        public ImageOutputCallbackHandler(IOutputPort port, MMALEncoding encoding)
             : base(port, encoding)
         {
         }
@@ -43,12 +44,12 @@ namespace MMALSharp.Callbacks
             if (eos)
             {
                 // In rapid capture mode, provide the ability to do post-processing once we have a complete frame.
-                component.Handler?.PostProcess();
+                this.WorkingPort.Handler?.PostProcess();
             }
 
-            if (eos && component.Handler.GetType() == typeof(ImageStreamCaptureHandler))
+            if (eos && this.WorkingPort.Handler.GetType() == typeof(ImageStreamCaptureHandler))
             {
-                ((ImageStreamCaptureHandler) component.Handler).NewFile();
+                ((ImageStreamCaptureHandler) this.WorkingPort.Handler).NewFile();
             }
         }
     }

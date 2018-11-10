@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using MMALSharp.Common.Handlers;
 using MMALSharp.Native;
-using MMALSharp.Ports;
 using System.Text;
 using MMALSharp.Callbacks.Providers;
 using MMALSharp.Handlers;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Components
 {
@@ -105,9 +104,9 @@ namespace MMALSharp.Components
             MMALLog.Logger.Info("Beginning Image decode from filestream. Please note, this process may take some time depending on the size of the input image.");
 
             // Enable control, input and output ports. Input & Output ports should have been pre-configured by user prior to this point.
-            this.Start(this.Control);
-            this.Start(this.Inputs[0]);
-            this.Start(this.Outputs[outputPort]);
+            this.Control.Start();
+            this.Inputs[0].Start();
+            this.Outputs[outputPort].Start();
 
             this.EnableComponent();
 
@@ -125,7 +124,7 @@ namespace MMALSharp.Components
                 while (true)
                 {
                     MMALBufferImpl buffer;
-                    lock (MMALPortBase.OutputLock)
+                    lock (OutputPort.OutputLock)
                     {
                         buffer = WorkingQueue.GetBuffer();
                     }
@@ -142,7 +141,7 @@ namespace MMALSharp.Components
                             }
                             else
                             {
-                                lock (MMALPortBase.OutputLock)
+                                lock (OutputPort.OutputLock)
                                 {
                                     buffer.Release();
                                 }
@@ -161,7 +160,7 @@ namespace MMALSharp.Components
                             }
 
                             // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.                    
-                            lock (MMALPortBase.OutputLock)
+                            lock (OutputPort.OutputLock)
                             {
                                 buffer.Release();
                             }
@@ -202,7 +201,7 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].Commit();
         }
 
-        internal void LogFormat(MMALEventFormat format, MMALPortImpl port)
+        internal void LogFormat(MMALEventFormat format, IPort port)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -242,7 +241,7 @@ namespace MMALSharp.Components
         {
             // Get buffer from input port pool                
             MMALBufferImpl inputBuffer;
-            lock (MMALPortBase.InputLock)
+            lock (InputPort.InputLock)
             {                
                 inputBuffer = this.Inputs[0].BufferPool.Queue.GetBuffer();
 
@@ -261,7 +260,7 @@ namespace MMALSharp.Components
         {
             while (true)
             {
-                lock (MMALPortBase.OutputLock)
+                lock (OutputPort.OutputLock)
                 {
                     var tempBuf2 = this.Outputs[outputPort].BufferPool.Queue.GetBuffer();
 
@@ -294,7 +293,7 @@ namespace MMALSharp.Components
             // Port format changed
             this.Outputs[outputPort].ManagedOutputCallback.Callback(buffer);
             
-            lock (MMALPortBase.OutputLock)
+            lock (OutputPort.OutputLock)
             {                
                 buffer.Release();
             }
@@ -304,7 +303,7 @@ namespace MMALSharp.Components
             while (this.Outputs[outputPort].BufferPool.Queue.QueueLength() < this.Outputs[outputPort].BufferPool.HeadersNum)
             {
                 MMALLog.Logger.Debug("Queue length less than buffer pool num");
-                lock (MMALPortBase.OutputLock)
+                lock (OutputPort.OutputLock)
                 {
                     MMALLog.Logger.Debug("Getting buffer via Queue.Wait");
                     var tempBuf = WorkingQueue.Wait();                                        
@@ -323,12 +322,12 @@ namespace MMALSharp.Components
         
         internal override void InitialiseInputPort(int inputPort)
         {
-            this.Inputs[inputPort] = new MMALStillDecodeConvertPort(this.Inputs[inputPort]);
+            this.Inputs[inputPort] = new ImageFileDecodeInputPort(this.Inputs[inputPort]);
         }
 
         internal override void InitialiseOutputPort(int outputPort)
         {
-            this.Outputs[outputPort] = new MMALStillDecodeConvertPort(this.Outputs[outputPort]);
+            this.Outputs[outputPort] = new ImageFileDecodeOutputPort(this.Outputs[outputPort]);
         }
     }
 }

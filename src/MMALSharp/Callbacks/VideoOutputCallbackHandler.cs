@@ -8,6 +8,7 @@ using System.Linq;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Callbacks
 {
@@ -16,12 +17,12 @@ namespace MMALSharp.Callbacks
     /// </summary>
     public class VideoOutputCallbackHandler : DefaultOutputCallbackHandler
     {
-        public VideoOutputCallbackHandler(MMALPortBase port) 
+        public VideoOutputCallbackHandler(IOutputPort port) 
             : base(port)
         {
         }
 
-        public VideoOutputCallbackHandler(MMALPortBase port, MMALEncoding encoding)
+        public VideoOutputCallbackHandler(IOutputPort port, MMALEncoding encoding)
             : base(port, encoding)
         {
         }
@@ -36,12 +37,14 @@ namespace MMALSharp.Callbacks
             {
                 throw new ArgumentException($"Working port component is not of type {nameof(MMALVideoEncoder)}");
             }
+            
+            MMALLog.Logger.Debug("In video output callback");
 
             var component = (MMALVideoEncoder)this.WorkingPort.ComponentReference;
 
             if (component.PrepareSplit && buffer.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))
             {
-                ((VideoStreamCaptureHandler)component.Handler).Split();
+                ((VideoStreamCaptureHandler)this.WorkingPort.Handler).Split();
                 component.LastSplit = DateTime.Now;
                 component.PrepareSplit = false;
             }

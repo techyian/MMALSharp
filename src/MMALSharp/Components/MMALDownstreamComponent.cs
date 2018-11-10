@@ -9,6 +9,7 @@ using System.Drawing;
 using MMALSharp.Callbacks;
 using MMALSharp.Callbacks.Providers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Components
 {
@@ -26,14 +27,14 @@ namespace MMALSharp.Components
             : base(name)
         {
             MMALCamera.Instance.DownstreamComponents.Add(this);
-            this.ProcessingPorts = new Dictionary<int, MMALPortImpl>();
+            this.ProcessingPorts = new Dictionary<int, IOutputPort>();
         }
 
         public abstract int Width { get; set; }
 
         public abstract int Height { get; set; }
 
-        public Dictionary<int, MMALPortImpl> ProcessingPorts { get; set; }
+        public Dictionary<int, IOutputPort> ProcessingPorts { get; set; }
         
         /// <summary>
         /// Registers a <see cref="IInputCallbackHandler"/>.
@@ -69,7 +70,7 @@ namespace MMALSharp.Components
         /// If it exists, removes a <see cref="ConnectionCallbackHandlerBase"/> on the port specified.
         /// </summary>
         /// <param name="port">The port with a created connection.</param>
-        public void RemoveConnectionCallback(MMALPortBase port) =>
+        public void RemoveConnectionCallback(IPort port) =>
             ConnectionCallbackProvider.RemoveCallback(port.ConnectedReference);
 
         /// <summary>
@@ -80,7 +81,7 @@ namespace MMALSharp.Components
         /// <param name="pixelFormat">The pixel format the input port shall be expecting.</param>
         /// <param name="copyPort">The output port we are copying format data from.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        public virtual MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, MMALPortImpl copyPort, bool zeroCopy = false)
+        public virtual MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, IPort copyPort, bool zeroCopy = false)
         {
             this.InitialiseInputPort(0);
 
@@ -196,7 +197,7 @@ namespace MMALSharp.Components
             {
                 this.ProcessingPorts.Remove(outputPort);
             }
-            
+
             this.ProcessingPorts.Add(outputPort, this.Outputs[outputPort]);
             
             this.Inputs[0].ShallowCopy(this.Outputs[outputPort]);
@@ -261,9 +262,6 @@ namespace MMALSharp.Components
             MMALLog.Logger.Debug("Removing downstream component");
 
             this.ClosePipelineConnections();
-
-            // Remove any unmanaged resources held by the capture handler.
-            this.Handler?.Dispose();
 
             MMALCamera.Instance.DownstreamComponents.Remove(this);
 

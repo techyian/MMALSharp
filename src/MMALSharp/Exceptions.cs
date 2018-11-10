@@ -11,7 +11,7 @@ namespace MMALSharp
     /// <summary>
     /// Provides methods which support calling native methods.
     /// </summary>
-    public static class MMALCallerHelper
+    public static class MMALNativeExceptionHelper
     {
         /// <summary>
         /// Checks whether the provided MMAL_STATUS_T is equal to MMAL_SUCCESS and throws the associated exception in case of an error.

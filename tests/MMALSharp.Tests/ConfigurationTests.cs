@@ -11,16 +11,15 @@ using Xunit;
 
 namespace MMALSharp.Tests
 {
-    public class ConfigurationTests : TestBase
+    /*public class ConfigurationTests : TestBase
     {
         [Theory]
         [InlineData(MMALSensorMode.Mode0)]
         [InlineData(MMALSensorMode.Mode2)]
         [InlineData(MMALSensorMode.Mode4)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetSensorMode(MMALSensorMode mode)
-        {            
-            TestHelper.SetConfigurationDefaults();
+        {
             MMALCameraConfig.SensorMode = mode;
 
             Fixture.MMALCamera.ConfigureCameraSettings();
@@ -31,10 +30,9 @@ namespace MMALSharp.Tests
         [InlineData(40)]
         [InlineData(45)]
         [InlineData(-100)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetBrightness(double brightness)
-        {            
-            TestHelper.SetConfigurationDefaults();
+        {
             MMALCameraConfig.Brightness = brightness;
 
             if (brightness >= 0 && brightness <= 100)
@@ -53,10 +51,9 @@ namespace MMALSharp.Tests
         [InlineData(20)]
         [InlineData(38)]
         [InlineData(101)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetSharpness(double sharpness)
-        {            
-            TestHelper.SetConfigurationDefaults();
+        { 
             MMALCameraConfig.Sharpness = sharpness;
 
             if (sharpness >= -100 && sharpness <= 100)
@@ -75,10 +72,9 @@ namespace MMALSharp.Tests
         [InlineData(10)]
         [InlineData(54)]
         [InlineData(-200)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetContrast(double contrast)
-        {            
-            TestHelper.SetConfigurationDefaults();
+        {  
             MMALCameraConfig.Contrast = contrast;
 
             if (contrast >= -100 && contrast <= 100)
@@ -97,11 +93,9 @@ namespace MMALSharp.Tests
         [InlineData(30)]
         [InlineData(55)]
         [InlineData(90)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetSaturation(double saturation)
-        {            
-            TestHelper.SetConfigurationDefaults();
-
+        {    
             MMALCameraConfig.Saturation = saturation;
             Fixture.MMALCamera.ConfigureCameraSettings();
 
@@ -112,10 +106,9 @@ namespace MMALSharp.Tests
         [InlineData(100)]
         [InlineData(900)]
         [InlineData(0)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetIso(int iso)
-        {            
-            TestHelper.SetConfigurationDefaults();
+        {  
             MMALCameraConfig.ISO = iso;
 
             if ((iso >= 100 && iso <= 800) || iso == 0)
@@ -134,10 +127,9 @@ namespace MMALSharp.Tests
         [InlineData(5)]
         [InlineData(50)]
         [InlineData(-30)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetExposureCompensation(int expCompensation)
-        {            
-            TestHelper.SetConfigurationDefaults();
+        {   
             MMALCameraConfig.ExposureCompensation = expCompensation;
 
             if (expCompensation >= -10 && expCompensation <= 10)
@@ -155,11 +147,9 @@ namespace MMALSharp.Tests
         [InlineData(MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_BEACH)]
         [InlineData(MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_FIREWORKS)]
         [InlineData(MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_ANTISHAKE)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetExposureMode(MMAL_PARAM_EXPOSUREMODE_T expMode)
-        {            
-            TestHelper.SetConfigurationDefaults();
-
+        {    
             MMALCameraConfig.ExposureMode = expMode;
             Fixture.MMALCamera.ConfigureCameraSettings();
 
@@ -170,11 +160,9 @@ namespace MMALSharp.Tests
         [InlineData(MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_BACKLIT)]
         [InlineData(MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_MATRIX)]
         [InlineData(MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetExposureMeteringMode(MMAL_PARAM_EXPOSUREMETERINGMODE_T expMetMode)
-        {            
-            TestHelper.SetConfigurationDefaults();
-
+        {     
             MMALCameraConfig.ExposureMeterMode = expMetMode;
             Fixture.MMALCamera.ConfigureCameraSettings();
 
@@ -185,11 +173,9 @@ namespace MMALSharp.Tests
         [InlineData(MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_AUTO)]
         [InlineData(MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_FLUORESCENT)]
         [InlineData(MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_CLOUDY)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetAwbMode(MMAL_PARAM_AWBMODE_T awbMode)
-        {            
-            TestHelper.SetConfigurationDefaults();
-
+        {    
             MMALCameraConfig.AwbMode = awbMode;
             Fixture.MMALCamera.ConfigureCameraSettings();
 
@@ -200,11 +186,9 @@ namespace MMALSharp.Tests
         [InlineData(MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_CARTOON)]
         [InlineData(MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_COLOURBALANCE)]
         [InlineData(MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_OILPAINT)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetImageFx(MMAL_PARAM_IMAGEFX_T imgFx)
-        {            
-            TestHelper.SetConfigurationDefaults();
-
+        {      
             MMALCameraConfig.ImageFx = imgFx;
             Fixture.MMALCamera.ConfigureCameraSettings();
             Assert.True(Fixture.MMALCamera.Camera.GetImageFx() == imgFx);
@@ -214,11 +198,9 @@ namespace MMALSharp.Tests
         [InlineData(true, 128, 128)]
         [InlineData(true, 50, 100)]
         [InlineData(false, 128, 128)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetColourFx(bool enable, byte u, byte v)
-        {            
-            TestHelper.SetConfigurationDefaults();
-
+        {        
             var color = MMALColor.FromYUVBytes(0, u, v);
 
             var colFx = new ColourEffects(enable, color);
@@ -239,11 +221,9 @@ namespace MMALSharp.Tests
         [InlineData(140, 90)]
         [InlineData(250, 180)]
         [InlineData(270, 270)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetRotation(int rotation, int expectedResult)
-        {            
-            TestHelper.SetConfigurationDefaults();
-
+        {     
             MMALCameraConfig.Rotation = rotation;
             Fixture.MMALCamera.ConfigureCameraSettings();
 
@@ -254,11 +234,9 @@ namespace MMALSharp.Tests
         [InlineData(MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_HORIZONTAL)]
         [InlineData(MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_BOTH)]
         [InlineData(MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_VERTICAL)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetFlips(MMAL_PARAM_MIRROR_T flips)
-        {            
-            TestHelper.SetConfigurationDefaults();
-
+        {     
             MMALCameraConfig.Flips = flips;
             Fixture.MMALCamera.ConfigureCameraSettings();
             Assert.True(Fixture.MMALCamera.Camera.GetFlips() == flips &&
@@ -270,11 +248,9 @@ namespace MMALSharp.Tests
         [InlineData(0.1, 0.1, 0.5, 1.0)]
         [InlineData(0.5, 0.1, 0.5, 1.0)]
         [InlineData(0.1, 1.1, 0.5, 1.0)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetZoom(double x, double y, double width, double height)
-        {            
-            TestHelper.SetConfigurationDefaults();
-
+        {      
             var zoom = new Zoom(x, y, width, height);
 
             MMALCameraConfig.ROI = zoom;
@@ -296,11 +272,9 @@ namespace MMALSharp.Tests
 
         [Theory]
         [InlineData(2500)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetShutterSpeed(int shutterSpeed)
-        {            
-            TestHelper.SetConfigurationDefaults();
-
+        {   
             MMALCameraConfig.StillFramerate = new MMAL_RATIONAL_T(0, 0);
             MMALCameraConfig.SensorMode = MMALSensorMode.Mode1;
             MMALCameraConfig.AwbMode = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_OFF;
@@ -314,11 +288,9 @@ namespace MMALSharp.Tests
         [InlineData(MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_HIGH)]
         [InlineData(MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_LOW)]
         [InlineData(MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_MEDIUM)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetDrc(MMAL_PARAMETER_DRC_STRENGTH_T drc)
-        {            
-            TestHelper.SetConfigurationDefaults();
-
+        { 
             MMALCameraConfig.DrcLevel = drc;
             Fixture.MMALCamera.ConfigureCameraSettings();
             Assert.True(Fixture.MMALCamera.Camera.GetDRC() == drc);
@@ -327,14 +299,12 @@ namespace MMALSharp.Tests
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void SetThenGetStatsPass(bool statsPass)
-        {            
-            TestHelper.SetConfigurationDefaults();
-
+        {    
             MMALCameraConfig.StatsPass = statsPass;
             Fixture.MMALCamera.ConfigureCameraSettings();
             Assert.True(Fixture.MMALCamera.Camera.GetStatsPass() == statsPass);
         }
-    }
+    }*/
 }

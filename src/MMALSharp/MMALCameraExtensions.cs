@@ -11,7 +11,7 @@ using MMALSharp.Components;
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using MMALSharp.Utility;
-using static MMALSharp.MMALCallerHelper;
+using static MMALSharp.MMALNativeExceptionHelper;
 using static MMALSharp.Native.MMALParametersCamera;
 
 namespace MMALSharp
@@ -28,7 +28,7 @@ namespace MMALSharp
             MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, &value.Hdr), "Unable to set camera config.");
         }
 
-        internal static void SetChangeEventRequest(this MMALControlPort controlPort, MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T value)
+        internal static void SetChangeEventRequest(this IControlPort controlPort, MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T value)
         {
             MMALCheck(MMALPort.mmal_port_parameter_set(controlPort.Ptr, &value.Hdr), "Unable to set camera event request.");
         }

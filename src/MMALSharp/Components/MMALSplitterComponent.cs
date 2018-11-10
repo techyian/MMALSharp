@@ -46,7 +46,7 @@ namespace MMALSharp.Components
             set { _height = value; }
         }
 
-        public MMALSplitterComponent(ICaptureHandler handler)
+        public MMALSplitterComponent(params ICaptureHandler[] handler)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER, handler)
         {
         }

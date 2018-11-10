@@ -11,14 +11,14 @@ namespace MMALSharp.Callbacks
     /// <summary>
     /// A default callback handler for Output and Control ports.
     /// </summary>
-    public class DefaultOutputCallbackHandler : OutputCallbackHandlerBase
+    public class DefaultControlCallbackHandler : ControlCallbackHandlerBase
     {
-        public DefaultOutputCallbackHandler(IOutputPort port)
+        public DefaultControlCallbackHandler(IControlPort port)
             : base(port)
         {
         }
 
-        public DefaultOutputCallbackHandler(IOutputPort port, MMALEncoding encodingType)
+        public DefaultControlCallbackHandler(IControlPort port, MMALEncoding encodingType)
             : base(port, encodingType)
         {
         }

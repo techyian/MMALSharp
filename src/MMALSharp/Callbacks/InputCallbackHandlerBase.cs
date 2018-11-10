@@ -6,6 +6,7 @@
 using System;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Callbacks
 {
@@ -19,14 +20,14 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// The port this callback handler is used with.
         /// </summary>
-        public MMALPortBase WorkingPort { get; internal set; }
+        public IInputPort WorkingPort { get; internal set; }
 
-        protected InputCallbackHandlerBase(MMALPortBase port)
+        protected InputCallbackHandlerBase(IInputPort port)
         {
             this.WorkingPort = port;
         }
 
-        protected InputCallbackHandlerBase(MMALPortBase port, MMALEncoding encodingType)
+        protected InputCallbackHandlerBase(IInputPort port, MMALEncoding encodingType)
         {
             this.WorkingPort = port;
             this.EncodingType = encodingType;
@@ -49,7 +50,7 @@ namespace MMALSharp.Callbacks
                 throw new ArgumentException("Port Encoding Type not supported for this handler.");
             }
             
-            return this.WorkingPort.ComponentReference.Handler?.Process(buffer.AllocSize);
+            return this.WorkingPort.Handler?.Process(buffer.AllocSize);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace MMALSharp.Tests
     public class ColorConversionTests
     {        
         [Fact]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void FromCie1960()
         {          
             var cie1960 = MMALColor.RGBToCIE1960(Color.Blue);
@@ -22,7 +22,7 @@ namespace MMALSharp.Tests
         }
              
         [Fact]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void FromCiexyz()
         {           
             var cieXyz = MMALColor.RGBToCIEXYZ(Color.Blue);
@@ -32,7 +32,7 @@ namespace MMALSharp.Tests
         }
                 
         [Fact]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void FromYiq()
         {           
             var yiq = MMALColor.RGBToYIQ(Color.Blue);
@@ -42,7 +42,7 @@ namespace MMALSharp.Tests
         }
                 
         [Fact]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void FromYuv()
         {
             var fromYuvBytes = MMALColor.FromYUVBytes(0, 20, 20);
@@ -53,7 +53,7 @@ namespace MMALSharp.Tests
         }
 
         [Fact]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void RgbtoYuvBytes()
         {
             var yuvBytes = MMALColor.RGBToYUVBytes(Color.Blue);
@@ -63,7 +63,7 @@ namespace MMALSharp.Tests
         }
 
         [Fact]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void FromHls()
         {            
             var hls = MMALColor.RGBToHLS(Color.Blue);
@@ -73,7 +73,7 @@ namespace MMALSharp.Tests
         }
                 
         [Fact]
-        [DisplayTestMethodName]
+        [MMALTestsAttribute]
         public void FromHsv()
         {            
             var hsv = MMALColor.RGBToHSV(Color.Blue);

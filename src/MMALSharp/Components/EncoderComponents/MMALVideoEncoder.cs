@@ -8,11 +8,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
-using MMALSharp.Callbacks.Providers;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
-using static MMALSharp.MMALCallerHelper;
+using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp.Components
 {
@@ -97,7 +96,7 @@ namespace MMALSharp.Components
         {
             base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate, zeroCopy);
             
-            ((MMALVideoPort)this.Outputs[outputPort]).Timeout = this.Timeout;
+            ((VideoPort)this.Outputs[outputPort]).Timeout = this.Timeout;
             this.Outputs[outputPort].Ptr->BufferSize = 512 * 1024;
             this.Quality = quality;
             this.Bitrate = bitrate;
@@ -137,7 +136,7 @@ namespace MMALSharp.Components
         /// <inheritdoc />>
         internal override void InitialiseOutputPort(int outputPort)
         {
-            this.Outputs[outputPort] = new MMALVideoPort(this.Outputs[outputPort]);
+            this.Outputs[outputPort] = new VideoPort(this.Outputs[outputPort]);
         }
 
         internal void ConfigureBitrate(int outputPort)

@@ -11,7 +11,7 @@ using MMALSharp.Callbacks;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
-using static MMALSharp.MMALCallerHelper;
+using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp.Components
 {
@@ -115,11 +115,11 @@ namespace MMALSharp.Components
         {
             if (this.ContinuousCapture)
             {
-                this.Outputs[outputPort] = new MMALFastStillPort(this.Outputs[outputPort]);
+                this.Outputs[outputPort] = new FastStillPort(this.Outputs[outputPort]);
             }
             else
             {
-                this.Outputs[outputPort] = new MMALStillPort(this.Outputs[outputPort]);    
+                this.Outputs[outputPort] = new StillPort(this.Outputs[outputPort]);    
             }
         }
 

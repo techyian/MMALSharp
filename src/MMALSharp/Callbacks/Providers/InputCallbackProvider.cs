@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Callbacks.Providers
 {
@@ -16,7 +17,7 @@ namespace MMALSharp.Callbacks.Providers
         /// <summary>
         /// The list of active callback handlers.
         /// </summary>
-        public static Dictionary<MMALPortBase, InputCallbackHandlerBase> WorkingHandlers { get; private set; } = new Dictionary<MMALPortBase, InputCallbackHandlerBase>();
+        public static Dictionary<IInputPort, InputCallbackHandlerBase> WorkingHandlers { get; private set; } = new Dictionary<IInputPort, InputCallbackHandlerBase>();
 
         /// <summary>
         /// Register a new <see cref="InputCallbackHandlerBase"/>.
@@ -46,7 +47,7 @@ namespace MMALSharp.Callbacks.Providers
         /// <param name="port">The port we are retrieving the callback handler on.</param>
         /// <returns>A <see cref="InputCallbackHandlerBase"/> for a given port. If no handler is registered, a 
         /// <see cref="DefaultInputCallbackHandler"/> will be returned.</returns>
-        public static InputCallbackHandlerBase FindCallback(MMALPortBase port)
+        public static InputCallbackHandlerBase FindCallback(IInputPort port)
         {
             if (WorkingHandlers.ContainsKey(port))
             {
@@ -60,7 +61,7 @@ namespace MMALSharp.Callbacks.Providers
         /// Remove a callback handler for a given port.
         /// </summary>
         /// <param name="port">The port we are removing the callback handler on.</param>
-        public static void RemoveCallback(MMALPortBase port)
+        public static void RemoveCallback(IInputPort port)
         {
             if (WorkingHandlers.ContainsKey(port))
             {

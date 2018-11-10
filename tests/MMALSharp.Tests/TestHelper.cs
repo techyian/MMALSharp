@@ -29,6 +29,7 @@ namespace MMALSharp.Tests
             MMALCameraConfig.DrcLevel = MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_OFF;
             MMALCameraConfig.ShutterSpeed = 0;
             MMALCameraConfig.SensorMode = MMALSensorMode.Mode0;
+            MMALCameraConfig.VideoStabilisation = true; 
             MMALCameraConfig.StillEncoding = MMALEncoding.OPAQUE;
             MMALCameraConfig.StillSubFormat = MMALEncoding.I420;
         }

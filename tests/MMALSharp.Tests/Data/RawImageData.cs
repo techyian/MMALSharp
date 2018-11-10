@@ -14,8 +14,7 @@ namespace MMALSharp.Tests
             get
             {
                 yield return TestBase.Yuv420EncoderData;
-                yield return TestBase.Yuv422EncoderData;
-                yield return TestBase.Rgb24EncoderData;
+                yield return TestBase.Rgb16EncoderData;
                 yield return TestBase.Rgb24EncoderData;
                 yield return TestBase.RgbaEncoderData;                
             }

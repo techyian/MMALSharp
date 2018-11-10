@@ -1,4 +1,4 @@
-﻿// <copyright file="MMALControlPort.cs" company="Techyian">
+﻿// <copyright file="ControlPort.cs" company="Techyian">
 // Copyright (c) Ian Auty. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
@@ -8,16 +8,16 @@ using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
 using MMALSharp.Callbacks.Providers;
 using MMALSharp.Native;
-using static MMALSharp.MMALCallerHelper;
+using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp.Ports
 {
     /// <summary>
     /// Represents a control port.
     /// </summary>
-    public unsafe class MMALControlPort : MMALPortImpl
+    public unsafe class ControlPort : GenericPort, IControlPort
     {
-        public MMALControlPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
+        public ControlPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
             : base(ptr, comp, type, guid)
         {
         }
@@ -25,21 +25,21 @@ namespace MMALSharp.Ports
         /// <summary>
         /// A callback handler for Control ports we use to do further processing on buffer headers after they've been received by the native callback delegate.
         /// </summary>
-        public OutputCallbackHandlerBase ManagedControlCallback { get; set; }
+        public ControlCallbackHandlerBase ManagedControlCallback { get; set; }
 
         /// <summary>
         /// Monitor lock for control port callback method.
         /// </summary>
         internal static object ControlLock = new object();
-
+        
         /// <summary>
-        /// Enables processing on a port.
+        /// Enables processing on a control port.
         /// </summary>
-        internal override void EnableControlPort()
+        public void EnableControlPort()
         {
             if (!this.Enabled)
             {
-                this.ManagedControlCallback = OutputCallbackProvider.FindCallback(this);
+                this.ManagedControlCallback = ControlCallbackProvider.FindCallback(this);
 
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeControlPortCallback);
 
@@ -60,14 +60,19 @@ namespace MMALSharp.Ports
             }
         }
 
-        /// <summary>
-        /// The native callback MMAL passes buffer headers to.
-        /// </summary>
-        /// <param name="port">The port the buffer is sent to.</param>
-        /// <param name="buffer">The buffer header.</param>
-        internal override void NativeControlPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        public void Start()
         {
-            lock (MMALControlPort.ControlLock)
+            this.EnableControlPort();
+        }
+
+        /// <summary>
+        /// Represents the native callback method for a control port that's called by MMAL.
+        /// </summary>
+        /// <param name="port">Native port struct pointer.</param>
+        /// <param name="buffer">Native buffer header pointer.</param>
+        private void NativeControlPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        {
+            lock (ControlLock)
             {
                 if (MMALCameraConfig.Debug)
                 {

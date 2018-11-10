@@ -6,7 +6,7 @@
 using System;
 using System.Runtime.InteropServices;
 using MMALSharp.Native;
-using static MMALSharp.MMALCallerHelper;
+using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp.Components
 {

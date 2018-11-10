@@ -9,10 +9,16 @@ namespace MMALSharp.Components
 {
     public abstract class MMALDownstreamHandlerComponent : MMALDownstreamComponent
     {
-        protected MMALDownstreamHandlerComponent(string name, ICaptureHandler handler)
+        protected MMALDownstreamHandlerComponent(string name, params ICaptureHandler[] handlers)
             : base(name)
         {
-            this.Handler = handler;
+            if (handlers != null)
+            {
+                for (var i = 0; i < this.Outputs.Count; i++)
+                {
+                    this.Outputs[i].Handler = handlers[i];
+                }    
+            }
         }
     }
 }

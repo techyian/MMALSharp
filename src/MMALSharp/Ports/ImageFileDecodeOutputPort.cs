@@ -1,4 +1,4 @@
-﻿// <copyright file="MMALStillDecodeConvertPort.cs" company="Techyian">
+﻿// <copyright file="ImageFileDecodeOutputPort.cs" company="Techyian">
 // Copyright (c) Ian Auty. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
@@ -12,35 +12,16 @@ namespace MMALSharp.Ports
     /// <summary>
     /// A custom port definition used specifically when using encoder conversion functionality.
     /// </summary>
-    public unsafe class MMALStillDecodeConvertPort : MMALPortImpl
+    public unsafe class ImageFileDecodeOutputPort : OutputPort
     {
-        public MMALStillDecodeConvertPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
+        public ImageFileDecodeOutputPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
             : base(ptr, comp, type, guid)
         {
         }
 
-        public MMALStillDecodeConvertPort(MMALPortImpl copyFrom)
-            : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
+        public ImageFileDecodeOutputPort(IPort copyFrom)
+            : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid, copyFrom.Handler)
         {
-        }
-
-        internal override unsafe void NativeInputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
-        {
-            lock (MMALPortBase.InputLock)
-            {
-                if (MMALCameraConfig.Debug)
-                {
-                    MMALLog.Logger.Debug("Releasing input port buffer");
-                }
-
-                var bufferImpl = new MMALBufferImpl(buffer);
-                bufferImpl.Release();
-
-                if (!this.Trigger)
-                {
-                    this.Trigger = true;
-                }
-            }
         }
 
         /// <summary>
@@ -50,7 +31,7 @@ namespace MMALSharp.Ports
         /// <param name="buffer">The buffer header.</param>
         internal override void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
-            lock (MMALPortBase.OutputLock)
+            lock (OutputLock)
             {
                 var bufferImpl = new MMALBufferImpl(buffer);
 

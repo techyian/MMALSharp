@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 using MMALSharp.Utility;
 
 namespace MMALSharp
@@ -50,7 +51,7 @@ namespace MMALSharp
         /// Begin capture on one of the camera's output ports.
         /// </summary>
         /// <param name="port">An output port of the camera component.</param>
-        public void StartCapture(MMALPortImpl port)
+        public void StartCapture(IOutputPort port)
         {
             if (port == this.Camera.StillPort || port == this.Camera.VideoPort)
             {
@@ -62,7 +63,7 @@ namespace MMALSharp
         /// Stop capture on one of the camera's output ports.
         /// </summary>
         /// <param name="port">An output port of the camera component.</param>
-        public void StopCapture(MMALPortImpl port)
+        public void StopCapture(IOutputPort port)
         {
             if (port == this.Camera.StillPort || port == this.Camera.VideoPort)
             {
@@ -74,7 +75,7 @@ namespace MMALSharp
         /// Force capture to stop on a port (Still or Video).
         /// </summary>
         /// <param name="port">The capture port.</param>
-        public void ForceStop(MMALPortImpl port)
+        public void ForceStop(IOutputPort port)
         {
             port.Trigger = true;
         }
@@ -129,11 +130,11 @@ namespace MMALSharp
                 throw new PiCameraError("A connection was found to the Camera still port. No encoder should be connected to the Camera's still port for raw capture.");
             }
 
-            this.Camera.Handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            this.Camera.StillPort.Handler = handler ?? throw new ArgumentNullException(nameof(handler));
 
-            if (this.Camera.Handler.GetType().IsSubclassOf(typeof(FileStreamCaptureHandler)))
+            if (this.Camera.StillPort.Handler.GetType().IsSubclassOf(typeof(FileStreamCaptureHandler)))
             {
-                ((FileStreamCaptureHandler)this.Camera.Handler).NewFile();
+                ((FileStreamCaptureHandler)this.Camera.StillPort.Handler).NewFile();
             }
                 
             using (var renderer = new MMALNullSinkComponent())
@@ -286,7 +287,7 @@ namespace MMALSharp
         /// <param name="cameraPort">The camera port which image data is coming from.</param>
         /// <param name="cancellationToken">A CancellationToken to observe while waiting for a task to complete.</param>
         /// <returns>The awaitable Task.</returns>
-        public async Task ProcessAsync(MMALPortImpl cameraPort, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task ProcessAsync(IOutputPort cameraPort, CancellationToken cancellationToken = default(CancellationToken))
         {
             var handlerComponents = this.PopulateProcessingList();
             
@@ -317,7 +318,7 @@ namespace MMALSharp
                             }
                         }, cancellationToken));
                         
-                        component.Start(port);
+                        port.Start();
                     }
                 }
             }
@@ -341,20 +342,17 @@ namespace MMALSharp
                 await Task.WhenAll(tasks).ConfigureAwait(false);
             }
             
-            // If taking raw image, the camera component will hold the handler
-            this.Camera.Handler?.PostProcess();
-            
             // Disable the image encoder output port.
             foreach (var component in handlerComponents)
             {
-                // Apply any final processing on each component
-                component.Handler?.PostProcess();
-
                 foreach (var port in component.ProcessingPorts.Values)
                 {
+                    // Apply any final processing on each component
+                    port.Handler?.PostProcess();
+                    
                     if (port.ConnectedReference == null)
                     {
-                        component.Stop(port);
+                        port.Stop();
                     }
                 }
                 
@@ -453,27 +451,34 @@ namespace MMALSharp
             BcmHost.bcm_host_deinit();
         }
 
-        private async Task ProcessRawAsync(MMALPortImpl cameraPort,
+        /// <summary>
+        /// Acts as an isolated processor specifically used when capturing raw frames from the camera component.
+        /// </summary>
+        /// <param name="cameraPort">The camera component port (still or video).</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        /// <returns></returns>
+        private async Task ProcessRawAsync(IOutputPort cameraPort,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            MMALLog.Logger.Info("Processing raw image frames");
+            cameraPort.Trigger = false;
             
             var t = Task.Run(async () =>
             {
-                while (!this.Camera.StillPort.Trigger)
+                while (!cameraPort.Trigger)
                 {
                     await Task.Delay(50).ConfigureAwait(false);
                 }
-            });
+            }, cancellationToken);
             
             cameraPort.DisablePort();
-            this.Camera.Start(cameraPort);
+            cameraPort.Start();
                 
             this.StartCapture(cameraPort);
             await t.ConfigureAwait(false);
             
-            this.Camera.Handler?.PostProcess();
+            cameraPort.Handler?.PostProcess();
             this.StopCapture(cameraPort);
+            this.Camera.CleanPortPools();
         }
         
         /// <summary>
