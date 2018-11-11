@@ -11,7 +11,8 @@ using Xunit;
 
 namespace MMALSharp.Tests
 {
-    public class TestBase : IClassFixture<MMALFixture>
+    [Collection("MMALCollection")]
+    public class TestBase
     {
         private static MMALFixture _fixture;
         public static MMALFixture Fixture

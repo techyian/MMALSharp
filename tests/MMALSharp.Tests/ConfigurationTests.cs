@@ -11,7 +11,7 @@ using Xunit;
 
 namespace MMALSharp.Tests
 {
-    /*public class ConfigurationTests : TestBase
+    public class ConfigurationTests : TestBase
     {
         [Theory]
         [InlineData(MMALSensorMode.Mode0)]
@@ -306,5 +306,5 @@ namespace MMALSharp.Tests
             Fixture.MMALCamera.ConfigureCameraSettings();
             Assert.True(Fixture.MMALCamera.Camera.GetStatsPass() == statsPass);
         }
-    }*/
+    }
 }

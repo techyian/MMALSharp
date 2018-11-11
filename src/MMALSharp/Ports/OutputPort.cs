@@ -185,8 +185,6 @@ namespace MMALSharp.Ports
                     MMALLog.Logger.Debug("In native output callback");
                 }
                 
-                MMALLog.Logger.Debug("Here check 1");
-                
                 var bufferImpl = new MMALBufferImpl(buffer);
 
                 if (MMALCameraConfig.Debug)
@@ -203,19 +201,14 @@ namespace MMALSharp.Ports
                     this.ManagedOutputCallback.Callback(bufferImpl);
                 }
                 
-                MMALLog.Logger.Debug("Here check 2");
-                
                 // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
                 this.ReleaseOutputBuffer(bufferImpl);
 
-                MMALLog.Logger.Debug("Here check 3");
-                
                 // If this buffer signals the end of data stream, allow waiting thread to continue.
                 if (eos || failed)
                 {
                     MMALLog.Logger.Debug($"{this.ComponentReference.Name} {this.Name} End of stream. Signaling completion...");
                     this.Trigger = true;
-                    MMALLog.Logger.Debug("Here check 4");
                 }
             }
         }

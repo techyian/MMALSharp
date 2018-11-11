@@ -49,4 +49,10 @@ namespace MMALSharp.Tests
 
         public void Dispose() => this.MMALCamera.Cleanup();
     }
+
+    [CollectionDefinition("MMALCollection")]
+    public class MMALTestCollection : ICollectionFixture<MMALFixture>
+    {
+        
+    }
 }
