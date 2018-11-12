@@ -12,7 +12,7 @@ namespace MMALSharp.Ports
 {
     public interface IOutputPort : IPort
     {
-        OutputCallbackHandlerBase ManagedOutputCallback { get; set; }
+        IOutputCallbackHandler ManagedOutputCallback { get; set; }
         IInputPort ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort = 0, bool useCallback = false);
         IInputPort ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort, Func<IPort> callback);
         void EnableOutputPort(bool sendBuffers = true);

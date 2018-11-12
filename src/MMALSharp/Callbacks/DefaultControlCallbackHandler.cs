@@ -9,15 +9,24 @@ using MMALSharp.Ports;
 namespace MMALSharp.Callbacks
 {
     /// <summary>
-    /// A default callback handler for Output and Control ports.
+    /// A default callback handler for Control ports.
     /// </summary>
     public class DefaultControlCallbackHandler : ControlCallbackHandlerBase
     {
+        /// <summary>
+        /// Creates a new instance of <see cref="DefaultControlCallbackHandler"/>.
+        /// </summary>
+        /// <param name="port">The working <see cref="IControlPort"/>.</param>
         public DefaultControlCallbackHandler(IControlPort port)
             : base(port)
         {
         }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="DefaultControlCallbackHandler"/>.
+        /// </summary>
+        /// <param name="port">The working <see cref="IControlPort"/>.</param>
+        /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
         public DefaultControlCallbackHandler(IControlPort port, MMALEncoding encodingType)
             : base(port, encodingType)
         {

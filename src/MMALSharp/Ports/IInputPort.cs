@@ -10,7 +10,7 @@ namespace MMALSharp.Ports
 {
     public interface IInputPort : IPort
     {
-        InputCallbackHandlerBase ManagedInputCallback { get; set; }
+        IInputCallbackHandler ManagedInputCallback { get; set; }
         void EnableInputPort();
         void ReleaseInputBuffer(MMALBufferImpl bufferImpl);
         void Start();

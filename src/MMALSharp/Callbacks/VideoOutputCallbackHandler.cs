@@ -17,11 +17,20 @@ namespace MMALSharp.Callbacks
     /// </summary>
     public class VideoOutputCallbackHandler : DefaultOutputCallbackHandler
     {
+        /// <summary>
+        /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
+        /// </summary>
+        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
         public VideoOutputCallbackHandler(IOutputPort port) 
             : base(port)
         {
         }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
+        /// </summary>
+        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
+        /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
         public VideoOutputCallbackHandler(IOutputPort port, MMALEncoding encoding)
             : base(port, encoding)
         {

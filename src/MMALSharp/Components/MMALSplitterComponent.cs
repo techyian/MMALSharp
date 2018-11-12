@@ -18,6 +18,7 @@ namespace MMALSharp.Components
         private int _width;
         private int _height;
 
+        /// <inheritdoc />
         public override int Width
         {
             get
@@ -32,6 +33,7 @@ namespace MMALSharp.Components
             set { _width = value; }
         }
 
+        /// <inheritdoc />
         public override int Height
         {
             get
@@ -46,6 +48,10 @@ namespace MMALSharp.Components
             set { _height = value; }
         }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="MMALSplitterComponent"/>.
+        /// </summary>
+        /// <param name="handler">The capture handlers to associate with each splitter port.</param>
         public MMALSplitterComponent(params ICaptureHandler[] handler)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER, handler)
         {

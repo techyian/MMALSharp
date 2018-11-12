@@ -18,6 +18,7 @@ namespace MMALSharp.Components
         private int _width;
         private int _height;
 
+        /// <inheritdoc />
         public override int Width
         {
             get
@@ -32,6 +33,7 @@ namespace MMALSharp.Components
             set { _width = value; }
         }
 
+        /// <inheritdoc />
         public override int Height
         {
             get
@@ -46,6 +48,9 @@ namespace MMALSharp.Components
             set { _height = value; }
         }
 
+        /// <summary>
+        /// A <see cref="DateTime"/> for when you want processing to terminate on this component.
+        /// </summary>
         public DateTime? Timeout { get; set; }
         
         public MMALVideoDecoder(ICaptureHandler handler, DateTime? timeout = null)

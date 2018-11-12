@@ -53,14 +53,14 @@ namespace MMALSharp
         /// Indicates whether this component is enabled.
         /// </summary>
         public bool Enabled => this.Ptr->IsEnabled == 1;
+
+        internal bool ForceStopProcessing { get; set; }
         
         /// <summary>
         /// Native pointer to the component this object represents.
         /// </summary>
         private MMAL_COMPONENT_T* Ptr { get; }
-
-        internal bool ForceStopProcessing { get; set; }
-
+        
         /// <summary>
         /// Creates the MMAL Component by the given name.
         /// </summary>

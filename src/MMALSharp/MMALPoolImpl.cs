@@ -19,6 +19,9 @@ namespace MMALSharp
         /// </summary>
         public MMALQueueImpl Queue { get; set; }
 
+        /// <summary>
+        /// The number of buffer headers in this pool.
+        /// </summary>
         public uint HeadersNum => this.Ptr->HeadersNum;
 
         /// <summary>
@@ -50,6 +53,7 @@ namespace MMALSharp
             this.Queue = new MMALQueueImpl((*this.Ptr).Queue);
         }
         
+        /// <inheritdoc />
         public override void Dispose()
         {
             MMALLog.Logger.Debug("Disposing pool.");

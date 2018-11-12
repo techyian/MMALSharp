@@ -5,13 +5,20 @@
 
 namespace MMALSharp.Callbacks
 {
-    public abstract class ConnectionCallbackHandlerBase
+    /// <summary>
+    /// Base class for connection callback handlers.
+    /// </summary>
+    public abstract class ConnectionCallbackHandlerBase : IConnectionCallbackHandler
     {
         /// <summary>
         /// The port this callback handler is used with.
         /// </summary>
-        public MMALConnectionImpl WorkingConnection { get; internal set; }
+        public MMALConnectionImpl WorkingConnection { get; }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="ConnectionCallbackHandlerBase"/>.
+        /// </summary>
+        /// <param name="connection">The connection.</param>
         protected ConnectionCallbackHandlerBase(MMALConnectionImpl connection)
         {
             this.WorkingConnection = connection;

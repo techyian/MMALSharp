@@ -156,7 +156,7 @@ namespace MMALSharp.Components
                 int fullScreen = 0, noAspect = 0, copyProtect = 0;
                 uint displaySet = 0;
 
-                MMAL_RECT_T? previewWindow = new MMAL_RECT_T?();
+                MMAL_RECT_T? previewWindow = default(MMAL_RECT_T);
 
                 if (!this.Configuration.FullScreen)
                 {

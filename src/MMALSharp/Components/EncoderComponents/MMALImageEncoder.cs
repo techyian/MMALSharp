@@ -61,6 +61,10 @@ namespace MMALSharp.Components
         /// </summary>
         public ExifTag[] ExifTags { get; set; }
         
+        /// <summary>
+        /// If true, this component will be configured to process rapidly captured frames from the camera's video port.
+        /// Note: The component pipeline must be configured as such. 
+        /// </summary>
         public bool ContinuousCapture { get; set; }
         
         /// <summary>
@@ -69,6 +73,7 @@ namespace MMALSharp.Components
         /// <param name="handler">A handler to receive the encoded image data.</param>
         /// <param name="rawBayer">Specifies whether to include raw bayer image data.</param>
         /// <param name="useExif">Specifies whether any EXIF tags should be used.</param>
+        /// <param name="continuousCapture">Configure component for rapid capture mode.</param>
         /// <param name="exifTags">A collection of custom EXIF tags.</param>
         public MMALImageEncoder(ICaptureHandler handler, bool rawBayer = false, bool useExif = true, bool continuousCapture = false, params ExifTag[] exifTags)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER, handler)
@@ -96,7 +101,7 @@ namespace MMALSharp.Components
 
             if (this.ContinuousCapture)
             {
-                this.RegisterOutputCallback(new ImageOutputCallbackHandler(this.Outputs[outputPort]));    
+                this.RegisterOutputCallback(new FastImageOutputCallbackHandler(this.Outputs[outputPort]));    
             }
             
             return this;

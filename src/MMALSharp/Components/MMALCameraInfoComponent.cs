@@ -30,6 +30,9 @@ namespace MMALSharp.Components
         /// </summary>
         public int MaxHeight { get; set; }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="MMALCameraInfoComponent"/>.
+        /// </summary>
         public MMALCameraInfoComponent()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA_INFO)
         {

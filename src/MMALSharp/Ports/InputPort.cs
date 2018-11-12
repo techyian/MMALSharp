@@ -14,7 +14,7 @@ namespace MMALSharp.Ports
 {
     public class InputPort : GenericPort, IInputPort
     {
-        public InputCallbackHandlerBase ManagedInputCallback { get; set; }
+        public IInputCallbackHandler ManagedInputCallback { get; set; }
         
         /// <summary>
         /// Monitor lock for input port callback method.

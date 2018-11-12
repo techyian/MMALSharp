@@ -8,13 +8,23 @@ using MMALSharp.Ports;
 
 namespace MMALSharp.Components
 {
+    /// <summary>
+    /// This component is used to decode image data stored in a file.
+    /// </summary>
     public class MMALImageFileDecoder : MMALImageDecoder, IMMALConvert
     {        
+        /// <summary>
+        /// Creates a new instance of <see cref="MMALImageFileDecoder"/>.
+        /// </summary>
+        /// <param name="handler">The capture handle to use.</param>
         public MMALImageFileDecoder(ICaptureHandler handler)
             : base(handler)
         {
         }
 
+        /// <summary>
+        /// The working queue of buffer headers.
+        /// </summary>
         public static MMALQueueImpl WorkingQueue { get; set; }
 
         /// <inheritdoc />>
@@ -76,24 +86,7 @@ namespace MMALSharp.Components
 
             return this;
         }
-
-        public async Task WaitForTriggers(int outputPort = 0)
-        {
-            MMALLog.Logger.Debug("Waiting for trigger signal");
-
-            // Wait until the process is complete.
-            while (!this.Inputs[0].Trigger)
-            {
-                MMALLog.Logger.Info("Awaiting...");
-                await Task.Delay(2000).ConfigureAwait(false);
-                break;
-            }
-            
-            MMALLog.Logger.Debug("Resetting trigger state.");
-            this.Inputs[0].Trigger = false;
-            this.Outputs[outputPort].Trigger = false;
-        }
-
+        
         /// <summary>
         /// Encodes/decodes user provided image data.
         /// </summary>
@@ -146,6 +139,7 @@ namespace MMALSharp.Components
                                     buffer.Release();
                                 }
                             }
+                            
                             continue;
                         }
                         else
@@ -183,7 +177,17 @@ namespace MMALSharp.Components
             WorkingQueue.Dispose();
         }
 
-        internal unsafe void ConfigureOutputPortWithoutInit(int outputPort, MMALEncoding encodingType)
+        internal override void InitialiseInputPort(int inputPort)
+        {
+            this.Inputs[inputPort] = new ImageFileDecodeInputPort(this.Inputs[inputPort]);
+        }
+
+        internal override void InitialiseOutputPort(int outputPort)
+        {
+            this.Outputs[outputPort] = new ImageFileDecodeOutputPort(this.Outputs[outputPort]);
+        }
+        
+        private unsafe void ConfigureOutputPortWithoutInit(int outputPort, MMALEncoding encodingType)
         {
             if (encodingType != null)
             {
@@ -201,7 +205,7 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].Commit();
         }
 
-        internal void LogFormat(MMALEventFormat format, IPort port)
+        private void LogFormat(MMALEventFormat format, IPort port)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -237,7 +241,7 @@ namespace MMALSharp.Components
             MMALLog.Logger.Info(sb.ToString());
         }
         
-        internal void GetAndSendInputBuffer()
+        private void GetAndSendInputBuffer()
         {
             // Get buffer from input port pool                
             MMALBufferImpl inputBuffer;
@@ -256,7 +260,7 @@ namespace MMALSharp.Components
             }
         }
 
-        internal void GetAndSendOutputBuffer(int outputPort = 0)
+        private void GetAndSendOutputBuffer(int outputPort = 0)
         {
             while (true)
             {
@@ -277,8 +281,8 @@ namespace MMALSharp.Components
                 }
             }
         }
-
-        internal void ProcessFormatChangedEvent(MMALBufferImpl buffer, int outputPort = 0)
+        
+        private void ProcessFormatChangedEvent(MMALBufferImpl buffer, int outputPort = 0)
         {            
             MMALLog.Logger.Debug("Received MMAL_EVENT_FORMAT_CHANGED event");
 
@@ -320,14 +324,21 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].EnableOutputPort(false);            
         }
         
-        internal override void InitialiseInputPort(int inputPort)
+        private async Task WaitForTriggers(int outputPort = 0)
         {
-            this.Inputs[inputPort] = new ImageFileDecodeInputPort(this.Inputs[inputPort]);
-        }
+            MMALLog.Logger.Debug("Waiting for trigger signal");
 
-        internal override void InitialiseOutputPort(int outputPort)
-        {
-            this.Outputs[outputPort] = new ImageFileDecodeOutputPort(this.Outputs[outputPort]);
+            // Wait until the process is complete.
+            while (!this.Inputs[0].Trigger)
+            {
+                MMALLog.Logger.Info("Awaiting...");
+                await Task.Delay(2000).ConfigureAwait(false);
+                break;
+            }
+            
+            MMALLog.Logger.Debug("Resetting trigger state.");
+            this.Inputs[0].Trigger = false;
+            this.Outputs[outputPort].Trigger = false;
         }
     }
 }

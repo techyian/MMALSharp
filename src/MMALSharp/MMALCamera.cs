@@ -143,7 +143,6 @@ namespace MMALSharp
                 this.Camera.PreviewPort.ConnectTo(renderer);
                 
                 // Enable the image encoder output port.
-                
                 MMALLog.Logger.Info($"Preparing to take raw picture - Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}. " +
                                   $"Encoder: {MMALCameraConfig.StillEncoding.EncodingName}. Pixel Format: {MMALCameraConfig.StillSubFormat.EncodingName}.");
 
@@ -456,7 +455,7 @@ namespace MMALSharp
         /// </summary>
         /// <param name="cameraPort">The camera component port (still or video).</param>
         /// <param name="cancellationToken">The cancellation token</param>
-        /// <returns></returns>
+        /// <returns>The awaitable task.</returns>
         private async Task ProcessRawAsync(IOutputPort cameraPort,
             CancellationToken cancellationToken = default(CancellationToken))
         {

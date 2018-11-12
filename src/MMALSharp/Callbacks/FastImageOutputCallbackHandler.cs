@@ -12,14 +12,26 @@ using MMALSharp.Ports;
 
 namespace MMALSharp.Callbacks
 {
-    public class ImageOutputCallbackHandler : DefaultOutputCallbackHandler
+    /// <summary>
+    /// A callback handler specifically for rapid image capture from the camera's video port.
+    /// </summary>
+    public class FastImageOutputCallbackHandler : DefaultOutputCallbackHandler
     {
-        public ImageOutputCallbackHandler(IOutputPort port)
+        /// <summary>
+        /// Creates a new instance of <see cref="FastImageOutputCallbackHandler"/>.
+        /// </summary>
+        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
+        public FastImageOutputCallbackHandler(IOutputPort port)
             : base(port)
         {
         }
 
-        public ImageOutputCallbackHandler(IOutputPort port, MMALEncoding encoding)
+        /// <summary>
+        /// Creates a new instance of <see cref="FastImageOutputCallbackHandler"/>.
+        /// </summary>
+        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
+        /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
+        public FastImageOutputCallbackHandler(IOutputPort port, MMALEncoding encoding)
             : base(port, encoding)
         {
         }
@@ -37,7 +49,7 @@ namespace MMALSharp.Callbacks
 
             base.Callback(buffer);
             
-            var component = (MMALImageEncoder) this.WorkingPort.ComponentReference;
+            var component = (MMALImageEncoder)this.WorkingPort.ComponentReference;
             var eos = buffer.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END ||
                                                  c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
 
@@ -49,7 +61,7 @@ namespace MMALSharp.Callbacks
 
             if (eos && this.WorkingPort.Handler.GetType() == typeof(ImageStreamCaptureHandler))
             {
-                ((ImageStreamCaptureHandler) this.WorkingPort.Handler).NewFile();
+                ((ImageStreamCaptureHandler)this.WorkingPort.Handler).NewFile();
             }
         }
     }

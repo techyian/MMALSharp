@@ -16,7 +16,7 @@ namespace MMALSharp.Ports
 {
     public class OutputPort : GenericPort, IOutputPort
     {
-        public OutputCallbackHandlerBase ManagedOutputCallback { get; set; }
+        public IOutputCallbackHandler ManagedOutputCallback { get; set; }
         
         /// <summary>
         /// Monitor lock for output port callback method.

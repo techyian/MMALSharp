@@ -10,7 +10,10 @@ using MMALSharp.Ports;
 
 namespace MMALSharp.Callbacks
 {
-    public abstract class InputCallbackHandlerBase
+    /// <summary>
+    /// Base class for input port callback handlers.
+    /// </summary>
+    public abstract class InputCallbackHandlerBase : IInputCallbackHandler
     {
         /// <summary>
         /// A whitelisted Encoding Type that this callback handler will operate on.
@@ -20,13 +23,22 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// The port this callback handler is used with.
         /// </summary>
-        public IInputPort WorkingPort { get; internal set; }
+        public IInputPort WorkingPort { get; }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="InputCallbackHandlerBase"/>.
+        /// </summary>
+        /// <param name="port">The working <see cref="IInputPort"/>.</param>
         protected InputCallbackHandlerBase(IInputPort port)
         {
             this.WorkingPort = port;
         }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="InputCallbackHandlerBase"/>.
+        /// </summary>
+        /// <param name="port">The working <see cref="IInputPort"/>.</param>
+        /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
         protected InputCallbackHandlerBase(IInputPort port, MMALEncoding encodingType)
         {
             this.WorkingPort = port;

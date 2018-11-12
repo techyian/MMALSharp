@@ -500,8 +500,8 @@ namespace MMALSharp
         /// <summary>
         /// Sets the ISO to the specified value. Range from 100 to 800.
         /// </summary>
-        /// <param name="camera"></param>
-        /// <param name="iso"></param>
+        /// <param name="camera">The camera component.</param>
+        /// <param name="iso">The ISO value.</param>
         /// <exception cref="ArgumentOutOfRangeException"/>
         internal static void SetISO(this MMALCameraComponent camera, int iso)
         {
@@ -546,8 +546,8 @@ namespace MMALSharp
         /// <summary>
         /// Sets the exposure compensation to the specified value. Range from -10 to 10.
         /// </summary>
-        /// <param name="camera"></param>
-        /// <param name="expCompensation"></param>
+        /// <param name="camera">The camera component.</param>
+        /// <param name="expCompensation">The exposure compensation value.</param>
         internal static void SetExposureCompensation(this MMALCameraComponent camera, int expCompensation)
         {
             MMALLog.Logger.Debug($"Setting exposure compensation: {expCompensation}");
@@ -909,8 +909,8 @@ namespace MMALSharp
         /// <summary>
         /// Sets the zoom to the specified value. Each parameter must not be greater than 1.0.
         /// </summary>
-        /// <param name="camera"></param>
-        /// <param name="rect"></param>
+        /// <param name="camera">The camera component.</param>
+        /// <param name="rect">The region of interest.</param>
         internal static void SetZoom(this MMALCameraComponent camera, Zoom rect)
         {
             if (rect.X > 1.0 || rect.Y > 1.0 || rect.Height > 1.0 || rect.Width > 1.0)

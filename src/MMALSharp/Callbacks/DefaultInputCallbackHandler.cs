@@ -13,11 +13,20 @@ namespace MMALSharp.Callbacks
     /// </summary>
     public class DefaultInputCallbackHandler : InputCallbackHandlerBase
     {
+        /// <summary>
+        /// Creates a new instance of <see cref="DefaultInputCallbackHandler"/>.
+        /// </summary>
+        /// <param name="port">The working <see cref="IInputPort"/>.</param>
         public DefaultInputCallbackHandler(IInputPort port) 
             : base(port)
         {
         }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="DefaultInputCallbackHandler"/>.
+        /// </summary>
+        /// <param name="port">The working <see cref="IInputPort"/>.</param>
+        /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
         public DefaultInputCallbackHandler(IInputPort port, MMALEncoding encodingType)
             : base(port, encodingType)
         {

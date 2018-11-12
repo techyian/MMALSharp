@@ -17,7 +17,7 @@ namespace MMALSharp.Native
     {
         /// <summary>
         /// Gets a list of all supported encodings.
-        /// Call <see cref="MMALPortExtensions.GetSupportedEncodings(MMALPortImpl)"/> to get supported encodings for a specific port.
+        /// Call <see cref="PortExtensions.GetSupportedEncodings"/> to get supported encodings for a specific port.
         /// </summary>
         public static IReadOnlyCollection<MMALEncoding> EncodingList { get; } = new ReadOnlyCollection<MMALEncoding>(new List<MMALEncoding>
         {
