@@ -16,7 +16,7 @@ namespace MMALSharp.Processors
             this.CameraVersion = camVersion;
         }
 
-        public void Apply(byte[] store)
+        public void Apply(byte[] store, IImageContext context)
         {
             byte[] array = null;
             

@@ -5,6 +5,7 @@
 
 using System;
 using System.Drawing;
+using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 

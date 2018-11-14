@@ -1,4 +1,5 @@
 using System.IO;
+using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Native;
 

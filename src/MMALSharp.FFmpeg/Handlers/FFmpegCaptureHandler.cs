@@ -6,6 +6,8 @@
 using System;
 using System.Diagnostics;
 using System.Text;
+using MMALSharp.Common;
+using MMALSharp.Common.PixelFormats;
 using MMALSharp.Common.Utility;
 using MMALSharp.Processors;
 
@@ -98,6 +100,11 @@ namespace MMALSharp.Handlers
         public bool CanSplit() => false;
         
         public void PostProcess() { }
+        
+        public void Manipulate(Action<IFrameProcessingContext> context, IImageContext imageContext)
+        {
+            throw new NotImplementedException();
+        }
 
         public string GetDirectory()
             => throw new NotImplementedException();

@@ -5,10 +5,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using MMALSharp.Common.Utility;
-using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using static MMALSharp.MMALNativeExceptionHelper;

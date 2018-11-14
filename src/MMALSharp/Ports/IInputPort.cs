@@ -4,7 +4,6 @@
 // </copyright>
 
 using MMALSharp.Callbacks;
-using MMALSharp.Native;
 
 namespace MMALSharp.Ports
 {

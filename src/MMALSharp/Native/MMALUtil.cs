@@ -20,11 +20,6 @@ namespace MMALSharp.Native
         /// </summary>
         public static long MMAL_TIME_UNKNOWN => 1 << 63;
 
-        public static int VCOS_ALIGN_UP(int value, int roundTo)
-        {
-            return (int)(Math.Ceiling(value / Convert.ToDouble(roundTo)) * roundTo);
-        }
-
         public static int MMAL_FOURCC(string s)
         {
             int a1 = s[0];

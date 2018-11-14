@@ -5,6 +5,7 @@
 
 using System;
 using System.Linq;
+using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;

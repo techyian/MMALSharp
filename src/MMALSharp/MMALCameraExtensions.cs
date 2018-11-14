@@ -11,7 +11,6 @@ using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Native;
 using MMALSharp.Ports;
-using MMALSharp.Utility;
 using static MMALSharp.MMALNativeExceptionHelper;
 using static MMALSharp.Native.MMALParametersCamera;
 

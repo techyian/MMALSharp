@@ -6,7 +6,6 @@
 using System;
 using MMALSharp.Callbacks;
 using MMALSharp.Components;
-using MMALSharp.Native;
 
 namespace MMALSharp.Ports
 {

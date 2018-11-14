@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using MMALSharp.Common;
 
 namespace MMALSharp.Processors
 {
@@ -13,7 +14,7 @@ namespace MMALSharp.Processors
             this.Text = text;
         }
 
-        public void Apply(byte[] store)
+        public void Apply(byte[] store, IImageContext context)
         {
             throw new NotImplementedException();
         }

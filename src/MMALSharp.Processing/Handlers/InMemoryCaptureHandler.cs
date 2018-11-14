@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using MMALSharp.Common;
+using MMALSharp.Common.PixelFormats;
+using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers
 {
@@ -29,6 +32,13 @@ namespace MMALSharp.Handlers
 
         public virtual void PostProcess()
         {
+        }
+
+        public void Manipulate(Action<IFrameProcessingContext> context, IImageContext imageContext)
+        {
+            var tempData = this.WorkingData.ToArray();
+            context(new FrameProcessingContext(tempData, imageContext));
+            this.WorkingData = new List<byte>(tempData);
         }
     }
 }

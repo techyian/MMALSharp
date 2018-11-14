@@ -12,7 +12,6 @@ using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
-using MMALSharp.Utility;
 
 namespace MMALSharp
 {

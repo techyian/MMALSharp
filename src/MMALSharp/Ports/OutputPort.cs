@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
 using MMALSharp.Callbacks.Providers;
+using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;

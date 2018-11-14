@@ -4,6 +4,8 @@
 // </copyright>
 
 using System;
+using MMALSharp.Common;
+using MMALSharp.Common.PixelFormats;
 using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers
@@ -35,6 +37,6 @@ namespace MMALSharp.Handlers
         /// Allows manipulating of the image frame.
         /// </summary>
         /// <param name="context">A delegate to the manipulation you wish to carry out.</param>
-        void Manipulate(Action<IFrameProcessingContext> context);
+        void Manipulate(Action<IFrameProcessingContext> context, IImageContext imageContext);
     }
 }

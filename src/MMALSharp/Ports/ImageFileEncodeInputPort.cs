@@ -4,7 +4,7 @@
 // </copyright>
 
 using System;
-using MMALSharp.Components;
+using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 
 namespace MMALSharp.Ports

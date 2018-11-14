@@ -7,6 +7,7 @@ using System;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
 using MMALSharp.Callbacks.Providers;
+using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 using static MMALSharp.MMALNativeExceptionHelper;
 

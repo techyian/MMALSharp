@@ -5,6 +5,8 @@
 
 using System;
 using System.IO;
+using MMALSharp.Common;
+using MMALSharp.Common.PixelFormats;
 using MMALSharp.Common.Utility;
 using MMALSharp.Processors;
 
@@ -66,11 +68,8 @@ namespace MMALSharp.Handlers
             }
         }
 
-        /// <summary>
-        /// Allows manipulating of the image frame.
-        /// </summary>
-        /// <param name="action">A delegate to the manipulation you wish to carry out.</param>
-        public void Manipulate(Action<IFrameProcessingContext> action)
+        /// <inheritdoc />
+        public void Manipulate(Action<IFrameProcessingContext> context, IImageContext imageContext) 
         {
             if (this.CurrentStream != null && this.CurrentStream.Length > 0)
             {
@@ -83,7 +82,7 @@ namespace MMALSharp.Handlers
 
                     arr = ms.ToArray();
 
-                    action(new FrameProcessingContext(arr));
+                    context(new FrameProcessingContext(arr, imageContext));
                 }
 
                 using (var ms = new MemoryStream(arr))
