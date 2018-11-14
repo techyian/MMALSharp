@@ -10,6 +10,7 @@ using MMALSharp.Callbacks;
 using MMALSharp.Callbacks.Providers;
 using MMALSharp.Common.Utility;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Components
 {
@@ -27,20 +28,29 @@ namespace MMALSharp.Components
             : base(name)
         {
             MMALCamera.Instance.DownstreamComponents.Add(this);
-            this.ProcessingPorts = new Dictionary<int, MMALPortImpl>();
+            this.ProcessingPorts = new Dictionary<int, IOutputPort>();
         }
 
+        /// <summary>
+        /// The width that this component will try to output data in.   
+        /// </summary>
         public abstract int Width { get; set; }
 
+        /// <summary>
+        /// The height that this component will try to output data in.   
+        /// </summary>
         public abstract int Height { get; set; }
 
-        public Dictionary<int, MMALPortImpl> ProcessingPorts { get; set; }
+        /// <summary>
+        /// A list of working ports which are processing data in the component pipeline.
+        /// </summary>
+        public Dictionary<int, IOutputPort> ProcessingPorts { get; set; }
         
         /// <summary>
         /// Registers a <see cref="IInputCallbackHandler"/>.
         /// </summary>
         /// <param name="handler">The input handler.</param>
-        public void RegisterInputCallback(InputCallbackHandlerBase handler) => InputCallbackProvider.RegisterCallback(handler);
+        public void RegisterInputCallback(IInputCallbackHandler handler) => InputCallbackProvider.RegisterCallback(handler);
 
         /// <summary>
         /// If it exists, removes a <see cref="IInputCallbackHandler"/> on this component's input port.
@@ -48,29 +58,29 @@ namespace MMALSharp.Components
         public void RemoveInputCallback() => InputCallbackProvider.RemoveCallback(this.Inputs[0]);
         
         /// <summary>
-        /// Registers a <see cref="OutputCallbackHandlerBase"/>.
+        /// Registers a <see cref="IOutputCallbackHandler"/>.
         /// </summary>
         /// <param name="handler">The output handler.</param>
-        public void RegisterOutputCallback(OutputCallbackHandlerBase handler) => OutputCallbackProvider.RegisterCallback(handler);
+        public void RegisterOutputCallback(IOutputCallbackHandler handler) => OutputCallbackProvider.RegisterCallback(handler);
 
         /// <summary>
-        /// If it exists, removes a <see cref="ICallbackHandler"/> on the port specified.
+        /// If it exists, removes a <see cref="IOutputCallbackHandler"/> on the port specified.
         /// </summary>
         /// <param name="outputPort">The output port number.</param>
         public void RemoveOutputCallback(int outputPort) =>
             OutputCallbackProvider.RemoveCallback(this.Outputs[outputPort]);
 
         /// <summary>
-        /// Registers a <see cref="ConnectionCallbackHandlerBase"/>.
+        /// Registers a <see cref="IConnectionCallbackHandler"/>.
         /// </summary>
         /// <param name="handler">The output handler.</param>
-        public void RegisterConnectionCallback(ConnectionCallbackHandlerBase handler) => ConnectionCallbackProvider.RegisterCallback(handler);
+        public void RegisterConnectionCallback(IConnectionCallbackHandler handler) => ConnectionCallbackProvider.RegisterCallback(handler);
 
         /// <summary>
-        /// If it exists, removes a <see cref="ConnectionCallbackHandlerBase"/> on the port specified.
+        /// If it exists, removes a <see cref="IConnectionCallbackHandler"/> on the port specified.
         /// </summary>
         /// <param name="port">The port with a created connection.</param>
-        public void RemoveConnectionCallback(MMALPortBase port) =>
+        public void RemoveConnectionCallback(IPort port) =>
             ConnectionCallbackProvider.RemoveCallback(port.ConnectedReference);
         
         /// <summary>
@@ -81,7 +91,8 @@ namespace MMALSharp.Components
         /// <param name="pixelFormat">The pixel format the input port shall be expecting.</param>
         /// <param name="copyPort">The output port we are copying format data from.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        public virtual MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, MMALPortImpl copyPort, bool zeroCopy = false)
+        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
+        public virtual MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, IPort copyPort, bool zeroCopy = false)
         {
             this.InitialiseInputPort(0);
 
@@ -118,6 +129,7 @@ namespace MMALSharp.Components
         /// <param name="encodingType">The encoding type the input port will expect data in.</param>
         /// <param name="pixelFormat">The pixel format the input port will expect data in.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
+        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, bool zeroCopy = false)
         {
             return this.ConfigureInputPort(encodingType, pixelFormat, 0, 0, zeroCopy);
@@ -132,6 +144,7 @@ namespace MMALSharp.Components
         /// <param name="width">The width of the incoming frame.</param>
         /// <param name="height">The height of the incoming frame.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
+        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual unsafe MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, bool zeroCopy = false)
         {
             this.InitialiseInputPort(0);
@@ -175,6 +188,7 @@ namespace MMALSharp.Components
         /// <param name="quality">The quality of our outputted data.</param>
         /// <param name="bitrate">The bitrate we are sending data at.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
+        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual MMALDownstreamComponent ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
             return this.ConfigureOutputPort(0, encodingType, pixelFormat, quality, bitrate, zeroCopy);
@@ -189,6 +203,7 @@ namespace MMALSharp.Components
         /// <param name="quality">The quality of our outputted data.</param>
         /// <param name="bitrate">The bitrate we are sending data at.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
+        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
         {
             this.InitialiseOutputPort(outputPort);
@@ -197,7 +212,7 @@ namespace MMALSharp.Components
             {
                 this.ProcessingPorts.Remove(outputPort);
             }
-            
+
             this.ProcessingPorts.Add(outputPort, this.Outputs[outputPort]);
             
             this.Inputs[0].ShallowCopy(this.Outputs[outputPort]);
@@ -262,9 +277,6 @@ namespace MMALSharp.Components
             MMALLog.Logger.Debug("Removing downstream component");
 
             this.ClosePipelineConnections();
-
-            // Remove any unmanaged resources held by the capture handler.
-            this.Handler?.Dispose();
 
             MMALCamera.Instance.DownstreamComponents.Remove(this);
 

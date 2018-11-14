@@ -120,6 +120,7 @@ namespace MMALSharp.Native
         public byte* data;
         public uint allocSize, length, offset, flags;
         public long pts, dts;
+        
         private IntPtr type, userData;
 
         public MMAL_BUFFER_HEADER_T* Next => this.next;

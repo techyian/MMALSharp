@@ -11,7 +11,8 @@ using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Native;
 using MMALSharp.Ports;
-using static MMALSharp.MMALCallerHelper;
+using MMALSharp.Utility;
+using static MMALSharp.MMALNativeExceptionHelper;
 using static MMALSharp.Native.MMALParametersCamera;
 
 namespace MMALSharp
@@ -28,7 +29,7 @@ namespace MMALSharp
             MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, &value.Hdr), "Unable to set camera config.");
         }
 
-        internal static void SetChangeEventRequest(this MMALControlPort controlPort, MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T value)
+        internal static void SetChangeEventRequest(this IControlPort controlPort, MMAL_PARAMETER_CHANGE_EVENT_REQUEST_T value)
         {
             MMALCheck(MMALPort.mmal_port_parameter_set(controlPort.Ptr, &value.Hdr), "Unable to set camera event request.");
         }
@@ -500,8 +501,8 @@ namespace MMALSharp
         /// <summary>
         /// Sets the ISO to the specified value. Range from 100 to 800.
         /// </summary>
-        /// <param name="camera"></param>
-        /// <param name="iso"></param>
+        /// <param name="camera">The camera component.</param>
+        /// <param name="iso">The ISO value.</param>
         /// <exception cref="ArgumentOutOfRangeException"/>
         internal static void SetISO(this MMALCameraComponent camera, int iso)
         {
@@ -546,8 +547,8 @@ namespace MMALSharp
         /// <summary>
         /// Sets the exposure compensation to the specified value. Range from -10 to 10.
         /// </summary>
-        /// <param name="camera"></param>
-        /// <param name="expCompensation"></param>
+        /// <param name="camera">The camera component.</param>
+        /// <param name="expCompensation">The exposure compensation value.</param>
         internal static void SetExposureCompensation(this MMALCameraComponent camera, int expCompensation)
         {
             MMALLog.Logger.Debug($"Setting exposure compensation: {expCompensation}");
@@ -846,7 +847,30 @@ namespace MMALSharp
         /// </summary>
         /// <param name="camera">The camera component.</param>
         /// <returns>The Flips value.</returns>
-        public static MMAL_PARAM_MIRROR_T GetFlips(this MMALCameraComponent camera)
+        public static MMAL_PARAM_MIRROR_T GetFlips(this MMALCameraComponent camera) => GetStillFlips(camera);
+
+        /// <summary>
+        /// Gets the Flips value currently being used by the video port.
+        /// </summary>
+        /// <param name="camera">The camera component.</param>
+        /// <returns>The Flips value.</returns>
+        public static MMAL_PARAM_MIRROR_T GetVideoFlips(this MMALCameraComponent camera)
+        {
+            MMAL_PARAMETER_MIRROR_T mirror = new MMAL_PARAMETER_MIRROR_T(
+                new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_MIRROR, Marshal.SizeOf<MMAL_PARAMETER_MIRROR_T>()),
+                MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE);
+
+            MMALCheck(MMALPort.mmal_port_parameter_get(camera.VideoPort.Ptr, &mirror.Hdr), "Unable to get flips");
+
+            return mirror.Value;
+        }
+
+        /// <summary>
+        /// Gets the Flips value currently being used by the still port.
+        /// </summary>
+        /// <param name="camera">The camera component.</param>
+        /// <returns>The Flips value.</returns>
+        public static MMAL_PARAM_MIRROR_T GetStillFlips(this MMALCameraComponent camera)
         {
             MMAL_PARAMETER_MIRROR_T mirror = new MMAL_PARAMETER_MIRROR_T(
                 new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_MIRROR, Marshal.SizeOf<MMAL_PARAMETER_MIRROR_T>()),
@@ -864,6 +888,7 @@ namespace MMALSharp
                 flips);
 
             MMALCheck(MMALPort.mmal_port_parameter_set(camera.StillPort.Ptr, &mirror.Hdr), "Unable to set flips");
+            MMALCheck(MMALPort.mmal_port_parameter_set(camera.VideoPort.Ptr, &mirror.Hdr), "Unable to set flips");
         }
 
         /// <summary>
@@ -885,8 +910,8 @@ namespace MMALSharp
         /// <summary>
         /// Sets the zoom to the specified value. Each parameter must not be greater than 1.0.
         /// </summary>
-        /// <param name="camera"></param>
-        /// <param name="rect"></param>
+        /// <param name="camera">The camera component.</param>
+        /// <param name="rect">The region of interest.</param>
         internal static void SetZoom(this MMALCameraComponent camera, Zoom rect)
         {
             if (rect.X > 1.0 || rect.Y > 1.0 || rect.Height > 1.0 || rect.Width > 1.0)

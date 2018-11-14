@@ -11,7 +11,7 @@ using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
-using static MMALSharp.MMALCallerHelper;
+using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp
 {
@@ -23,27 +23,27 @@ namespace MMALSharp
         /// <summary>
         /// Reference to the Control port of this component.
         /// </summary>
-        public MMALControlPort Control { get; }
+        public IControlPort Control { get; }
 
         /// <summary>
         /// Reference to all input ports associated with this component.
         /// </summary>
-        public List<MMALPortImpl> Inputs { get; }
+        public List<IInputPort> Inputs { get; }
 
         /// <summary>
         /// Reference to all output ports associated with this component.
         /// </summary>
-        public List<MMALPortImpl> Outputs { get; }
+        public List<IOutputPort> Outputs { get; }
 
         /// <summary>
         /// Reference to all clock ports associated with this component.
         /// </summary>
-        public List<MMALPortImpl> Clocks { get; }
+        public List<IPort> Clocks { get; }
 
         /// <summary>
         /// Reference to all ports associated with this component.
         /// </summary>
-        public List<MMALPortImpl> Ports { get; }
+        public List<IPort> Ports { get; }
         
         /// <summary>
         /// Name of the component
@@ -55,18 +55,13 @@ namespace MMALSharp
         /// </summary>
         public bool Enabled => this.Ptr->IsEnabled == 1;
 
-        /// <summary>
-        /// The handler to process the final data.
-        /// </summary>
-        public ICaptureHandler Handler { get; set; }
-
+        internal bool ForceStopProcessing { get; set; }
+        
         /// <summary>
         /// Native pointer to the component this object represents.
         /// </summary>
         private MMAL_COMPONENT_T* Ptr { get; }
-
-        internal bool ForceStopProcessing { get; set; }
-
+        
         /// <summary>
         /// Creates the MMAL Component by the given name.
         /// </summary>
@@ -75,31 +70,31 @@ namespace MMALSharp
         {
             this.Ptr = CreateComponent(name);
 
-            this.Inputs = new List<MMALPortImpl>();
-            this.Outputs = new List<MMALPortImpl>();
-            this.Clocks = new List<MMALPortImpl>();
-            this.Ports = new List<MMALPortImpl>();
+            this.Inputs = new List<IInputPort>();
+            this.Outputs = new List<IOutputPort>();
+            this.Clocks = new List<IPort>();
+            this.Ports = new List<IPort>();
 
-            this.Control = new MMALControlPort(this.Ptr->Control, this, PortType.Control, Guid.NewGuid());
+            this.Control = new ControlPort(this.Ptr->Control, this, PortType.Control, Guid.NewGuid());
 
             for (int i = 0; i < this.Ptr->InputNum; i++)
             {
-                this.Inputs.Add(new MMALPortImpl(&(*this.Ptr->Input[i]), this, PortType.Input, Guid.NewGuid()));
+                this.Inputs.Add(new InputPort(&(*this.Ptr->Input[i]), this, PortType.Input, Guid.NewGuid()));
             }
 
             for (int i = 0; i < this.Ptr->OutputNum; i++)
             {
-                this.Outputs.Add(new MMALPortImpl(&(*this.Ptr->Output[i]), this, PortType.Output, Guid.NewGuid()));
+                this.Outputs.Add(new OutputPort(&(*this.Ptr->Output[i]), this, PortType.Output, Guid.NewGuid()));
             }
 
             for (int i = 0; i < this.Ptr->ClockNum; i++)
             {
-                this.Clocks.Add(new MMALPortImpl(&(*this.Ptr->Clock[i]), this, PortType.Clock, Guid.NewGuid()));
+                this.Clocks.Add(new ClockPort(&(*this.Ptr->Clock[i]), this, PortType.Clock, Guid.NewGuid()));
             }
 
             for (int i = 0; i < this.Ptr->PortNum; i++)
             {
-                this.Ports.Add(new MMALPortImpl(&(*this.Ptr->Port[i]), this, PortType.Unknown, Guid.NewGuid()));
+                this.Ports.Add(new GenericPort(&(*this.Ptr->Port[i]), this, PortType.Generic, Guid.NewGuid()));
             }
         }
         
@@ -109,7 +104,7 @@ namespace MMALSharp
         /// </summary>
         public void EnableConnections()
         {
-            foreach (MMALPortImpl port in this.Outputs)
+            foreach (IOutputPort port in this.Outputs)
             {
                 if (port.ConnectedReference != null)
                 {
@@ -128,7 +123,7 @@ namespace MMALSharp
         /// </summary>
         public void DisableConnections()
         {
-            foreach (MMALPortImpl port in this.Outputs)
+            foreach (IOutputPort port in this.Outputs)
             {
                 if (port.ConnectedReference != null)
                 {
@@ -181,6 +176,9 @@ namespace MMALSharp
 
                     port.DestroyPortPool();
                 }
+                
+                // Remove any unmanaged resources held by the capture handler.
+                port.Handler?.Dispose();
             }
 
             foreach (var port in this.Outputs)
@@ -191,6 +189,9 @@ namespace MMALSharp
 
                     port.DestroyPortPool();
                 }
+                
+                // Remove any unmanaged resources held by the capture handler.
+                port.Handler?.Dispose();
             }
 
             this.DisableComponent();
@@ -249,60 +250,6 @@ namespace MMALSharp
             {
                 MMALCheck(MMALComponent.mmal_component_disable(this.Ptr), "Unable to disable component");
             }
-        }
-
-        /// <summary>
-        /// Enable the port with the specified port number.
-        /// </summary>
-        /// <param name="outputPortNumber">The output port number.</param>
-        internal void Start(int outputPortNumber)
-        {
-            this.Start(this.Outputs[outputPortNumber]);
-        }
-        
-        /// <summary>
-        /// Enable the port specified.
-        /// </summary>
-        /// <param name="port">The output port.</param>
-        internal void Start(MMALPortBase port)
-        {
-            switch (port.PortType)
-            {
-                case PortType.Input:
-                    port.EnableInputPort();
-                    break;
-                case PortType.Output:
-                    if (this.Handler != null && this.Handler.GetType().GetTypeInfo().IsSubclassOf(typeof(FileStreamCaptureHandler)))
-                    {
-                        ((FileStreamCaptureHandler)this.Handler).NewFile();
-                    }
-                    port.EnableOutputPort();
-                    break;
-                case PortType.Control:
-                    port.EnableControlPort();
-                    break;
-                default:
-                    port.EnableOutputPort();
-                    break;
-            }
-        }
-        
-        /// <summary>
-        /// Disable the port with the specified port number.
-        /// </summary>
-        /// <param name="outputPortNumber">The output port number.</param>
-        internal void Stop(int outputPortNumber)
-        {
-            this.Outputs[outputPortNumber].DisablePort();
-        }
-
-        /// <summary>
-        /// Disable the specified port.
-        /// </summary>
-        /// <param name="port">The output port.</param>
-        internal void Stop(MMALPortBase port)
-        {
-            port.DisablePort();
         }
 
         /// <summary>

@@ -7,7 +7,7 @@ using System;
 using System.Runtime.InteropServices;
 using MMALSharp.Common.Utility;
 using MMALSharp.Native;
-using static MMALSharp.MMALCallerHelper;
+using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp.Components
 {
@@ -31,6 +31,9 @@ namespace MMALSharp.Components
         /// </summary>
         public int MaxHeight { get; set; }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="MMALCameraInfoComponent"/>.
+        /// </summary>
         public MMALCameraInfoComponent()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA_INFO)
         {

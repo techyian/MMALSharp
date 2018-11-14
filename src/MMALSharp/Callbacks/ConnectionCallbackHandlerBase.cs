@@ -7,13 +7,18 @@ using MMALSharp.Common.Utility;
 
 namespace MMALSharp.Callbacks
 {
-    public abstract class ConnectionCallbackHandlerBase
+    /// <summary>
+    /// Base class for connection callback handlers.
+    /// </summary>
+    public abstract class ConnectionCallbackHandlerBase : IConnectionCallbackHandler
     {
-        /// <summary>
-        /// The port this callback handler is used with.
-        /// </summary>
-        public MMALConnectionImpl WorkingConnection { get; internal set; }
+        /// <inheritdoc />
+        public MMALConnectionImpl WorkingConnection { get; }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="ConnectionCallbackHandlerBase"/>.
+        /// </summary>
+        /// <param name="connection">The connection.</param>
         protected ConnectionCallbackHandlerBase(MMALConnectionImpl connection)
         {
             this.WorkingConnection = connection;
@@ -31,10 +36,7 @@ namespace MMALSharp.Callbacks
             }
         }
 
-        /// <summary>
-        /// The output port callback function to carry out.
-        /// </summary>
-        /// <param name="buffer">The working buffer header.</param>
+        /// <inheritdoc />
         public virtual void OutputCallback(MMALBufferImpl buffer)
         {
             if (MMALCameraConfig.Debug)

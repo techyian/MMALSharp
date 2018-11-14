@@ -5,7 +5,8 @@
 
 using MMALSharp.Common.Utility;
 using MMALSharp.Native;
-using static MMALSharp.MMALCallerHelper;
+using MMALSharp.Ports;
+using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp
 {
@@ -19,6 +20,9 @@ namespace MMALSharp
         /// </summary>
         public MMALQueueImpl Queue { get; set; }
 
+        /// <summary>
+        /// The number of buffer headers in this pool.
+        /// </summary>
         public uint HeadersNum => this.Ptr->HeadersNum;
 
         /// <summary>
@@ -30,7 +34,7 @@ namespace MMALSharp
         /// Creates a new instance of <see cref="MMALPoolImpl"/> based on a port.
         /// </summary>
         /// <param name="port">The port.</param>
-        public MMALPoolImpl(MMALPortBase port)
+        public MMALPoolImpl(IPort port)
         {            
             MMALLog.Logger.Debug($"Creating buffer pool with {port.BufferNum} buffers of size {port.BufferSize}");
 
@@ -50,6 +54,7 @@ namespace MMALSharp
             this.Queue = new MMALQueueImpl((*this.Ptr).Queue);
         }
         
+        /// <inheritdoc />
         public override void Dispose()
         {
             MMALLog.Logger.Debug("Disposing pool.");

@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using MMALSharp.Common.Utility;
 using MMALSharp.Native;
-using static MMALSharp.MMALCallerHelper;
+using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp
 {
@@ -150,10 +150,7 @@ namespace MMALSharp
             return sb.ToString();
         }
 
-        /// <summary>
-        /// Checks whether this instance is attached to a valid native pointer.
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         public bool CheckState()
         {
             return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;

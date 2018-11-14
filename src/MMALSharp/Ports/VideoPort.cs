@@ -1,4 +1,4 @@
-﻿// <copyright file="MMALVideoPort.cs" company="Techyian">
+﻿// <copyright file="VideoPort.cs" company="Techyian">
 // Copyright (c) Ian Auty. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
@@ -12,7 +12,7 @@ namespace MMALSharp.Ports
     /// <summary>
     /// Represents a video encode/decode port
     /// </summary>
-    public unsafe class MMALVideoPort : MMALPortImpl
+    public unsafe class VideoPort : OutputPort
     {
         /// <summary>
         /// This is used when the user provides a timeout DateTime and
@@ -20,13 +20,24 @@ namespace MMALSharp.Ports
         /// </summary>
         public DateTime? Timeout { get; set; }
 
-        public MMALVideoPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
+        /// <summary>
+        /// Creates a new instance of <see cref="VideoPort"/>. 
+        /// </summary>
+        /// <param name="ptr">The native pointer.</param>
+        /// <param name="comp">The component this port is associated with.</param>
+        /// <param name="type">The type of port.</param>
+        /// <param name="guid">Managed unique identifier for this component.</param>
+        public VideoPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
             : base(ptr, comp, type, guid)
         {
         }
 
-        public MMALVideoPort(MMALPortImpl copyFrom)
-            : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
+        /// <summary>
+        /// Creates a new instance of <see cref="VideoPort"/>.
+        /// </summary>
+        /// <param name="copyFrom">The port to copy data from.</param>
+        public VideoPort(IPort copyFrom)
+            : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid, copyFrom.Handler)
         {
         }
 
@@ -65,7 +76,7 @@ namespace MMALSharp.Ports
                 {
                     if (!this.Trigger)
                     {
-                        MMALLog.Logger.Debug("Timeout exceeded, triggering signal.");
+                        MMALLog.Logger.Debug($"{this.ComponentReference.Name} {this.Name} Timeout exceeded, triggering signal.");
                         this.Trigger = true;
                     }
                 }

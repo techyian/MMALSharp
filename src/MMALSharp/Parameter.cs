@@ -7,7 +7,7 @@ using System;
 
 namespace MMALSharp
 {
-    public class Parameter
+    internal class Parameter
     {
         public Parameter(int paramVal, Type paramType, string paramName)
         {

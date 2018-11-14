@@ -1,19 +1,28 @@
 ﻿using System.Threading.Tasks;
 using MMALSharp.Native;
-using MMALSharp.Ports;
 using System.Text;
-using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Components
 {
+    /// <summary>
+    /// This component is used to encode image data stored in a file.
+    /// </summary>
     public class MMALImageFileEncoder : MMALImageEncoder, IMMALConvert
     {
-        public unsafe MMALImageFileEncoder(TransformStreamCaptureHandler handler)
+        /// <summary>
+        /// Creates a new instance of <see cref="MMALImageFileEncoder"/>.
+        /// </summary>
+        /// <param name="handler">The capture handler.</param>
+        public MMALImageFileEncoder(ICaptureHandler handler)
             : base(handler)
         {
         }
 
+        /// <summary>
+        /// The working queue of buffer headers.
+        /// </summary>
         public static MMALQueueImpl WorkingQueue { get; set; }
 
         /// <inheritdoc />>
@@ -58,24 +67,7 @@ namespace MMALSharp.Components
 
             return this;
         }
-
-        public async Task WaitForTriggers()
-        {
-            MMALLog.Logger.Debug("Waiting for trigger signal");
-
-            // Wait until the process is complete.
-            while (!this.Inputs[0].Trigger)
-            {
-                MMALLog.Logger.Info("Awaiting...");
-                await Task.Delay(2000).ConfigureAwait(false);
-                break;
-            }
-            
-            MMALLog.Logger.Debug("Resetting trigger state.");
-            this.Inputs[0].Trigger = false;
-            this.Outputs[0].Trigger = false;
-        }
-
+        
         /// <summary>
         /// Encodes/decodes user provided image data.
         /// </summary>
@@ -86,9 +78,9 @@ namespace MMALSharp.Components
             MMALLog.Logger.Info("Beginning Image encode from filestream. Please note, this process may take some time depending on the size of the input image.");
 
             // Enable control, input and output ports. Input & Output ports should have been pre-configured by user prior to this point.
-            this.Start(this.Control);
-            this.Start(this.Inputs[0]);
-            this.Start(this.Outputs[outputPort]);
+            this.Control.Start();
+            this.Inputs[0].Start();
+            this.Outputs[outputPort].Start();
 
             this.EnableComponent();
 
@@ -106,7 +98,7 @@ namespace MMALSharp.Components
                 while (true)
                 {
                     MMALBufferImpl buffer;
-                    lock (MMALPortBase.OutputLock)
+                    lock (OutputPort.OutputLock)
                     {
                         buffer = WorkingQueue.GetBuffer();
                     }
@@ -123,11 +115,12 @@ namespace MMALSharp.Components
                             }
                             else
                             {
-                                lock (MMALPortBase.OutputLock)
+                                lock (OutputPort.OutputLock)
                                 {
                                     buffer.Release();
                                 }
                             }
+                            
                             continue;
                         }
                         else
@@ -142,7 +135,7 @@ namespace MMALSharp.Components
                             }
 
                             // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.                    
-                            lock (MMALPortBase.OutputLock)
+                            lock (OutputPort.OutputLock)
                             {
                                 buffer.Release();
                             }
@@ -164,8 +157,35 @@ namespace MMALSharp.Components
             this.CleanPortPools();
             WorkingQueue.Dispose();
         }
+        
+        internal override void InitialiseInputPort(int inputPort)
+        {
+            this.Inputs[inputPort] = new ImageFileEncodeInputPort(this.Inputs[inputPort]);
+        }
 
-        internal unsafe void ConfigureOutputPortWithoutInit(int outputPort, MMALEncoding encodingType)
+        internal override void InitialiseOutputPort(int outputPort)
+        {
+            this.Outputs[outputPort] = new ImageFileEncodeOutputPort(this.Outputs[outputPort]);
+        }
+        
+        private async Task WaitForTriggers()
+        {
+            MMALLog.Logger.Debug("Waiting for trigger signal");
+
+            // Wait until the process is complete.
+            while (!this.Inputs[0].Trigger)
+            {
+                MMALLog.Logger.Info("Awaiting...");
+                await Task.Delay(2000).ConfigureAwait(false);
+                break;
+            }
+            
+            MMALLog.Logger.Debug("Resetting trigger state.");
+            this.Inputs[0].Trigger = false;
+            this.Outputs[0].Trigger = false;
+        }
+
+        private unsafe void ConfigureOutputPortWithoutInit(int outputPort, MMALEncoding encodingType)
         {
             if (encodingType != null)
             {
@@ -183,7 +203,7 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].Commit();
         }
 
-        internal void LogFormat(MMALEventFormat format, MMALPortImpl port)
+        private void LogFormat(MMALEventFormat format, IPort port)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -219,11 +239,11 @@ namespace MMALSharp.Components
             MMALLog.Logger.Info(sb.ToString());
         }
         
-        internal void GetAndSendInputBuffer()
+        private void GetAndSendInputBuffer()
         {
             // Get buffer from input port pool                
             MMALBufferImpl inputBuffer;
-            lock (MMALPortBase.InputLock)
+            lock (InputPort.InputLock)
             {
                 inputBuffer = this.Inputs[0].BufferPool.Queue.GetBuffer();
 
@@ -238,11 +258,11 @@ namespace MMALSharp.Components
             }
         }
 
-        internal void GetAndSendOutputBuffer()
+        private void GetAndSendOutputBuffer()
         {
             while (true)
             {
-                lock (MMALPortBase.OutputLock)
+                lock (OutputPort.OutputLock)
                 {
                     var tempBuf2 = this.Outputs[0].BufferPool.Queue.GetBuffer();
 
@@ -260,7 +280,7 @@ namespace MMALSharp.Components
             }
         }
 
-        internal void ProcessFormatChangedEvent(MMALBufferImpl buffer)
+        private void ProcessFormatChangedEvent(MMALBufferImpl buffer)
         {
             MMALLog.Logger.Debug("Received MMAL_EVENT_FORMAT_CHANGED event");
 
@@ -275,7 +295,7 @@ namespace MMALSharp.Components
             // Port format changed
             this.Outputs[0].ManagedOutputCallback.Callback(buffer);
             
-            lock (MMALPortBase.OutputLock)
+            lock (OutputPort.OutputLock)
             {
                 buffer.Release();
             }
@@ -285,7 +305,7 @@ namespace MMALSharp.Components
             while (this.Outputs[0].BufferPool.Queue.QueueLength() < this.Outputs[0].BufferPool.HeadersNum)
             {
                 MMALLog.Logger.Debug("Queue length less than buffer pool num");
-                lock (MMALPortBase.OutputLock)
+                lock (OutputPort.OutputLock)
                 {
                     MMALLog.Logger.Debug("Getting buffer via Queue.Wait");
                     var tempBuf = WorkingQueue.Wait();
@@ -300,16 +320,6 @@ namespace MMALSharp.Components
             this.ConfigureOutputPortWithoutInit(0, this.Outputs[0].EncodingType);
 
             this.Outputs[0].EnableOutputPort(false);
-        }
-        
-        internal override unsafe void InitialiseInputPort(int inputPort)
-        {
-            this.Inputs[inputPort] = new MMALStillEncodeConvertPort(this.Inputs[inputPort]);
-        }
-
-        internal override unsafe void InitialiseOutputPort(int outputPort)
-        {
-            this.Outputs[outputPort] = new MMALStillEncodeConvertPort(this.Outputs[outputPort]);
         }
     }
 }

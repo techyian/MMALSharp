@@ -9,11 +9,18 @@ using Xunit.Sdk;
 
 namespace MMALSharp.Tests
 {
-    public class DisplayTestMethodNameAttribute : BeforeAfterTestAttribute
+    public class MMALTestsAttribute : BeforeAfterTestAttribute
     {        
         public override void Before(MethodInfo methodUnderTest)
-        {            
+        {
+            TestHelper.SetConfigurationDefaults();
             Console.WriteLine("Running test '{0}.'", methodUnderTest.Name);
-        }                
+        }
+
+        public override void After(MethodInfo methodUnderTest)
+        {
+            TestHelper.SetConfigurationDefaults();
+            base.After(methodUnderTest);
+        }
     }
 }

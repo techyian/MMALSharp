@@ -12,7 +12,7 @@ using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
-using static MMALSharp.MMALCallerHelper;
+using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp.Components
 {
@@ -63,18 +63,26 @@ namespace MMALSharp.Components
         public ExifTag[] ExifTags { get; set; }
         
         /// <summary>
+        /// If true, this component will be configured to process rapidly captured frames from the camera's video port.
+        /// Note: The component pipeline must be configured as such. 
+        /// </summary>
+        public bool ContinuousCapture { get; set; }
+        
+        /// <summary>
         /// Creates a new instance of the <see cref="MMALImageEncoder"/> class with the specified handler.
         /// </summary>
         /// <param name="handler">A handler to receive the encoded image data.</param>
         /// <param name="rawBayer">Specifies whether to include raw bayer image data.</param>
         /// <param name="useExif">Specifies whether any EXIF tags should be used.</param>
+        /// <param name="continuousCapture">Configure component for rapid capture mode.</param>
         /// <param name="exifTags">A collection of custom EXIF tags.</param>
-        public MMALImageEncoder(ICaptureHandler handler, bool rawBayer = false, bool useExif = true, params ExifTag[] exifTags)
+        public MMALImageEncoder(ICaptureHandler handler, bool rawBayer = false, bool useExif = true, bool continuousCapture = false, params ExifTag[] exifTags)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER, handler)
         {
             this.RawBayer = rawBayer;
             this.UseExif = useExif;
             this.ExifTags = exifTags;
+            this.ContinuousCapture = continuousCapture;
         }
         
         /// <inheritdoc />>
@@ -92,6 +100,11 @@ namespace MMALSharp.Components
                 this.AddExifTags(this.ExifTags);
             }
 
+            if (this.ContinuousCapture)
+            {
+                this.RegisterOutputCallback(new FastImageOutputCallbackHandler(this.Outputs[outputPort]));    
+            }
+            
             return this;
         }
 
@@ -106,7 +119,14 @@ namespace MMALSharp.Components
 
         internal override void InitialiseOutputPort(int outputPort)
         {
-            this.Outputs[outputPort] = new MMALStillPort(this.Outputs[outputPort]);
+            if (this.ContinuousCapture)
+            {
+                this.Outputs[outputPort] = new FastStillPort(this.Outputs[outputPort]);
+            }
+            else
+            {
+                this.Outputs[outputPort] = new StillPort(this.Outputs[outputPort]);    
+            }
         }
 
         /// <summary>

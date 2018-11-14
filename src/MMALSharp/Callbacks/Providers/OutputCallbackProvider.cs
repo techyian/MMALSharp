@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Callbacks.Providers
 {
@@ -16,13 +17,13 @@ namespace MMALSharp.Callbacks.Providers
         /// <summary>
         /// The list of active callback handlers.
         /// </summary>
-        public static Dictionary<MMALPortBase, OutputCallbackHandlerBase> WorkingHandlers { get; private set; } = new Dictionary<MMALPortBase, OutputCallbackHandlerBase>();
+        public static Dictionary<IOutputPort, IOutputCallbackHandler> WorkingHandlers { get; private set; } = new Dictionary<IOutputPort, IOutputCallbackHandler>();
 
         /// <summary>
-        /// Register a new <see cref="OutputCallbackHandlerBase"/>.
+        /// Register a new <see cref="IOutputCallbackHandler"/>.
         /// </summary>
         /// <param name="handler">The callback handler.</param>
-        public static void RegisterCallback(OutputCallbackHandlerBase handler)
+        public static void RegisterCallback(IOutputCallbackHandler handler)
         {
             if (handler?.WorkingPort == null)
             {
@@ -40,13 +41,13 @@ namespace MMALSharp.Callbacks.Providers
         }
 
         /// <summary>
-        /// Finds and returns a <see cref="OutputCallbackHandlerBase"/> for a given port. If no handler is registered, a 
+        /// Finds and returns a <see cref="IOutputCallbackHandler"/> for a given port. If no handler is registered, a 
         /// <see cref="DefaultOutputCallbackHandler"/> will be returned.
         /// </summary>
         /// <param name="port">The port we are retrieving the callback handler on.</param>
-        /// <returns>A <see cref="OutputCallbackHandlerBase"/> for a given port. If no handler is registered, a 
+        /// <returns>A <see cref="IOutputCallbackHandler"/> for a given port. If no handler is registered, a 
         /// <see cref="DefaultOutputCallbackHandler"/> will be returned.</returns>
-        public static OutputCallbackHandlerBase FindCallback(MMALPortBase port)
+        public static IOutputCallbackHandler FindCallback(IOutputPort port)
         {
             if (WorkingHandlers.ContainsKey(port))
             {
@@ -60,7 +61,7 @@ namespace MMALSharp.Callbacks.Providers
         /// Remove a callback handler for a given port.
         /// </summary>
         /// <param name="port">The port we are removing the callback handler on.</param>
-        public static void RemoveCallback(MMALPortBase port)
+        public static void RemoveCallback(IOutputPort port)
         {
             if (WorkingHandlers.ContainsKey(port))
             {

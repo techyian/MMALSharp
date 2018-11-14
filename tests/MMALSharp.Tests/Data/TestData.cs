@@ -6,79 +6,48 @@
 using MMALSharp.Native;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using MMALSharp.Common.Utility;
-using MMALSharp.Components;
+using Xunit;
 
 namespace MMALSharp.Tests
 {
-    public class TestHelper
+    [Collection("MMALCollection")]
+    public class TestBase
     {
-        public static void SetConfigurationDefaults()
+        private static MMALFixture _fixture;
+        public static MMALFixture Fixture
         {
-            MMALCameraConfig.Debug = true;
-            MMALCameraConfig.Brightness = 50;
-            MMALCameraConfig.Sharpness = 0;
-            MMALCameraConfig.Contrast = 0;
-            MMALCameraConfig.Saturation = 0;
-            MMALCameraConfig.AwbGainsB = 0;
-            MMALCameraConfig.AwbGainsR = 0;
-            MMALCameraConfig.AwbMode = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_AUTO;
-            MMALCameraConfig.ColourFx = new ColourEffects();
-            MMALCameraConfig.ExposureCompensation = -1;
-            MMALCameraConfig.ExposureMeterMode = MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE;
-            MMALCameraConfig.ExposureMode = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
-            MMALCameraConfig.ROI = new Zoom();
-            MMALCameraConfig.ISO = 0;
-            MMALCameraConfig.StatsPass = false;
-            MMALCameraConfig.Flips = MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE;
-            MMALCameraConfig.ImageFx = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_NONE;
-            MMALCameraConfig.Rotation = 0;
-            MMALCameraConfig.DrcLevel = MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_OFF;
-            MMALCameraConfig.ShutterSpeed = 0;
-            MMALCameraConfig.SensorMode = MMALSensorMode.Mode0;
-        }
-
-        public static void CleanDirectory(string directory)
-        {
-            try
+            get
             {
-                var files = Directory.GetFiles(directory);
-
-                // Clear directory first
-                foreach (string file in files)
+                if (_fixture == null)
                 {
-                    File.Delete(file);
+                    _fixture = new MMALFixture();
                 }
+
+                return _fixture;
             }
-            catch
-            {
-            }
+            set => _fixture = value;
         }
         
-        public static void BeginTest(string name) => MMALLog.Logger.Info($"Running test: {name}.");
-        
-        public static void BeginTest(string name, string encodingType, string pixelFormat) => 
-            MMALLog.Logger.Info($"Running test: {name}. Encoding type: {encodingType}. Pixel format: {pixelFormat}.");
-    }
+        public TestBase() {}
 
-    public class TestData
-    {
-        public static MMALFixture Fixture { get; set; }
+        public TestBase(MMALFixture fixture)
+        {
+            Fixture = fixture;
+        }
         
         public static List<MMALEncoding> PixelFormats = MMALEncodingHelpers.EncodingList.Where(c => c.EncType == MMALEncoding.EncodingType.PixelFormat).ToList();
 
         private static IEnumerable<object[]> GetVideoEncoderData(MMALEncoding encodingType, string extension)
         {
             var supportedEncodings = Fixture.MMALCamera.Camera.VideoPort.GetSupportedEncodings();
-            return PixelFormats.Where(c => supportedEncodings.Contains(c.EncodingVal)).Select(pixFormat => new object[] { extension, encodingType, pixFormat }).ToList();
+            return PixelFormats.Where(c => supportedEncodings.Contains(c.EncodingVal) && c != MMALEncoding.OPAQUE).Select(pixFormat => new object[] { extension, encodingType, pixFormat }).ToList();
         }
 
         private static IEnumerable<object[]> GetImageEncoderData(MMALEncoding encodingType, string extension)
         {
             var supportedEncodings = Fixture.MMALCamera.Camera.StillPort.GetSupportedEncodings();
-            return PixelFormats.Where(c => supportedEncodings.Contains(c.EncodingVal)).Select(pixFormat => new object[] { extension, encodingType, pixFormat }).ToList();
+            return PixelFormats.Where(c => supportedEncodings.Contains(c.EncodingVal) && c != MMALEncoding.OPAQUE).Select(pixFormat => new object[] { extension, encodingType, pixFormat }).ToList();
         }
         
         private static object[] GetEncoderData(MMALEncoding encodingType, MMALEncoding pixelFormat, string extension)
@@ -149,7 +118,8 @@ namespace MMALSharp.Tests
 
         public static object[] Yuv420EncoderData => GetEncoderData(MMALEncoding.I420, MMALEncoding.I420, "i420");
         public static object[] Yuv422EncoderData => GetEncoderData(MMALEncoding.I422, MMALEncoding.I422, "i422");
-        public static object[] Rgb24EncoderData => GetEncoderData(MMALEncoding.RGB24, MMALEncoding.RGB24, "rgb");
+        public static object[] Rgb16EncoderData => GetEncoderData(MMALEncoding.RGB16, MMALEncoding.RGB16, "rgb16");
+        public static object[] Rgb24EncoderData => GetEncoderData(MMALEncoding.RGB24, MMALEncoding.RGB24, "rgb24");
         public static object[] RgbaEncoderData => GetEncoderData(MMALEncoding.RGBA, MMALEncoding.RGBA, "rgba");
         
         #endregion

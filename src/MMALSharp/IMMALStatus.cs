@@ -6,9 +6,9 @@
     public interface IMMALStatus
     {
         /// <summary>
-        /// Checks whether this instance is attached to a valid native pointer.
+        /// Checks whether a native MMAL pointer is valid.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if the pointer is valid.</returns>
         bool CheckState();
     }
 }

@@ -6,39 +6,42 @@
 using System;
 using MMALSharp.Common.Utility;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Callbacks
 {
     /// <summary>
     /// The base class for Output port callback handlers.
     /// </summary>
-    public abstract class OutputCallbackHandlerBase
+    public abstract class OutputCallbackHandlerBase : IOutputCallbackHandler
     {
-        /// <summary>
-        /// A whitelisted Encoding Type that this callback handler will operate on.
-        /// </summary>
+        /// <inheritdoc />
         public MMALEncoding EncodingType { get; }
 
-        /// <summary>
-        /// The port this callback handler is used with.
-        /// </summary>
-        public MMALPortBase WorkingPort { get; internal set; }
+        /// <inheritdoc />
+        public IOutputPort WorkingPort { get; }
         
-        protected OutputCallbackHandlerBase(MMALPortBase port)
+        /// <summary>
+        /// Creates a new instance of <see cref="OutputCallbackHandlerBase"/>.
+        /// </summary>
+        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
+        protected OutputCallbackHandlerBase(IOutputPort port)
         {
             this.WorkingPort = port;
         }
 
-        protected OutputCallbackHandlerBase(MMALPortBase port, MMALEncoding encodingType)
+        /// <summary>
+        /// Creates a new instance of <see cref="OutputCallbackHandlerBase"/>.
+        /// </summary>
+        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
+        /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
+        protected OutputCallbackHandlerBase(IOutputPort port, MMALEncoding encodingType)
         {
             this.WorkingPort = port;
             this.EncodingType = encodingType;
         }
         
-        /// <summary>
-        /// The callback function to carry out.
-        /// </summary>
-        /// <param name="buffer">The working buffer header.</param>
+        /// <inheritdoc />
         public virtual void Callback(MMALBufferImpl buffer)
         {
             if (MMALCameraConfig.Debug)

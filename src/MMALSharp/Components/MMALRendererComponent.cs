@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 using MMALSharp.Ports;
-using static MMALSharp.MMALCallerHelper;
+using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp.Components
 {
@@ -157,7 +157,7 @@ namespace MMALSharp.Components
                 int fullScreen = 0, noAspect = 0, copyProtect = 0;
                 uint displaySet = 0;
 
-                MMAL_RECT_T? previewWindow = new MMAL_RECT_T?();
+                MMAL_RECT_T? previewWindow = default(MMAL_RECT_T);
 
                 if (!this.Configuration.FullScreen)
                 {
@@ -283,7 +283,7 @@ namespace MMALSharp.Components
             this.OverlayConfiguration = config;
             parent.Overlays.Add(this);
             
-            this.Inputs[0] = new MMALOverlayPort(this.Inputs[0]);
+            this.Inputs[0] = new OverlayPort(this.Inputs[0]);
             
             if (config != null)
             {
@@ -330,8 +330,8 @@ namespace MMALSharp.Components
 
             this.Inputs[0].Commit();
             
-            this.Start(this.Control);
-            this.Start(this.Inputs[0]);
+            this.Control.Start();
+            this.Inputs[0].Start();
         }
 
         /// <summary>
@@ -348,7 +348,7 @@ namespace MMALSharp.Components
         /// <param name="imageData">Byte array containing the image data encoded like configured.</param>
         public void UpdateOverlay(byte[] imageData)
         {
-            lock (MMALPortBase.InputLock)
+            lock (InputPort.InputLock)
             {
                 var buffer = this.Inputs[0].BufferPool.Queue.GetBuffer();
 

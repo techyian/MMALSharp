@@ -19,11 +19,16 @@ namespace MMALSharp
         /// </summary>
         internal MMAL_QUEUE_T* Ptr { get; set; }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="MMALQueueImpl"/>.
+        /// </summary>
+        /// <param name="ptr">The native pointer.</param>
         public MMALQueueImpl(MMAL_QUEUE_T* ptr)
         {
             this.Ptr = ptr;
         }
 
+        /// <inheritdoc />
         public override void Dispose()
         {
             MMALLog.Logger.Debug("Disposing queue.");
@@ -34,7 +39,7 @@ namespace MMALSharp
         /// <summary>
         /// Checks whether this instance is attached to a valid native pointer.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if the pointer is valid.</returns>
         public bool CheckState()
         {
             return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;

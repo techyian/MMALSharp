@@ -5,8 +5,15 @@
 
 namespace MMALSharp.Callbacks
 {
+    /// <summary>
+    /// Default callback handler for connections.
+    /// </summary>
     public class DefaultConnectionCallbackHandler : ConnectionCallbackHandlerBase
     {
+        /// <summary>
+        /// Create a new instance of <see cref="DefaultConnectionCallbackHandler"/>.
+        /// </summary>
+        /// <param name="connection">The connection object.</param>
         public DefaultConnectionCallbackHandler(MMALConnectionImpl connection) 
             : base(connection)
         {

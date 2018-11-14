@@ -17,11 +17,16 @@ namespace MMALSharp.Components
         private int _width;
         private int _height;
 
+        /// <summary>
+        /// Creates a new instance of <see cref="MMALImageDecoder"/>.
+        /// </summary>
+        /// <param name="handler">The capture handler.</param>
         public MMALImageDecoder(ICaptureHandler handler)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_DECODER, handler)
         {
         }
-
+        
+        /// <inheritdoc />
         public override int Width
         {
             get
@@ -36,6 +41,7 @@ namespace MMALSharp.Components
             set => this._width = value;
         }
 
+        /// <inheritdoc />
         public override int Height
         {
             get

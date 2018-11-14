@@ -13,13 +13,13 @@ namespace MMALSharp.Callbacks.Providers
         /// <summary>
         /// The list of active callback handlers.
         /// </summary>
-        public static Dictionary<MMALConnectionImpl, ConnectionCallbackHandlerBase> WorkingHandlers { get; private set; } = new Dictionary<MMALConnectionImpl, ConnectionCallbackHandlerBase>();
+        public static Dictionary<MMALConnectionImpl, IConnectionCallbackHandler> WorkingHandlers { get; private set; } = new Dictionary<MMALConnectionImpl, IConnectionCallbackHandler>();
 
         /// <summary>
-        /// Register a new <see cref="ConnectionCallbackHandlerBase"/>.
+        /// Register a new <see cref="IConnectionCallbackHandler"/>.
         /// </summary>
         /// <param name="handler">The callback handler.</param>
-        public static void RegisterCallback(ConnectionCallbackHandlerBase handler)
+        public static void RegisterCallback(IConnectionCallbackHandler handler)
         {
             if (handler?.WorkingConnection == null)
             {
@@ -37,13 +37,13 @@ namespace MMALSharp.Callbacks.Providers
         }
 
         /// <summary>
-        /// Finds and returns a <see cref="ConnectionCallbackHandlerBase"/> for a given connection. If no handler is registered, a 
+        /// Finds and returns a <see cref="IConnectionCallbackHandler"/> for a given connection. If no handler is registered, a 
         /// <see cref="DefaultConnectionCallbackHandler"/> will be returned.
         /// </summary>
         /// <param name="connection">The connection for which we are retrieving the callback handler.</param>
-        /// <returns>A <see cref="ConnectionCallbackHandlerBase"/> for a given connection. If no handler is registered, a 
+        /// <returns>A <see cref="IConnectionCallbackHandler"/> for a given connection. If no handler is registered, a 
         /// <see cref="DefaultConnectionCallbackHandler"/> will be returned.</returns>
-        public static ConnectionCallbackHandlerBase FindCallback(MMALConnectionImpl connection)
+        public static IConnectionCallbackHandler FindCallback(MMALConnectionImpl connection)
         {
             if (WorkingHandlers.ContainsKey(connection))
             {

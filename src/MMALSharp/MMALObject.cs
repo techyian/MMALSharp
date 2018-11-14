@@ -22,7 +22,7 @@ namespace MMALSharp
         /// <summary>
         /// Creates a new instance of the MMALObject class and adds this instance to the Objects list.
         /// </summary>
-        public MMALObject()
+        protected MMALObject()
         {
             reference = new WeakReference<MMALObject>(this);
             Objects.Add(reference);
