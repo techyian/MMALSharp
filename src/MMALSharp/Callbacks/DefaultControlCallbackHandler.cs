@@ -32,10 +32,7 @@ namespace MMALSharp.Callbacks
         {
         }
 
-        /// <summary>
-        /// The callback function to carry out.
-        /// </summary>
-        /// <param name="buffer">The working buffer header.</param>
+        /// <inheritdoc />
         public override void Callback(MMALBufferImpl buffer)
         {
             base.Callback(buffer);

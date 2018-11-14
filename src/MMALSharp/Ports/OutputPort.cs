@@ -14,8 +14,12 @@ using MMALSharp.Native;
 
 namespace MMALSharp.Ports
 {
+    /// <summary>
+    /// Represents an output port.
+    /// </summary>
     public class OutputPort : GenericPort, IOutputPort
     {
+        /// <inheritdoc />
         public IOutputCallbackHandler ManagedOutputCallback { get; set; }
         
         /// <summary>
@@ -23,23 +27,32 @@ namespace MMALSharp.Ports
         /// </summary>
         internal static object OutputLock = new object();
 
+        /// <summary>
+        /// Creates a new instance of <see cref="OutputPort"/>. 
+        /// </summary>
+        /// <param name="ptr">The native pointer.</param>
+        /// <param name="comp">The component this port is associated with.</param>
+        /// <param name="type">The type of port.</param>
+        /// <param name="guid">Managed unique identifier for this component.</param>
         public unsafe OutputPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid) 
             : base(ptr, comp, type, guid)
         {
         }
         
+        /// <summary>
+        /// Creates a new instance of <see cref="OutputPort"/>. 
+        /// </summary>
+        /// <param name="ptr">The native pointer.</param>
+        /// <param name="comp">The component this port is associated with.</param>
+        /// <param name="type">The type of port.</param>
+        /// <param name="guid">Managed unique identifier for this component.</param>
+        /// <param name="handler">The capture handler.</param>
         public unsafe OutputPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler) 
             : base(ptr, comp, type, guid, handler)
         {
         }
         
-        /// <summary>
-        /// Connects two components together by their input and output ports.
-        /// </summary>
-        /// <param name="destinationComponent">The component we want to connect to.</param>
-        /// <param name="inputPort">The input port of the component we want to connect to.</param>
-        /// <param name="useCallback">Flag to use connection callback (adversely affects performance).</param>
-        /// <returns>The input port of the component we're connecting to - allows chain calling of this method.</returns>
+        /// <inheritdoc />
         public IInputPort ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort = 0, bool useCallback = false)
         {
             if (this.ConnectedReference != null)
@@ -55,13 +68,7 @@ namespace MMALSharp.Ports
             return destinationComponent.Inputs[inputPort];
         }
 
-        /// <summary>
-        /// Connects two components together by their input and output ports.
-        /// </summary>
-        /// <param name="destinationComponent">The component we want to connect to.</param>
-        /// <param name="inputPort">The input port of the component we want to connect to.</param>
-        /// <param name="callback">An operation we would like to carry out after connecting these components together.</param>
-        /// <returns>The input port of the component we're connecting to - allows chain calling of this method.</returns>
+        /// <inheritdoc />
         public IInputPort ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort, Func<IPort> callback)
         {
             this.ConnectTo(destinationComponent, inputPort);
@@ -69,10 +76,7 @@ namespace MMALSharp.Ports
             return destinationComponent.Inputs[inputPort];
         }
         
-        /// <summary>
-        /// Release an output port buffer, get a new one from the queue and send it for processing.
-        /// </summary>
-        /// <param name="bufferImpl">A managed buffer object.</param>
+        /// <inheritdoc />
         public unsafe void ReleaseOutputBuffer(MMALBufferImpl bufferImpl)
         {
             bufferImpl.Release();
@@ -109,10 +113,7 @@ namespace MMALSharp.Ports
             }
         }
         
-        /// <summary>
-        /// Enables processing on an output port.
-        /// </summary>
-        /// <param name="sendBuffers">Indicates whether we want to send all the buffers in the port pool or simply create the pool.</param>
+        /// <inheritdoc />
         public virtual unsafe void EnableOutputPort(bool sendBuffers = true)
         {            
             if (!this.Enabled)
@@ -155,10 +156,7 @@ namespace MMALSharp.Ports
             }
         }
         
-        /// <summary>
-        /// Enable the port specified.
-        /// </summary>
-        /// <param name="port">The port.</param>
+        /// <inheritdoc />
         public void Start()
         {
             MMALLog.Logger.Debug($"Starting output port {this.Name}");
@@ -212,6 +210,5 @@ namespace MMALSharp.Ports
                 }
             }
         }
-        
     }
 }

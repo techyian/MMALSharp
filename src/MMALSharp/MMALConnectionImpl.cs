@@ -128,13 +128,13 @@ namespace MMALSharp
             MMALLog.Logger.Debug("Inside Managed connection callback");
         }
 
-        /// <inheritdoc cref=""/>
+        /// <inheritdoc />
         public override string ToString()
         {
             return $"Component connection - Upstream component: {this.UpstreamComponent.Name} on port {this.OutputPort.Name} Downstream component: {this.DownstreamComponent.Name} on port {this.InputPort.Name}";
         }
 
-        /// <inheritdoc cref=""/>
+        /// <inheritdoc />
         public override void Dispose()
         {
             MMALLog.Logger.Debug("Disposing connection.");
@@ -207,6 +207,7 @@ namespace MMALSharp
         /// Represents the native callback method for a connection between two ports.
         /// </summary>
         /// <param name="connection">The native pointer to a MMAL_CONNECTION_T struct.</param>
+        /// <returns>The value of all flags set against this connection.</returns>
         internal virtual int NativeConnectionCallback(MMAL_CONNECTION_T* connection)
         {
             lock (MMALConnectionImpl.ConnectionLock)

@@ -372,7 +372,7 @@ namespace MMALSharp.Components
             return videoLevels;
         }
 
-        private static List<VideoLevel> GetHigh10LevelLimits()
+        private List<VideoLevel> GetHigh10LevelLimits()
         {
             var videoLevels = new List<VideoLevel>
             {

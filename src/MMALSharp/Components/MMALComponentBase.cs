@@ -93,7 +93,7 @@ namespace MMALSharp
 
             for (int i = 0; i < this.Ptr->PortNum; i++)
             {
-                this.Ports.Add(new GenericPort(&(*this.Ptr->Port[i]), this, PortType.Unknown, Guid.NewGuid()));
+                this.Ports.Add(new GenericPort(&(*this.Ptr->Port[i]), this, PortType.Generic, Guid.NewGuid()));
             }
         }
         

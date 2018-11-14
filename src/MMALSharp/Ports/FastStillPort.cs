@@ -9,12 +9,27 @@ using MMALSharp.Native;
 
 namespace MMALSharp.Ports
 {
+    /// <summary>
+    /// Represents a still port used specifically when capturing rapid single image frames from the camera's video port.
+    /// </summary>
     public unsafe class FastStillPort : OutputPort
     {
-        public FastStillPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid) : base(ptr, comp, type, guid)
+        /// <summary>
+        /// Creates a new instance of <see cref="FastStillPort"/>. 
+        /// </summary>
+        /// <param name="ptr">The native pointer.</param>
+        /// <param name="comp">The component this port is associated with.</param>
+        /// <param name="type">The type of port.</param>
+        /// <param name="guid">Managed unique identifier for this component.</param>
+        public FastStillPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid) 
+            : base(ptr, comp, type, guid)
         {
         }
         
+        /// <summary>
+        /// Creates a new instance of <see cref="FastStillPort"/>.
+        /// </summary>
+        /// <param name="copyFrom">The port to copy data from.</param>
         public FastStillPort(IPort copyFrom)
             : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid, copyFrom.Handler)
         {

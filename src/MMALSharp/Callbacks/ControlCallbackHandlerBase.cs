@@ -14,14 +14,10 @@ namespace MMALSharp.Callbacks
     /// </summary>
     public abstract class ControlCallbackHandlerBase : IControlCallbackHandler
     {
-        /// <summary>
-        /// A whitelisted Encoding Type that this callback handler will operate on.
-        /// </summary>
+        /// <inheritdoc />
         public MMALEncoding EncodingType { get; }
 
-        /// <summary>
-        /// The port this callback handler is used with.
-        /// </summary>
+        /// <inheritdoc />
         public IControlPort WorkingPort { get; }
         
         /// <summary>
@@ -44,10 +40,7 @@ namespace MMALSharp.Callbacks
             this.EncodingType = encodingType;
         }
         
-        /// <summary>
-        /// The callback function to carry out.
-        /// </summary>
-        /// <param name="buffer">The working buffer header.</param>
+        /// <inheritdoc />
         public virtual void Callback(MMALBufferImpl buffer)
         {
             if (MMALCameraConfig.Debug)

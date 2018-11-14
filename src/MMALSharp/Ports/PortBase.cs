@@ -13,13 +13,35 @@ using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp
 {
+    /// <summary>
+    /// Describes a port type.
+    /// </summary>
     public enum PortType
     {
+        /// <summary>
+        /// An input port.
+        /// </summary>
         Input,
+        
+        /// <summary>
+        /// An output port.
+        /// </summary>
         Output,
+        
+        /// <summary>
+        /// A clock port.
+        /// </summary>
         Clock,
+        
+        /// <summary>
+        /// A control port.
+        /// </summary>
         Control,
-        Unknown
+        
+        /// <summary>
+        /// A generic port.
+        /// </summary>
+        Generic
     }
 
     /// <summary>
@@ -27,116 +49,74 @@ namespace MMALSharp
     /// </summary>
     public abstract unsafe class PortBase : MMALObject, IPort
     {
-        /// <summary>
-        /// Specifies the type of port this is.
-        /// </summary>
+        /// <inheritdoc />
         public PortType PortType { get; set; }
 
-        /// <summary>
-        /// Managed reference to the component this port is associated with.
-        /// </summary>
+        /// <inheritdoc />
         public MMALComponentBase ComponentReference { get; set; }
 
-        /// <summary>
-        /// Managed reference to the downstream component this port is connected to.
-        /// </summary>
+        /// <inheritdoc />
         public MMALConnectionImpl ConnectedReference { get; set; }
 
-        /// <summary>
-        /// Managed reference to the pool of buffer headers associated with this port.
-        /// </summary>
+        /// <inheritdoc />
         public MMALPoolImpl BufferPool { get; set; }
 
-        /// <summary>
-        /// Managed name given to this object (user defined).
-        /// </summary>
+        /// <inheritdoc />
         public Guid Guid { get; set; }
 
-        /// <summary>
-        /// The MMALEncoding encoding type that this port will process data in. Helpful for retrieving encoding name/FourCC value.
-        /// </summary>
+        /// <inheritdoc />
         public MMALEncoding EncodingType { get; set; }
 
-        /// <summary>
-        /// The MMALEncoding pixel format that this port will process data in. Helpful for retrieving encoding name/FourCC value.
-        /// </summary>
+        /// <inheritdoc />
         public MMALEncoding PixelFormat { get; set; }
 
-        /// <summary>
-        /// The handler to process the final data.
-        /// </summary>
+        /// <inheritdoc />
         public ICaptureHandler Handler { get; set; }
         
-        /// <summary>
-        /// Indicates whether ZeroCopy mode should be enabled on this port. When enabled, data is not copied to the ARM processor and is handled directly by the GPU. Useful when
-        /// transferring large amounts of data or raw capture.
-        /// See: https://www.raspberrypi.org/forums/viewtopic.php?t=170024
-        /// </summary>
+        /// <inheritdoc />
         public bool ZeroCopy { get; set; }
 
         #region Native properties
 
-        /// <summary>
-        /// Native name of port.
-        /// </summary>
+        /// <inheritdoc />
         public string Name => Marshal.PtrToStringAnsi((IntPtr)this.Ptr->Name);
 
-        /// <summary>
-        /// Indicates whether this port is enabled.
-        /// </summary>
+        /// <inheritdoc />
         public bool Enabled => this.Ptr->IsEnabled == 1;
 
-        /// <summary>
-        /// Specifies minimum number of buffer headers required for this port.
-        /// </summary>
+        /// <inheritdoc />
         public int BufferNumMin => this.Ptr->BufferNumMin;
         
-        /// <summary>
-        /// Specifies minimum size of buffer headers required for this port.
-        /// </summary>
+        /// <inheritdoc />
         public int BufferSizeMin => this.Ptr->BufferSizeMin;
 
-        /// <summary>
-        /// Specifies minimum alignment value for buffer headers required for this port.
-        /// </summary>
+        /// <inheritdoc />
         public int BufferAlignmentMin => this.Ptr->BufferAlignmentMin;
 
-        /// <summary>
-        /// Specifies recommended number of buffer headers for this port.
-        /// </summary>
+        /// <inheritdoc />
         public int BufferNumRecommended => this.Ptr->BufferNumRecommended;
 
-        /// <summary>
-        /// Specifies recommended size of buffer headers for this port.
-        /// </summary>
+        /// <inheritdoc />
         public int BufferSizeRecommended => this.Ptr->BufferSizeRecommended;
 
-        /// <summary>
-        /// Indicates the currently set number of buffer headers for this port.
-        /// </summary>
+        /// <inheritdoc />
         public int BufferNum
         {
             get => this.Ptr->BufferNum;
             set => this.Ptr->BufferNum = value;
         }
 
-        /// <summary>
-        /// Indicates the currently set size of buffer headers for this port.
-        /// </summary>
+        /// <inheritdoc />
         public int BufferSize
         {
             get => this.Ptr->BufferSize;
             set => this.Ptr->BufferSize = value;
         }
 
-        /// <summary>
-        /// Accessor for the elementary stream.
-        /// </summary>
+        /// <inheritdoc />
         public MMAL_ES_FORMAT_T Format => *this.Ptr->Format;
 
-        /// <summary>
-        /// The Width/Height that this port will process data in.
-        /// </summary>
+        /// <inheritdoc />
         public Resolution Resolution
         {
             get => new Resolution(this.Ptr->Format->Es->Video.Width, this.Ptr->Format->Es->Video.Height);
@@ -147,46 +127,34 @@ namespace MMALSharp
             }
         }
 
-        /// <summary>
-        /// The region of interest that this port will process data in.
-        /// </summary>
+        /// <inheritdoc />
         public Rectangle Crop
         {
             get => new Rectangle(this.Ptr->Format->Es->Video.Crop.X, this.Ptr->Format->Es->Video.Crop.Y, this.Ptr->Format->Es->Video.Crop.Width, this.Ptr->Format->Es->Video.Crop.Height);
             set => this.Ptr->Format->Es->Video.Crop = new MMAL_RECT_T(value.X, value.Y, value.Width, value.Height);
         }
 
-        /// <summary>
-        /// The framerate we are processing data in.
-        /// </summary>
+        /// <inheritdoc />
         public MMAL_RATIONAL_T FrameRate
         {
             get => this.Ptr->Format->Es->Video.FrameRate;
             set => this.Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(value.Num, value.Den);
         }
         
-        /// <summary>
-        /// The Region of Interest width that this port will process data in.
-        /// </summary>
+        /// <inheritdoc />
         public int CropWidth => this.Ptr->Format->Es->Video.Crop.Width;
 
-        /// <summary>
-        /// The Region of Interest height that this port will process data in.
-        /// </summary>
+        /// <inheritdoc />
         public int CropHeight => this.Ptr->Format->Es->Video.Crop.Height;
 
-        /// <summary>
-        /// The encoding type that this port will process data in.
-        /// </summary>
+        /// <inheritdoc />
         public int NativeEncodingType
         {
             get => this.Ptr->Format->Encoding;
             set => this.Ptr->Format->Encoding = value;
         }
 
-        /// <summary>
-        /// The pixel format that this port will process data in.
-        /// </summary>
+        /// <inheritdoc />
         public int NativeEncodingSubformat
         {
             get => this.Ptr->Format->EncodingVariant;
@@ -195,24 +163,16 @@ namespace MMALSharp
 
         #endregion
         
-        /// <summary>
-        /// Asynchronous trigger which is set when processing has completed on this port.
-        /// </summary>
+        /// <inheritdoc />
         public bool Trigger { get; set; }
         
-        /// <summary>
-        /// Native pointer that represents the component this port is associated with.
-        /// </summary>
+        /// <inheritdoc />
         public MMAL_COMPONENT_T* Comp { get; set; }
 
-        /// <summary>
-        /// Native pointer that represents this port.
-        /// </summary>
+        /// <inheritdoc />
         public MMAL_PORT_T* Ptr { get; set; }
         
-        /// <summary>
-        /// Native pointer to the native callback function.
-        /// </summary>
+        /// <inheritdoc />
         public IntPtr PtrCallback { get; set; }
 
         /// <summary>
@@ -226,6 +186,7 @@ namespace MMALSharp
         /// <param name="ptr">The native pointer to the component port.</param>
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port this is.</param>
+        /// <param name="guid">A managed unique identifier for this port.</param>
         protected PortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
         {
             this.Ptr = ptr;
@@ -235,23 +196,28 @@ namespace MMALSharp
             this.Guid = guid;
         }
 
+        /// <summary>
+        /// Creates a new managed reference to a MMAL Component Port.
+        /// </summary>
+        /// <param name="ptr">The native pointer to the component port.</param>
+        /// <param name="comp">The component this port is associated with.</param>
+        /// <param name="type">The type of port this is.</param>
+        /// <param name="guid">A managed unique identifier for this port.</param>
+        /// <param name="handler">The capture handler.</param>
         protected PortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler)
             : this(ptr, comp, type, guid)
         {
             this.Handler = handler;
         }
         
+        /// <inheritdoc />
         public void EnablePort(IntPtr callback)
         {
             MMALLog.Logger.Debug("Enabling port.");
             MMALCheck(MMALPort.mmal_port_enable(this.Ptr, callback), "Unable to enable port.");
         }
         
-        /// <summary>
-        /// Disable processing on a port. Disabling a port will stop all processing on this port and return all (non-processed)
-        /// buffer headers to the client. If this is a connected output port, the input port to which it is connected shall also be disabled.
-        /// Any buffer pool shall be released.
-        /// </summary>
+        /// <inheritdoc />
         public void DisablePort()
         {
             if (this.Enabled)
@@ -261,70 +227,49 @@ namespace MMALSharp
             }
         }
 
-        /// <summary>
-        /// Commit format changes on this port.
-        /// </summary>
-        /// <exception cref="MMALException"/>
+        /// <inheritdoc />
         public void Commit()
         {
             MMALLog.Logger.Debug("Committing port format changes");
             MMALCheck(MMALPort.mmal_port_format_commit(this.Ptr), "Unable to commit port changes.");
         }
 
-        /// <summary>
-        /// Shallow copy a format structure. It is worth noting that the extradata buffer will not be copied in the new format.
-        /// </summary>
-        /// <param name="destination">The destination port we're copying to.</param>
+        /// <inheritdoc />
         public void ShallowCopy(IPort destination)
         {
             MMALLog.Logger.Debug("Shallow copy port format");
             MMALFormat.mmal_format_copy(destination.Ptr->Format, this.Ptr->Format);
         }
 
-        /// <summary>
-        /// Shallow copy a format structure. It is worth noting that the extradata buffer will not be copied in the new format.
-        /// </summary>
-        /// <param name="eventFormatSource">The source event format we're copying from.</param>
+        /// <inheritdoc />
         public void ShallowCopy(MMALEventFormat eventFormatSource)
         {
             MMALLog.Logger.Debug("Shallow copy event format");
             MMALFormat.mmal_format_copy(this.Ptr->Format, eventFormatSource.Ptr);
         }
 
-        /// <summary>
-        /// Fully copy a format structure, including the extradata buffer.
-        /// </summary>
-        /// <param name="destination">The destination port we're copying to.</param>
+        /// <inheritdoc />
         public void FullCopy(IPort destination)
         {
             MMALLog.Logger.Debug("Full copy port format");
             MMALFormat.mmal_format_full_copy(destination.Ptr->Format, this.Ptr->Format);
         }
 
-        /// <summary>
-        /// Fully copy a format structure, including the extradata buffer.
-        /// </summary>
-        /// <param name="eventFormatSource">The source event format we're copying from.</param>
+        /// <inheritdoc />
         public void FullCopy(MMALEventFormat eventFormatSource)
         {
             MMALLog.Logger.Debug("Full copy event format");
             MMALFormat.mmal_format_full_copy(this.Ptr->Format, eventFormatSource.Ptr);
         }
 
-        /// <summary>
-        /// Ask a port to release all the buffer headers it currently has. This is an asynchronous operation and the
-        /// flush call will return before all the buffer headers are returned to the client.
-        /// </summary>
+        /// <inheritdoc />
         public void Flush()
         {            
             MMALLog.Logger.Debug("Flushing port buffers");
             MMALCheck(MMALPort.mmal_port_flush(this.Ptr), "Unable to flush port.");
         }
 
-        /// <summary>
-        /// Send a buffer header to a port.
-        /// </summary>
-        /// <param name="buffer">A managed buffer object.</param>
+        /// <inheritdoc />
         public void SendBuffer(MMALBufferImpl buffer)
         {
             if (this.Enabled)
@@ -338,6 +283,7 @@ namespace MMALSharp
             }
         }
 
+        /// <inheritdoc />
         public void SendAllBuffers(bool sendBuffers = true)
         {
             this.InitialiseBufferPool();
@@ -357,6 +303,7 @@ namespace MMALSharp
             }            
         }
 
+        /// <inheritdoc />
         public void SendAllBuffers(MMALPoolImpl pool)
         {
             var length = pool.Queue.QueueLength();
@@ -371,10 +318,7 @@ namespace MMALSharp
             }
         }
 
-        /// <summary>
-        /// Destroy a pool of MMAL_BUFFER_HEADER_T associated with a specific port. This will also deallocate all of the memory
-        /// which was allocated when creating or resizing the pool.
-        /// </summary>
+        /// <inheritdoc />
         public void DestroyPortPool()
         {
             if (this.BufferPool != null)
@@ -384,16 +328,14 @@ namespace MMALSharp
             }
         }
 
+        /// <inheritdoc />
         public void InitialiseBufferPool()
         {
             MMALLog.Logger.Debug($"Initialising buffer pool.");
             this.BufferPool = new MMALPoolImpl(this);
         }
         
-        /// <summary>
-        /// Disable the specified port.
-        /// </summary>
-        /// <param name="port">The output port.</param>
+        /// <inheritdoc />
         public void Stop()
         {
             this.DisablePort();

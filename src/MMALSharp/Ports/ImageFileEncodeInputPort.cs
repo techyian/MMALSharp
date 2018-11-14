@@ -14,11 +14,22 @@ namespace MMALSharp.Ports
     /// </summary>
     public unsafe class ImageFileEncodeInputPort : InputPort
     {
+        /// <summary>
+        /// Creates a new instance of <see cref="ImageFileEncodeInputPort"/>. 
+        /// </summary>
+        /// <param name="ptr">The native pointer.</param>
+        /// <param name="comp">The component this port is associated with.</param>
+        /// <param name="type">The type of port.</param>
+        /// <param name="guid">Managed unique identifier for this component.</param>
         public ImageFileEncodeInputPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
             : base(ptr, comp, type, guid)
         {
         }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="ImageFileEncodeInputPort"/>.
+        /// </summary>
+        /// <param name="copyFrom">The port to copy data from.</param>
         public ImageFileEncodeInputPort(IPort copyFrom)
             : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
         {

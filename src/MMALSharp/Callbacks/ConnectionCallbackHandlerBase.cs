@@ -10,9 +10,7 @@ namespace MMALSharp.Callbacks
     /// </summary>
     public abstract class ConnectionCallbackHandlerBase : IConnectionCallbackHandler
     {
-        /// <summary>
-        /// The port this callback handler is used with.
-        /// </summary>
+        /// <inheritdoc />
         public MMALConnectionImpl WorkingConnection { get; }
 
         /// <summary>
@@ -36,10 +34,7 @@ namespace MMALSharp.Callbacks
             }
         }
 
-        /// <summary>
-        /// The output port callback function to carry out.
-        /// </summary>
-        /// <param name="buffer">The working buffer header.</param>
+        /// <inheritdoc />
         public virtual void OutputCallback(MMALBufferImpl buffer)
         {
             if (MMALCameraConfig.Debug)

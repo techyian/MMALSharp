@@ -12,8 +12,12 @@ using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp.Ports
 {
+    /// <summary>
+    /// Represents an input port.
+    /// </summary>
     public class InputPort : GenericPort, IInputPort
     {
+        /// <inheritdoc />
         public IInputCallbackHandler ManagedInputCallback { get; set; }
         
         /// <summary>
@@ -21,13 +25,19 @@ namespace MMALSharp.Ports
         /// </summary>
         internal static object InputLock = new object();
 
-        public unsafe InputPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid) : base(ptr, comp, type, guid)
+        /// <summary>
+        /// Creates a new instance of <see cref="InputPort"/>. 
+        /// </summary>
+        /// <param name="ptr">The native pointer.</param>
+        /// <param name="comp">The component this port is associated with.</param>
+        /// <param name="type">The type of port.</param>
+        /// <param name="guid">Managed unique identifier for this component.</param>
+        public unsafe InputPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid) 
+            : base(ptr, comp, type, guid)
         {
         }
         
-        /// <summary>
-        /// Provides functionality to enable processing on an input port.
-        /// </summary>
+        /// <inheritdoc />
         public virtual unsafe void EnableInputPort()
         {
             if (!this.Enabled)
@@ -60,10 +70,7 @@ namespace MMALSharp.Ports
             }
         }
         
-        /// <summary>
-        /// Releases an input port buffer and reads further data from user provided image data if not reached end of file.
-        /// </summary>
-        /// <param name="bufferImpl">A managed buffer object.</param>
+        /// <inheritdoc />
         public void ReleaseInputBuffer(MMALBufferImpl bufferImpl)
         {            
             bufferImpl.Release();
@@ -112,6 +119,7 @@ namespace MMALSharp.Ports
             }
         }
 
+        /// <inheritdoc />
         public void Start()
         {
             this.EnableInputPort();

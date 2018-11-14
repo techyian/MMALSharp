@@ -113,6 +113,11 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Returns the type of port in string format.
+        /// </summary>
+        /// <param name="type">The port type.</param>
+        /// <returns>A string representation of the port type.</returns>
         public static string GetPortType(this PortType type)
         {
             switch (type)
@@ -185,15 +190,20 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Enables or Disables inclusion of raw Bayer image data on this port.
+        /// Starts or stops image processing on a port.
         /// </summary>
-        /// <param name="port"></param>
-        /// <param name="enable"></param>
+        /// <param name="port">The port.</param>
+        /// <param name="enable">Set true to start image capture.</param>
         internal static void SetImageCapture(this IPort port, bool enable)
         {
             port.SetParameter(MMAL_PARAMETER_CAPTURE, enable);
         }
 
+        /// <summary>
+        /// Enables or disables inclusion of raw Bayer metadata on this port.
+        /// </summary>
+        /// <param name="port">The port.</param>
+        /// <param name="raw">Set true to include Bayer metadata.</param>
         internal static void SetRawCapture(this IPort port, bool raw)
         {
             port.SetParameter(MMAL_PARAMETER_ENABLE_RAW_CAPTURE, raw);

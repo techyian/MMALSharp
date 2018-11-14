@@ -53,6 +53,11 @@ namespace MMALSharp.Components
         /// </summary>
         public DateTime? Timeout { get; set; }
         
+        /// <summary>
+        /// Creates a new instance of <see cref="MMALVideoDecoder"/>.
+        /// </summary>
+        /// <param name="handler">The capture handler.</param>
+        /// <param name="timeout">Optional timeout value.</param>
         public MMALVideoDecoder(ICaptureHandler handler, DateTime? timeout = null)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_DECODER, handler)
         {

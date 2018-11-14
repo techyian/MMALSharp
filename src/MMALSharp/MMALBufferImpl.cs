@@ -149,10 +149,7 @@ namespace MMALSharp
             return sb.ToString();
         }
 
-        /// <summary>
-        /// Checks whether this instance is attached to a valid native pointer.
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         public bool CheckState()
         {
             return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;
