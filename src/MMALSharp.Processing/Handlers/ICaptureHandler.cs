@@ -5,7 +5,6 @@
 
 using System;
 using MMALSharp.Common;
-using MMALSharp.Common.PixelFormats;
 using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers

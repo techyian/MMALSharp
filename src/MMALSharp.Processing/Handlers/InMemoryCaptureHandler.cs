@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using MMALSharp.Common;
-using MMALSharp.Common.PixelFormats;
 using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers

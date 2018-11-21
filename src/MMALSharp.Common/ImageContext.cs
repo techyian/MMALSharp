@@ -1,4 +1,4 @@
-using MMALSharp.Common.PixelFormats;
+using System.Drawing.Imaging;
 using MMALSharp.Common.Utility;
 
 namespace MMALSharp.Common
@@ -6,9 +6,9 @@ namespace MMALSharp.Common
     public class ImageContext : IImageContext
     {
         public Resolution Resolution { get; }
-        public IPixelFormat PixelFormat { get; }
+        public PixelFormat PixelFormat { get; }
 
-        public ImageContext(Resolution res, IPixelFormat format)
+        public ImageContext(Resolution res, PixelFormat format)
         {
             this.Resolution = res;
             this.PixelFormat = format;

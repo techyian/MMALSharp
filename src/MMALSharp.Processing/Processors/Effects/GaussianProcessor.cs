@@ -3,35 +3,21 @@ using MMALSharp.Common;
 
 namespace MMALSharp.Processors.Effects
 {
-    public class GaussianProcessor : IFrameProcessor
+    public class GaussianProcessor : ConvolutionBase, IFrameProcessor
     {
-        private Vector3[] Kernel = new Vector3[]
+        private const int KernelWidth = 3;
+        private const int KernelHeight = 3;
+        
+        private double[,] kernel = new double[KernelWidth, KernelHeight]
         {
-            new Vector3(0.0625f, 0.125f, 0.0625f),
-            new Vector3(0.125f,  0.25f,  0.125f),
-            new Vector3(0.0625f, 0.125f, 0.0625f) 
+            { 0.0625, 0.125, 0.0625 },
+            { 0.125,  0.25,  0.125  },
+            { 0.0625, 0.125, 0.0625 } 
         };
         
         public void Apply(byte[] store, IImageContext context)
         {
-            int currentElement = 0;
-            int bytesPerPixel = context.PixelFormat.PixelSize / 8;
-            int processed = 0;
-            
-            for (var i = 1; i <= context.Resolution.Width; i++)
-            {
-                for (var j = 1; j <= context.Resolution.Height; j++)
-                {
-                    processed++;
-                    
-                    currentElement = currentElement + 
-                    if (i > 3 && j > 3)
-                    {
-                        
-                    }
-                }
-                processed++;
-            }
+            this.Convolute(store, kernel, KernelWidth, KernelHeight, context);
         }
     }
 }

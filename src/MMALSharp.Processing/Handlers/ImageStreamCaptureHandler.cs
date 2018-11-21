@@ -20,6 +20,5 @@ namespace MMALSharp.Handlers
         public ImageStreamCaptureHandler(string directory, string extension)
             : base(directory, extension) { }
         
-        
     }
 }

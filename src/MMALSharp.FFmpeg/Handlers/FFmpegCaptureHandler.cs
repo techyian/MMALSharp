@@ -7,7 +7,6 @@ using System;
 using System.Diagnostics;
 using System.Text;
 using MMALSharp.Common;
-using MMALSharp.Common.PixelFormats;
 using MMALSharp.Common.Utility;
 using MMALSharp.Processors;
 
