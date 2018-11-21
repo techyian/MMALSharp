@@ -5,6 +5,7 @@ namespace MMALSharp.Common
 {
     public interface IImageContext
     {
+        bool Raw { get; }
         Resolution Resolution { get; }
         PixelFormat PixelFormat { get; }
     }

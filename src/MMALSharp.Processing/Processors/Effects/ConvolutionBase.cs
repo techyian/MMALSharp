@@ -11,23 +11,41 @@ namespace MMALSharp.Processors.Effects
     {
         public virtual void Convolute(byte[] store, double[,] kernel, int kernelWidth, int kernelHeight, IImageContext context)
         {
-            using (var bmp = new Bitmap(context.Resolution.Width, context.Resolution.Height, context.PixelFormat))
+            Bitmap bmp = null;
+            BitmapData bmpData = null;
+            IntPtr pNative = IntPtr.Zero;
+            
+            using (var ms = new MemoryStream(store))
             {
-                BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0,
-                        bmp.Width,
-                        bmp.Height),
-                    ImageLockMode.ReadWrite,
-                    bmp.PixelFormat);
+                if (context.Raw)
+                {
+                    bmp = new Bitmap(context.Resolution.Width, context.Resolution.Height, context.PixelFormat);
+                    bmpData = bmp.LockBits(new Rectangle(0, 0,
+                            bmp.Width,
+                            bmp.Height),
+                        ImageLockMode.ReadWrite,
+                        bmp.PixelFormat);
 
-                IntPtr pNative = bmpData.Scan0;
-                Marshal.Copy(store, 0, pNative, store.Length);
-                
+                    pNative = bmpData.Scan0;
+                    Marshal.Copy(store, 0, pNative, store.Length);
+                }
+                else
+                {
+                    bmp = new Bitmap(ms);
+                    bmpData = bmp.LockBits(new Rectangle(0, 0,
+                            bmp.Width,
+                            bmp.Height),
+                        ImageLockMode.ReadWrite,
+                        bmp.PixelFormat);
+                    pNative = bmpData.Scan0;
+                }
+
                 // Declare an array to hold the bytes of the bitmap.
                 int bytes = bmpData.Stride * bmp.Height;
                 int stride = bmpData.Stride;
 
                 var rgbValues = new byte[bytes];
-                
+
                 // Copy the RGB values into the array.
                 Marshal.Copy(pNative, rgbValues, 0, bytes);
 
@@ -62,9 +80,10 @@ namespace MMALSharp.Processors.Effects
                         }
                     }
                 }
-                
+
                 bmp.UnlockBits(bmpData);
                 store = rgbValues;
+                bmp.Dispose();
             }
         }
         

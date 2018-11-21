@@ -8,16 +8,16 @@ namespace MMALSharp.Processors.Effects
         private const int KernelWidth = 3;
         private const int KernelHeight = 3;
         
-        private double[,] kernel = new double[KernelWidth, KernelHeight]
+        private double[,] _kernel = new double[KernelWidth, KernelHeight]
         {
             { 0.0625, 0.125, 0.0625 },
-            { 0.125,  0.25,  0.125  },
+            { 0.125,  0.25,  0.125 },
             { 0.0625, 0.125, 0.0625 } 
         };
         
         public void Apply(byte[] store, IImageContext context)
         {
-            this.Convolute(store, kernel, KernelWidth, KernelHeight, context);
+            this.Convolute(store, _kernel, KernelWidth, KernelHeight, context);
         }
     }
 }
