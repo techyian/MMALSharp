@@ -11,65 +11,60 @@ namespace MMALSharp.Processors.Effects
     {
         public virtual void Convolute(byte[] store, double[,] kernel, int kernelWidth, int kernelHeight, IImageContext context)
         {
-            byte[] rgbValues = null;
-            
-            using (var ms = new MemoryStream(store))
+            using (var bmp = new Bitmap(context.Resolution.Width, context.Resolution.Height, context.PixelFormat))
             {
-                var bmp = new Bitmap(ms);
-                
-                // Lock the bitmap's bits.  
-                Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-                BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, context.PixelFormat);
+                BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0,
+                        bmp.Width,
+                        bmp.Height),
+                    ImageLockMode.ReadWrite,
+                    bmp.PixelFormat);
 
+                IntPtr pNative = bmpData.Scan0;
+                Marshal.Copy(store, 0, pNative, store.Length);
+                
                 // Declare an array to hold the bytes of the bitmap.
                 int bytes = bmpData.Stride * bmp.Height;
-                rgbValues = new byte[bytes];
-                
-                int count = 0;
                 int stride = bmpData.Stride;
-             
-                unsafe
-                {
-                    IntPtr ptr = bmpData.Scan0;
-                 
-                    // Copy the RGB values into the array.
-                    Marshal.Copy(ptr, rgbValues, 0, bytes);
-    
-                    for (int column = 0; column < bmpData.Height; column++)
-                    {
-                        for (int row = 0; row < bmpData.Width; row++)
-                        {
-                            if (column > 3 && row > 3)
-                            {
-                                int acc = 0;
-                                int r1 = 0, g1 = 0, b1 = 0;
-    
-                                for (var l = 0; l < kernelWidth; l++)
-                                {
-                                    for (var m = 0; m < kernelHeight; m++)
-                                    {
-                                        r1 += (int)(rgbValues[(this.Bound(column + m, bmpData.Height) * stride) + (this.Bound(row + l, bmpData.Width) * 3)] * kernel[l, m]);
-                                        g1 += (int)(rgbValues[(this.Bound(column + m, bmpData.Height) * stride) + (this.Bound(row + l, bmpData.Width) * 3) + 1] * kernel[l, m]);
-                                        b1 += (int)(rgbValues[(this.Bound(column + m, bmpData.Height) * stride) + (this.Bound(row + l, bmpData.Width) * 3) + 2] * kernel[l, m]);
-                                    }
-                                }
 
-                                rgbValues[(column * stride) + (row * 3)] = (byte) Math.Max(0, r1);
-                                rgbValues[(column * stride) + (row * 3) + 1] = (byte) Math.Max(0, g1);
-                                rgbValues[(column * stride) + (row * 3) + 2] = (byte) Math.Max(0, b1);
-                            }
-                            else
+                var rgbValues = new byte[bytes];
+                
+                // Copy the RGB values into the array.
+                Marshal.Copy(pNative, rgbValues, 0, bytes);
+
+                for (int column = 0; column < bmpData.Height; column++)
+                {
+                    for (int row = 0; row < bmpData.Width; row++)
+                    {
+                        if (column > 3 && row > 3)
+                        {
+                            int acc = 0;
+                            int r1 = 0, g1 = 0, b1 = 0;
+
+                            for (var l = 0; l < kernelWidth; l++)
                             {
-                                rgbValues[(column * stride) + (row * 3)] = 0;
-                                rgbValues[(column * stride) + (row * 3) + 1] = 0;
-                                rgbValues[(column * stride) + (row * 3) + 2] = 0;
+                                for (var m = 0; m < kernelHeight; m++)
+                                {
+                                    r1 += (int)(rgbValues[(this.Bound(column + m, bmpData.Height) * stride) + (this.Bound(row + l, bmpData.Width) * 3)] * kernel[l, m]);
+                                    g1 += (int)(rgbValues[(this.Bound(column + m, bmpData.Height) * stride) + (this.Bound(row + l, bmpData.Width) * 3) + 1] * kernel[l, m]);
+                                    b1 += (int)(rgbValues[(this.Bound(column + m, bmpData.Height) * stride) + (this.Bound(row + l, bmpData.Width) * 3) + 2] * kernel[l, m]);
+                                }
                             }
+
+                            rgbValues[(column * stride) + (row * 3)] = (byte)Math.Max(0, r1);
+                            rgbValues[(column * stride) + (row * 3) + 1] = (byte)Math.Max(0, g1);
+                            rgbValues[(column * stride) + (row * 3) + 2] = (byte)Math.Max(0, b1);
+                        }
+                        else
+                        {
+                            rgbValues[(column * stride) + (row * 3)] = 0;
+                            rgbValues[(column * stride) + (row * 3) + 1] = 0;
+                            rgbValues[(column * stride) + (row * 3) + 2] = 0;
                         }
                     }
                 }
-
-                store = rgbValues;
+                
                 bmp.UnlockBits(bmpData);
+                store = rgbValues;
             }
         }
         
