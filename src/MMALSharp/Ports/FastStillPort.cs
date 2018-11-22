@@ -56,7 +56,7 @@ namespace MMALSharp.Ports
                     bufferImpl.PrintProperties();
                 }
                 
-                var failed = bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
+                var failed = bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
                 
                 if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !this.ComponentReference.ForceStopProcessing && !failed && !this.Trigger) || 
                     (this.ComponentReference.ForceStopProcessing && !this.Trigger))

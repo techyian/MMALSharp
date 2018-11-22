@@ -51,7 +51,7 @@ namespace MMALSharp.Callbacks
 
             var component = (MMALVideoEncoder)this.WorkingPort.ComponentReference;
 
-            if (component.PrepareSplit && buffer.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))
+            if (component.PrepareSplit && buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))
             {
                 ((VideoStreamCaptureHandler)this.WorkingPort.Handler).Split();
                 component.LastSplit = DateTime.Now;

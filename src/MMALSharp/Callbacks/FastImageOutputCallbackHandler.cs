@@ -4,7 +4,6 @@
 // </copyright>
 
 using System;
-using System.Linq;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
@@ -46,9 +45,8 @@ namespace MMALSharp.Callbacks
 
             base.Callback(buffer);
             
-            var component = (MMALImageEncoder)this.WorkingPort.ComponentReference;
-            var eos = buffer.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END ||
-                                                 c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
+            var eos = buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) ||
+                      buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
 
             if (eos)
             {
@@ -56,7 +54,7 @@ namespace MMALSharp.Callbacks
                 this.WorkingPort.Handler?.PostProcess();
             }
 
-            if (eos && this.WorkingPort.Handler.GetType() == typeof(ImageStreamCaptureHandler))
+            if (eos && this.WorkingPort.Handler?.GetType() == typeof(ImageStreamCaptureHandler))
             {
                 ((ImageStreamCaptureHandler)this.WorkingPort.Handler).NewFile();
             }
