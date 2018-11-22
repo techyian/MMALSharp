@@ -4,7 +4,6 @@
 // </copyright>
 
 using System;
-using System.Linq;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
 using MMALSharp.Callbacks.Providers;
@@ -81,7 +80,7 @@ namespace MMALSharp.Ports
         public unsafe void ReleaseOutputBuffer(MMALBufferImpl bufferImpl)
         {
             bufferImpl.Release();
-            bufferImpl.Dispose();
+            
             try
             {
                 if (!this.Enabled)
@@ -97,7 +96,7 @@ namespace MMALSharp.Ports
                 if (this.Enabled && this.BufferPool != null)
                 {
                     var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
-
+                    
                     if (newBuffer != null)
                     {
                         this.SendBuffer(newBuffer);
@@ -191,9 +190,11 @@ namespace MMALSharp.Ports
                     bufferImpl.PrintProperties();
                 }
                 
-                var failed = bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
-                var eos = bufferImpl.Properties.Any(c => c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END ||
-                                                         c == MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) || this.ComponentReference.ForceStopProcessing;
+                var failed = bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
+                
+                var eos = bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) ||
+                          bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) ||
+                          this.ComponentReference.ForceStopProcessing;
 
                 if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !failed && !this.Trigger) || (eos && !this.Trigger))
                 {

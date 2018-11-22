@@ -19,16 +19,6 @@ namespace MMALSharp
     public unsafe class MMALBufferImpl : MMALObject, IMMALStatus
     {
         /// <summary>
-        /// Creates a new Managed reference to a MMAL Buffer.
-        /// </summary>
-        /// <param name="ptr">The native pointer to the buffer.</param>
-        public MMALBufferImpl(MMAL_BUFFER_HEADER_T* ptr)
-        {
-            this.Ptr = ptr;
-            this.InitialiseProperties();
-        }
-        
-        /// <summary>
         /// Pointer to the data associated with this buffer header.
         /// </summary>
         public byte* Data => this.Ptr->data;
@@ -89,6 +79,15 @@ namespace MMALSharp
         internal MMAL_BUFFER_HEADER_T* Ptr { get; set; }
 
         /// <summary>
+        /// Creates a new Managed reference to a MMAL Buffer.
+        /// </summary>
+        /// <param name="ptr">The native pointer to the buffer.</param>
+        public MMALBufferImpl(MMAL_BUFFER_HEADER_T* ptr)
+        {
+            this.Ptr = ptr;
+        }
+        
+        /// <summary>
         /// Print the properties associated with this buffer header to console.
         /// </summary>
         public void PrintProperties()
@@ -125,12 +124,19 @@ namespace MMALSharp
             }
         }
 
+        public bool AssertProperty(MMALBufferProperties property)
+        {
+            return ((int) this.Flags & (int) property) == (int) property;
+        }
+
         /// <summary>
         /// Returns a summary, including length presentation timestamp and flags, about this buffer header instance.
         /// </summary>
         /// <returns>A string summarising this instance.</returns>
         public override string ToString()
         {
+            this.InitialiseProperties();
+            
             var sb = new StringBuilder();
 
             sb.Append(
@@ -175,7 +181,7 @@ namespace MMALSharp
                 var buffer = new byte[(int)this.Ptr->Length];
                 Marshal.Copy((IntPtr)ps, buffer, 0, buffer.Length);
                 MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
-
+                
                 return buffer;
             }
             catch
