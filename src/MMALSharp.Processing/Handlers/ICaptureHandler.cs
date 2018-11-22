@@ -31,11 +31,5 @@ namespace MMALSharp.Handlers
         /// Used for any further processing once we have completed capture.
         /// </summary>
         void PostProcess();
-
-        /// <summary>
-        /// Allows manipulating of the image frame.
-        /// </summary>
-        /// <param name="context">A delegate to the manipulation you wish to carry out.</param>
-        void Manipulate(Action<IFrameProcessingContext> context, IImageContext imageContext);
     }
 }

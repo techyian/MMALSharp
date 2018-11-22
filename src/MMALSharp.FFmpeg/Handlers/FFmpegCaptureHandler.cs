@@ -6,9 +6,7 @@
 using System;
 using System.Diagnostics;
 using System.Text;
-using MMALSharp.Common;
 using MMALSharp.Common.Utility;
-using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers
 {
@@ -100,17 +98,9 @@ namespace MMALSharp.Handlers
         
         public void PostProcess() { }
         
-        public void Manipulate(Action<IFrameProcessingContext> context, IImageContext imageContext)
-        {
-            throw new NotImplementedException();
-        }
-
         public string GetDirectory()
             => throw new NotImplementedException();
         
-        public void Manipulate(Action<IFrameProcessingContext> context)
-            => throw new NotImplementedException();
-
         public ProcessResult Process(uint allocSize)
             => throw new NotImplementedException();
 

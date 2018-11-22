@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
-using MMALSharp.Common;
 using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers
 {
-    public class InMemoryCaptureHandler : ICaptureHandler
+    public class InMemoryCaptureHandler : CaptureHandlerProcessorBase
     {
         public List<byte> WorkingData { get; set; }
 
@@ -14,30 +12,23 @@ namespace MMALSharp.Handlers
             this.WorkingData = new List<byte>();
         }
         
-        public void Dispose()
+        public override void Dispose()
         {
             // Not required.
         }
-
-        public virtual ProcessResult Process(uint allocSize)
-        {
-            return new ProcessResult();
-        }
-
-        public virtual void Process(byte[] data)
+        
+        /// <inheritdoc />
+        public override void Process(byte[] data)
         {
             this.WorkingData.AddRange(data);
         }
 
-        public virtual void PostProcess()
-        {
-        }
-
-        public void Manipulate(Action<IFrameProcessingContext> context, IImageContext imageContext)
+        /// <inheritdoc />
+        public override void PostProcess()
         {
             var tempData = this.WorkingData.ToArray();
-            context(new FrameProcessingContext(tempData, imageContext));
-            this.WorkingData = new List<byte>(tempData);
+            _manipulate(new FrameProcessingContext(tempData, _imageContext));
+            this.WorkingData = new List<byte>(tempData);    
         }
     }
 }
