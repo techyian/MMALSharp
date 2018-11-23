@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MMALSharp.Common.Utility;
+using MMALSharp.Config;
 using Xunit;
 
 namespace MMALSharp.Tests

@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
+using MMALSharp.Config;
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using static MMALSharp.MMALNativeExceptionHelper;

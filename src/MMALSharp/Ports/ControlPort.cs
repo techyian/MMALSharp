@@ -93,8 +93,9 @@ namespace MMALSharp.Ports
                     if (MMALCameraConfig.Debug)
                     {
                         bufferImpl.ParseEvents();
-                        bufferImpl.PrintProperties();
                     }
+
+                    bufferImpl.PrintProperties();
 
                     this.ManagedControlCallback.Callback(bufferImpl);
 

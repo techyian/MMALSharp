@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MMALSharp.Components;
+using MMALSharp.Config;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using Xunit;

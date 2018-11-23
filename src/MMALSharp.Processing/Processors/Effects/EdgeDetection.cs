@@ -1,3 +1,8 @@
+// <copyright file="EdgeDetection.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using MMALSharp.Common;
 
 namespace MMALSharp.Processors.Effects
@@ -9,6 +14,9 @@ namespace MMALSharp.Processors.Effects
         High
     }
     
+    /// <summary>
+    /// A kernel based image processor used to apply Edge detection convolution.
+    /// </summary>
     public class EdgeDetection : ConvolutionBase, IFrameProcessor
     {
         private const int KernelWidth = 3;
@@ -16,6 +24,10 @@ namespace MMALSharp.Processors.Effects
         
         private double[,] Kernel { get; }
         
+        /// <summary>
+        /// Creates a new instance of <see cref="EdgeDetection"/>.
+        /// </summary>
+        /// <param name="strength">The Edge detection strength.</param>
         public EdgeDetection(EDStrength strength)
         {
             switch (strength)
@@ -46,7 +58,8 @@ namespace MMALSharp.Processors.Effects
                     break;
             }
         }
-    
+
+        /// <inheritdoc />
         public void Apply(byte[] store, IImageContext context)
         {
             this.Convolute(store, this.Kernel, KernelWidth, KernelHeight, context);

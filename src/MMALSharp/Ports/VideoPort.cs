@@ -57,10 +57,7 @@ namespace MMALSharp.Ports
 
                 var bufferImpl = new MMALBufferImpl(buffer);
 
-                if (MMALCameraConfig.Debug)
-                {
-                    bufferImpl.PrintProperties();
-                }
+                bufferImpl.PrintProperties();
                 
                 var eos = (this.Timeout.HasValue && DateTime.Now.CompareTo(this.Timeout.Value) > 0) || this.ComponentReference.ForceStopProcessing;
 

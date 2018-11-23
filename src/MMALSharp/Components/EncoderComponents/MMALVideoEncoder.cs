@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
+using MMALSharp.Config;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
@@ -21,6 +22,21 @@ namespace MMALSharp.Components
     /// </summary>
     public sealed unsafe class MMALVideoEncoder : MMALEncoderBase
     {
+        /// <summary>
+        /// Signifies the max bitrate supported for MJPEG (25Mbits/s)
+        /// </summary>
+        public const int MaxBitrateMJPEG = 25000000;
+
+        /// <summary>
+        /// Signifies the max bitrate supported for H.264 Level 4 (25Mbits/s)
+        /// </summary>
+        public const int MaxBitrateLevel4 = 25000000; // 25Mbits/s
+
+        /// <summary>
+        /// Signifies the max bitrate supported for H.264 Level 4.2 (62.5Mbits/s)
+        /// </summary>
+        public const int MaxBitrateLevel42 = 62500000; // 62.5Mbits/s
+
         /// <summary>
         /// The working bitrate of this <see cref="MMALVideoEncoder"/>.
         /// </summary>
@@ -37,26 +53,11 @@ namespace MMALSharp.Components
         /// MJPEG encoding - Uses same quality scale as JPEG encoder (Lowest: 1  Highest: 100).
         /// </summary>
         public int Quality { get; set; }
-
-        /// <summary>
-        /// Signifies the max bitrate supported for MJPEG (25Mbits/s)
-        /// </summary>
-        public const int MaxBitrateMJPEG = 25000000;
         
-        /// <summary>
-        /// Signifies the max bitrate supported for H.264 Level 4 (25Mbits/s)
-        /// </summary>
-        public const int MaxBitrateLevel4 = 25000000; // 25Mbits/s
-        
-        /// <summary>
-        /// Signifies the max bitrate supported for H.264 Level 4.2 (62.5Mbits/s)
-        /// </summary>
-        public const int MaxBitrateLevel42 = 62500000; // 62.5Mbits/s
-
         /// <summary>
         /// Object containing properties used to determine when we should perform a file split.
         /// </summary>
-        public Split Split { get; set; }
+        public Split Split { get; }
 
         /// <summary>
         /// States the time we last did a file split.
@@ -68,6 +69,11 @@ namespace MMALSharp.Components
         /// and this can be applied on the next run to the newly created file.
         /// </summary>
         public bool PrepareSplit { get; set; }
+
+        /// <summary>
+        /// A <see cref="DateTime"/> to signify when processing should terminate on this component.
+        /// </summary>
+        public DateTime? Timeout { get; }
 
         private int _width;
         private int _height;
@@ -101,12 +107,7 @@ namespace MMALSharp.Components
             }
             set { _height = value; }
         }
-
-        /// <summary>
-        /// A <see cref="DateTime"/> to signify when processing should terminate on this component.
-        /// </summary>
-        public DateTime? Timeout { get; set; }
-
+        
         /// <summary>
         /// Creates a new instance of <see cref="MMALVideoEncoder"/>.
         /// </summary>

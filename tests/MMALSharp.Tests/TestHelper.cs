@@ -1,6 +1,7 @@
 using System.IO;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
+using MMALSharp.Config;
 using MMALSharp.Native;
 
 namespace MMALSharp.Tests

@@ -137,10 +137,7 @@ namespace MMALSharp.Ports
 
                 var bufferImpl = new MMALBufferImpl(buffer);
 
-                if (MMALCameraConfig.Debug)
-                {
-                    bufferImpl.PrintProperties();
-                }
+                bufferImpl.PrintProperties();
 
                 this.ReleaseInputBuffer(bufferImpl);
             }

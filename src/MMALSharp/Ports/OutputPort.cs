@@ -185,10 +185,7 @@ namespace MMALSharp.Ports
                 
                 var bufferImpl = new MMALBufferImpl(buffer);
 
-                if (MMALCameraConfig.Debug)
-                {
-                    bufferImpl.PrintProperties();
-                }
+                bufferImpl.PrintProperties();
                 
                 var failed = bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
                 

@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
+using MMALSharp.Config;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
@@ -50,23 +51,23 @@ namespace MMALSharp.Components
         /// <summary>
         /// When enabled, raw bayer metadata will be included in JPEG still captures.
         /// </summary>
-        public bool RawBayer { get; set; }
+        public bool RawBayer { get; }
 
         /// <summary>
         /// When enabled, EXIF metadata will be included in image stills.
         /// </summary>
-        public bool UseExif { get; set; }
+        public bool UseExif { get; }
 
         /// <summary>
         /// Custom list of user defined EXIF metadata.
         /// </summary>
-        public ExifTag[] ExifTags { get; set; }
+        public ExifTag[] ExifTags { get; }
         
         /// <summary>
         /// If true, this component will be configured to process rapidly captured frames from the camera's video port.
         /// Note: The component pipeline must be configured as such. 
         /// </summary>
-        public bool ContinuousCapture { get; set; }
+        public bool ContinuousCapture { get; }
         
         /// <summary>
         /// Creates a new instance of the <see cref="MMALImageEncoder"/> class with the specified handler.

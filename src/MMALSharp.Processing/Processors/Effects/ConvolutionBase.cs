@@ -1,3 +1,8 @@
+// <copyright file="ConvolutionBase.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -7,16 +12,25 @@ using MMALSharp.Common;
 
 namespace MMALSharp.Processors.Effects
 {
+    /// <summary>
+    /// Base class for image processors using matrix convolution.
+    /// </summary>
     public abstract class ConvolutionBase
     {
+        /// <summary>
+        /// Apply a convolution based on the kernel passed in.
+        /// </summary>
+        /// <param name="store">The image data.</param>
+        /// <param name="kernel">The kernel.</param>
+        /// <param name="kernelWidth">The kernel's width.</param>
+        /// <param name="kernelHeight">The kernel's height.</param>
+        /// <param name="context">An image context providing additional metadata on the data passed in.</param>
         public void Convolute(byte[] store, double[,] kernel, int kernelWidth, int kernelHeight, IImageContext context)
         {
             Bitmap bmp = null;
             BitmapData bmpData = null;
             IntPtr pNative = IntPtr.Zero;
-            int bytes = 0;
-            int stride = 0;
-
+            int bytes, stride;
             byte[] rgbValues = null;
             
             using (var ms = new MemoryStream(store))
@@ -63,7 +77,6 @@ namespace MMALSharp.Processors.Effects
                         {
                             if (column > 3 && row > 3)
                             {
-                                int acc = 0;
                                 int r1 = 0, g1 = 0, b1 = 0;
     
                                 for (var l = 0; l < kernelWidth; l++)
