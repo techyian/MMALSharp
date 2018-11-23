@@ -659,22 +659,27 @@ namespace MMALSharp.Native
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
 
-        private int width;
-        private int height;
-        private int quality;
+        private int _enable;
+        private int _width;
+        private int _height;
+        private int _quality;
 
-        public int Width => this.width;
+        public bool Enable => _enable == 1;
 
-        public int Height => this.height;
+        public int Width => _width;
 
-        public int Quality => this.quality;
+        public int Height => _height;
 
-        public MMAL_PARAMETER_THUMBNAIL_CONFIG_T(MMAL_PARAMETER_HEADER_T hdr, int width, int height, int quality)
+        public int Quality => _quality;
+
+        public MMAL_PARAMETER_THUMBNAIL_CONFIG_T(MMAL_PARAMETER_HEADER_T hdr, bool enable, int width, int height, int quality)
         {
             this.Hdr = hdr;
-            this.width = width;
-            this.height = height;
-            this.quality = quality;
+
+            _enable = enable ? 1 : 0;
+            _width = width;
+            _height = height;
+            _quality = quality;
         }
     }
 
