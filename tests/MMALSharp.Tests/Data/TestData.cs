@@ -29,7 +29,7 @@ namespace MMALSharp.Tests
             set => _fixture = value;
         }
         
-        public TestBase() {}
+        public TestBase() { }
 
         public TestBase(MMALFixture fixture)
         {

@@ -3,9 +3,7 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using System;
-using MMALSharp.Native;
-using MMALSharp.Ports;
+using MMALSharp.Ports.Controls;
 
 namespace MMALSharp.Callbacks
 {
@@ -15,29 +13,15 @@ namespace MMALSharp.Callbacks
     public abstract class ControlCallbackHandlerBase : IControlCallbackHandler
     {
         /// <inheritdoc />
-        public MMALEncoding EncodingType { get; }
-
-        /// <inheritdoc />
-        public IControlPort WorkingPort { get; }
+        public ControlPortBase WorkingPort { get; }
         
         /// <summary>
         /// Creates a new instance of <see cref="ControlCallbackHandlerBase"/>.
         /// </summary>
-        /// <param name="port">The <see cref="IControlPort"/>.</param>
-        protected ControlCallbackHandlerBase(IControlPort port)
+        /// <param name="port">The <see cref="ControlPortBase"/>.</param>
+        protected ControlCallbackHandlerBase(ControlPortBase port)
         {
             this.WorkingPort = port;
-        }
-
-        /// <summary>
-        /// Creates a new instance of <see cref="ControlCallbackHandlerBase"/>.
-        /// </summary>
-        /// <param name="port">The <see cref="IControlPort"/>.</param>
-        /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        protected ControlCallbackHandlerBase(IControlPort port, MMALEncoding encodingType)
-        {
-            this.WorkingPort = port;
-            this.EncodingType = encodingType;
         }
         
         /// <inheritdoc />
@@ -46,11 +30,6 @@ namespace MMALSharp.Callbacks
             if (MMALCameraConfig.Debug)
             {
                 MMALLog.Logger.Debug($"In managed {this.WorkingPort.PortType.GetPortType()} callback");
-            }
-            
-            if (this.EncodingType != null && this.WorkingPort.EncodingType != this.EncodingType)
-            {
-                throw new ArgumentException("Port Encoding Type not supported for this handler.");
             }
         }
     }

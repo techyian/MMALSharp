@@ -10,7 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using MMALSharp.Native;
-using MMALSharp.Ports;
+using MMALSharp.Ports.Inputs;
 using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp.Components

@@ -10,12 +10,12 @@ using MMALSharp.Callbacks.Providers;
 using MMALSharp.Native;
 using static MMALSharp.MMALNativeExceptionHelper;
 
-namespace MMALSharp.Ports
+namespace MMALSharp.Ports.Controls
 {
     /// <summary>
     /// Represents a control port.
     /// </summary>
-    public unsafe class ControlPort : GenericPort, IControlPort
+    public unsafe class ControlPort : ControlPortBase
     {
         /// <summary>
         /// Creates a new instance of <see cref="ControlPort"/>. 
@@ -32,7 +32,7 @@ namespace MMALSharp.Ports
         /// <summary>
         /// A callback handler for Control ports we use to do further processing on buffer headers after they've been received by the native callback delegate.
         /// </summary>
-        public IControlCallbackHandler ManagedControlCallback { get; set; }
+        internal override IControlCallbackHandler ManagedControlCallback { get; set; }
 
         /// <summary>
         /// Monitor lock for control port callback method.
@@ -40,7 +40,7 @@ namespace MMALSharp.Ports
         private static object ControlLock = new object();
         
         /// <inheritdoc />
-        public void EnableControlPort()
+        internal override void EnableControlPort()
         {
             if (!this.Enabled)
             {
@@ -66,7 +66,7 @@ namespace MMALSharp.Ports
         }
 
         /// <inheritdoc />
-        public void Start()
+        internal override void Start()
         {
             this.EnableControlPort();
         }

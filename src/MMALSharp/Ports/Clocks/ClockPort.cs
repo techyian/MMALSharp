@@ -6,7 +6,7 @@
 using System;
 using MMALSharp.Native;
 
-namespace MMALSharp.Ports
+namespace MMALSharp.Ports.Clocks
 {
     /// <summary>
     /// Represents a clock port.

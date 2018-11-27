@@ -6,7 +6,7 @@
 using System;
 using MMALSharp.Native;
 
-namespace MMALSharp.Ports
+namespace MMALSharp.Ports.Outputs
 {
     /// <summary>
     /// Represents a still image encoder/decoder port.
@@ -29,7 +29,7 @@ namespace MMALSharp.Ports
         /// Creates a new instance of <see cref="StillPort"/>.
         /// </summary>
         /// <param name="copyFrom">The port to copy data from.</param>
-        public StillPort(IPort copyFrom)
+        public StillPort(PortBase copyFrom)
             : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid, copyFrom.Handler)
         {
         }

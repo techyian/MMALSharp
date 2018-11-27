@@ -4,7 +4,7 @@
 // </copyright>
 
 using MMALSharp.Native;
-using MMALSharp.Ports;
+using MMALSharp.Ports.Controls;
 
 namespace MMALSharp.Callbacks
 {
@@ -16,19 +16,9 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="DefaultControlCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="IControlPort"/>.</param>
-        public DefaultControlCallbackHandler(IControlPort port)
+        /// <param name="port">The working <see cref="ControlPortBase"/>.</param>
+        public DefaultControlCallbackHandler(ControlPortBase port)
             : base(port)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new instance of <see cref="DefaultControlCallbackHandler"/>.
-        /// </summary>
-        /// <param name="port">The working <see cref="IControlPort"/>.</param>
-        /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        public DefaultControlCallbackHandler(IControlPort port, MMALEncoding encodingType)
-            : base(port, encodingType)
         {
         }
 

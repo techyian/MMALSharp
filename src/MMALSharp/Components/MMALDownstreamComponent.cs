@@ -10,6 +10,7 @@ using MMALSharp.Callbacks;
 using MMALSharp.Callbacks.Providers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
+using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp.Components
 {
@@ -27,7 +28,7 @@ namespace MMALSharp.Components
             : base(name)
         {
             MMALCamera.Instance.DownstreamComponents.Add(this);
-            this.ProcessingPorts = new Dictionary<int, IOutputPort>();
+            this.ProcessingPorts = new Dictionary<int, OutputPortBase>();
         }
 
         /// <summary>
@@ -43,7 +44,7 @@ namespace MMALSharp.Components
         /// <summary>
         /// A list of working ports which are processing data in the component pipeline.
         /// </summary>
-        public Dictionary<int, IOutputPort> ProcessingPorts { get; set; }
+        public Dictionary<int, OutputPortBase> ProcessingPorts { get; set; }
         
         /// <summary>
         /// Registers a <see cref="IInputCallbackHandler"/>.
@@ -79,7 +80,7 @@ namespace MMALSharp.Components
         /// If it exists, removes a <see cref="IConnectionCallbackHandler"/> on the port specified.
         /// </summary>
         /// <param name="port">The port with a created connection.</param>
-        public void RemoveConnectionCallback(IPort port) =>
+        public void RemoveConnectionCallback(PortBase port) =>
             ConnectionCallbackProvider.RemoveCallback(port.ConnectedReference);
 
         /// <summary>
@@ -91,7 +92,7 @@ namespace MMALSharp.Components
         /// <param name="copyPort">The output port we are copying format data from.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, IPort copyPort, bool zeroCopy = false)
+        public virtual MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, PortBase copyPort, bool zeroCopy = false)
         {
             this.InitialiseInputPort(0);
 

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
-using MMALSharp.Ports;
+using MMALSharp.Ports.Outputs;
 using MMALSharp.Utility;
 
 namespace MMALSharp
@@ -51,7 +51,7 @@ namespace MMALSharp
         /// Begin capture on one of the camera's output ports.
         /// </summary>
         /// <param name="port">An output port of the camera component.</param>
-        public void StartCapture(IOutputPort port)
+        public void StartCapture(OutputPortBase port)
         {
             if (port == this.Camera.StillPort || port == this.Camera.VideoPort)
             {
@@ -63,7 +63,7 @@ namespace MMALSharp
         /// Stop capture on one of the camera's output ports.
         /// </summary>
         /// <param name="port">An output port of the camera component.</param>
-        public void StopCapture(IOutputPort port)
+        public void StopCapture(OutputPortBase port)
         {
             if (port == this.Camera.StillPort || port == this.Camera.VideoPort)
             {
@@ -75,7 +75,7 @@ namespace MMALSharp
         /// Force capture to stop on a port (Still or Video).
         /// </summary>
         /// <param name="port">The capture port.</param>
-        public void ForceStop(IOutputPort port)
+        public void ForceStop(OutputPortBase port)
         {
             port.Trigger = true;
         }
@@ -286,7 +286,7 @@ namespace MMALSharp
         /// <param name="cameraPort">The camera port which image data is coming from.</param>
         /// <param name="cancellationToken">A CancellationToken to observe while waiting for a task to complete.</param>
         /// <returns>The awaitable Task.</returns>
-        public async Task ProcessAsync(IOutputPort cameraPort, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task ProcessAsync(OutputPortBase cameraPort, CancellationToken cancellationToken = default(CancellationToken))
         {
             var handlerComponents = this.PopulateProcessingList();
             
@@ -351,7 +351,7 @@ namespace MMALSharp
                     
                     if (port.ConnectedReference == null)
                     {
-                        port.Stop();
+                        port.DisablePort();
                     }
                 }
                 
@@ -456,7 +456,7 @@ namespace MMALSharp
         /// <param name="cameraPort">The camera component port (still or video).</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The awaitable task.</returns>
-        private async Task ProcessRawAsync(IOutputPort cameraPort,
+        private async Task ProcessRawAsync(OutputPortBase cameraPort,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             cameraPort.Trigger = false;

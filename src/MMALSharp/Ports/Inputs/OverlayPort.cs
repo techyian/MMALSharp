@@ -6,7 +6,7 @@
 using System;
 using MMALSharp.Native;
 
-namespace MMALSharp.Ports
+namespace MMALSharp.Ports.Inputs
 {
     /// <summary>
     /// Represents port behaviour especially for the static overlay renderer functionality. This object overrides <see cref="NativeInputPortCallback"/>
@@ -30,7 +30,7 @@ namespace MMALSharp.Ports
         /// Creates a new instance of <see cref="OverlayPort"/>.
         /// </summary>
         /// <param name="copyFrom">The port to copy data from.</param>
-        public OverlayPort(IPort copyFrom)
+        public OverlayPort(PortBase copyFrom)
             : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
         {
         }

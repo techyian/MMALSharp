@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices.ComTypes;
-using System.Threading;
 using System.Threading.Tasks;
 using MMALSharp.Components;
 using MMALSharp.Handlers;

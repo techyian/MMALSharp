@@ -55,6 +55,5 @@ namespace MMALSharp.Tests
         
         public static void BeginTest(string name, string encodingType, string pixelFormat)
             => MMALLog.Logger.Info($"Running test: {name}. Encoding type: {encodingType}. Pixel format: {pixelFormat}.");
-            
     }
 }

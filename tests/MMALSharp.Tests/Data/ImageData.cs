@@ -23,8 +23,8 @@ namespace MMALSharp.Tests
                 // TGA/PPM support is enabled by performing a firmware update "sudo rpi-update".
                 // See: https://github.com/techyian/MMALSharp/issues/23
 
-                //list.AddRange(TestData.TgaEncoderData);
-                //list.AddRange(TestData.PpmEncoderData);
+                // list.AddRange(TestData.TgaEncoderData);
+                // list.AddRange(TestData.PpmEncoderData);
 
                 return list;
             }

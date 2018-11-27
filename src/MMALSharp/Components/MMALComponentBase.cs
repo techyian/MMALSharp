@@ -5,11 +5,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
+using MMALSharp.Ports.Clocks;
+using MMALSharp.Ports.Controls;
+using MMALSharp.Ports.Inputs;
+using MMALSharp.Ports.Outputs;
 using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp
@@ -22,27 +24,27 @@ namespace MMALSharp
         /// <summary>
         /// Reference to the Control port of this component.
         /// </summary>
-        public IControlPort Control { get; }
+        public ControlPortBase Control { get; }
 
         /// <summary>
         /// Reference to all input ports associated with this component.
         /// </summary>
-        public List<IInputPort> Inputs { get; }
+        public List<InputPortBase> Inputs { get; }
 
         /// <summary>
         /// Reference to all output ports associated with this component.
         /// </summary>
-        public List<IOutputPort> Outputs { get; }
+        public List<OutputPortBase> Outputs { get; }
 
         /// <summary>
         /// Reference to all clock ports associated with this component.
         /// </summary>
-        public List<IPort> Clocks { get; }
+        public List<PortBase> Clocks { get; }
 
         /// <summary>
         /// Reference to all ports associated with this component.
         /// </summary>
-        public List<IPort> Ports { get; }
+        public List<PortBase> Ports { get; }
         
         /// <summary>
         /// Name of the component
@@ -69,10 +71,10 @@ namespace MMALSharp
         {
             this.Ptr = CreateComponent(name);
 
-            this.Inputs = new List<IInputPort>();
-            this.Outputs = new List<IOutputPort>();
-            this.Clocks = new List<IPort>();
-            this.Ports = new List<IPort>();
+            this.Inputs = new List<InputPortBase>();
+            this.Outputs = new List<OutputPortBase>();
+            this.Clocks = new List<PortBase>();
+            this.Ports = new List<PortBase>();
 
             this.Control = new ControlPort(this.Ptr->Control, this, PortType.Control, Guid.NewGuid());
 
@@ -103,7 +105,7 @@ namespace MMALSharp
         /// </summary>
         public void EnableConnections()
         {
-            foreach (IOutputPort port in this.Outputs)
+            foreach (OutputPortBase port in this.Outputs)
             {
                 if (port.ConnectedReference != null)
                 {
@@ -122,7 +124,7 @@ namespace MMALSharp
         /// </summary>
         public void DisableConnections()
         {
-            foreach (IOutputPort port in this.Outputs)
+            foreach (OutputPortBase port in this.Outputs)
             {
                 if (port.ConnectedReference != null)
                 {

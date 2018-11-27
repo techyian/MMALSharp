@@ -7,7 +7,8 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using MMALSharp.Native;
-using MMALSharp.Ports;
+using MMALSharp.Ports.Controls;
+using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp.Components
 {
@@ -85,17 +86,17 @@ namespace MMALSharp.Components
         /// <summary>
         /// Managed reference to the Preview port of the camera.
         /// </summary>
-        public IOutputPort PreviewPort { get; set; }
+        public OutputPortBase PreviewPort { get; set; }
 
         /// <summary>
         /// Managed reference to the Video port of the camera.
         /// </summary>
-        public IOutputPort VideoPort { get; set; }
+        public OutputPortBase VideoPort { get; set; }
 
         /// <summary>
         /// Managed reference to the Still port of the camera.
         /// </summary>
-        public IOutputPort StillPort { get; set; }
+        public OutputPortBase StillPort { get; set; }
 
         /// <summary>
         /// Camera Info component. This is used to provide detailed info about the camera itself.
@@ -171,7 +172,7 @@ namespace MMALSharp.Components
         /// <seealso cref="MMALCameraConfig.SetChangeEventRequest" />
         /// <param name="buffer">The buffer header being sent from MMAL.</param>
         /// <param name="port">The managed control port instance.</param>
-        internal unsafe void CameraControlCallback(MMALBufferImpl buffer, IControlPort port)
+        internal unsafe void CameraControlCallback(MMALBufferImpl buffer, ControlPortBase port)
         {
             if (buffer.Cmd == MMALEvents.MMAL_EVENT_PARAMETER_CHANGED)
             {

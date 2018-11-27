@@ -4,10 +4,9 @@
 // </copyright>
 
 using System;
-using System.Linq;
 using MMALSharp.Native;
 
-namespace MMALSharp.Ports
+namespace MMALSharp.Ports.Outputs
 {
     /// <summary>
     /// Represents a still port used specifically when capturing rapid single image frames from the camera's video port.
@@ -30,7 +29,7 @@ namespace MMALSharp.Ports
         /// Creates a new instance of <see cref="FastStillPort"/>.
         /// </summary>
         /// <param name="copyFrom">The port to copy data from.</param>
-        public FastStillPort(IPort copyFrom)
+        public FastStillPort(PortBase copyFrom)
             : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid, copyFrom.Handler)
         {
         }

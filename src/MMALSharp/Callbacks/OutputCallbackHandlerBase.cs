@@ -5,7 +5,7 @@
 
 using System;
 using MMALSharp.Native;
-using MMALSharp.Ports;
+using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp.Callbacks
 {
@@ -18,13 +18,13 @@ namespace MMALSharp.Callbacks
         public MMALEncoding EncodingType { get; }
 
         /// <inheritdoc />
-        public IOutputPort WorkingPort { get; }
+        public OutputPortBase WorkingPort { get; }
         
         /// <summary>
         /// Creates a new instance of <see cref="OutputCallbackHandlerBase"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
-        protected OutputCallbackHandlerBase(IOutputPort port)
+        /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
+        protected OutputCallbackHandlerBase(OutputPortBase port)
         {
             this.WorkingPort = port;
         }
@@ -32,9 +32,9 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="OutputCallbackHandlerBase"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
+        /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
         /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        protected OutputCallbackHandlerBase(IOutputPort port, MMALEncoding encodingType)
+        protected OutputCallbackHandlerBase(OutputPortBase port, MMALEncoding encodingType)
         {
             this.WorkingPort = port;
             this.EncodingType = encodingType;
