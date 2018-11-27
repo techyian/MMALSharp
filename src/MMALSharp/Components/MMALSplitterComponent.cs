@@ -49,6 +49,23 @@ namespace MMALSharp.Components
             set { _height = value; }
         }
 
+        /// <inheritdoc />>
+        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType,
+            MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
+        {
+            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate, zeroCopy);
+
+            if (MMALCameraConfig.VideoColorSpace != null &&
+                MMALCameraConfig.VideoColorSpace.EncType == MMALEncoding.EncodingType.ColorSpace)
+            {
+                this.Outputs[outputPort].VideoColorSpace = MMALCameraConfig.VideoColorSpace;
+            }
+            
+            this.Outputs[outputPort].Commit();
+            
+            return this;
+        }
+        
         /// <summary>
         /// Creates a new instance of <see cref="MMALSplitterComponent"/>.
         /// </summary>
