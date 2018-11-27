@@ -53,6 +53,5 @@ namespace MMALSharp.Tests
     [CollectionDefinition("MMALCollection")]
     public class MMALTestCollection : ICollectionFixture<MMALFixture>
     {
-        
     }
 }

@@ -1,6 +1,6 @@
 using MMALSharp.Handlers;
 using MMALSharp.Native;
-using MMALSharp.Ports;
+using MMALSharp.Ports.Inputs;
 
 namespace MMALSharp.Callbacks
 {
@@ -17,7 +17,7 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// The port this callback handler is used with.
         /// </summary>
-        IInputPort WorkingPort { get; }
+        InputPortBase WorkingPort { get; }
         
         /// <summary>
         /// The callback function to carry out.

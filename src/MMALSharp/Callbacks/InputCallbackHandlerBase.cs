@@ -6,7 +6,7 @@
 using System;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
-using MMALSharp.Ports;
+using MMALSharp.Ports.Inputs;
 
 namespace MMALSharp.Callbacks
 {
@@ -19,13 +19,13 @@ namespace MMALSharp.Callbacks
         public MMALEncoding EncodingType { get; }
 
         /// <inheritdoc />
-        public IInputPort WorkingPort { get; }
+        public InputPortBase WorkingPort { get; }
 
         /// <summary>
         /// Creates a new instance of <see cref="InputCallbackHandlerBase"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="IInputPort"/>.</param>
-        protected InputCallbackHandlerBase(IInputPort port)
+        /// <param name="port">The working <see cref="InputPortBase"/>.</param>
+        protected InputCallbackHandlerBase(InputPortBase port)
         {
             this.WorkingPort = port;
         }
@@ -33,9 +33,9 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="InputCallbackHandlerBase"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="IInputPort"/>.</param>
+        /// <param name="port">The working <see cref="InputPortBase"/>.</param>
         /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        protected InputCallbackHandlerBase(IInputPort port, MMALEncoding encodingType)
+        protected InputCallbackHandlerBase(InputPortBase port, MMALEncoding encodingType)
         {
             this.WorkingPort = port;
             this.EncodingType = encodingType;

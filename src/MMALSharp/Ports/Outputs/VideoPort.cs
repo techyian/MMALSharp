@@ -6,7 +6,7 @@
 using System;
 using MMALSharp.Native;
 
-namespace MMALSharp.Ports
+namespace MMALSharp.Ports.Outputs
 {
     /// <summary>
     /// Represents a video encode/decode port
@@ -35,7 +35,7 @@ namespace MMALSharp.Ports
         /// Creates a new instance of <see cref="VideoPort"/>.
         /// </summary>
         /// <param name="copyFrom">The port to copy data from.</param>
-        public VideoPort(IPort copyFrom)
+        public VideoPort(PortBase copyFrom)
             : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid, copyFrom.Handler)
         {
         }

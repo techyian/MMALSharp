@@ -33,7 +33,7 @@ namespace MMALSharp
         /// Creates a new instance of <see cref="MMALPoolImpl"/> based on a port.
         /// </summary>
         /// <param name="port">The port.</param>
-        public MMALPoolImpl(IPort port)
+        public MMALPoolImpl(PortBase port)
         {            
             MMALLog.Logger.Debug($"Creating buffer pool with {port.BufferNum} buffers of size {port.BufferSize}");
 

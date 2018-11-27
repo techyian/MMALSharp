@@ -7,7 +7,7 @@ using System;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
-using MMALSharp.Ports;
+using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp.Callbacks
 {
@@ -19,8 +19,8 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="FastImageOutputCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
-        public FastImageOutputCallbackHandler(IOutputPort port)
+        /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
+        public FastImageOutputCallbackHandler(OutputPortBase port)
             : base(port)
         {
         }
@@ -28,9 +28,9 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="FastImageOutputCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
+        /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
         /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        public FastImageOutputCallbackHandler(IOutputPort port, MMALEncoding encoding)
+        public FastImageOutputCallbackHandler(OutputPortBase port, MMALEncoding encoding)
             : base(port, encoding)
         {
         }

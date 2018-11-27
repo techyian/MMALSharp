@@ -10,7 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using MMALSharp.Native;
-using MMALSharp.Ports;
+using MMALSharp.Ports.Inputs;
 using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp.Components
@@ -243,17 +243,17 @@ namespace MMALSharp.Components
         /// <summary>
         /// A reference to the current stream being used in the overlay.
         /// </summary>
-        public byte[] Source { get; set; }
+        public byte[] Source { get; }
 
         /// <summary>
         /// The parent renderer which is being used to overlay onto the display.
         /// </summary>
-        public MMALVideoRenderer ParentRenderer { get; set; }
+        public MMALVideoRenderer ParentRenderer { get; }
 
         /// <summary>
         /// The configuration for rendering a static preview overlay.
         /// </summary>
-        public PreviewOverlayConfiguration OverlayConfiguration { get; set; }
+        public PreviewOverlayConfiguration OverlayConfiguration { get; }
 
         /// <summary>
         /// A list of supported encodings for overlay image data.

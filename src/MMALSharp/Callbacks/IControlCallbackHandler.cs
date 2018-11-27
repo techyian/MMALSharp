@@ -1,5 +1,4 @@
-using MMALSharp.Native;
-using MMALSharp.Ports;
+using MMALSharp.Ports.Controls;
 
 namespace MMALSharp.Callbacks
 {
@@ -9,14 +8,9 @@ namespace MMALSharp.Callbacks
     public interface IControlCallbackHandler
     {
         /// <summary>
-        /// A whitelisted Encoding Type that this callback handler will operate on.
-        /// </summary>
-        MMALEncoding EncodingType { get; }
-        
-        /// <summary>
         /// The port this callback handler is used with.
         /// </summary>
-        IControlPort WorkingPort { get; }
+        ControlPortBase WorkingPort { get; }
         
         /// <summary>
         /// The callback function to carry out.

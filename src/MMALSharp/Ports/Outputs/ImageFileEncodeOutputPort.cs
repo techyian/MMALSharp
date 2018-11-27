@@ -7,7 +7,7 @@ using System;
 using MMALSharp.Components;
 using MMALSharp.Native;
 
-namespace MMALSharp.Ports
+namespace MMALSharp.Ports.Outputs
 {
     /// <summary>
     /// A custom port definition used specifically when using encoder conversion functionality.
@@ -30,7 +30,7 @@ namespace MMALSharp.Ports
         /// Creates a new instance of <see cref="ImageFileEncodeOutputPort"/>.
         /// </summary>
         /// <param name="copyFrom">The port to copy data from.</param>
-        public ImageFileEncodeOutputPort(IPort copyFrom)
+        public ImageFileEncodeOutputPort(PortBase copyFrom)
             : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid, copyFrom.Handler)
         {
         }

@@ -239,6 +239,11 @@ namespace MMALSharp
         /// </summary>
         public static MMAL_RATIONAL_T VideoFramerate { get; set; } = new MMAL_RATIONAL_T(30, 1);
 
+        /// <summary>
+        /// The working video color space, specific to video ports.
+        /// </summary>
+        public static MMALEncoding VideoColorSpace { get; set; }
+
         /*
          * -----------------------------------------------------------------------------------------------------------
          * Camera still port specific properties.

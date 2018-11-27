@@ -10,15 +10,15 @@ using MMALSharp.Callbacks.Providers;
 using MMALSharp.Native;
 using static MMALSharp.MMALNativeExceptionHelper;
 
-namespace MMALSharp.Ports
+namespace MMALSharp.Ports.Inputs
 {
     /// <summary>
     /// Represents an input port.
     /// </summary>
-    public class InputPort : GenericPort, IInputPort
+    public class InputPort : InputPortBase
     {
         /// <inheritdoc />
-        public IInputCallbackHandler ManagedInputCallback { get; set; }
+        internal override IInputCallbackHandler ManagedInputCallback { get; set; }
         
         /// <summary>
         /// Monitor lock for input port callback method.
@@ -38,7 +38,7 @@ namespace MMALSharp.Ports
         }
         
         /// <inheritdoc />
-        public virtual unsafe void EnableInputPort()
+        internal override unsafe void EnableInputPort()
         {
             if (!this.Enabled)
             {
@@ -69,9 +69,9 @@ namespace MMALSharp.Ports
                 throw new PiCameraError("Unknown error occurred whilst enabling port");
             }
         }
-        
+
         /// <inheritdoc />
-        public void ReleaseInputBuffer(MMALBufferImpl bufferImpl)
+        internal override void ReleaseInputBuffer(MMALBufferImpl bufferImpl)
         {            
             bufferImpl.Release();
             
@@ -120,7 +120,7 @@ namespace MMALSharp.Ports
         }
 
         /// <inheritdoc />
-        public void Start()
+        internal override void Start()
         {
             this.EnableInputPort();
         }

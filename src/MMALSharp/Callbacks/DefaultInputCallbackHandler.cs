@@ -4,7 +4,7 @@
 // </copyright>
 
 using MMALSharp.Native;
-using MMALSharp.Ports;
+using MMALSharp.Ports.Inputs;
 
 namespace MMALSharp.Callbacks
 {
@@ -16,8 +16,8 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="DefaultInputCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="IInputPort"/>.</param>
-        public DefaultInputCallbackHandler(IInputPort port) 
+        /// <param name="port">The working <see cref="InputPortBase"/>.</param>
+        public DefaultInputCallbackHandler(InputPortBase port) 
             : base(port)
         {
         }
@@ -25,9 +25,9 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="DefaultInputCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="IInputPort"/>.</param>
+        /// <param name="port">The working <see cref="InputPortBase"/>.</param>
         /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        public DefaultInputCallbackHandler(IInputPort port, MMALEncoding encodingType)
+        public DefaultInputCallbackHandler(InputPortBase port, MMALEncoding encodingType)
             : base(port, encodingType)
         {
         }

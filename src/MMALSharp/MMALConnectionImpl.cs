@@ -8,7 +8,8 @@ using System.Runtime.InteropServices;
 using MMALSharp.Callbacks.Providers;
 using MMALSharp.Components;
 using MMALSharp.Native;
-using MMALSharp.Ports;
+using MMALSharp.Ports.Inputs;
+using MMALSharp.Ports.Outputs;
 using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp
@@ -31,12 +32,12 @@ namespace MMALSharp
         /// <summary>
         /// The input port of this connection.
         /// </summary>
-        public IInputPort InputPort { get; set; }
+        public InputPortBase InputPort { get; set; }
 
         /// <summary>
         /// The output port of this connection.
         /// </summary>
-        public IOutputPort OutputPort { get; set; }
+        public OutputPortBase OutputPort { get; set; }
         
         /// <summary>
         /// The pool of buffer headers in this connection.
@@ -98,7 +99,7 @@ namespace MMALSharp
         /// <param name="inputComponent">The upstream component.</param>
         /// <param name="outputComponent">The downstream component.</param>
         /// <param name="useCallback">Configure the connection to intercept native callbacks. Note: will adversely impact performance.</param>
-        protected MMALConnectionImpl(MMAL_CONNECTION_T* ptr, IOutputPort output, IInputPort input, MMALDownstreamComponent inputComponent, MMALComponentBase outputComponent, bool useCallback)
+        protected MMALConnectionImpl(MMAL_CONNECTION_T* ptr, OutputPortBase output, InputPortBase input, MMALDownstreamComponent inputComponent, MMALComponentBase outputComponent, bool useCallback)
         {
             this.Ptr = ptr;
             this.OutputPort = output;
@@ -150,7 +151,7 @@ namespace MMALSharp
         /// <param name="inputComponent">The managed instance of the component we are connecting to.</param>
         /// <param name="useCallback">When set to true, enable the connection callback delegate (adversely affects performance).</param>
         /// <returns>A new managed connection object.</returns>
-        internal static MMALConnectionImpl CreateConnection(IOutputPort output, IInputPort input, MMALDownstreamComponent inputComponent, bool useCallback)
+        internal static MMALConnectionImpl CreateConnection(OutputPortBase output, InputPortBase input, MMALDownstreamComponent inputComponent, bool useCallback)
         {
             IntPtr ptr = IntPtr.Zero;
 
@@ -263,7 +264,7 @@ namespace MMALSharp
             return (int)connection->Flags;
         }
         
-        private void ConfigureConnectionCallback(IOutputPort output, IInputPort input)
+        private void ConfigureConnectionCallback(OutputPortBase output, InputPortBase input)
         {
             output.SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
             input.SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);

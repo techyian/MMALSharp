@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace MMALSharp.Native
 {
@@ -156,6 +155,7 @@ namespace MMALSharp.Native
             Video,
             Audio,
             PixelFormat,
+            ColorSpace,
             Internal
         }
 
@@ -305,14 +305,14 @@ namespace MMALSharp.Native
         public static readonly MMALEncoding VARIANT_H264_RAW = new MMALEncoding("RAW ", EncodingType.Video);
         public static readonly MMALEncoding VARIANT_MP4A_DEFAULT = new MMALEncoding(0, "VARIANT_MP4A_DEFAULT", EncodingType.Video);
         public static readonly MMALEncoding VARIANT_MP4A_ADTS = new MMALEncoding("ADTS", EncodingType.Video);
-        public static readonly MMALEncoding MMAL_COLOR_SPACE_UNKNOWN = new MMALEncoding(0, "MMAL_COLOR_SPACE_UNKNOWN", EncodingType.PixelFormat);
-        public static readonly MMALEncoding MMAL_COLOR_SPACE_ITUR_BT601 = new MMALEncoding("Y601", EncodingType.PixelFormat);
-        public static readonly MMALEncoding MMAL_COLOR_SPACE_ITUR_BT709 = new MMALEncoding("Y709", EncodingType.PixelFormat);
-        public static readonly MMALEncoding MMAL_COLOR_SPACE_JPEG_JFIF = new MMALEncoding("YJFI", EncodingType.PixelFormat);
-        public static readonly MMALEncoding MMAL_COLOR_SPACE_FCC = new MMALEncoding("YFCC", EncodingType.PixelFormat);
-        public static readonly MMALEncoding MMAL_COLOR_SPACE_SMPTE240M = new MMALEncoding("Y240", EncodingType.PixelFormat);
-        public static readonly MMALEncoding MMAL_COLOR_SPACE_BT470_2_M = new MMALEncoding("Y__M", EncodingType.PixelFormat);
-        public static readonly MMALEncoding MMAL_COLOR_SPACE_BT470_2_BG = new MMALEncoding("Y_BG", EncodingType.PixelFormat);
-        public static readonly MMALEncoding MMAL_COLOR_SPACE_JFIF_Y16_255 = new MMALEncoding("YY16", EncodingType.PixelFormat);
+        public static readonly MMALEncoding MMAL_COLOR_SPACE_UNKNOWN = new MMALEncoding(0, "MMAL_COLOR_SPACE_UNKNOWN", EncodingType.ColorSpace);
+        public static readonly MMALEncoding MMAL_COLOR_SPACE_ITUR_BT601 = new MMALEncoding("Y601", EncodingType.ColorSpace);
+        public static readonly MMALEncoding MMAL_COLOR_SPACE_ITUR_BT709 = new MMALEncoding("Y709", EncodingType.ColorSpace);
+        public static readonly MMALEncoding MMAL_COLOR_SPACE_JPEG_JFIF = new MMALEncoding("YJFI", EncodingType.ColorSpace);
+        public static readonly MMALEncoding MMAL_COLOR_SPACE_FCC = new MMALEncoding("YFCC", EncodingType.ColorSpace);
+        public static readonly MMALEncoding MMAL_COLOR_SPACE_SMPTE240M = new MMALEncoding("Y240", EncodingType.ColorSpace);
+        public static readonly MMALEncoding MMAL_COLOR_SPACE_BT470_2_M = new MMALEncoding("Y__M", EncodingType.ColorSpace);
+        public static readonly MMALEncoding MMAL_COLOR_SPACE_BT470_2_BG = new MMALEncoding("Y_BG", EncodingType.ColorSpace);
+        public static readonly MMALEncoding MMAL_COLOR_SPACE_JFIF_Y16_255 = new MMALEncoding("YY16", EncodingType.ColorSpace);
     }
 }

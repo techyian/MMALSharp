@@ -10,16 +10,17 @@ using MMALSharp.Callbacks.Providers;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports.Inputs;
 
-namespace MMALSharp.Ports
+namespace MMALSharp.Ports.Outputs
 {
     /// <summary>
     /// Represents an output port.
     /// </summary>
-    public class OutputPort : GenericPort, IOutputPort
+    public class OutputPort : OutputPortBase
     {
         /// <inheritdoc />
-        public IOutputCallbackHandler ManagedOutputCallback { get; set; }
+        internal override IOutputCallbackHandler ManagedOutputCallback { get; set; }
         
         /// <summary>
         /// Monitor lock for output port callback method.
@@ -52,7 +53,7 @@ namespace MMALSharp.Ports
         }
         
         /// <inheritdoc />
-        public IInputPort ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort = 0, bool useCallback = false)
+        public override InputPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort = 0, bool useCallback = false)
         {
             if (this.ConnectedReference != null)
             {
@@ -68,7 +69,7 @@ namespace MMALSharp.Ports
         }
 
         /// <inheritdoc />
-        public IInputPort ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort, Func<IPort> callback)
+        public override InputPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort, Func<PortBase> callback)
         {
             this.ConnectTo(destinationComponent, inputPort);
             callback();
@@ -76,7 +77,7 @@ namespace MMALSharp.Ports
         }
         
         /// <inheritdoc />
-        public unsafe void ReleaseOutputBuffer(MMALBufferImpl bufferImpl)
+        internal override unsafe void ReleaseOutputBuffer(MMALBufferImpl bufferImpl)
         {
             bufferImpl.Release();
             
@@ -113,7 +114,7 @@ namespace MMALSharp.Ports
         }
         
         /// <inheritdoc />
-        public virtual unsafe void EnableOutputPort(bool sendBuffers = true)
+        internal override unsafe void EnableOutputPort(bool sendBuffers = true)
         {            
             if (!this.Enabled)
             {
@@ -156,7 +157,7 @@ namespace MMALSharp.Ports
         }
         
         /// <inheritdoc />
-        public void Start()
+        internal override void Start()
         {
             MMALLog.Logger.Debug($"Starting output port {this.Name}");
             

@@ -4,11 +4,10 @@
 // </copyright>
 
 using System;
-using System.Linq;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
-using MMALSharp.Ports;
+using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp.Callbacks
 {
@@ -20,8 +19,8 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
-        public VideoOutputCallbackHandler(IOutputPort port) 
+        /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
+        public VideoOutputCallbackHandler(OutputPortBase port) 
             : base(port)
         {
         }
@@ -29,9 +28,9 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
+        /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
         /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        public VideoOutputCallbackHandler(IOutputPort port, MMALEncoding encoding)
+        public VideoOutputCallbackHandler(OutputPortBase port, MMALEncoding encoding)
             : base(port, encoding)
         {
         }

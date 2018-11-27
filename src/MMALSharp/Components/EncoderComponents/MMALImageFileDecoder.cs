@@ -5,6 +5,8 @@ using System.Text;
 using MMALSharp.Callbacks.Providers;
 using MMALSharp.Handlers;
 using MMALSharp.Ports;
+using MMALSharp.Ports.Inputs;
+using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp.Components
 {
@@ -205,7 +207,7 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].Commit();
         }
 
-        private void LogFormat(MMALEventFormat format, IPort port)
+        private void LogFormat(MMALEventFormat format, PortBase port)
         {
             StringBuilder sb = new StringBuilder();
 
