@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>    
+	<Description>Image Processing library for MMALSharp.</Description>
+    <AssemblyTitle>MMALSharp.Processing</AssemblyTitle>
+    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
+    <AssemblyName>MMALSharp.Processing</AssemblyName>
+    <PackageId>MMALSharp.Processing</PackageId>	
+    <RootNamespace>MMALSharp</RootNamespace>
+	<Copyright>Ian Auty (c) 2016-2018</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Authors>Ian Auty</Authors>
+    <PackageTags>raspberry-pi</PackageTags>    
+    <PackageProjectUrl>https://github.com/techyian/MMALSharp</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/techyian/MMALSharp/blob/dev/LICENSE.txt</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/techyian/MMALSharp</RepositoryUrl>
+	<VersionPrefix>0.5.0</VersionPrefix>
+	<CodeAnalysisRuleSet>..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>	
+	<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
+		<PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MMALSharp.Common\MMALSharp.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
+  </ItemGroup>
+  
+</Project>

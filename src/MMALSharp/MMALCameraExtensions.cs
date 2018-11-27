@@ -7,10 +7,11 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
+using MMALSharp.Common.Utility;
 using MMALSharp.Components;
+using MMALSharp.Config;
 using MMALSharp.Native;
 using MMALSharp.Ports.Controls;
-using MMALSharp.Utility;
 using static MMALSharp.MMALNativeExceptionHelper;
 using static MMALSharp.Native.MMALParametersCamera;
 

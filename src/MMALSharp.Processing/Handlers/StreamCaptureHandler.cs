@@ -5,6 +5,8 @@
 
 using System;
 using System.IO;
+using MMALSharp.Common.Utility;
+using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers
 {
@@ -12,38 +14,21 @@ namespace MMALSharp.Handlers
     /// Processes the image data to a stream.
     /// </summary>
     /// <typeparam name="T">The <see cref="Stream"/> type.</typeparam>
-    public abstract class StreamCaptureHandler<T> : ICaptureHandler 
+    public abstract class StreamCaptureHandler<T> : CaptureHandlerProcessorBase 
         where T : Stream
     {
         /// <summary>
         /// A Stream instance that we can process image data to.
         /// </summary>
         public T CurrentStream { get; protected set; }
-
+        
         /// <summary>
         /// The total size of data that has been processed by this capture handler.
         /// </summary>
         protected int Processed { get; set; }
-        
-        protected StreamCaptureHandler()
-        {
-        }
-        
-        /// <summary>
-        /// When overridden in a derived class, returns user provided image data.
-        /// </summary>
-        /// <param name="allocSize">The count of bytes to return at most in the <see cref="ProcessResult"/>.</param>
-        /// <returns>A <see cref="ProcessResult"/> object containing the user provided image data.</returns>
-        public virtual ProcessResult Process(uint allocSize)
-        {
-            return new ProcessResult();
-        }
 
-        /// <summary>
-        /// Processes the data passed into this method to this class' Stream instance.
-        /// </summary>
-        /// <param name="data">The image data.</param>
-        public virtual void Process(byte[] data)
+        /// <inheritdoc />
+        public override void Process(byte[] data)
         {
             this.Processed += data.Length;
                         
@@ -53,25 +38,47 @@ namespace MMALSharp.Handlers
                 throw new IOException("Stream not writable.");
         }
 
-        /// <summary>
-        /// Allows us to do any further processing once the capture method has completed.
-        /// </summary>
-        public virtual void PostProcess()
+        /// <inheritdoc />
+        public override void PostProcess()
         {
             try
             {
                 MMALLog.Logger.Info($"Successfully processed {Helpers.ConvertBytesToMegabytes(this.Processed)}.");
+                
+                if (this.CurrentStream != null && this.CurrentStream.Length > 0)
+                {
+                    if (_manipulate != null && _imageContext != null)
+                    {
+                        byte[] arr = null;
+
+                        using (var ms = new MemoryStream())
+                        {
+                            this.CurrentStream.Position = 0;
+                            this.CurrentStream.CopyTo(ms);
+
+                            arr = ms.ToArray();
+
+                            _manipulate(new FrameProcessingContext(arr, _imageContext));
+                        }
+
+                        using (var ms = new MemoryStream(arr))
+                        {
+                            this.CurrentStream.Position = 0;
+                            ms.CopyTo(this.CurrentStream);
+                        }    
+                    }
+                }
             }
             catch(Exception e)
             {
                 MMALLog.Logger.Warn($"Something went wrong while processing stream: {e.Message}");                
-            }                   
+            }
         }
-        
+
         /// <summary>
         /// Releases the underlying stream.
         /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
             CurrentStream?.Dispose();
         }

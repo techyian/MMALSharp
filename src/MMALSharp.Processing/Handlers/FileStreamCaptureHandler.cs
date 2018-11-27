@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers
 {
+    /// <summary>
+    /// Processes image data to a <see cref="FileStream"/>.
+    /// </summary>
     public class FileStreamCaptureHandler : StreamCaptureHandler<FileStream>
     {
         /// <summary>

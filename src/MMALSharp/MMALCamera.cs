@@ -7,11 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MMALSharp.Common.Utility;
 using MMALSharp.Components;
+using MMALSharp.Config;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports.Outputs;
-using MMALSharp.Utility;
 
 namespace MMALSharp
 {

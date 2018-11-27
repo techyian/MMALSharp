@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using MMALSharp.Native;
 using System.Text;
+using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Ports;
 using MMALSharp.Ports.Inputs;

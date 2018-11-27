@@ -6,6 +6,7 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 using MMALSharp.Ports.Controls;
 using MMALSharp.Ports.Outputs;

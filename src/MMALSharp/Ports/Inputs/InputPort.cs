@@ -7,6 +7,7 @@ using System;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
 using MMALSharp.Callbacks.Providers;
+using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 using static MMALSharp.MMALNativeExceptionHelper;
 
@@ -136,10 +137,7 @@ namespace MMALSharp.Ports.Inputs
 
                 var bufferImpl = new MMALBufferImpl(buffer);
 
-                if (MMALCameraConfig.Debug)
-                {
-                    bufferImpl.PrintProperties();
-                }
+                bufferImpl.PrintProperties();
 
                 this.ReleaseInputBuffer(bufferImpl);
             }

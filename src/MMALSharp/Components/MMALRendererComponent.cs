@@ -9,6 +9,8 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+using MMALSharp.Common.Utility;
+using MMALSharp.Config;
 using MMALSharp.Native;
 using MMALSharp.Ports.Inputs;
 using static MMALSharp.MMALNativeExceptionHelper;

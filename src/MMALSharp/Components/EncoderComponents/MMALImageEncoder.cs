@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using MMALSharp.Callbacks;
+using MMALSharp.Common.Utility;
+using MMALSharp.Config;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports.Outputs;
@@ -49,24 +51,29 @@ namespace MMALSharp.Components
         /// <summary>
         /// When enabled, raw bayer metadata will be included in JPEG still captures.
         /// </summary>
-        public bool RawBayer { get; set; }
+        public bool RawBayer { get; }
 
         /// <summary>
         /// When enabled, EXIF metadata will be included in image stills.
         /// </summary>
-        public bool UseExif { get; set; }
+        public bool UseExif { get; }
 
         /// <summary>
         /// Custom list of user defined EXIF metadata.
         /// </summary>
-        public ExifTag[] ExifTags { get; set; }
+        public ExifTag[] ExifTags { get; }
         
         /// <summary>
         /// If true, this component will be configured to process rapidly captured frames from the camera's video port.
         /// Note: The component pipeline must be configured as such. 
         /// </summary>
-        public bool ContinuousCapture { get; set; }
-        
+        public bool ContinuousCapture { get; }
+
+        /// <summary>
+        /// Configuration for JPEG thumbnail embedding.
+        /// </summary>
+        public JpegThumbnail JpegThumbnailConfig { get; set; }
+
         /// <summary>
         /// Creates a new instance of the <see cref="MMALImageEncoder"/> class with the specified handler.
         /// </summary>
@@ -74,14 +81,16 @@ namespace MMALSharp.Components
         /// <param name="rawBayer">Specifies whether to include raw bayer image data.</param>
         /// <param name="useExif">Specifies whether any EXIF tags should be used.</param>
         /// <param name="continuousCapture">Configure component for rapid capture mode.</param>
+        /// <param name="thumbnailConfig">Configures the embedded JPEG thumbnail.</param>
         /// <param name="exifTags">A collection of custom EXIF tags.</param>
-        public MMALImageEncoder(ICaptureHandler handler, bool rawBayer = false, bool useExif = true, bool continuousCapture = false, params ExifTag[] exifTags)
+        public MMALImageEncoder(ICaptureHandler handler, bool rawBayer = false, bool useExif = true, bool continuousCapture = false, JpegThumbnail thumbnailConfig = null, params ExifTag[] exifTags)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER, handler)
         {
             this.RawBayer = rawBayer;
             this.UseExif = useExif;
             this.ExifTags = exifTags;
             this.ContinuousCapture = continuousCapture;
+            this.JpegThumbnailConfig = thumbnailConfig;
         }
         
         /// <inheritdoc />>
@@ -102,6 +111,18 @@ namespace MMALSharp.Components
             if (this.ContinuousCapture)
             {
                 this.RegisterOutputCallback(new FastImageOutputCallbackHandler(this.Outputs[outputPort]));    
+            }
+
+            if (this.JpegThumbnailConfig != null)
+            {
+                var str = new MMAL_PARAMETER_THUMBNAIL_CONFIG_T(
+                    new MMAL_PARAMETER_HEADER_T(
+                        MMALParametersCamera.MMAL_PARAMETER_THUMBNAIL_CONFIGURATION,
+                        Marshal.SizeOf<MMAL_PARAMETER_THUMBNAIL_CONFIG_T>()), 
+                        this.JpegThumbnailConfig.Enable, this.JpegThumbnailConfig.Width, 
+                        this.JpegThumbnailConfig.Height, this.JpegThumbnailConfig.Quality);
+
+                MMALCheck(MMALPort.mmal_port_parameter_set(this.Control.Ptr, &str.Hdr), "Unable to set JPEG thumbnail config.");
             }
             
             return this;

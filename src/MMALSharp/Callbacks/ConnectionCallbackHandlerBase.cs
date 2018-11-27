@@ -3,6 +3,8 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using MMALSharp.Common.Utility;
+
 namespace MMALSharp.Callbacks
 {
     /// <summary>

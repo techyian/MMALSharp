@@ -3,8 +3,8 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using MMALSharp.Utility;
 using System.Drawing;
+using MMALSharp.Common.Utility;
 using Xunit;
 
 namespace MMALSharp.Tests

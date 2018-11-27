@@ -4,6 +4,8 @@
 // </copyright>
 
 using System;
+using MMALSharp.Common;
+using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers
 {

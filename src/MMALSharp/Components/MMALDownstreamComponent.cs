@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using MMALSharp.Callbacks;
 using MMALSharp.Callbacks.Providers;
+using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using MMALSharp.Ports.Outputs;
@@ -82,7 +83,7 @@ namespace MMALSharp.Components
         /// <param name="port">The port with a created connection.</param>
         public void RemoveConnectionCallback(PortBase port) =>
             ConnectionCallbackProvider.RemoveCallback(port.ConnectedReference);
-
+        
         /// <summary>
         /// Configures a specific input port on a downstream component. This method will perform a shallow copy of the output
         /// port it is to be connected to.

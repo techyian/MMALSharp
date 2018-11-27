@@ -7,6 +7,7 @@ using System;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
 using MMALSharp.Callbacks.Providers;
+using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 using static MMALSharp.MMALNativeExceptionHelper;
 
@@ -92,8 +93,9 @@ namespace MMALSharp.Ports.Controls
                     if (MMALCameraConfig.Debug)
                     {
                         bufferImpl.ParseEvents();
-                        bufferImpl.PrintProperties();
                     }
+
+                    bufferImpl.PrintProperties();
 
                     this.ManagedControlCallback.Callback(bufferImpl);
 

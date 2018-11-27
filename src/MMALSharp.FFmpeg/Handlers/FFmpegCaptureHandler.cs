@@ -6,6 +6,7 @@
 using System;
 using System.Diagnostics;
 using System.Text;
+using MMALSharp.Common.Utility;
 
 namespace MMALSharp.Handlers
 {
@@ -93,22 +94,15 @@ namespace MMALSharp.Handlers
             }
         }
 
-        public bool CanSplit()
-        {
-            return false;
-        }
-
-        public string GetDirectory()
-        {
-            throw new NotImplementedException();
-        }
-
+        public bool CanSplit() => false;
+        
         public void PostProcess() { }
-
+        
+        public string GetDirectory()
+            => throw new NotImplementedException();
+        
         public ProcessResult Process(uint allocSize)
-        {
-            throw new NotImplementedException();
-        }
+            => throw new NotImplementedException();
 
         /// <summary>
         /// Writes frame data to the StandardInput stream to be processed by FFmpeg.

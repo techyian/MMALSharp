@@ -38,5 +38,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MMALSharp.Common\MMALSharp.Common.csproj" />
+    <ProjectReference Include="..\MMALSharp.Processing\MMALSharp.Processing.csproj" />
   </ItemGroup>
 </Project>

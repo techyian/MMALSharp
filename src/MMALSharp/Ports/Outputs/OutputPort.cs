@@ -7,6 +7,7 @@ using System;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
 using MMALSharp.Callbacks.Providers;
+using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
@@ -185,10 +186,7 @@ namespace MMALSharp.Ports.Outputs
                 
                 var bufferImpl = new MMALBufferImpl(buffer);
 
-                if (MMALCameraConfig.Debug)
-                {
-                    bufferImpl.PrintProperties();
-                }
+                bufferImpl.PrintProperties();
                 
                 var failed = bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
                 

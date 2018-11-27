@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using MMALSharp.Ports.Clocks;

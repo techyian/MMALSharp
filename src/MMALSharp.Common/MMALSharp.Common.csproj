@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">  
   <PropertyGroup>
-	<Description>MMALSharp Common classes</Description>
+	<Description>MMALSharp common library.</Description>
     <AssemblyTitle>MMALSharp.Common</AssemblyTitle>
     <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <AssemblyName>MMALSharp.Common</AssemblyName>
     <PackageId>MMALSharp.Common</PackageId>
-    <RootNamespace>MMALSharp</RootNamespace>
+    <RootNamespace>MMALSharp.Common</RootNamespace>
 	<Copyright>Ian Auty (c) 2016-2018</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Ian Auty</Authors>
@@ -26,6 +26,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.5.6" />
