@@ -43,6 +43,15 @@ namespace MMALSharp.Ports.Outputs
         }
 
         /// <summary>
+        /// The working video color space, specific to video ports.
+        /// </summary>
+        public unsafe MMALEncoding VideoColorSpace
+        {
+            get => this.Ptr->Format->Es->Video.ColorSpace.ParseEncoding();
+            internal set => this.Ptr->Format->Es->Video.ColorSpace = value.EncodingVal;
+        }
+
+        /// <summary>
         /// Output callback handler which is called by the native function callback.
         /// </summary>
         internal abstract IOutputCallbackHandler ManagedOutputCallback { get; set; }

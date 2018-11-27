@@ -288,7 +288,13 @@ namespace MMALSharp.Components
             this.VideoPort.FrameRate = MMALCameraConfig.VideoFramerate;
             this.VideoPort.NativeEncodingType = MMALCameraConfig.VideoEncoding.EncodingVal;
             this.VideoPort.NativeEncodingSubformat = MMALCameraConfig.VideoSubformat.EncodingVal;
-            
+
+            if (MMALCameraConfig.VideoColorSpace != null &&
+                MMALCameraConfig.VideoColorSpace.EncType == MMALEncoding.EncodingType.ColorSpace)
+            {
+                this.VideoPort.VideoColorSpace = MMALCameraConfig.VideoColorSpace;
+            }
+
             MMALLog.Logger.Debug("Commit video");
             this.VideoPort.Commit();
 
