@@ -30,12 +30,12 @@ namespace MMALSharp
         /// <summary>
         /// Reference to the camera component.
         /// </summary>
-        public MMALCameraComponent Camera { get; set; }
+        public MMALCameraComponent Camera { get; }
 
         /// <summary>
         /// List of all encoders currently in the pipeline.
         /// </summary>
-        public List<MMALDownstreamComponent> DownstreamComponents { get; set; }
+        public List<MMALDownstreamComponent> DownstreamComponents { get; }
         
         private MMALCamera()
         {
