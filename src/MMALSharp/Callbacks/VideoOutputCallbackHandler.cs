@@ -6,6 +6,7 @@
 using System;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
+using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports.Outputs;
 
