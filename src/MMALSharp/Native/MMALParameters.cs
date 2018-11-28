@@ -1509,35 +1509,35 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
-        private int enable;
-        private int showShutter, showAnalogGain, showLens, showCaf, showMotion, showFrameNum,
-                    enableTextBackground, customBackgroundColor;
-        private byte customBackgroundY, customBackgroundU, customBackgroundV, dummy1;
-        private int customTextColor;
-        private byte customTextY, customTextU, customTextV, textSize;
+        private int _enable;
+        private int _showShutter, _showAnalogGain, _showLens, _showCaf, _showMotion, _showFrameNum,
+            _enableTextBackground, _customBackgroundColor;
+        private byte _customBackgroundY, _customBackgroundU, _customBackgroundV, _dummy1;
+        private int _customTextColor;
+        private byte _customTextY, _customTextU, _customTextV, _textSize;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        private byte[] text;
+        private byte[] _text;
 
-        public int Enable => enable;
-        public int ShowShutter => showShutter;
-        public int ShowAnalogGain => showAnalogGain;
-        public int ShowLens => showLens;
-        public int ShowCaf => showCaf;
-        public int ShowMotion => showMotion;
-        public int ShowFrameNum => showFrameNum;
-        public int EnableTextBackground => enableTextBackground;
-        public int CustomBackgroundColor => customBackgroundColor;
-        public byte CustomBackgroundY => customBackgroundY;
-        public byte CustomBackgroundU => customBackgroundU;
-        public byte CustomBackgroundV => customBackgroundV;
-        public byte Dummy1 => dummy1;
-        public int CustomTextColor => customTextColor;
-        public byte CustomTextY => customTextY;
-        public byte CustomTextU => customTextU;
-        public byte CustomTextV => customTextV;
-        public byte TextSize => textSize;
-        public byte[] Text => text;
+        public int Enable => _enable;
+        public int ShowShutter => _showShutter;
+        public int ShowAnalogGain => _showAnalogGain;
+        public int ShowLens => _showLens;
+        public int ShowCaf => _showCaf;
+        public int ShowMotion => _showMotion;
+        public int ShowFrameNum => _showFrameNum;
+        public int EnableTextBackground => _enableTextBackground;
+        public int CustomBackgroundColor => _customBackgroundColor;
+        public byte CustomBackgroundY => _customBackgroundY;
+        public byte CustomBackgroundU => _customBackgroundU;
+        public byte CustomBackgroundV => _customBackgroundV;
+        public byte Dummy1 => _dummy1;
+        public int CustomTextColor => _customTextColor;
+        public byte CustomTextY => _customTextY;
+        public byte CustomTextU => _customTextU;
+        public byte CustomTextV => _customTextV;
+        public byte TextSize => _textSize;
+        public byte[] Text => _text;
 
         public MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(MMAL_PARAMETER_HEADER_T hdr, int enable, int showShutter, int showAnalogGain, int showLens,
                                                    int showCaf, int showMotion, int showFrameNum, int enableTextBackground, int customBackgroundColor,
@@ -1546,26 +1546,100 @@ namespace MMALSharp.Native
                                                    byte[] text)
         {
             this.Hdr = hdr;
-            this.enable = enable;
-            this.text = text;
-            this.showShutter = showShutter;
-            this.showAnalogGain = showAnalogGain;
-            this.showLens = showLens;
-            this.showCaf = showCaf;
-            this.showMotion = showMotion;
-            this.showFrameNum = showFrameNum;
-            this.enableTextBackground = enableTextBackground;
-            this.customBackgroundColor = customBackgroundColor;
-            this.customBackgroundY = customBackgroundY;
-            this.customBackgroundU = customBackgroundU;
-            this.customBackgroundV = customBackgroundV;
-            this.dummy1 = dummy1;
-            this.customTextColor = customTextColor;
-            this.customTextY = customTextY;
-            this.customTextU = customTextU;
-            this.customTextV = customTextV;
-            this.textSize = textSize;
-            this.text = text;
+
+            _enable = enable;
+            _text = text;
+            _showShutter = showShutter;
+            _showAnalogGain = showAnalogGain;
+            _showLens = showLens;
+            _showCaf = showCaf;
+            _showMotion = showMotion;
+            _showFrameNum = showFrameNum;
+            _enableTextBackground = enableTextBackground;
+            _customBackgroundColor = customBackgroundColor;
+            _customBackgroundY = customBackgroundY;
+            _customBackgroundU = customBackgroundU;
+            _customBackgroundV = customBackgroundV;
+            _dummy1 = dummy1;
+            _customTextColor = customTextColor;
+            _customTextY = customTextY;
+            _customTextU = customTextU;
+            _customTextV = customTextV;
+            _textSize = textSize;
+            _text = text;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MMAL_PARAMETER_CAMERA_ANNOTATE_V4_T
+    {
+        public MMAL_PARAMETER_HEADER_T Hdr;
+        private int _enable;
+        private int _showShutter, _showAnalogGain, _showLens, _showCaf, _showMotion, _showFrameNum,
+                    _enableTextBackground, _customBackgroundColor;
+        private byte _customBackgroundY, _customBackgroundU, _customBackgroundV, _dummy1;
+        private int _customTextColor;
+        private byte _customTextY, _customTextU, _customTextV, _textSize;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        private byte[] _text;
+
+        private int _justify, _xOffset, _yOffset;
+
+        public int Enable => _enable;
+        public int ShowShutter => _showShutter;
+        public int ShowAnalogGain => _showAnalogGain;
+        public int ShowLens => _showLens;
+        public int ShowCaf => _showCaf;
+        public int ShowMotion => _showMotion;
+        public int ShowFrameNum => _showFrameNum;
+        public int EnableTextBackground => _enableTextBackground;
+        public int CustomBackgroundColor => _customBackgroundColor;
+        public byte CustomBackgroundY => _customBackgroundY;
+        public byte CustomBackgroundU => _customBackgroundU;
+        public byte CustomBackgroundV => _customBackgroundV;
+        public byte Dummy1 => _dummy1;
+        public int CustomTextColor => _customTextColor;
+        public byte CustomTextY => _customTextY;
+        public byte CustomTextU => _customTextU;
+        public byte CustomTextV => _customTextV;
+        public byte TextSize => _textSize;
+        public byte[] Text => _text;
+        public int Justify => _justify;
+        public int XOffset => _xOffset;
+        public int YOffset => _yOffset;
+
+        public MMAL_PARAMETER_CAMERA_ANNOTATE_V4_T(MMAL_PARAMETER_HEADER_T hdr, int enable, int showShutter, int showAnalogGain, int showLens,
+                                                   int showCaf, int showMotion, int showFrameNum, int enableTextBackground, int customBackgroundColor,
+                                                   byte customBackgroundY, byte customBackgroundU, byte customBackgroundV, byte dummy1,
+                                                   int customTextColor, byte customTextY, byte customTextU, byte customTextV, byte textSize,
+                                                   byte[] text, int justify, int xOffset, int yOffset)
+        {
+            this.Hdr = hdr;
+
+            _enable = enable;
+            _text = text;
+            _showShutter = showShutter;
+            _showAnalogGain = showAnalogGain;
+            _showLens = showLens;
+            _showCaf = showCaf;
+            _showMotion = showMotion;
+            _showFrameNum = showFrameNum;
+            _enableTextBackground = enableTextBackground;
+            _customBackgroundColor = customBackgroundColor;
+            _customBackgroundY = customBackgroundY;
+            _customBackgroundU = customBackgroundU;
+            _customBackgroundV = customBackgroundV;
+            _dummy1 = dummy1;
+            _customTextColor = customTextColor;
+            _customTextY = customTextY;
+            _customTextU = customTextU;
+            _customTextV = customTextV;
+            _textSize = textSize;
+            _text = text;
+            _justify = justify;
+            _xOffset = xOffset;
+            _yOffset = yOffset;
         }
     }
 

@@ -234,6 +234,9 @@ namespace MMALSharp
                 var customBackgroundY = (byte)0;
                 var customBackgroundU = (byte)0;
                 var customBackgroundV = (byte)0;
+                var justify = MMALCameraConfig.Annotate.Justify;
+                var xOffset = MMALCameraConfig.Annotate.XOffset;
+                var yOffset = MMALCameraConfig.Annotate.YOffset;
 
                 if (!string.IsNullOrEmpty(MMALCameraConfig.Annotate.CustomText))
                 {
@@ -310,23 +313,53 @@ namespace MMALSharp
 
                 var text = Encoding.ASCII.GetBytes(t);
 
-                var str = new MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(
-                    new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_ANNOTATE, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>() + t.Length),
+                var strV4 = new MMAL_PARAMETER_CAMERA_ANNOTATE_V4_T(
+                    new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_ANNOTATE, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V4_T>() + t.Length),
                                                                                                     1, showShutter, showAnalogGain, showLens,
                                                                                                     showCaf, showMotion, showFrame, enableTextBackground,
                                                                                                     customBackgroundColor, customBackgroundY, customBackgroundU, customBackgroundV, 0, customTextColor,
-                                                                                                    customTextY, customTextU, customTextV, textSize, text);
+                                                                                                    customTextY, customTextU, customTextV, textSize, text, justify, xOffset, yOffset);
 
-                var ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>());
-                Marshal.StructureToPtr(str, ptr, false);
+                var ptrV4 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V4_T>());
+                Marshal.StructureToPtr(strV4, ptrV4, false);
 
                 try
                 {
-                    MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), "Unable to set annotate");
+                    MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, (MMAL_PARAMETER_HEADER_T*) ptrV4),
+                        "Unable to set annotate");
+                }
+                catch
+                {
+                    Marshal.FreeHGlobal(ptrV4);
+                    ptrV4 = IntPtr.Zero;
+                    
+                    MMALLog.Logger.Warn("Unable to set V4 annotation structure. Trying V3. Please update firmware to latest version.");
+
+                    var str = new MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(
+                        new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_ANNOTATE, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>() + t.Length),
+                        1, showShutter, showAnalogGain, showLens,
+                        showCaf, showMotion, showFrame, enableTextBackground,
+                        customBackgroundColor, customBackgroundY, customBackgroundU, customBackgroundV, 0, customTextColor,
+                        customTextY, customTextU, customTextV, textSize, text);
+
+                    var ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>());
+                    Marshal.StructureToPtr(str, ptr, false);
+
+                    try
+                    {
+                        MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, (MMAL_PARAMETER_HEADER_T*)ptr), "Unable to set annotate V3.");
+                    }
+                    finally
+                    {
+                        Marshal.FreeHGlobal(ptr);
+                    }
                 }
                 finally
                 {
-                    Marshal.FreeHGlobal(ptr);
+                    if (ptrV4 != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(ptrV4);
+                    }
                 }
             }
         }
