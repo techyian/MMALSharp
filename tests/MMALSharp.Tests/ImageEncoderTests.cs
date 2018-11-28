@@ -8,12 +8,16 @@ using MMALSharp.Handlers;
 using MMALSharp.Native;
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using MMALSharp.Config;
+using MMALSharp.Processors;
 using Xunit;
 
 namespace MMALSharp.Tests
@@ -380,6 +384,86 @@ namespace MMALSharp.Tests
                 await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
 
                 Assert.True(imgCaptureHandler.WorkingData.Count > 0);
+            }
+        }
+
+        [Fact]
+        public async Task StripBayerData()
+        {
+            TestHelper.BeginTest("Image - StripBayerData");
+            TestHelper.SetConfigurationDefaults();
+            TestHelper.CleanDirectory("/home/pi/images/tests");
+
+            string filepath = string.Empty;
+            
+            using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "raw"))
+            using (var preview = new MMALNullSinkComponent())
+            using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler, true))
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+
+                imgEncoder.ConfigureOutputPort(MMALEncoding.JPEG, MMALEncoding.I420, 90);
+
+                // Create our component pipeline.         
+                Fixture.MMALCamera.Camera.StillPort
+                    .ConnectTo(imgEncoder);
+                Fixture.MMALCamera.Camera.PreviewPort
+                    .ConnectTo(preview);
+
+                imgCaptureHandler.Manipulate(context =>
+                {
+                    context.StripBayerMetadata(CameraVersion.OV5647);
+                }, new ImageContext(MMALCameraConfig.StillResolution, PixelFormat.Format24bppRgb, false));
+                
+                // Camera warm up time
+                await Task.Delay(2000);
+                
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
+
+                filepath = imgCaptureHandler.GetFilepath();
+            }
+            
+            byte[] meta = new byte[4];
+
+            var array = File.ReadAllBytes(filepath);
+                
+            Array.Copy(array, 0, meta, 0, 4);
+            
+            Assert.True(Encoding.ASCII.GetString(meta) == "BRCM");
+        }
+        
+        [Fact]
+        public async Task JpegThumbnail()
+        {
+            TestHelper.BeginTest("Image - JpegThumbnail");
+            TestHelper.SetConfigurationDefaults();
+            TestHelper.CleanDirectory("/home/pi/images/tests");
+            
+            JpegThumbnail tm = new JpegThumbnail(true, 200, 200, 90);
+            
+            using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "jpg"))
+            using (var preview = new MMALNullSinkComponent())
+            using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler, thumbnailConfig: tm))
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+
+                imgEncoder.ConfigureOutputPort(MMALEncoding.JPEG, MMALEncoding.I420, 90);
+
+                // Create our component pipeline.         
+                Fixture.MMALCamera.Camera.StillPort
+                    .ConnectTo(imgEncoder);
+                Fixture.MMALCamera.Camera.PreviewPort
+                    .ConnectTo(preview);
+
+                imgCaptureHandler.Manipulate(context =>
+                {
+                    context.StripBayerMetadata(CameraVersion.OV5647);
+                }, new ImageContext(MMALCameraConfig.StillResolution, PixelFormat.Format24bppRgb, false));
+                
+                // Camera warm up time
+                await Task.Delay(2000);
+                
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
             }
         }
     }

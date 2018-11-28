@@ -58,13 +58,17 @@ namespace MMALSharp.Handlers
 
                             arr = ms.ToArray();
 
-                            _manipulate(new FrameProcessingContext(arr, _imageContext));
+                            _imageContext.Data = arr;
+                            
+                            _manipulate(new FrameProcessingContext(_imageContext));
                         }
 
-                        using (var ms = new MemoryStream(arr))
-                        {
+                        using (var ms = new MemoryStream(_imageContext.Data))
+                        {   
+                            this.CurrentStream.SetLength(0);
                             this.CurrentStream.Position = 0;
                             ms.CopyTo(this.CurrentStream);
+                            
                         }    
                     }
                 }

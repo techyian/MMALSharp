@@ -14,7 +14,7 @@ namespace MMALSharp.Processors
             this.Text = text;
         }
 
-        public void Apply(byte[] store, IImageContext context)
+        public void Apply(IImageContext context)
         {
             throw new NotImplementedException();
         }

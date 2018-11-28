@@ -14,6 +14,6 @@ namespace MMALSharp.Processors
         /// </summary>
         /// <param name="store">The image data.</param>
         /// <param name="context">The image's metadata.</param>
-        void Apply(byte[] store, IImageContext context);
+        void Apply(IImageContext context);
     }
 }

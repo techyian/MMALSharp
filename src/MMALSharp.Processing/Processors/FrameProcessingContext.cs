@@ -3,6 +3,7 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using System;
 using MMALSharp.Common;
 
 namespace MMALSharp.Processors
@@ -12,7 +13,6 @@ namespace MMALSharp.Processors
     /// </summary>
     public class FrameProcessingContext : IFrameProcessingContext
     {
-        private byte[] _buffer;
         private IImageContext _context;
 
         /// <summary>
@@ -20,16 +20,16 @@ namespace MMALSharp.Processors
         /// </summary>
         /// <param name="currentState">The image frame.</param>
         /// <param name="context">Metadata for the image frame.</param>
-        public FrameProcessingContext(byte[] currentState, IImageContext context)
+        public FrameProcessingContext(IImageContext context)
         {
-            _buffer = currentState;
             _context = context;
         }
 
         /// <inheritdoc />
         public IFrameProcessingContext Apply(IFrameProcessor processor)
         {
-            processor.Apply(_buffer, _context);
+            processor.Apply(_context);
+            
             return this;
         }
     }

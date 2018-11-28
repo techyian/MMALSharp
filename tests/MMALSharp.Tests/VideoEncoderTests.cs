@@ -214,5 +214,69 @@ namespace MMALSharp.Tests
                 Fixture.CheckAndAssertFilepath(handler4.GetFilepath());
             }
         }
+        
+        [Fact]
+        public void ChangeColorSpace()
+        {
+            TestHelper.BeginTest("ChangeColorSpace");
+            TestHelper.SetConfigurationDefaults();
+            TestHelper.CleanDirectory("/home/pi/videos/tests");
+
+            MMALCameraConfig.VideoColorSpace = MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF;
+            
+            using (var handler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "avi"))
+            using (var handler2 = new VideoStreamCaptureHandler("/home/pi/video/tests", "avi"))
+            using (var handler3 = new VideoStreamCaptureHandler("/home/pi/video/tests", "avi"))
+            using (var handler4 = new VideoStreamCaptureHandler("/home/pi/video/tests", "avi"))
+            using (var splitter = new MMALSplitterComponent(null))
+            using (var vidEncoder = new MMALVideoEncoder(handler, DateTime.Now.AddSeconds(10)))
+            using (var vidEncoder2 = new MMALVideoEncoder(handler2, DateTime.Now.AddSeconds(15)))
+            using (var vidEncoder3 = new MMALVideoEncoder(handler3, DateTime.Now.AddSeconds(10)))
+            using (var vidEncoder4 = new MMALVideoEncoder(handler4, DateTime.Now.AddSeconds(10)))
+            using (var renderer = new MMALVideoRenderer())
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+
+                // Create our component pipeline.         
+                splitter.ConfigureInputPort(MMALEncoding.I420, MMALEncoding.I420, Fixture.MMALCamera.Camera.VideoPort);
+                splitter.ConfigureOutputPort(0, MMALEncoding.OPAQUE, MMALEncoding.I420, 0);
+                splitter.ConfigureOutputPort(1, MMALEncoding.OPAQUE, MMALEncoding.I420, 0);
+                splitter.ConfigureOutputPort(2, MMALEncoding.OPAQUE, MMALEncoding.I420, 0);
+                splitter.ConfigureOutputPort(3, MMALEncoding.OPAQUE, MMALEncoding.I420, 0);
+
+                vidEncoder.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[0]);
+                vidEncoder.ConfigureOutputPort(0, MMALEncoding.H264, MMALEncoding.I420, 10, 25000000);
+
+                vidEncoder2.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[1]);
+                vidEncoder2.ConfigureOutputPort(0, MMALEncoding.H264, MMALEncoding.I420, 20, 25000000);
+                vidEncoder3.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[2]);
+                vidEncoder3.ConfigureOutputPort(0, MMALEncoding.H264, MMALEncoding.I420, 30, 25000000);
+
+                vidEncoder4.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[3]);
+                vidEncoder4.ConfigureOutputPort(0, MMALEncoding.H264, MMALEncoding.I420, 40, 25000000);
+
+                Fixture.MMALCamera.Camera.VideoPort.ConnectTo(splitter);
+
+                splitter.Outputs[0].ConnectTo(vidEncoder);
+                splitter.Outputs[1].ConnectTo(vidEncoder2);
+                splitter.Outputs[2].ConnectTo(vidEncoder3);
+                splitter.Outputs[3].ConnectTo(vidEncoder4);
+
+                Fixture.MMALCamera.Camera.PreviewPort.ConnectTo(renderer);
+
+                // Assert that all output ports have the same video color space.
+                Assert.True(Fixture.MMALCamera.Camera.VideoPort.VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
+                
+                Assert.True(splitter.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
+                Assert.True(splitter.Outputs[1].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
+                Assert.True(splitter.Outputs[2].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
+                Assert.True(splitter.Outputs[3].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
+                
+                Assert.True(vidEncoder.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
+                Assert.True(vidEncoder2.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
+                Assert.True(vidEncoder3.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
+                Assert.True(vidEncoder4.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
+            }
+        }
     }
 }

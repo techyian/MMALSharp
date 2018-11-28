@@ -5,6 +5,7 @@ namespace MMALSharp.Common
 {
     public class ImageContext : IImageContext
     {
+        public byte[] Data { get; set; }
         public bool Raw { get; }
         public Resolution Resolution { get; }
         public PixelFormat PixelFormat { get; }

@@ -21,7 +21,7 @@ namespace MMALSharp.Processors
             this.CameraVersion = camVersion;
         }
 
-        public void Apply(byte[] store, IImageContext context)
+        public void Apply(IImageContext context)
         {
             byte[] array = null;
             
@@ -29,11 +29,11 @@ namespace MMALSharp.Processors
             {
                 case CameraVersion.OV5647:
                     array = new byte[BayerMetaLengthV1];
-                    Array.Copy(store, store.Length - BayerMetaLengthV1, array, 0, BayerMetaLengthV1);
+                    Array.Copy(context.Data, context.Data.Length - BayerMetaLengthV1, array, 0, BayerMetaLengthV1);
                     break;
                 case CameraVersion.IMX219:
                     array = new byte[BayerMetaLengthV2];
-                    Array.Copy(store, store.Length - BayerMetaLengthV2, array, 0, BayerMetaLengthV2);
+                    Array.Copy(context.Data, context.Data.Length - BayerMetaLengthV2, array, 0, BayerMetaLengthV2);
                     break;
             }
 
@@ -44,9 +44,9 @@ namespace MMALSharp.Processors
             {
                 throw new Exception("Could not find Bayer metadata in header");
             }
-
-            store = new byte[array.Length];
-            Array.Copy(array, store, array.Length);
+            
+            context.Data = new byte[array.Length];
+            Array.Copy(array, context.Data, array.Length);
         }
     }
 }

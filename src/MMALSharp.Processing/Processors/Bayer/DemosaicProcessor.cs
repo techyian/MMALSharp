@@ -5,7 +5,7 @@ namespace MMALSharp.Processors.Bayer
 {
     public class DemosaicProcessor : IFrameProcessor
     {
-        public void Apply(byte[] store, IImageContext context)
+        public void Apply(IImageContext context)
         {
             throw new NotImplementedException();
         }

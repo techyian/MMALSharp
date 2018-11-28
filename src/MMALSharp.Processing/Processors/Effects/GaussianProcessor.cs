@@ -57,9 +57,9 @@ namespace MMALSharp.Processors.Effects
         }
 
         /// <inheritdoc />
-        public void Apply(byte[] store, IImageContext context)
+        public void Apply(IImageContext context)
         {
-            this.Convolute(store, this.Kernel, _kernelWidth, _kernelHeight, context);
+            this.Convolute(context.Data, this.Kernel, _kernelWidth, _kernelHeight, context);
         }
     }
 }

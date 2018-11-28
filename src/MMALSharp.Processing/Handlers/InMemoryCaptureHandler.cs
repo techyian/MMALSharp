@@ -26,9 +26,12 @@ namespace MMALSharp.Handlers
         /// <inheritdoc />
         public override void PostProcess()
         {
-            var tempData = this.WorkingData.ToArray();
-            _manipulate(new FrameProcessingContext(tempData, _imageContext));
-            this.WorkingData = new List<byte>(tempData);    
+            if (_manipulate != null && _imageContext != null)
+            {
+                _imageContext.Data = this.WorkingData.ToArray();
+                _manipulate(new FrameProcessingContext(_imageContext));
+                this.WorkingData = new List<byte>(_imageContext.Data);     
+            }
         }
     }
 }
