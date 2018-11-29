@@ -21,6 +21,7 @@ namespace MMALSharp.Components
         public MMALImageFileEncoder(ICaptureHandler handler)
             : base(handler)
         {
+            this.Inputs[0].Handler = handler;
         }
 
         /// <summary>
