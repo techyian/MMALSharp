@@ -15,18 +15,11 @@ namespace MMALSharp
 
         private static readonly Lazy<MMALStandalone> Lazy = new Lazy<MMALStandalone>(() => new MMALStandalone());
         
-        /// <summary>
-        /// List of all encoders currently in the pipeline.
-        /// </summary>
-        public List<MMALDownstreamComponent> DownstreamComponents { get; }
-        
         private MMALStandalone()
         {
             BcmHost.bcm_host_init();
 
             MMALLog.ConfigureLogger();
-            
-            this.DownstreamComponents = new List<MMALDownstreamComponent>();
         }
         
         /// <summary>
@@ -36,7 +29,7 @@ namespace MMALSharp
         {
             MMALLog.Logger.Debug("Destroying final components");
 
-            var tempList = new List<MMALDownstreamComponent>(this.DownstreamComponents);
+            var tempList = new List<MMALDownstreamComponent>(MMALBootstrapper.DownstreamComponents);
 
             tempList.ForEach(c => c.Dispose());
             

@@ -31,7 +31,7 @@ namespace MMALSharp.Ports.Inputs
         /// </summary>
         /// <param name="copyFrom">The port to copy data from.</param>
         public ImageFileDecodeInputPort(PortBase copyFrom)
-            : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
+            : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid, copyFrom.Handler)
         {
         }
 

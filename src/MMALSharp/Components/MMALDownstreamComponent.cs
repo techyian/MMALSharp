@@ -28,7 +28,7 @@ namespace MMALSharp.Components
         protected MMALDownstreamComponent(string name)
             : base(name)
         {
-            MMALCamera.Instance.DownstreamComponents.Add(this);
+            MMALBootstrapper.DownstreamComponents.Add(this);
             this.ProcessingPorts = new Dictionary<int, OutputPortBase>();
         }
 
@@ -279,7 +279,7 @@ namespace MMALSharp.Components
 
             this.ClosePipelineConnections();
 
-            MMALCamera.Instance.DownstreamComponents.Remove(this);
+            MMALBootstrapper.DownstreamComponents.Remove(this);
 
             base.Dispose();
         }

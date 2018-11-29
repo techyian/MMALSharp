@@ -32,11 +32,6 @@ namespace MMALSharp
         /// Reference to the camera component.
         /// </summary>
         public MMALCameraComponent Camera { get; }
-
-        /// <summary>
-        /// List of all encoders currently in the pipeline.
-        /// </summary>
-        public List<MMALDownstreamComponent> DownstreamComponents { get; }
         
         private MMALCamera()
         {
@@ -45,7 +40,6 @@ namespace MMALSharp
             MMALLog.ConfigureLogger();
 
             this.Camera = new MMALCameraComponent();
-            this.DownstreamComponents = new List<MMALDownstreamComponent>();
         }
 
         /// <summary>
@@ -373,7 +367,7 @@ namespace MMALSharp
 
             this.Camera.PrintComponent();
 
-            foreach (var component in this.DownstreamComponents)
+            foreach (var component in MMALBootstrapper.DownstreamComponents)
             {
                 component.PrintComponent();
             }
@@ -443,7 +437,7 @@ namespace MMALSharp
         {
             MMALLog.Logger.Debug("Destroying final components");
 
-            var tempList = new List<MMALDownstreamComponent>(this.DownstreamComponents);
+            var tempList = new List<MMALDownstreamComponent>(MMALBootstrapper.DownstreamComponents);
 
             tempList.ForEach(c => c.Dispose());
             this.Camera.Dispose();

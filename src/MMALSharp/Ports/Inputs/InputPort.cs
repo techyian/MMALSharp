@@ -8,7 +8,9 @@ using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
 using MMALSharp.Callbacks.Providers;
 using MMALSharp.Common.Utility;
+using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports.Outputs;
 using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp.Ports.Inputs
@@ -35,6 +37,19 @@ namespace MMALSharp.Ports.Inputs
         /// <param name="guid">Managed unique identifier for this component.</param>
         public unsafe InputPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid) 
             : base(ptr, comp, type, guid)
+        {
+        }
+        
+        /// <summary>
+        /// Creates a new instance of <see cref="InputPort"/>. 
+        /// </summary>
+        /// <param name="ptr">The native pointer.</param>
+        /// <param name="comp">The component this port is associated with.</param>
+        /// <param name="type">The type of port.</param>
+        /// <param name="guid">Managed unique identifier for this component.</param>
+        /// <param name="handler">The capture handler.</param>
+        public unsafe InputPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler) 
+            : base(ptr, comp, type, guid, handler)
         {
         }
         

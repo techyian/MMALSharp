@@ -78,5 +78,20 @@ namespace MMALSharp.Config
         /// Show the current time.
         /// </summary>
         public bool ShowTimeText { get; set; }
+        
+        /// <summary>
+        /// Justify annotation text. 0 = centre, 1 = left, 2 = right.
+        /// </summary>
+        public int Justify { get; set; }
+        
+        /// <summary>
+        /// X Offset from the justification edge.
+        /// </summary>
+        public int XOffset { get; set; }
+        
+        /// <summary>
+        /// Y Offset from the justification edge.
+        /// </summary>
+        public int YOffset { get; set; }
     }
 }

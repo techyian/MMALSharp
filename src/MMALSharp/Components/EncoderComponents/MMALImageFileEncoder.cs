@@ -215,28 +215,28 @@ namespace MMALSharp.Components
                 switch (port.PortType)
                 {
                     case PortType.Input:
-                        sb.Append("Port Type: Input");
+                        sb.AppendLine("Port Type: Input");
                         break;
                     case PortType.Output:
-                        sb.Append("Port Type: Output");
+                        sb.AppendLine("Port Type: Output");
                         break;
                     case PortType.Control:
-                        sb.Append("Port Type: Control");
+                        sb.AppendLine("Port Type: Control");
                         break;
                     default:
                         break;
                 }
             }
 
-            sb.Append($"FourCC: {format.FourCC}");
-            sb.Append($"Width: {format.Width}");
-            sb.Append($"Height: {format.Height}");
-            sb.Append($"Crop: {format.CropX}, {format.CropY}, {format.CropWidth}, {format.CropHeight}");
-            sb.Append($"Pixel aspect ratio: {format.ParNum}, {format.ParDen}. Frame rate: {format.FramerateNum}, {format.FramerateDen}");
+            sb.AppendLine($"FourCC: {format.FourCC}");
+            sb.AppendLine($"Width: {format.Width}");
+            sb.AppendLine($"Height: {format.Height}");
+            sb.AppendLine($"Crop: {format.CropX}, {format.CropY}, {format.CropWidth}, {format.CropHeight}");
+            sb.AppendLine($"Pixel aspect ratio: {format.ParNum}, {format.ParDen}. Frame rate: {format.FramerateNum}, {format.FramerateDen}");
 
             if (port != null)
             {
-                sb.Append($"Port info: Buffers num: {port.BufferNum}(opt {port.BufferNumRecommended}, min {port.BufferNumMin}). Size: {port.BufferSize} (opt {port.BufferSizeRecommended}, min {port.BufferSizeMin}). Alignment: {port.BufferAlignmentMin}");
+                sb.AppendLine($"Port info: Buffers num: {port.BufferNum}(opt {port.BufferNumRecommended}, min {port.BufferNumMin}). Size: {port.BufferSize} (opt {port.BufferSizeRecommended}, min {port.BufferSizeMin}). Alignment: {port.BufferAlignmentMin}");
             }
 
             MMALLog.Logger.Info(sb.ToString());
