@@ -20,7 +20,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// Represents a video encoder component
     /// </summary>
-    public sealed unsafe class MMALVideoEncoder : MMALEncoderBase
+    public unsafe class MMALVideoEncoder : MMALEncoderBase
     {
         /// <summary>
         /// Signifies the max bitrate supported for MJPEG (25Mbits/s)

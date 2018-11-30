@@ -466,5 +466,70 @@ namespace MMALSharp.Tests
                 await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
             }
         }
+
+        [Fact]
+        public async Task EncodeDecodeFromFile()
+        {
+            TestHelper.BeginTest("Image - EncodeDecodeFromFile");
+            TestHelper.SetConfigurationDefaults();
+            TestHelper.CleanDirectory("/home/pi/images/tests");
+
+            string imageFilepath = string.Empty;
+            string decodedFilepath = string.Empty;
+            
+            // First take a new JPEG picture using RGB24 encoding.
+            using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "jpg"))
+            using (var preview = new MMALNullSinkComponent())
+            using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+
+                imgEncoder.ConfigureOutputPort(MMALEncoding.JPEG, MMALEncoding.RGB24, 90);
+
+                // Create our component pipeline.         
+                Fixture.MMALCamera.Camera.StillPort
+                    .ConnectTo(imgEncoder);
+                Fixture.MMALCamera.Camera.PreviewPort
+                    .ConnectTo(preview);
+
+                // Camera warm up time
+                await Task.Delay(2000);
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
+
+                Fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
+
+                imageFilepath = imgCaptureHandler.GetFilepath();
+            }
+            
+            // Next decode the JPEG to raw YUV420.
+            using (var stream = File.OpenRead(imageFilepath))
+            using (var imgCaptureHandler = new TransformStreamCaptureHandler(stream, "/home/pi/images/", "raw"))
+            using (var imgDecoder = new MMALImageFileDecoder(imgCaptureHandler))
+            {
+                // Create our component pipeline.
+                imgDecoder.ConfigureInputPort(MMALEncoding.JPEG, null)
+                    .ConfigureOutputPort(MMALEncoding.I420, null, 90, zeroCopy: true);
+
+                await imgDecoder.Convert();
+
+                Fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
+
+                decodedFilepath = imgCaptureHandler.GetFilepath();
+            }
+
+            // Finally re-encode to BMP using YUV420.
+            using (var stream = File.OpenRead(decodedFilepath))
+            using (var imgCaptureHandler = new TransformStreamCaptureHandler(stream, "/home/pi/images/", "bmp"))
+            using (var imgEncoder = new MMALImageFileEncoder(imgCaptureHandler))
+            {
+                // Create our component pipeline.
+                imgEncoder.ConfigureInputPort(MMALEncoding.I420, null, 2592, 1944)
+                    .ConfigureOutputPort(MMALEncoding.BMP, MMALEncoding.I420, 90, zeroCopy: true);
+
+                await imgEncoder.Convert();
+
+                Fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
+            }
+        }
     }
 }

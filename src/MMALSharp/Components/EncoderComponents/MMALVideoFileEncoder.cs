@@ -1,13 +1,13 @@
-﻿// <copyright file="MMALImageFileEncoder.cs" company="Techyian">
+﻿// <copyright file="MMALVideoFileEncoder.cs" company="Techyian">
 // Copyright (c) Ian Auty. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using System.Threading.Tasks;
-using MMALSharp.Native;
 using System.Text;
+using System.Threading.Tasks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
+using MMALSharp.Native;
 using MMALSharp.Ports;
 using MMALSharp.Ports.Inputs;
 using MMALSharp.Ports.Outputs;
@@ -15,15 +15,15 @@ using MMALSharp.Ports.Outputs;
 namespace MMALSharp.Components
 {
     /// <summary>
-    /// This component is used to encode image data stored in a stream.
+    /// This component is used to encode video data stored in a stream.
     /// </summary>
-    public class MMALImageFileEncoder : MMALImageEncoder, IMMALConvert
+    public class MMALVideoFileEncoder : MMALVideoEncoder, IMMALConvert
     {
         /// <summary>
         /// Creates a new instance of <see cref="MMALImageFileEncoder"/>.
         /// </summary>
         /// <param name="handler">The capture handler.</param>
-        public MMALImageFileEncoder(ICaptureHandler handler)
+        public MMALVideoFileEncoder(ICaptureHandler handler)
             : base(handler)
         {
             this.Inputs[0].Handler = handler;
@@ -44,15 +44,15 @@ namespace MMALSharp.Components
                 this.Inputs[0].Ptr->Format->Encoding = encodingType.EncodingVal;
             }
 
-            /*if (pixelFormat != null)
+            if (pixelFormat != null)
             {
                 this.Inputs[0].Ptr->Format->EncodingVariant = pixelFormat.EncodingVal;
-            }*/
+            }
 
             this.Inputs[0].Ptr->Format->Type = MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_VIDEO;
             this.Inputs[0].Ptr->Format->Es->Video.Height = height;
             this.Inputs[0].Ptr->Format->Es->Video.Width = width;
-            this.Inputs[0].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(25, 1);
+            this.Inputs[0].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(0, 1);
             this.Inputs[0].Ptr->Format->Es->Video.Par = new MMAL_RATIONAL_T(1, 1);
             this.Inputs[0].Ptr->Format->Es->Video.Crop = new MMAL_RECT_T(0, 0, width, height);
 
@@ -76,7 +76,7 @@ namespace MMALSharp.Components
 
             return this;
         }
-        
+
         /// <summary>
         /// Encodes/decodes user provided image data.
         /// </summary>
@@ -129,7 +129,7 @@ namespace MMALSharp.Components
                                     buffer.Release();
                                 }
                             }
-                            
+
                             continue;
                         }
                         else
@@ -166,17 +166,17 @@ namespace MMALSharp.Components
             this.CleanPortPools();
             WorkingQueue.Dispose();
         }
-        
+
         internal override void InitialiseInputPort(int inputPort)
         {
-            this.Inputs[inputPort] = new ImageFileEncodeInputPort(this.Inputs[inputPort]);
+            this.Inputs[inputPort] = new VideoFileEncodeInputPort(this.Inputs[inputPort]);
         }
 
         internal override void InitialiseOutputPort(int outputPort)
         {
-            this.Outputs[outputPort] = new ImageFileEncodeOutputPort(this.Outputs[outputPort]);
+            this.Outputs[outputPort] = new VideoFileEncodeOutputPort(this.Outputs[outputPort]);
         }
-        
+
         private async Task WaitForTriggers()
         {
             MMALLog.Logger.Debug("Waiting for trigger signal");
@@ -188,7 +188,7 @@ namespace MMALSharp.Components
                 await Task.Delay(2000).ConfigureAwait(false);
                 break;
             }
-            
+
             MMALLog.Logger.Debug("Resetting trigger state.");
             this.Inputs[0].Trigger = false;
             this.Outputs[0].Trigger = false;
@@ -247,7 +247,7 @@ namespace MMALSharp.Components
 
             MMALLog.Logger.Info(sb.ToString());
         }
-        
+
         private void GetAndSendInputBuffer()
         {
             // Get buffer from input port pool                
@@ -303,7 +303,7 @@ namespace MMALSharp.Components
 
             // Port format changed
             this.Outputs[0].ManagedOutputCallback.Callback(buffer);
-            
+
             lock (OutputPort.OutputLock)
             {
                 buffer.Release();

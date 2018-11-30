@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="MMALImageFileDecoder.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using System.Threading.Tasks;
 using MMALSharp.Native;
 using System.Text;
@@ -12,7 +17,7 @@ using MMALSharp.Ports.Outputs;
 namespace MMALSharp.Components
 {
     /// <summary>
-    /// This component is used to decode image data stored in a file.
+    /// This component is used to decode image data stored in a stream.
     /// </summary>
     public class MMALImageFileDecoder : MMALImageDecoder, IMMALConvert
     {        
