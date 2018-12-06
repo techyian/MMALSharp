@@ -33,5 +33,10 @@ namespace MMALSharp.Handlers
                 this.WorkingData = new List<byte>(_imageContext.Data);     
             }
         }
+        
+        public override string TotalProcessed()
+        {
+            return $"{this.WorkingData.Count}";
+        }
     }
 }

@@ -15,6 +15,12 @@ namespace MMALSharp.Handlers
     public interface ICaptureHandler : IDisposable
     {
         /// <summary>
+        /// Returns a string of how much data has been processed by this capture handler.
+        /// </summary>
+        /// <returns>How much data has been processed by this capture handler.</returns>
+        string TotalProcessed();
+        
+        /// <summary>
         /// Used to return user provided image data.
         /// </summary>
         /// <param name="allocSize">The count of bytes to return at most in the <see cref="ProcessResult"/>.</param>

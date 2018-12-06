@@ -10,6 +10,11 @@ namespace MMALSharp.Common
         public Resolution Resolution { get; }
         public PixelFormat PixelFormat { get; }
 
+        public ImageContext(Resolution res)
+        {
+            this.Resolution = res;
+        }
+        
         public ImageContext(Resolution res, PixelFormat format, bool raw)
         {
             this.Resolution = res;

@@ -35,7 +35,7 @@ namespace MMALSharp.Ports.Outputs
             : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid, copyFrom.Handler)
         {
         }
-
+        
         /// <summary>
         /// The native callback MMAL passes buffer headers to.
         /// </summary>
@@ -51,18 +51,18 @@ namespace MMALSharp.Ports.Outputs
                 {
                     if (MMALCameraConfig.Debug)
                     {
-                        MMALLog.Logger.Debug($"Putting output port buffer back into queue {((IntPtr)MMALImageFileDecoder.WorkingQueue.Ptr).ToString()}");
+                        MMALLog.Logger.Debug($"Putting output port buffer back into queue {((IntPtr)MMALVideoFileDecoder.WorkingQueue.Ptr).ToString()}");
                     }
 
                     bufferImpl.PrintProperties();
 
-                    MMALImageFileDecoder.WorkingQueue.Put(bufferImpl);
+                    MMALVideoFileDecoder.WorkingQueue.Put(bufferImpl);
                 }
                 else
                 {
                     MMALLog.Logger.Debug($"Invalid output buffer received");
                 }
-
+                
                 if (port->IsEnabled == 1 && !this.Trigger)
                 {
                     this.Trigger = true;

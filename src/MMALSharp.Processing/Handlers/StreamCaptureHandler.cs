@@ -78,6 +78,11 @@ namespace MMALSharp.Handlers
                 MMALLog.Logger.Warn($"Something went wrong while processing stream: {e.Message}");                
             }
         }
+        
+        public override string TotalProcessed()
+        {
+            return $"{Helpers.ConvertBytesToMegabytes(this.Processed)}";
+        }
 
         /// <summary>
         /// Releases the underlying stream.

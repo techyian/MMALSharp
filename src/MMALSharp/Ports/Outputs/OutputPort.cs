@@ -123,16 +123,8 @@ namespace MMALSharp.Ports.Outputs
 
                 this.NativeCallback = this.NativeOutputPortCallback;
                 
-                IntPtr ptrCallback = IntPtr.Zero;
-                if (sendBuffers)
-                {
-                    ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
-                    this.PtrCallback = ptrCallback;
-                }
-                else
-                {
-                    ptrCallback = this.PtrCallback;
-                }
+                IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
+                this.PtrCallback = ptrCallback;
                 
                 if (this.ManagedOutputCallback == null)
                 {
@@ -150,7 +142,7 @@ namespace MMALSharp.Ports.Outputs
                     this.SendAllBuffers(sendBuffers);
                 }
             }
-
+            
             if (!this.Enabled)
             {
                 throw new PiCameraError("Unknown error occurred whilst enabling port");

@@ -55,6 +55,8 @@ namespace MMALSharp.Callbacks
                 throw new ArgumentException("Port Encoding Type not supported for this handler.");
             }
             
+            MMALLog.Logger.Info($"Processing {this.WorkingPort.Handler?.TotalProcessed()}");
+            
             return this.WorkingPort.Handler?.Process(buffer.AllocSize);
         }
     }

@@ -70,7 +70,7 @@ namespace MMALSharp.Handlers
 
             this.CurrentStream = File.Create(filename);
         }
-
+        
         /// <summary>
         /// Allows us to do any further processing once the capture method has completed.
         /// </summary>
@@ -78,6 +78,11 @@ namespace MMALSharp.Handlers
         {
             this.ProcessedFiles.Add(new ProcessedFileResult(this.Directory, this.GetFilename(), this.Extension));
             base.PostProcess();
+        }
+
+        public override string TotalProcessed()
+        {
+            return $"{this.Processed}";
         }
     }
 }

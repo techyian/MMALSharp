@@ -3,8 +3,10 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using System;
 using System.Text;
 using System.Threading.Tasks;
+using MMALSharp.Callbacks.Providers;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
@@ -73,6 +75,40 @@ namespace MMALSharp.Components
                 this.Inputs[0].ZeroCopy = true;
                 this.Inputs[0].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
             }
+            
+            return this;
+        }
+        
+        /// <inheritdoc />>
+        public override unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
+        {
+            this.InitialiseOutputPort(outputPort);
+
+            if (this.ProcessingPorts.ContainsKey(outputPort))
+            {
+                this.ProcessingPorts.Remove(outputPort);
+            }
+
+            this.ProcessingPorts.Add(outputPort, this.Outputs[outputPort]);
+
+            if (encodingType != null)
+            {
+                this.Outputs[outputPort].Ptr->Format->Encoding = encodingType.EncodingVal;
+            }
+
+            if (zeroCopy)
+            {
+                this.Outputs[outputPort].ZeroCopy = true;
+                this.Outputs[outputPort].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
+            }
+
+            this.Outputs[outputPort].Commit();
+
+            this.Outputs[outputPort].EncodingType = encodingType;
+
+            this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
+            this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
+            this.Outputs[outputPort].ManagedOutputCallback = OutputCallbackProvider.FindCallback(this.Outputs[outputPort]);
 
             return this;
         }
@@ -84,7 +120,7 @@ namespace MMALSharp.Components
         /// <returns>An awaitable task.</returns>
         public virtual async Task Convert(int outputPort = 0)
         {
-            MMALLog.Logger.Info("Beginning Image encode from filestream. Please note, this process may take some time depending on the size of the input image.");
+            MMALLog.Logger.Info("Beginning Video encode from stream. Please note, this process may take some time depending on the size of the input stream.");
 
             // Enable control, input and output ports. Input & Output ports should have been pre-configured by user prior to this point.
             this.Control.Start();
@@ -184,7 +220,6 @@ namespace MMALSharp.Components
             // Wait until the process is complete.
             while (!this.Inputs[0].Trigger)
             {
-                MMALLog.Logger.Info("Awaiting...");
                 await Task.Delay(2000).ConfigureAwait(false);
                 break;
             }
@@ -203,8 +238,8 @@ namespace MMALSharp.Components
 
             this.Outputs[outputPort].EncodingType = encodingType;
 
-            this.Outputs[outputPort].Ptr->BufferNum = 2;
-            this.Outputs[outputPort].Ptr->BufferSize = this.Outputs[outputPort].Ptr->BufferSizeRecommended;
+            this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
+            this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
 
             MMALLog.Logger.Info($"New buffer number {this.Outputs[outputPort].Ptr->BufferNum}");
             MMALLog.Logger.Info($"New buffer size {this.Outputs[outputPort].Ptr->BufferSize}");

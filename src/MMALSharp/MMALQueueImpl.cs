@@ -78,6 +78,7 @@ namespace MMALSharp
 
             if (!this.CheckState())
             {
+                MMALLog.Logger.Warn("Buffer retrieved null.");
                 return null;                
             }
 

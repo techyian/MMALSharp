@@ -360,7 +360,7 @@ namespace MMALSharp.Ports
                     var buffer = this.BufferPool.Queue.GetBuffer();
 
                     MMALLog.Logger.Debug($"Sending buffer to output port: Length {buffer.Length}");
-
+                    
                     this.SendBuffer(buffer);
                 }
             }            

@@ -18,6 +18,11 @@ namespace MMALSharp.Handlers
         private Process _process;
         
         /// <summary>
+        /// The total size of data that has been processed by this capture handler.
+        /// </summary>
+        protected int Processed { get; set; }
+        
+        /// <summary>
         /// Streams video from the standard output stream via FFmpeg to an RTMP server.
         /// </summary>
         /// <param name="streamName">The meta name of the stream.</param>
@@ -114,6 +119,7 @@ namespace MMALSharp.Handlers
             {
                 _process.StandardInput.BaseStream.Write(data, 0, data.Length);
                 _process.StandardInput.BaseStream.Flush();
+                this.Processed += data.Length;
             }
             catch
             {
@@ -125,6 +131,11 @@ namespace MMALSharp.Handlers
         public void Split()
         {
             throw new NotImplementedException();
+        }
+        
+        public string TotalProcessed()
+        {
+            return $"{this.Processed}";
         }
 
         public void Dispose()

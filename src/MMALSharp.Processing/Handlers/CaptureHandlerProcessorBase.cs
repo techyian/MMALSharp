@@ -11,6 +11,8 @@ namespace MMALSharp.Handlers
         
         public abstract void Dispose();
 
+        public abstract string TotalProcessed();
+        
         /// <summary>
         /// When overridden in a derived class, returns user provided image data.
         /// </summary>

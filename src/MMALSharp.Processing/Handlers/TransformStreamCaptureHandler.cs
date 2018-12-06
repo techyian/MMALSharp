@@ -4,6 +4,7 @@
 // </copyright>
 
 using System.IO;
+using MMALSharp.Common.Utility;
 
 namespace MMALSharp.Handlers
 {
@@ -15,7 +16,9 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// Gets or sets the stream to retrieve input data from.
         /// </summary>
-        public Stream InputStream { get; set; }
+        public Stream InputStream { get; }
+        
+        private int TotalRead { get; set; }
 
         /// <summary>
         /// Creates a new instance of the <see cref="TransformStreamCaptureHandler"/> class with the specified input stream, output directory and output filename extension.
@@ -40,6 +43,8 @@ namespace MMALSharp.Handlers
 
             var read = this.InputStream.Read(buffer, 0, (int)allocSize - 128);
 
+            this.TotalRead += read;
+
             if (read < allocSize - 128)
             {
                 return new ProcessResult { Success = true, BufferFeed = buffer, EOF = true, DataLength = read };
@@ -60,6 +65,11 @@ namespace MMALSharp.Handlers
                 this.CurrentStream.Write(data, 0, data.Length);
             else
                 throw new IOException("Stream not writable.");
+        }
+
+        public override string TotalProcessed()
+        {
+            return $"{Helpers.ConvertBytesToMegabytes(this.TotalRead)} of {Helpers.ConvertBytesToMegabytes(this.InputStream.Length)}";
         }
     }
 }

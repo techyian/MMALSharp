@@ -131,8 +131,12 @@ namespace MMALSharp.Components
             {
                 this.Outputs[outputPort].VideoColorSpace = MMALCameraConfig.VideoColorSpace;
             }
+
+            if (this.GetType() == typeof(VideoPort) || this.GetType().IsSubclassOf(typeof(VideoPort)))
+            {
+                ((VideoPort)this.Outputs[outputPort]).Timeout = this.Timeout;
+            }
             
-            ((VideoPort)this.Outputs[outputPort]).Timeout = this.Timeout;
             this.Outputs[outputPort].Ptr->BufferSize = 512 * 1024;
             this.Quality = quality;
             this.Bitrate = bitrate;

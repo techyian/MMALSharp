@@ -47,11 +47,11 @@ namespace MMALSharp.Ports.Outputs
             {
                 if (MMALCameraConfig.Debug)
                 {
-                    MMALLog.Logger.Debug($"Putting output port buffer back into queue {((IntPtr)MMALImageFileEncoder.WorkingQueue.Ptr).ToString()}");
+                    MMALLog.Logger.Debug($"Putting output port buffer back into queue {((IntPtr)MMALVideoFileEncoder.WorkingQueue.Ptr).ToString()}");
                 }
 
                 var bufferImpl = new MMALBufferImpl(buffer);
-                MMALImageFileEncoder.WorkingQueue.Put(bufferImpl);
+                MMALVideoFileEncoder.WorkingQueue.Put(bufferImpl);
 
                 if (port->IsEnabled == 1 && !this.Trigger)
                 {

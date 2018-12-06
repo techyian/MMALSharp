@@ -47,9 +47,9 @@ namespace MMALSharp.Components
             }
 
             this.Inputs[0].Ptr->Format->Type = MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_VIDEO;
-            this.Inputs[0].Ptr->Format->Es->Video.Height = 0;
-            this.Inputs[0].Ptr->Format->Es->Video.Width = 0;
-            this.Inputs[0].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(0, 1);
+            this.Inputs[0].Ptr->Format->Es->Video.Height = width;
+            this.Inputs[0].Ptr->Format->Es->Video.Width = height;
+            this.Inputs[0].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(25, 1);
             this.Inputs[0].Ptr->Format->Es->Video.Par = new MMAL_RATIONAL_T(1, 1);
 
             this.Inputs[0].EncodingType = encodingType;
@@ -103,7 +103,7 @@ namespace MMALSharp.Components
         /// <returns>An awaitable task.</returns>
         public virtual async Task Convert(int outputPort = 0)
         {
-            MMALLog.Logger.Info("Beginning Image decode from filestream. Please note, this process may take some time depending on the size of the input image.");
+            MMALLog.Logger.Info("Beginning Video decode from stream. Please note, this process may take some time depending on the size of the input stream.");
 
             // Enable control, input and output ports. Input & Output ports should have been pre-configured by user prior to this point.
             this.Control.Start();
@@ -205,8 +205,8 @@ namespace MMALSharp.Components
 
             this.Outputs[outputPort].EncodingType = encodingType;
 
-            this.Outputs[outputPort].Ptr->BufferNum = 2;
-            this.Outputs[outputPort].Ptr->BufferSize = this.Outputs[outputPort].Ptr->BufferSizeRecommended;
+            this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
+            this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
 
             MMALLog.Logger.Info($"New buffer number {this.Outputs[outputPort].Ptr->BufferNum}");
             MMALLog.Logger.Info($"New buffer size {this.Outputs[outputPort].Ptr->BufferSize}");
@@ -325,6 +325,7 @@ namespace MMALSharp.Components
             }
 
             this.Outputs[outputPort].BufferPool.Dispose();
+            this.Outputs[outputPort].BufferPool = null;
 
             this.Outputs[outputPort].FullCopy(ev);
 
@@ -340,7 +341,6 @@ namespace MMALSharp.Components
             // Wait until the process is complete.
             while (!this.Inputs[0].Trigger)
             {
-                MMALLog.Logger.Info("Awaiting...");
                 await Task.Delay(2000).ConfigureAwait(false);
                 break;
             }
