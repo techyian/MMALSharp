@@ -132,7 +132,7 @@ namespace MMALSharp.Components
                 this.Outputs[outputPort].VideoColorSpace = MMALCameraConfig.VideoColorSpace;
             }
 
-            if (this.GetType() == typeof(VideoPort) || this.GetType().IsSubclassOf(typeof(VideoPort)))
+            if (this.Outputs[outputPort].GetType() == typeof(VideoPort) || this.Outputs[outputPort].GetType().IsSubclassOf(typeof(VideoPort)))
             {
                 ((VideoPort)this.Outputs[outputPort]).Timeout = this.Timeout;
             }
