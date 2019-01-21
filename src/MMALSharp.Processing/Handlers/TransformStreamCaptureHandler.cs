@@ -39,13 +39,13 @@ namespace MMALSharp.Handlers
         /// <returns>A <see cref="ProcessResult"/> object containing read image data.</returns>
         public override ProcessResult Process(uint allocSize)
         {
-            var buffer = new byte[allocSize - 128];
+            var buffer = new byte[allocSize];
 
-            var read = this.InputStream.Read(buffer, 0, (int)allocSize - 128);
+            var read = this.InputStream.Read(buffer, 0, (int)allocSize);
 
             this.TotalRead += read;
 
-            if (read < allocSize - 128)
+            if (read < allocSize)
             {
                 return new ProcessResult { Success = true, BufferFeed = buffer, EOF = true, DataLength = read };
             }

@@ -157,6 +157,15 @@ namespace MMALSharp.Ports
         }
 
         /// <summary>
+        /// The working video color space, specific to video ports.
+        /// </summary>
+        public MMALEncoding VideoColorSpace
+        {
+            get => this.Ptr->Format->Es->Video.ColorSpace.ParseEncoding();
+            internal set => this.Ptr->Format->Es->Video.ColorSpace = value.EncodingVal;
+        }
+
+        /// <summary>
         /// The Region of Interest width that this port will process data in.
         /// </summary>
         public int CropWidth => this.Ptr->Format->Es->Video.Crop.Width;
@@ -182,6 +191,15 @@ namespace MMALSharp.Ports
         {
             get => this.Ptr->Format->EncodingVariant;
             internal set => this.Ptr->Format->EncodingVariant = value;
+        }
+
+        /// <summary>
+        /// The working bitrate of this port.
+        /// </summary>
+        public int Bitrate
+        {
+            get => this.Ptr->Format->Bitrate;
+            internal set => this.Ptr->Format->Bitrate = value;
         }
 
         #endregion
@@ -210,6 +228,12 @@ namespace MMALSharp.Ports
         /// Delegate for native port callback.
         /// </summary>
         internal MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
+
+        /// <inheritdoc />
+        public override bool CheckState()
+        {
+            return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;
+        }
 
         /// <summary>
         /// Creates a new managed reference to a MMAL Component Port.
@@ -404,6 +428,11 @@ namespace MMALSharp.Ports
         {
             MMALLog.Logger.Debug($"Initialising buffer pool.");
             this.BufferPool = new MMALPoolImpl(this);
+        }
+
+        internal void ExtraDataAlloc(int size)
+        {
+            MMALCheck(MMALFormat.mmal_format_extradata_alloc(this.Ptr->Format, (uint)size), "Unable to alloc extradata.");
         }
     }
 }

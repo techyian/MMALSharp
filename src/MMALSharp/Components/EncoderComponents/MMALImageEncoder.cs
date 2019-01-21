@@ -94,9 +94,9 @@ namespace MMALSharp.Components
         }
         
         /// <inheritdoc />>
-        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
+        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, bool zeroCopy = false)
         {
-            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate, zeroCopy);
+            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, zeroCopy);
 
             if (this.RawBayer)
             {

@@ -52,7 +52,7 @@ namespace MMALSharp.Components
             this.Inputs[0].Ptr->Format->Type = MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_VIDEO;
             this.Inputs[0].Ptr->Format->Es->Video.Height = height;
             this.Inputs[0].Ptr->Format->Es->Video.Width = width;
-            this.Inputs[0].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(25, 1);
+            this.Inputs[0].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(0, 1);
             this.Inputs[0].Ptr->Format->Es->Video.Par = new MMAL_RATIONAL_T(1, 1);
             this.Inputs[0].Ptr->Format->Es->Video.Crop = new MMAL_RECT_T(0, 0, width, height);
 

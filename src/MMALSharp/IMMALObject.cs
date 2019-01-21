@@ -1,9 +1,6 @@
 ﻿namespace MMALSharp
 {
-    /// <summary>
-    /// Supports checking if the native pointer is valid.
-    /// </summary>
-    public interface IMMALStatus
+    public interface IMMALObject
     {
         /// <summary>
         /// Checks whether a native MMAL pointer is valid.

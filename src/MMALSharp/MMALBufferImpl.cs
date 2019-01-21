@@ -16,7 +16,7 @@ namespace MMALSharp
     /// <summary>
     /// Represents a buffer header object.
     /// </summary>
-    public unsafe class MMALBufferImpl : MMALObject, IMMALStatus
+    public unsafe class MMALBufferImpl : MMALObject
     {
         /// <summary>
         /// Pointer to the data associated with this buffer header.
@@ -157,7 +157,7 @@ namespace MMALSharp
         }
 
         /// <inheritdoc />
-        public bool CheckState()
+        public override bool CheckState()
         {
             return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;
         }
@@ -203,7 +203,7 @@ namespace MMALSharp
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.Debug("Reading data into buffer");
+                MMALLog.Logger.Debug($"Reading {length} bytes into buffer");
             }
             
             this.Ptr->length = (uint)length;                        

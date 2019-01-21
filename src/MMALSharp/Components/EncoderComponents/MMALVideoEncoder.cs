@@ -36,11 +36,6 @@ namespace MMALSharp.Components
         /// Signifies the max bitrate supported for H.264 Level 4.2 (62.5Mbits/s)
         /// </summary>
         public const int MaxBitrateLevel42 = 62500000; // 62.5Mbits/s
-
-        /// <summary>
-        /// The working bitrate of this <see cref="MMALVideoEncoder"/>.
-        /// </summary>
-        public int Bitrate { get; set; }
         
         /// <summary>
         /// The working H.264 level.
@@ -122,9 +117,9 @@ namespace MMALSharp.Components
         }
         
         /// <inheritdoc />>
-        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
+        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int framerate, int quality, int bitrate, bool zeroCopy = false)
         {
-            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate, zeroCopy);
+            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, framerate, quality, bitrate, zeroCopy);
             
             if (MMALCameraConfig.VideoColorSpace != null &&
                 MMALCameraConfig.VideoColorSpace.EncType == MMALEncoding.EncodingType.ColorSpace)
@@ -139,8 +134,7 @@ namespace MMALSharp.Components
             
             this.Outputs[outputPort].Ptr->BufferSize = 512 * 1024;
             this.Quality = quality;
-            this.Bitrate = bitrate;
-
+            
             if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264)
             {
                 this.ConfigureIntraPeriod(outputPort);
@@ -194,8 +188,8 @@ namespace MMALSharp.Components
                     return tempDt.AddMinutes(this.Split.Value);
             }
         }
-        
-        private void ConfigureBitrate(int outputPort)
+
+        internal void ConfigureBitrate(int outputPort)
         {
             if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264)
             {
@@ -216,47 +210,48 @@ namespace MMALSharp.Components
 
                 var level = levelList.Where(c => c.Level == MMALCameraConfig.VideoLevel).First();
 
-                if (this.Bitrate > level.Maxbitrate)
+                if (this.Outputs[outputPort].Bitrate > level.Maxbitrate)
                 {
                     throw new PiCameraError("Bitrate requested exceeds maximum for selected Video Level and Profile");
                 }
             }
             else if (this.Outputs[outputPort].EncodingType == MMALEncoding.MJPEG)
             {
-                if (this.Bitrate > MaxBitrateMJPEG)
+                if (this.Outputs[outputPort].Bitrate > MaxBitrateMJPEG)
                 {
                     MMALLog.Logger.Warn("Bitrate too high: Reducing to 25MBit/s");
-                    this.Bitrate = MaxBitrateMJPEG;
+                    this.Outputs[outputPort].Bitrate = MaxBitrateMJPEG;
                 }
             }
-            
-            this.Outputs[outputPort].Ptr->Format->Bitrate = this.Bitrate;
+            this.Outputs[outputPort].Ptr->Format->Bitrate = this.Outputs[outputPort].Bitrate;
             this.Outputs[outputPort].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(0, 1);
             this.Outputs[outputPort].Commit();
+
+            this.Outputs[outputPort].Ptr->Format->Bitrate = this.Outputs[outputPort].Bitrate;
         }
-        
-        private void ConfigureRateControl(int outputPort)
+
+        internal void ConfigureRateControl(int outputPort)
         {
             MMAL_PARAMETER_VIDEO_RATECONTROL_T param = new MMAL_PARAMETER_VIDEO_RATECONTROL_T(new MMAL_PARAMETER_HEADER_T(MMALParametersVideo.MMAL_PARAMETER_RATECONTROL, Marshal.SizeOf<MMAL_PARAMETER_VIDEO_RATECONTROL_T>()), MMALCameraConfig.RateControl);
             MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs[outputPort].Ptr, param.HdrPtr), "Unable to set ratecontrol.");
         }
 
-        private void ConfigureIntraPeriod(int outputPort)
+        internal void ConfigureIntraPeriod(int outputPort)
         {
             if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264 && MMALCameraConfig.IntraPeriod != -1)
             {
                 this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_INTRAPERIOD, MMALCameraConfig.IntraPeriod);
             }
         }
-        
-        private void ConfigureQuantisationParameter(int outputPort)
+
+        internal void ConfigureQuantisationParameter(int outputPort)
         {
             this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INITIAL_QUANT, this.Quality);
             this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_MIN_QUANT, this.Quality);
             this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_MAX_QUANT, this.Quality);
         }
 
-        private void ConfigureVideoProfile(int outputPort)
+        internal void ConfigureVideoProfile(int outputPort)
         {
             var macroblocks = (MMALCameraConfig.VideoResolution.Width >> 4) * (MMALCameraConfig.VideoResolution.Height >> 4);
             var macroblocksPSec = macroblocks * (MMALCameraConfig.VideoFramerate.Num / MMALCameraConfig.VideoFramerate.Den);
@@ -297,17 +292,17 @@ namespace MMALSharp.Components
             }
         }
 
-        private void ConfigureImmutableInput(int outputPort)
+        internal void ConfigureImmutableInput(int outputPort)
         {
             this.Inputs[0].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_IMMUTABLE_INPUT, MMALCameraConfig.ImmutableInput);
         }
 
-        private void ConfigureInlineHeaderFlag(int outputPort)
+        internal void ConfigureInlineHeaderFlag(int outputPort)
         {
             this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INLINE_HEADER, MMALCameraConfig.InlineHeaders);
         }
 
-        private void ConfigureInlineVectorsFlag(int outputPort)
+        internal void ConfigureInlineVectorsFlag(int outputPort)
         {
             if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264)
             {
@@ -315,7 +310,7 @@ namespace MMALSharp.Components
             }
         }
 
-        private void ConfigureIntraRefresh(int outputPort)
+        internal void ConfigureIntraRefresh(int outputPort)
         {
             MMAL_PARAMETER_VIDEO_INTRA_REFRESH_T param = new MMAL_PARAMETER_VIDEO_INTRA_REFRESH_T(new MMAL_PARAMETER_HEADER_T(MMALParametersVideo.MMAL_PARAMETER_VIDEO_INTRA_REFRESH, Marshal.SizeOf<MMAL_PARAMETER_VIDEO_INTRA_REFRESH_T>()), MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T.MMAL_VIDEO_INTRA_REFRESH_BOTH, 0, 0, 0, 0);
 

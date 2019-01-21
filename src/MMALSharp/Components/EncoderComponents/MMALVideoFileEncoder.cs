@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
 using MMALSharp.Callbacks.Providers;
@@ -35,9 +36,9 @@ namespace MMALSharp.Components
         /// The working queue of buffer headers.
         /// </summary>
         public static MMALQueueImpl WorkingQueue { get; set; }
-
-        /// <inheritdoc />>
-        public override unsafe MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, bool zeroCopy = false)
+        
+        /// <inheritdoc />
+        public override unsafe MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, int bitrate, bool zeroCopy = false)
         {
             this.InitialiseInputPort(0);
 
@@ -52,23 +53,32 @@ namespace MMALSharp.Components
             }
 
             this.Inputs[0].Ptr->Format->Type = MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_VIDEO;
-            this.Inputs[0].Ptr->Format->Es->Video.Height = height;
-            this.Inputs[0].Ptr->Format->Es->Video.Width = width;
-            this.Inputs[0].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(0, 1);
+
+            if (MMALCameraConfig.VideoColorSpace != null &&
+                MMALCameraConfig.VideoColorSpace.EncType == MMALEncoding.EncodingType.ColorSpace)
+            {
+                this.Inputs[0].VideoColorSpace = MMALCameraConfig.VideoColorSpace;
+            }
+
+            this.Inputs[0].Bitrate = bitrate;
+            this.Inputs[0].Resolution = new Resolution(width, height).Pad();
+            this.Inputs[0].Crop = new Rectangle(0, 0, width, height);
+            
+            this.Inputs[0].FrameRate = new MMAL_RATIONAL_T(0, 1);
             this.Inputs[0].Ptr->Format->Es->Video.Par = new MMAL_RATIONAL_T(1, 1);
-            this.Inputs[0].Ptr->Format->Es->Video.Crop = new MMAL_RECT_T(0, 0, width, height);
+            //this.Inputs[0].Ptr->Format->Flags |= MMALFormat.MMAL_ES_FORMAT_FLAG_FRAMED;
 
             this.Inputs[0].EncodingType = encodingType;
 
             this.Inputs[0].Commit();
 
-            if (this.Outputs[0].Ptr->Format->Type == MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_UNKNOWN)
+            if (this.Inputs[0].Ptr->Format->Type == MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_UNKNOWN)
             {
-                throw new PiCameraError("Unable to determine settings for output port.");
+                throw new PiCameraError("Unable to determine settings for input port.");
             }
 
-            this.Inputs[0].Ptr->BufferNum = this.Inputs[0].Ptr->BufferNumMin;
-            this.Inputs[0].Ptr->BufferSize = this.Inputs[0].Ptr->BufferSizeMin;
+            this.Inputs[0].Ptr->BufferNum = Math.Max(this.Inputs[0].Ptr->BufferNumMin, this.Inputs[0].Ptr->BufferNumRecommended);
+            this.Inputs[0].Ptr->BufferSize = Math.Max(this.Inputs[0].Ptr->BufferSizeRecommended, this.Inputs[0].Ptr->BufferSizeRecommended);
 
             if (zeroCopy)
             {
@@ -78,10 +88,12 @@ namespace MMALSharp.Components
             
             return this;
         }
-        
-        /// <inheritdoc />>
-        public override unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
+
+        /// <inheritdoc />
+        public override unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, int framerate, int quality, int bitrate, bool zeroCopy = false)
         {
+            this.Outputs[outputPort].Ptr->Format->Es->Video.Par = new MMAL_RATIONAL_T(1, 1);
+
             this.InitialiseOutputPort(outputPort);
 
             if (this.ProcessingPorts.ContainsKey(outputPort))
@@ -96,19 +108,36 @@ namespace MMALSharp.Components
                 this.Outputs[outputPort].Ptr->Format->Encoding = encodingType.EncodingVal;
             }
 
+            if (pixelFormat != null)
+            {
+                this.Outputs[outputPort].Ptr->Format->EncodingVariant = pixelFormat.EncodingVal;
+            }
+
             if (zeroCopy)
             {
                 this.Outputs[outputPort].ZeroCopy = true;
                 this.Outputs[outputPort].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
             }
 
+            if (MMALCameraConfig.VideoColorSpace != null &&
+                MMALCameraConfig.VideoColorSpace.EncType == MMALEncoding.EncodingType.ColorSpace)
+            {
+                this.Outputs[outputPort].VideoColorSpace = MMALCameraConfig.VideoColorSpace;
+            }
+            
+            this.Outputs[outputPort].FrameRate = new MMAL_RATIONAL_T(framerate, 1);
+            this.Outputs[outputPort].Resolution = new Resolution(width, height).Pad();
+            this.Outputs[outputPort].Crop = new Rectangle(0, 0, width, height);
+            this.Outputs[outputPort].Ptr->Format->Bitrate = bitrate;
+
             this.Outputs[outputPort].Commit();
 
             this.Outputs[outputPort].EncodingType = encodingType;
-
-            this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
-            this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
+            
             this.Outputs[outputPort].ManagedOutputCallback = OutputCallbackProvider.FindCallback(this.Outputs[outputPort]);
+
+            this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumMin, this.Outputs[outputPort].Ptr->BufferNumRecommended);
+            this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeMin, this.Outputs[outputPort].Ptr->BufferSizeRecommended);
 
             return this;
         }
@@ -136,7 +165,7 @@ namespace MMALSharp.Components
             while (!eosReceived)
             {
                 await this.WaitForTriggers().ConfigureAwait(false);
-
+                
                 this.GetAndSendInputBuffer();
 
                 MMALLog.Logger.Debug("Getting processed output pool buffer");
@@ -214,7 +243,7 @@ namespace MMALSharp.Components
         }
 
         private async Task WaitForTriggers()
-        {
+        {            
             MMALLog.Logger.Debug("Waiting for trigger signal");
 
             // Wait until the process is complete.
@@ -237,14 +266,16 @@ namespace MMALSharp.Components
             }
 
             this.Outputs[outputPort].EncodingType = encodingType;
+            
+            this.Outputs[outputPort].Ptr->Format->Es->Video.Par = new MMAL_RATIONAL_T(1, 1);
 
-            this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
-            this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
-
-            MMALLog.Logger.Info($"New buffer number {this.Outputs[outputPort].Ptr->BufferNum}");
-            MMALLog.Logger.Info($"New buffer size {this.Outputs[outputPort].Ptr->BufferSize}");
-
+            this.Outputs[outputPort].Resolution = new Resolution(this.Width, this.Height).Pad();
+            this.Outputs[outputPort].Crop = new Rectangle(0, 0, this.Width, this.Height);
+            
             this.Outputs[outputPort].Commit();
+
+            this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumMin, this.Outputs[outputPort].Ptr->BufferNumRecommended);
+            this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeMin, this.Outputs[outputPort].Ptr->BufferSizeRecommended);
         }
 
         private void LogFormat(MMALEventFormat format, PortBase port)
@@ -272,6 +303,8 @@ namespace MMALSharp.Components
             sb.AppendLine($"FourCC: {format.FourCC}");
             sb.AppendLine($"Width: {format.Width}");
             sb.AppendLine($"Height: {format.Height}");
+            sb.AppendLine($"Bitrate: {format.Bitrate}");
+            sb.AppendLine($"Framerate: {format.FramerateNum}");
             sb.AppendLine($"Crop: {format.CropX}, {format.CropY}, {format.CropWidth}, {format.CropHeight}");
             sb.AppendLine($"Pixel aspect ratio: {format.ParNum}, {format.ParDen}. Frame rate: {format.FramerateNum}, {format.FramerateDen}");
 
@@ -326,19 +359,16 @@ namespace MMALSharp.Components
 
         private void ProcessFormatChangedEvent(MMALBufferImpl buffer)
         {
-            MMALLog.Logger.Debug("Received MMAL_EVENT_FORMAT_CHANGED event");
+            MMALLog.Logger.Info("Received MMAL_EVENT_FORMAT_CHANGED event");
 
             var ev = MMALEventFormat.GetEventFormat(buffer);
 
-            MMALLog.Logger.Debug("-- Event format changed from -- ");
+            MMALLog.Logger.Info("-- Event format changed from -- ");
             this.LogFormat(new MMALEventFormat(this.Outputs[0].Format), this.Outputs[0]);
 
-            MMALLog.Logger.Debug("-- To -- ");
+            MMALLog.Logger.Info("-- To -- ");
             this.LogFormat(ev, null);
-
-            // Port format changed
-            this.Outputs[0].ManagedOutputCallback.Callback(buffer);
-
+            
             lock (OutputPort.OutputLock)
             {
                 buffer.Release();

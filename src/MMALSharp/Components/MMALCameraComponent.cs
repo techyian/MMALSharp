@@ -151,7 +151,11 @@ namespace MMALSharp.Components
         /// </summary>
         public override void Dispose()
         {
-            this.CameraInfo?.DestroyComponent();
+            if (this.CameraInfo != null && this.CameraInfo.CheckState())
+            {
+                this.CameraInfo.DestroyComponent();
+            }
+            
             base.Dispose();
         }
 

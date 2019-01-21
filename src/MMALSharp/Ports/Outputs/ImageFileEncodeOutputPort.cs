@@ -49,8 +49,11 @@ namespace MMALSharp.Ports.Outputs
                 {
                     MMALLog.Logger.Debug($"Putting output port buffer back into queue {((IntPtr)MMALImageFileEncoder.WorkingQueue.Ptr).ToString()}");
                 }
-
+                
                 var bufferImpl = new MMALBufferImpl(buffer);
+
+                bufferImpl.PrintProperties();
+
                 MMALImageFileEncoder.WorkingQueue.Put(bufferImpl);
 
                 if (port->IsEnabled == 1 && !this.Trigger)

@@ -22,6 +22,8 @@ namespace MMALSharp.Native
             MMAL_ES_TYPE_SUBPICTURE
         }
 
+        public static int MMAL_ES_FORMAT_FLAG_FRAMED = 0x1;
+
         public static int MMAL_ES_FORMAT_COMPARE_FLAG_TYPE = 0x01;
         public static int MMAL_ES_FORMAT_COMPARE_FLAG_ENCODING = 0x02;
         public static int MMAL_ES_FORMAT_COMPARE_FLAG_BITRATE = 0x04;

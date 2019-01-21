@@ -3,6 +3,7 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using System;
 using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 using MMALSharp.Ports;
@@ -53,7 +54,13 @@ namespace MMALSharp
             this.Ptr = ptr;
             this.Queue = new MMALQueueImpl((*this.Ptr).Queue);
         }
-        
+
+        /// <inheritdoc />
+        public override bool CheckState()
+        {
+            return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;
+        }
+
         /// <inheritdoc />
         public override void Dispose()
         {

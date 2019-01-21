@@ -65,10 +65,10 @@ namespace MMALSharp.Components
             this.Timeout = timeout;
         }
 
-        /// <inheritdoc />>
-        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
+        /// <inheritdoc />
+        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int framerate, int bitrate, bool zeroCopy = false)
         {
-            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate, zeroCopy);
+            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, framerate, bitrate, zeroCopy);
             ((VideoPort)this.Outputs[outputPort]).Timeout = this.Timeout;
 
             return this;

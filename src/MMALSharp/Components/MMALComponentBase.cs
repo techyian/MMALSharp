@@ -62,7 +62,7 @@ namespace MMALSharp
         /// <summary>
         /// Native pointer to the component this object represents.
         /// </summary>
-        private MMAL_COMPONENT_T* Ptr { get; }
+        internal MMAL_COMPONENT_T* Ptr { get; }
         
         /// <summary>
         /// Creates the MMAL Component by the given name.
@@ -99,7 +99,13 @@ namespace MMALSharp
                 this.Ports.Add(new GenericPort(&(*this.Ptr->Port[i]), this, PortType.Generic, Guid.NewGuid()));
             }
         }
-        
+
+        /// <inheritdoc />
+        public override bool CheckState()
+        {
+            return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;
+        }
+
         /// <summary>
         /// Enables any connections associated with this component, traversing down the pipeline to enable those connections
         /// also.
@@ -167,41 +173,44 @@ namespace MMALSharp
         /// </summary>
         public override void Dispose()
         {
-            MMALLog.Logger.Debug($"Disposing component {this.Name}.");
-
-            // See if any pools need disposing before destroying component.
-            foreach (var port in this.Inputs)
+            if (this.CheckState())
             {
-                if (port.BufferPool != null)
+                MMALLog.Logger.Debug($"Disposing component {this.Name}.");
+
+                // See if any pools need disposing before destroying component.
+                foreach (var port in this.Inputs)
                 {
-                    MMALLog.Logger.Debug("Destroying port pool");
+                    if (port.BufferPool != null)
+                    {
+                        MMALLog.Logger.Debug("Destroying port pool");
 
-                    port.DestroyPortPool();
+                        port.DestroyPortPool();
+                    }
+
+                    // Remove any unmanaged resources held by the capture handler.
+                    port.Handler?.Dispose();
                 }
-                
-                // Remove any unmanaged resources held by the capture handler.
-                port.Handler?.Dispose();
-            }
 
-            foreach (var port in this.Outputs)
-            {
-                if (port.BufferPool != null)
+                foreach (var port in this.Outputs)
                 {
-                    MMALLog.Logger.Debug("Destroying port pool");
+                    if (port.BufferPool != null)
+                    {
+                        MMALLog.Logger.Debug("Destroying port pool");
 
-                    port.DestroyPortPool();
+                        port.DestroyPortPool();
+                    }
+
+                    // Remove any unmanaged resources held by the capture handler.
+                    port.Handler?.Dispose();
                 }
-                
-                // Remove any unmanaged resources held by the capture handler.
-                port.Handler?.Dispose();
+
+                this.DisableComponent();
+                this.DestroyComponent();
+
+                MMALLog.Logger.Debug("Completed disposal...");
+
+                base.Dispose();
             }
-
-            this.DisableComponent();
-            this.DestroyComponent();
-
-            MMALLog.Logger.Debug("Completed disposal...");
-
-            base.Dispose();
         }
         
         /// <summary>

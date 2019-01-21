@@ -47,7 +47,7 @@ namespace MMALSharp.Ports.Outputs
             {
                 var bufferImpl = new MMALBufferImpl(buffer);
 
-                if (bufferImpl.CheckState())
+                if (bufferImpl.CheckState() && MMALVideoFileDecoder.WorkingQueue != null)
                 {
                     if (MMALCameraConfig.Debug)
                     {

@@ -49,11 +49,10 @@ namespace MMALSharp.Components
             set { _height = value; }
         }
 
-        /// <inheritdoc />>
-        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType,
-            MMALEncoding pixelFormat, int quality, int bitrate = 0, bool zeroCopy = false)
+        /// <inheritdoc />
+        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, int framerate, int quality, int bitrate, bool zeroCopy = false)
         {
-            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, bitrate, zeroCopy);
+            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, width, height, framerate, quality, bitrate, zeroCopy);
 
             if (MMALCameraConfig.VideoColorSpace != null &&
                 MMALCameraConfig.VideoColorSpace.EncType == MMALEncoding.EncodingType.ColorSpace)

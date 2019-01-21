@@ -12,7 +12,7 @@ namespace MMALSharp
     /// <summary>
     /// Represents a queue of buffer headers.
     /// </summary>
-    public unsafe class MMALQueueImpl : MMALObject, IMMALStatus
+    public unsafe class MMALQueueImpl : MMALObject
     {
         /// <summary>
         /// Native pointer to the buffer header queue this object represents.
@@ -36,11 +36,8 @@ namespace MMALSharp
             base.Dispose();
         }
 
-        /// <summary>
-        /// Checks whether this instance is attached to a valid native pointer.
-        /// </summary>
-        /// <returns>True if the pointer is valid.</returns>
-        public bool CheckState()
+        /// <inheritdoc />
+        public override bool CheckState()
         {
             return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;
         }

@@ -91,6 +91,12 @@ namespace MMALSharp
         /// </summary>
         private MMAL_CONNECTION_T* Ptr { get; set; }
 
+        /// <inheritdoc />
+        public override bool CheckState()
+        {
+            return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;
+        }
+
         /// <summary>
         /// Creates a new instance of <see cref="MMALConnectionImpl"/>.
         /// </summary>
