@@ -124,19 +124,11 @@ namespace MMALSharp.Ports
         /// Accessor for the elementary stream.
         /// </summary>
         public MMAL_ES_FORMAT_T Format => *this.Ptr->Format;
-
+        
         /// <summary>
         /// The Width/Height that this port will process data in.
         /// </summary>
-        public Resolution Resolution
-        {
-            get => new Resolution(this.Ptr->Format->Es->Video.Width, this.Ptr->Format->Es->Video.Height);
-            internal set
-            {
-                this.Ptr->Format->Es->Video.Width = value.Width;
-                this.Ptr->Format->Es->Video.Height = value.Height;
-            }
-        }
+        public abstract Resolution Resolution { get; internal set; }
 
         /// <summary>
         /// The region of interest that this port will process data in.
@@ -228,6 +220,10 @@ namespace MMALSharp.Ports
         /// Delegate for native port callback.
         /// </summary>
         internal MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
+
+        private int _width;
+
+        private int _height;
 
         /// <inheritdoc />
         public override bool CheckState()

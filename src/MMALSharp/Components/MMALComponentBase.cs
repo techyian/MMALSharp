@@ -155,7 +155,7 @@ namespace MMALSharp
             {
                 if (this.Inputs[i].EncodingType != null)
                 {
-                    MMALLog.Logger.Info($"    Port {i} Input encoding: {this.Inputs[i].EncodingType.EncodingName}.");
+                    MMALLog.Logger.Info($"    Port {i} Input encoding: {this.Inputs[i].EncodingType.EncodingName}. Width: {this.Inputs[i].Resolution.Width}. Height: {this.Inputs[i].Resolution.Height}");
                 }
             }
 
@@ -163,7 +163,7 @@ namespace MMALSharp
             {
                 if (this.Outputs[i].EncodingType != null)
                 {
-                    MMALLog.Logger.Info($"    Port {i} Output encoding: {this.Outputs[i].EncodingType.EncodingName}");
+                    MMALLog.Logger.Info($"    Port {i} Output encoding: {this.Outputs[i].EncodingType.EncodingName}. Width: {this.Outputs[i].Resolution.Width}. Height: {this.Outputs[i].Resolution.Height}");
                 }
             }
         }

@@ -12,6 +12,7 @@ using MMALSharp.Common.Utility;
 using MMALSharp.Config;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 using MMALSharp.Ports.Outputs;
 using static MMALSharp.MMALNativeExceptionHelper;
 
@@ -26,27 +27,6 @@ namespace MMALSharp.Components
         /// Represents the maximum length of a formatted EXIF tag. This includes the tag's key, an equals sign, the tag's value and a null char.
         /// </summary>
         public const int MaxExifPayloadLength = 128;
-
-        private int _width;
-        private int _height;
-
-        /// <summary>
-        /// Gets or sets the width of the resulting image. If not specified, the camera's still resolution is used.
-        /// </summary>
-        public override int Width
-        {
-            get => _width == 0 ? MMALCameraConfig.StillResolution.Width : _width;
-            set => _width = value;
-        }
-
-        /// <summary>
-        /// Gets or sets the height of the resulting image. If not specified, the camera's still resolution is used.
-        /// </summary>
-        public override int Height
-        {
-            get => _height == 0 ? MMALCameraConfig.StillResolution.Height : _height;
-            set => _height = value;
-        }
 
         /// <summary>
         /// When enabled, raw bayer metadata will be included in JPEG still captures.
@@ -93,10 +73,10 @@ namespace MMALSharp.Components
             this.JpegThumbnailConfig = thumbnailConfig;
         }
         
-        /// <inheritdoc />>
-        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, bool zeroCopy = false)
+        /// <inheritdoc />
+        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
         {
-            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, quality, zeroCopy);
+            base.ConfigureOutputPort(outputPort, config);
 
             if (this.RawBayer)
             {
@@ -126,15 +106,6 @@ namespace MMALSharp.Components
             }
             
             return this;
-        }
-
-        /// <summary>
-        /// Prints a summary of the ports and the resolution associated with this component to the console.
-        /// </summary>
-        public override void PrintComponent()
-        {
-            base.PrintComponent();
-            MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
         }
 
         internal override void InitialiseOutputPort(int outputPort)

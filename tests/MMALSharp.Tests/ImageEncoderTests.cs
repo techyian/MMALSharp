@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using MMALSharp.Config;
+using MMALSharp.Ports;
 using MMALSharp.Processors;
 using Xunit;
 
@@ -38,7 +39,9 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, 90);
+                var portConfig = new MMALPortConfig(encodingType, pixelFormat, 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
 
                 // Create our component pipeline.         
                 Fixture.MMALCamera.Camera.StillPort
@@ -69,7 +72,9 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, 90);
+                var portConfig = new MMALPortConfig(encodingType, pixelFormat, 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
 
                 // Create our component pipeline.         
                 Fixture.MMALCamera.Camera.StillPort
@@ -135,7 +140,9 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, 90);
+                var portConfig = new MMALPortConfig(encodingType, pixelFormat, 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
 
                 // Create our component pipeline.
                 Fixture.MMALCamera.Camera.VideoPort
@@ -170,7 +177,9 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                imgEncoder.ConfigureOutputPort(0, MMALEncoding.JPEG, MMALEncoding.I420, 90);
+                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
 
                 // Create our component pipeline.         
                 Fixture.MMALCamera.Camera.StillPort
@@ -215,7 +224,9 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                imgEncoder.ConfigureOutputPort(0, MMALEncoding.JPEG, MMALEncoding.I420, 90);
+                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
 
                 // Create our component pipeline.         
                 Fixture.MMALCamera.Camera.StillPort
@@ -249,7 +260,9 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                imgEncoder.ConfigureOutputPort(MMALEncoding.JPEG, MMALEncoding.I420, 90);
+                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
 
                 // Create our component pipeline.         
                 Fixture.MMALCamera.Camera.StillPort
@@ -269,7 +282,9 @@ namespace MMALSharp.Tests
             using (var preview = new MMALNullSinkComponent())
             using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
             {
-                imgEncoder.ConfigureOutputPort(MMALEncoding.BMP, MMALEncoding.I420, 90);
+                var portConfig = new MMALPortConfig(MMALEncoding.BMP, MMALEncoding.I420, 0);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
 
                 // Create our component pipeline.         
                 Fixture.MMALCamera.Camera.StillPort
@@ -338,7 +353,9 @@ namespace MMALSharp.Tests
                 overlay.UpdateOverlay();
 
                 // Create our component pipeline.
-                imgEncoder.ConfigureOutputPort(0, MMALEncoding.JPEG, MMALEncoding.I420, 90);
+                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
 
                 Fixture.MMALCamera.Camera.StillPort.ConnectTo(imgEncoder);
                 Fixture.MMALCamera.Camera.PreviewPort.ConnectTo(video);
@@ -371,7 +388,9 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                imgEncoder.ConfigureOutputPort(0, MMALEncoding.JPEG, MMALEncoding.I420, 90);
+                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
 
                 // Create our component pipeline.
                 Fixture.MMALCamera.Camera.StillPort
@@ -402,7 +421,9 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                imgEncoder.ConfigureOutputPort(MMALEncoding.JPEG, MMALEncoding.I420, 90);
+                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
 
                 // Create our component pipeline.         
                 Fixture.MMALCamera.Camera.StillPort
@@ -447,7 +468,9 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                imgEncoder.ConfigureOutputPort(MMALEncoding.JPEG, MMALEncoding.I420, 90);
+                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
 
                 // Create our component pipeline.         
                 Fixture.MMALCamera.Camera.StillPort
@@ -484,7 +507,9 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                imgEncoder.ConfigureOutputPort(MMALEncoding.JPEG, MMALEncoding.RGB24, 90);
+                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.RGB24, 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
 
                 // Create our component pipeline.         
                 Fixture.MMALCamera.Camera.StillPort
@@ -506,9 +531,12 @@ namespace MMALSharp.Tests
             using (var imgCaptureHandler = new TransformStreamCaptureHandler(stream, "/home/pi/images/", "raw"))
             using (var imgDecoder = new MMALImageFileDecoder(imgCaptureHandler))
             {
+                var inputConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.RGB24, 2560, 1920, 0, 0, 0, true, null);
+                var outputConfig = new MMALPortConfig(MMALEncoding.I420, null, 2560, 1920, 0, 0, 0, true, null);
+
                 // Create our component pipeline.
-                imgDecoder.ConfigureInputPort(MMALEncoding.JPEG, null)
-                    .ConfigureOutputPort(MMALEncoding.I420, null, 90, zeroCopy: true);
+                imgDecoder.ConfigureInputPort(inputConfig)
+                    .ConfigureOutputPort(outputConfig);
 
                 await imgDecoder.Convert();
 
@@ -522,9 +550,11 @@ namespace MMALSharp.Tests
             using (var imgCaptureHandler = new TransformStreamCaptureHandler(stream, "/home/pi/images/", "bmp"))
             using (var imgEncoder = new MMALImageFileEncoder(imgCaptureHandler))
             {
-                // Create our component pipeline.
-                imgEncoder.ConfigureInputPort(MMALEncoding.I420, null, 2592, 1944)
-                    .ConfigureOutputPort(MMALEncoding.BMP, MMALEncoding.I420, 90, zeroCopy: true);
+                var inputConfig = new MMALPortConfig(MMALEncoding.I420, null, 2560, 1920, 0, 0, 0, true, null);
+                var outputConfig = new MMALPortConfig(MMALEncoding.BMP, MMALEncoding.I420, 2560, 1920, 0, 0, 0, true, null);
+
+                imgEncoder.ConfigureInputPort(inputConfig)
+                    .ConfigureOutputPort(outputConfig);
 
                 await imgEncoder.Convert();
 

@@ -37,29 +37,6 @@ namespace MMALSharp.Components
     /// </summary>
     public class MMALNullSinkComponent : MMALRendererBase
     {
-        private int _width;
-        private int _height;
-
-        /// <summary>
-        /// Gets or sets the width of resulting frames. This property has no direct effect as no frames will exit a Null Sink component.
-        /// If not specified, the camera's video resolution is used.
-        /// </summary>
-        public override int Width
-        {
-            get => _width == 0 ? MMALCameraConfig.VideoResolution.Width : _width;
-            set => _width = value;
-        }
-
-        /// <summary>
-        /// Gets or sets the height of resulting frames. This property has no direct effect as no frames will exit a Null Sink component.
-        /// If not specified, the camera's video resolution is used.
-        /// </summary>
-        public override int Height
-        {
-            get => _height == 0 ? MMALCameraConfig.VideoResolution.Height : _height;
-            set => _height = value;
-        }
-
         /// <summary>
         /// Creates a new instance of a Null Sink renderer component. This component is intended to be connected to the Camera's preview port
         /// and is used to measure exposure. No video preview is available with this renderer.
@@ -84,27 +61,6 @@ namespace MMALSharp.Components
     /// </summary>
     public class MMALVideoRenderer : MMALRendererBase
     {
-        private int _width;
-        private int _height;
-
-        /// <summary>
-        /// Gets or sets the width of resulting frames. If not specified, the camera's video resolution is used.
-        /// </summary>
-        public override int Width
-        {
-            get => _width == 0 ? MMALCameraConfig.VideoResolution.Width : _width;
-            set => _width = value;
-        }
-
-        /// <summary>
-        /// Gets or sets the height of resulting frames. If not specified, the camera's video resolution is used.
-        /// </summary>
-        public override int Height
-        {
-            get => _height == 0 ? MMALCameraConfig.VideoResolution.Height : _height;
-            set => _height = value;
-        }
-
         /// <summary>
         /// Gets the configuration for this video renderer. Call <see cref="ConfigureRenderer"/> to apply changes.
         /// </summary>

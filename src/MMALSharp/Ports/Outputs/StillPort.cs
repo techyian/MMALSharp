@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 
 namespace MMALSharp.Ports.Outputs
@@ -13,6 +14,43 @@ namespace MMALSharp.Ports.Outputs
     /// </summary>
     public unsafe class StillPort : OutputPort
     {
+        private int _width;
+        private int _height;
+
+        /// <inheritdoc />
+        public override Resolution Resolution
+        {
+            get
+            {
+                if (_width == 0 || _height == 0)
+                {
+                    return new Resolution(this.Ptr->Format->Es->Video.Width, this.Ptr->Format->Es->Video.Height);
+                }
+
+                return new Resolution(_width, _height);
+            }
+            
+            internal set
+            {
+                if (value.Width == 0 || value.Height == 0)
+                {
+                    _width = MMALCameraConfig.StillResolution.Pad().Width;
+                    _height = MMALCameraConfig.StillResolution.Pad().Height;
+
+                    this.Ptr->Format->Es->Video.Width = MMALCameraConfig.StillResolution.Pad().Width;
+                    this.Ptr->Format->Es->Video.Height = MMALCameraConfig.StillResolution.Pad().Height;
+                }
+                else
+                {
+                    _width = value.Pad().Width;
+                    _height = value.Pad().Height;
+
+                    this.Ptr->Format->Es->Video.Width = value.Pad().Width;
+                    this.Ptr->Format->Es->Video.Height = value.Pad().Height;
+                }
+            }
+        }
+
         /// <summary>
         /// Creates a new instance of <see cref="StillPort"/>. 
         /// </summary>

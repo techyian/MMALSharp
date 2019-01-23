@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 using Xunit;
 
 namespace MMALSharp.Tests
@@ -28,7 +29,9 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                vidEncoder.ConfigureOutputPort(0, MMALEncoding.H264, MMALEncoding.I420, 0, 25000000);
+                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 25, 10, 25000000, null);
+
+                vidEncoder.ConfigureOutputPort(portConfig);
 
                 Fixture.MMALCamera.Camera.VideoPort.ConnectTo(vidEncoder);
                 Fixture.MMALCamera.Camera.PreviewPort.ConnectTo(renderer);

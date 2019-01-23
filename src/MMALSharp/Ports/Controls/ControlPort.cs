@@ -18,6 +18,14 @@ namespace MMALSharp.Ports.Controls
     /// </summary>
     public unsafe class ControlPort : ControlPortBase
     {
+        public override Resolution Resolution
+        {
+            get => new Resolution(0, 0);
+            internal set
+            {
+            }
+        }
+
         /// <summary>
         /// Creates a new instance of <see cref="ControlPort"/>. 
         /// </summary>

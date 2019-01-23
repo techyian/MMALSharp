@@ -18,8 +18,34 @@ namespace MMALSharp.Ports.Inputs
     /// <summary>
     /// Represents an input port.
     /// </summary>
-    public class InputPort : InputPortBase
+    public unsafe class InputPort : InputPortBase
     {
+        private int _width;
+        private int _height;
+
+        /// <inheritdoc />
+        public override Resolution Resolution
+        {
+            get
+            {
+                if (_width == 0 || _height == 0)
+                {
+                    return new Resolution(this.Ptr->Format->Es->Video.Width, this.Ptr->Format->Es->Video.Height);
+                }
+
+                return new Resolution(_width, _height);
+            }
+
+            internal set
+            {
+                _width = value.Pad().Width;
+                _height = value.Pad().Height;
+
+                this.Ptr->Format->Es->Video.Width = value.Pad().Width;
+                this.Ptr->Format->Es->Video.Height = value.Pad().Height;
+            }
+        }
+
         /// <inheritdoc />
         internal override IInputCallbackHandler ManagedInputCallback { get; set; }
         

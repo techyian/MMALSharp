@@ -7,6 +7,7 @@ using System;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp.Components
@@ -18,71 +19,26 @@ namespace MMALSharp.Components
     {
         private int _width;
         private int _height;
-
-        /// <inheritdoc />
-        public override int Width
-        {
-            get
-            {
-                if (_width == 0)
-                {
-                    return MMALCameraConfig.VideoResolution.Width;
-                }
-
-                return _width;
-            }
-            set { _width = value; }
-        }
-
-        /// <inheritdoc />
-        public override int Height
-        {
-            get
-            {
-                if (_height == 0)
-                {
-                    return MMALCameraConfig.VideoResolution.Height;
-                }
-
-                return _height;
-            }
-            set { _height = value; }
-        }
-
-        /// <summary>
-        /// A <see cref="DateTime"/> for when you want processing to terminate on this component.
-        /// </summary>
-        public DateTime? Timeout { get; set; }
         
         /// <summary>
         /// Creates a new instance of <see cref="MMALVideoDecoder"/>.
         /// </summary>
         /// <param name="handler">The capture handler.</param>
         /// <param name="timeout">Optional timeout value.</param>
-        public MMALVideoDecoder(ICaptureHandler handler, DateTime? timeout = null)
+        public MMALVideoDecoder(ICaptureHandler handler)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_DECODER, handler)
         {
-            this.Timeout = timeout;
         }
 
         /// <inheritdoc />
-        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int framerate, int bitrate, bool zeroCopy = false)
+        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
         {
-            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, framerate, bitrate, zeroCopy);
-            ((VideoPort)this.Outputs[outputPort]).Timeout = this.Timeout;
+            base.ConfigureOutputPort(outputPort, config);
+            ((VideoPort)this.Outputs[outputPort]).Timeout = config.Timeout;
 
             return this;
         }
-
-        /// <summary>
-        /// Prints a summary of the ports and the resolution associated with this component to the console.
-        /// </summary>
-        public override void PrintComponent()
-        {
-            base.PrintComponent();
-            MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
-        }
-
+        
         /// <inheritdoc />>
         internal override void InitialiseOutputPort(int outputPort)
         {

@@ -33,16 +33,6 @@ namespace MMALSharp.Components
         }
 
         /// <summary>
-        /// The width that this component will try to output data in.
-        /// </summary>
-        public abstract int Width { get; set; }
-
-        /// <summary>
-        /// The height that this component will try to output data in.
-        /// </summary>
-        public abstract int Height { get; set; }
-
-        /// <summary>
         /// A list of working ports which are processing data in the component pipeline.
         /// </summary>
         public Dictionary<int, OutputPortBase> ProcessingPorts { get; set; }
@@ -126,88 +116,46 @@ namespace MMALSharp.Components
         /// <summary>
         /// Call to configure changes on a downstream component input port.
         /// </summary>
-        /// <param name="encodingType">The encoding type the input port will expect data in.</param>
-        /// <param name="pixelFormat">The pixel format the input port will expect data in.</param>
-        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
+        /// <param name="config">User provided port configuration object.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, bool zeroCopy = false)
-        {
-            return this.ConfigureInputPort(encodingType, pixelFormat, 0, 0, 0, 0, zeroCopy);
-        }
-
-        /// <summary>
-        /// Call to configure changes on a downstream component input port.
-        /// </summary>
-        /// <param name="encodingType">The encoding type the input port will expect data in.</param>
-        /// <param name="pixelFormat">The pixel format the input port will expect data in.</param>
-        /// <param name="width">The width of the incoming frame.</param>
-        /// <param name="height">The height of the incoming frame.</param>
-        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, bool zeroCopy = false)
-        {
-            return this.ConfigureInputPort(encodingType, pixelFormat, width, height, 0, 0, zeroCopy);
-        }
-
-        /// <summary>
-        /// Call to configure changes on a downstream component input port.
-        /// </summary>
-        /// <param name="encodingType">The encoding type the input port will expect data in.</param>
-        /// <param name="pixelFormat">The pixel format the input port will expect data in.</param>
-        /// <param name="width">The width of the incoming frame.</param>
-        /// <param name="height">The height of the incoming frame.</param>
-        /// <param name="bitrate">The bitrate of the incoming data.</param>
-        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, int bitrate, bool zeroCopy = false)
-        {
-            return this.ConfigureInputPort(encodingType, pixelFormat, width, height, 0, bitrate, zeroCopy);
-        }
-
-        /// <summary>
-        /// Call to configure changes on a downstream component input port.
-        /// </summary>
-        /// <param name="encodingType">The encoding type the input port will expect data in.</param>
-        /// <param name="pixelFormat">The pixel format the input port will expect data in.</param>
-        /// <param name="width">The width of the incoming frame.</param>
-        /// <param name="height">The height of the incoming frame.</param>
-        /// <param name="framerate">The framerate of the incoming data.</param>
-        /// <param name="bitrate">The bitrate of the incoming data.</param>
-        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual unsafe MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, int framerate, int bitrate, bool zeroCopy = false)
+        public virtual unsafe MMALDownstreamComponent ConfigureInputPort(MMALPortConfig config)
         {
             this.InitialiseInputPort(0);
 
-            if (encodingType != null)
+            if (config.EncodingType != null)
             {
-                this.Inputs[0].NativeEncodingType = encodingType.EncodingVal;
+                this.Inputs[0].NativeEncodingType = config.EncodingType.EncodingVal;
             }
 
-            if (pixelFormat != null)
+            if (config.PixelFormat != null)
             {
-                this.Inputs[0].NativeEncodingSubformat = pixelFormat.EncodingVal;
+                this.Inputs[0].NativeEncodingSubformat = config.PixelFormat.EncodingVal;
             }
 
             this.Inputs[0].BufferNum = Math.Max(this.Inputs[0].Ptr->BufferNumMin, this.Inputs[0].Ptr->BufferNumRecommended);
             this.Inputs[0].BufferSize = Math.Max(this.Inputs[0].Ptr->BufferSizeMin, this.Inputs[0].Ptr->BufferSizeRecommended);
 
-            if (width > 0 && height > 0)
+            if (config.Width > 0 && config.Height > 0)
             {
-                this.Inputs[0].Resolution = new Resolution(width, height);
+                this.Inputs[0].Resolution = new Resolution(config.Width, config.Height);
+            }
+            else
+            {
+                // Use config.
+                this.Inputs[0].Resolution = new Resolution(0, 0);
             }
 
-            if (framerate > 0)
+            if (config.Framerate > 0)
             {
-                this.Inputs[0].FrameRate = new MMAL_RATIONAL_T(framerate, 1);
+                this.Inputs[0].FrameRate = new MMAL_RATIONAL_T(config.Framerate, 1);
             }
 
-            if (bitrate > 0)
+            if (config.Bitrate > 0)
             {
-                this.Inputs[0].Bitrate = bitrate;
+                this.Inputs[0].Bitrate = config.Bitrate;
             }
 
-            this.Inputs[0].EncodingType = encodingType;
+            this.Inputs[0].EncodingType = config.EncodingType;
 
             this.Inputs[0].Commit();
 
@@ -216,7 +164,7 @@ namespace MMALSharp.Components
                 throw new PiCameraError("Unable to determine settings for output port.");
             }
 
-            if (zeroCopy)
+            if (config.ZeroCopy)
             {
                 this.Inputs[0].ZeroCopy = true;
                 this.Inputs[0].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
@@ -224,100 +172,25 @@ namespace MMALSharp.Components
 
             return this;
         }
-
-        /// <summary>
-        /// Call to configure changes on the first downstream component output port.
-        /// </summary>
-        /// <param name="encodingType">The encoding type this output port will send data in.</param>
-        /// <param name="pixelFormat">The pixel format this output port will send data in.</param>
-        /// <param name="quality">The quality of our outputted data.</param>
-        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual MMALDownstreamComponent ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, bool zeroCopy = false)
-        {
-            return this.ConfigureOutputPort(0, encodingType, pixelFormat, quality, zeroCopy);
-        }
-
-        /// <summary>
-        /// Call to configure changes on the first downstream component output port.
-        /// </summary>
-        /// <param name="encodingType">The encoding type this output port will send data in.</param>
-        /// <param name="pixelFormat">The pixel format this output port will send data in.</param>
-        /// <param name="bitrate">The bitrate we are sending data at.</param>
-        /// <param name="quality">The quality of our outputted data.</param>
-        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual MMALDownstreamComponent ConfigureOutputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, int bitrate, int quality, bool zeroCopy = false)
-        {
-            return this.ConfigureOutputPort(0, encodingType, pixelFormat, 0, quality, bitrate, zeroCopy);
-        }
-
-        /// <summary>
-        /// Call to configure changes on the first downstream component output port.
-        /// </summary>
-        /// <param name="outputPort">The output port number to configure.</param>
-        /// <param name="encodingType">The encoding type this output port will send data in.</param>
-        /// <param name="pixelFormat">The pixel format this output port will send data in.</param>
-        /// <param name="quality">Used for JPEG images. Specifies the quality of the outputted data..</param>
-        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, bool zeroCopy = false)
-        {
-            return this.ConfigureOutputPort(outputPort, encodingType, pixelFormat, 0, 0, 0, quality, 0, zeroCopy);
-        }
-
-        /// <summary>
-        /// Call to configure changes on the first downstream component output port.
-        /// </summary>
-        /// <param name="outputPort">The output port number to configure.</param>
-        /// <param name="encodingType">The encoding type this output port will send data in.</param>
-        /// <param name="pixelFormat">The pixel format this output port will send data in.</param>
-        /// <param name="framerate">The framerate of the outputted data.</param>
-        /// <param name="bitrate">The bitrate we are sending data at.</param>
-        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int framerate, int bitrate, bool zeroCopy = false)
-        {
-            return this.ConfigureOutputPort(outputPort, encodingType, pixelFormat, 0, 0, framerate, 0, bitrate, zeroCopy);
-        }
-
-        /// <summary>
-        /// Call to configure changes on the first downstream component output port.
-        /// </summary>
-        /// <param name="outputPort">The output port number to configure.</param>
-        /// <param name="encodingType">The encoding type this output port will send data in.</param>
-        /// <param name="pixelFormat">The pixel format this output port will send data in.</param>
-        /// <param name="framerate">The framerate of the outputted data.</param>
-        /// <param name="quality">The quality of our outputted data.</param>
-        /// <param name="bitrate">The bitrate we are sending data at.</param>
-        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
-        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int framerate, int quality, int bitrate, bool zeroCopy = false)
-        {
-            return this.ConfigureOutputPort(outputPort, encodingType, pixelFormat, 0, 0, framerate, quality, bitrate, zeroCopy);
-        }
         
+        /// <summary>
+        /// Call to configure changes on the first downstream component output port.
+        /// </summary>
+        /// <param name="config">User provided port configuration object.</param>
+        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
+        public virtual MMALDownstreamComponent ConfigureOutputPort(MMALPortConfig config)
+        {
+            return this.ConfigureOutputPort(0, config);
+        }
+
         /// <summary>
         /// Call to configure changes on a downstream component output port.
         /// </summary>
-        /// <param name="outputPort">The output port we are configuring.</param>
-        /// <param name="encodingType">The encoding type this output port will send data in.</param>
-        /// <param name="pixelFormat">The pixel format this output port will send data in.</param>
-        /// <param name="width">User provided width.</param>
-        /// <param name="height">User provided height.</param>
-        /// <param name="framerate">The framerate of the outputted data.</param>
-        /// <param name="quality">The quality of our outputted data.</param>
-        /// <param name="bitrate">The bitrate we are sending data at.</param>
-        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
+        /// <param name="outputPort">The output port number to configure.</param>
+        /// <param name="config">User provided port configuration object.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, int framerate, int quality, int bitrate, bool zeroCopy = false)
+        public virtual unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
         {
-            if (width > 0 && height > 0)
-            {
-                this.Width = width;
-                this.Height = height;
-            }
-            
             this.InitialiseOutputPort(outputPort);
 
             if (this.ProcessingPorts.ContainsKey(outputPort))
@@ -329,14 +202,14 @@ namespace MMALSharp.Components
             
             this.Inputs[0].ShallowCopy(this.Outputs[outputPort]);
 
-            if (encodingType != null)
+            if (config.EncodingType != null)
             {
-                this.Outputs[outputPort].NativeEncodingType = encodingType.EncodingVal;
+                this.Outputs[outputPort].NativeEncodingType = config.EncodingType.EncodingVal;
             }
 
-            if (pixelFormat != null)
+            if (config.PixelFormat != null)
             {
-                this.Outputs[outputPort].NativeEncodingSubformat = pixelFormat.EncodingVal;
+                this.Outputs[outputPort].NativeEncodingSubformat = config.PixelFormat.EncodingVal;
             }
 
             MMAL_VIDEO_FORMAT_T tempVid = this.Outputs[outputPort].Ptr->Format->Es->Video;
@@ -353,33 +226,52 @@ namespace MMALSharp.Components
                 this.Outputs[outputPort].Commit();
             }
 
-            if (encodingType == MMALEncoding.JPEG)
+            if (config.EncodingType == MMALEncoding.JPEG)
             {
-                this.Outputs[outputPort].SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, quality);
+                this.Outputs[outputPort].SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, config.Quality);
             }
 
-            if (zeroCopy)
+            if (config.ZeroCopy)
             {
                 this.Outputs[outputPort].ZeroCopy = true;
                 this.Outputs[outputPort].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
             }
 
-            if (framerate > 0)
+            if (MMALCameraConfig.VideoColorSpace != null &&
+                MMALCameraConfig.VideoColorSpace.EncType == MMALEncoding.EncodingType.ColorSpace)
             {
-                this.Outputs[outputPort].FrameRate = new MMAL_RATIONAL_T(framerate, 1);
+                this.Outputs[outputPort].VideoColorSpace = MMALCameraConfig.VideoColorSpace;
             }
 
-            if (bitrate > 0)
+            if (config.Framerate > 0)
             {
-                this.Outputs[outputPort].Bitrate = bitrate;
+                this.Outputs[outputPort].FrameRate = new MMAL_RATIONAL_T(config.Framerate, 1);
+            }
+
+            if (config.Bitrate > 0)
+            {
+                this.Outputs[outputPort].Bitrate = config.Bitrate;
             }
             
-            this.Outputs[outputPort].EncodingType = encodingType;
-            this.Outputs[outputPort].PixelFormat = pixelFormat;
+            this.Outputs[outputPort].EncodingType = config.EncodingType;
+            this.Outputs[outputPort].PixelFormat = config.PixelFormat;
+
+            if (config.Width > 0 && config.Height > 0)
+            {
+                this.Outputs[outputPort].Resolution = new Resolution(config.Width, config.Height).Pad();
+                this.Outputs[outputPort].Crop = new Rectangle(0, 0, this.Outputs[outputPort].Resolution.Width, this.Outputs[outputPort].Resolution.Height);
+            }
+            else
+            {
+                // Use config or don't set depending on port type.
+                this.Outputs[outputPort].Resolution = new Resolution(0, 0);
+
+                if (this.Outputs[outputPort].Resolution.Width > 0 && this.Outputs[outputPort].Resolution.Height > 0)
+                {
+                    this.Outputs[outputPort].Crop = new Rectangle(0, 0, this.Outputs[outputPort].Resolution.Width, this.Outputs[outputPort].Resolution.Height);
+                }
+            }
             
-            this.Outputs[outputPort].Resolution = new Resolution(this.Width, this.Height).Pad();
-            this.Outputs[outputPort].Crop = new Rectangle(0, 0, this.Width, this.Height);
-                        
             // It is important to re-commit changes to width and height.
             this.Outputs[outputPort].Commit();
 

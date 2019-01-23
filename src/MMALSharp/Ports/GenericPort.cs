@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 
@@ -12,8 +13,18 @@ namespace MMALSharp.Ports
     /// <summary>
     /// Represents a generic MMAL port of any type.
     /// </summary>
-    public class GenericPort : PortBase
+    public unsafe class GenericPort : PortBase
     {
+        public override Resolution Resolution
+        {
+            get => new Resolution(this.Ptr->Format->Es->Video.Width, this.Ptr->Format->Es->Video.Height);
+            internal set
+            {
+                this.Ptr->Format->Es->Video.Width = value.Width;
+                this.Ptr->Format->Es->Video.Height = value.Height;
+            }
+        }
+
         /// <summary>
         /// Creates a new instance of <see cref="GenericPort"/>. 
         /// </summary>

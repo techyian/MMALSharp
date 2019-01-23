@@ -18,8 +18,22 @@ namespace MMALSharp.Ports.Outputs
     /// <summary>
     /// Represents an output port.
     /// </summary>
-    public class OutputPort : OutputPortBase
+    public unsafe class OutputPort : OutputPortBase
     {
+        /// <inheritdoc />
+        public override Resolution Resolution
+        {
+            get => new Resolution(this.Ptr->Format->Es->Video.Width, this.Ptr->Format->Es->Video.Height);
+            internal set
+            {
+                if (value.Width > 0 && value.Height > 0)
+                {
+                    this.Ptr->Format->Es->Video.Width = value.Width;
+                    this.Ptr->Format->Es->Video.Height = value.Height;
+                }
+            }
+        }
+
         /// <inheritdoc />
         internal override IOutputCallbackHandler ManagedOutputCallback { get; set; }
         
@@ -35,11 +49,11 @@ namespace MMALSharp.Ports.Outputs
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
-        public unsafe OutputPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid) 
+        public OutputPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid) 
             : base(ptr, comp, type, guid)
         {
         }
-        
+
         /// <summary>
         /// Creates a new instance of <see cref="OutputPort"/>. 
         /// </summary>
@@ -48,7 +62,7 @@ namespace MMALSharp.Ports.Outputs
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
         /// <param name="handler">The capture handler.</param>
-        public unsafe OutputPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler) 
+        public OutputPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler) 
             : base(ptr, comp, type, guid, handler)
         {
         }

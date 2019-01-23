@@ -14,6 +14,43 @@ namespace MMALSharp.Ports.Outputs
     /// </summary>
     public unsafe class VideoPort : OutputPort
     {
+        private int _width;
+        private int _height;
+
+        /// <inheritdoc />
+        public override Resolution Resolution
+        {
+            get
+            {
+                if (_width == 0 || _height == 0)
+                {
+                    return new Resolution(this.Ptr->Format->Es->Video.Width, this.Ptr->Format->Es->Video.Height);
+                }
+
+                return new Resolution(_width, _height);
+            }
+
+            internal set
+            {
+                if (value.Width == 0 || value.Height == 0)
+                {
+                    _width = MMALCameraConfig.VideoResolution.Pad().Width;
+                    _height = MMALCameraConfig.VideoResolution.Pad().Height;
+
+                    this.Ptr->Format->Es->Video.Width = MMALCameraConfig.VideoResolution.Pad().Width;
+                    this.Ptr->Format->Es->Video.Height = MMALCameraConfig.VideoResolution.Pad().Height;
+                }
+                else
+                {
+                    _width = value.Pad().Width;
+                    _height = value.Pad().Height;
+
+                    this.Ptr->Format->Es->Video.Width = value.Pad().Width;
+                    this.Ptr->Format->Es->Video.Height = value.Pad().Height;
+                }
+            }
+        }
+
         /// <summary>
         /// This is used when the user provides a timeout DateTime and
         /// will signal an end to video recording.

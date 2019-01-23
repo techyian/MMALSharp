@@ -3,7 +3,6 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 
@@ -16,55 +15,6 @@ namespace MMALSharp.Components
     /// </summary>
     public class MMALSplitterComponent : MMALDownstreamHandlerComponent
     {
-        private int _width;
-        private int _height;
-
-        /// <inheritdoc />
-        public override int Width
-        {
-            get
-            {
-                if (_width == 0)
-                {
-                    return MMALCameraConfig.VideoResolution.Width;
-                }
-
-                return _width;
-            }
-            set { _width = value; }
-        }
-
-        /// <inheritdoc />
-        public override int Height
-        {
-            get
-            {
-                if (_height == 0)
-                {
-                    return MMALCameraConfig.VideoResolution.Height;
-                }
-
-                return _height;
-            }
-            set { _height = value; }
-        }
-
-        /// <inheritdoc />
-        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, int framerate, int quality, int bitrate, bool zeroCopy = false)
-        {
-            base.ConfigureOutputPort(outputPort, encodingType, pixelFormat, width, height, framerate, quality, bitrate, zeroCopy);
-
-            if (MMALCameraConfig.VideoColorSpace != null &&
-                MMALCameraConfig.VideoColorSpace.EncType == MMALEncoding.EncodingType.ColorSpace)
-            {
-                this.Outputs[outputPort].VideoColorSpace = MMALCameraConfig.VideoColorSpace;
-            }
-            
-            this.Outputs[outputPort].Commit();
-            
-            return this;
-        }
-        
         /// <summary>
         /// Creates a new instance of <see cref="MMALSplitterComponent"/>.
         /// </summary>
@@ -72,15 +22,6 @@ namespace MMALSharp.Components
         public MMALSplitterComponent(params ICaptureHandler[] handler)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER, handler)
         {
-        }
-
-        /// <summary>
-        /// Prints a summary of the ports and the resolution associated with this component to the console.
-        /// </summary>
-        public override void PrintComponent()
-        {
-            base.PrintComponent();
-            MMALLog.Logger.Info($"    Width: {this.Width}. Height: {this.Height}");
         }
     }
 }

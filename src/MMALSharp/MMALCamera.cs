@@ -12,6 +12,7 @@ using MMALSharp.Components;
 using MMALSharp.Config;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp
@@ -95,13 +96,15 @@ namespace MMALSharp
             {
                 this.ConfigureCameraSettings();
 
-                vidEncoder.ConfigureOutputPort(MMALEncoding.H264, MMALEncoding.I420, 0, MMALVideoEncoder.MaxBitrateLevel4);
+                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 25, 10, MMALVideoEncoder.MaxBitrateLevel4, null);
+
+                vidEncoder.ConfigureOutputPort(portConfig);
 
                 // Create our component pipeline.
                 this.Camera.VideoPort.ConnectTo(vidEncoder);
                 this.Camera.PreviewPort.ConnectTo(renderer);
 
-                MMALLog.Logger.Info($"Preparing to take video. Resolution: {vidEncoder.Width} x {vidEncoder.Height}. " +
+                MMALLog.Logger.Info($"Preparing to take video. Resolution: {vidEncoder.Outputs[0].Resolution.Width} x {vidEncoder.Outputs[0].Resolution.Height}. " +
                                     $"Encoder: {vidEncoder.Outputs[0].EncodingType.EncodingName}. Pixel Format: {vidEncoder.Outputs[0].PixelFormat.EncodingName}.");
 
                 // Camera warm up time
@@ -162,14 +165,16 @@ namespace MMALSharp
             {
                 this.ConfigureCameraSettings();
 
-                imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, 90);
+                var portConfig = new MMALPortConfig(encodingType, pixelFormat, 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
 
                 // Create our component pipeline.
                 this.Camera.StillPort.ConnectTo(imgEncoder);
                 this.Camera.PreviewPort.ConnectTo(renderer);
                 
                 // Enable the image encoder output port.
-                MMALLog.Logger.Info($"Preparing to take picture. Resolution: {imgEncoder.Width} x {imgEncoder.Height}. " +
+                MMALLog.Logger.Info($"Preparing to take picture. Resolution: {imgEncoder.Outputs[0].Resolution.Width} x {imgEncoder.Outputs[0].Resolution.Height}. " +
                                     $"Encoder: {encodingType.EncodingName}. Pixel Format: {pixelFormat.EncodingName}.");
 
                 // Camera warm up time
@@ -200,7 +205,9 @@ namespace MMALSharp
             {
                 this.ConfigureCameraSettings();
 
-                imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, 90);
+                var portConfig = new MMALPortConfig(encodingType, pixelFormat, 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
 
                 // Create our component pipeline.
                 this.Camera.StillPort.ConnectTo(imgEncoder);
@@ -240,7 +247,9 @@ namespace MMALSharp
             {
                 this.ConfigureCameraSettings();
 
-                imgEncoder.ConfigureOutputPort(encodingType, pixelFormat, 90);
+                var portConfig = new MMALPortConfig(encodingType, pixelFormat, 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
 
                 // Create our component pipeline.
                 this.Camera.StillPort.ConnectTo(imgEncoder);
@@ -266,7 +275,7 @@ namespace MMALSharp
 
                     await Task.Delay(interval).ConfigureAwait(false);
 
-                    MMALLog.Logger.Info($"Preparing to take picture. Resolution: {imgEncoder.Width} x {imgEncoder.Height}. " +
+                    MMALLog.Logger.Info($"Preparing to take picture. Resolution: {imgEncoder.Outputs[0].Resolution.Width} x {imgEncoder.Outputs[0].Resolution.Height}. " +
                                         $"Encoder: {encodingType.EncodingName}. Pixel Format: {pixelFormat.EncodingName}.");
 
                     await this.ProcessAsync(this.Camera.StillPort).ConfigureAwait(false);

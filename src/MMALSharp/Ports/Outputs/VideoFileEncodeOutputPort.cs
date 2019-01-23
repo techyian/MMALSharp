@@ -15,6 +15,32 @@ namespace MMALSharp.Ports.Outputs
     /// </summary>
     public unsafe class VideoFileEncodeOutputPort : OutputPort
     {
+        private int _width;
+        private int _height;
+
+        /// <inheritdoc />
+        public override Resolution Resolution
+        {
+            get
+            {
+                if (_width == 0 || _height == 0)
+                {
+                    return new Resolution(this.Ptr->Format->Es->Video.Width, this.Ptr->Format->Es->Video.Height);
+                }
+
+                return new Resolution(_width, _height);
+            }
+
+            internal set
+            {
+                _width = value.Pad().Width;
+                _height = value.Pad().Height;
+
+                this.Ptr->Format->Es->Video.Width = value.Pad().Width;
+                this.Ptr->Format->Es->Video.Height = value.Pad().Height;
+            }
+        }
+
         /// <summary>
         /// Creates a new instance of <see cref="VideoFileEncodeOutputPort"/>. 
         /// </summary>
