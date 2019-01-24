@@ -6,7 +6,7 @@
     <AssemblyName>MMALSharp.FFmpeg</AssemblyName>
     <PackageId>MMALSharp.FFmpeg</PackageId>	
     <RootNamespace>MMALSharp</RootNamespace>
-	<Copyright>Ian Auty (c) 2016-2018</Copyright>
+	<Copyright>Ian Auty (c) 2016-2019</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Ian Auty</Authors>
     <PackageTags>raspberry-pi</PackageTags>    
