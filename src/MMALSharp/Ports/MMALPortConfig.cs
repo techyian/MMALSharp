@@ -1,8 +1,16 @@
-﻿using System;
+﻿// <copyright file="MMALPortConfig.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using MMALSharp.Native;
 
 namespace MMALSharp.Ports
 {
+    /// <summary>
+    /// Port configuration class.
+    /// </summary>
     public class MMALPortConfig
     {
         /// <summary>
@@ -71,6 +79,7 @@ namespace MMALSharp.Ports
         /// <param name="framerate">The output framerate.</param>
         /// <param name="quality">The output quality.</param>
         /// <param name="bitrate">The output bitrate.</param>
+        /// <param name="timeout">Video record timeout.</param>
         public MMALPortConfig(MMALEncoding encodingType, MMALEncoding pixelFormat, int framerate, int quality, int bitrate, DateTime? timeout)
         {
             this.EncodingType = encodingType;
@@ -78,6 +87,7 @@ namespace MMALSharp.Ports
             this.Framerate = framerate;
             this.Quality = quality;
             this.Bitrate = bitrate;
+            this.Timeout = timeout;
         }
 
         /// <summary>

@@ -305,7 +305,7 @@ namespace MMALSharp.Components
 
             this.VideoPort.BufferNum = Math.Max(
                 this.VideoPort.BufferNumRecommended,
-                this.VideoPort.BufferNumMin);
+                3);
 
             this.VideoPort.BufferSize = Math.Max(
                 this.VideoPort.BufferSizeRecommended,
@@ -381,7 +381,7 @@ namespace MMALSharp.Components
 
             this.StillPort.BufferNum = Math.Max(
                 this.StillPort.BufferNumRecommended,
-                this.StillPort.BufferNumMin);
+                3);
 
             this.StillPort.BufferSize = Math.Max(
                 this.StillPort.BufferSizeRecommended,

@@ -26,11 +26,8 @@ namespace MMALSharp.Ports.Outputs
             get => new Resolution(this.Ptr->Format->Es->Video.Width, this.Ptr->Format->Es->Video.Height);
             internal set
             {
-                if (value.Width > 0 && value.Height > 0)
-                {
-                    this.Ptr->Format->Es->Video.Width = value.Width;
-                    this.Ptr->Format->Es->Video.Height = value.Height;
-                }
+                this.Ptr->Format->Es->Video.Width = value.Width;
+                this.Ptr->Format->Es->Video.Height = value.Height;
             }
         }
 

@@ -65,26 +65,19 @@ namespace MMALSharp.Components
         /// and this can be applied on the next run to the newly created file.
         /// </summary>
         public bool PrepareSplit { get; set; }
-
-        /// <summary>
-        /// A <see cref="DateTime"/> to signify when processing should terminate on this component.
-        /// </summary>
-        public DateTime? Timeout { get; }
         
         /// <summary>
         /// Creates a new instance of <see cref="MMALVideoEncoder"/>.
         /// </summary>
         /// <param name="handler">The capture handler.</param>
-        /// <param name="timeout">The optional termination time.</param>
         /// <param name="split">Configure this component to split into multiple files.</param>
-        public MMALVideoEncoder(ICaptureHandler handler, DateTime? timeout = null, Split split = null)
+        public MMALVideoEncoder(ICaptureHandler handler, Split split = null)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, handler)
         {
             this.Split = split;
-            this.Timeout = timeout;
         }
         
-        /// <inheritdoc />>
+        /// <inheritdoc />
         public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
         {
             base.ConfigureOutputPort(outputPort, config);
@@ -94,12 +87,13 @@ namespace MMALSharp.Components
             {
                 this.Outputs[outputPort].VideoColorSpace = MMALCameraConfig.VideoColorSpace;
             }
-
+            
             if (this.Outputs[outputPort].GetType() == typeof(VideoPort) || this.Outputs[outputPort].GetType().IsSubclassOf(typeof(VideoPort)))
             {
-                ((VideoPort)this.Outputs[outputPort]).Timeout = this.Timeout;
+                ((VideoPort)this.Outputs[outputPort]).Timeout = config.Timeout;
             }
-            
+
+            this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, 3);
             this.Outputs[outputPort].Ptr->BufferSize = 512 * 1024;
             this.Quality = config.Quality;
             
@@ -122,7 +116,7 @@ namespace MMALSharp.Components
             this.ConfigureBitrate(outputPort);
 
             this.RegisterOutputCallback(new VideoOutputCallbackHandler(this.Outputs[outputPort]));
-
+            
             return this;
         }
         
@@ -182,6 +176,7 @@ namespace MMALSharp.Components
                     this.Outputs[outputPort].Bitrate = MaxBitrateMJPEG;
                 }
             }
+
             this.Outputs[outputPort].Ptr->Format->Bitrate = this.Outputs[outputPort].Bitrate;
             this.Outputs[outputPort].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(0, 1);
             this.Outputs[outputPort].Commit();

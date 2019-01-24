@@ -78,9 +78,9 @@ namespace MMALSharp.Tests
 
             MMALCameraConfig.InlineHeaders = true;
             
-            using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests/split_test", "avi"))
+            using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests/split_test", "h264"))
             using (var preview = new MMALVideoRenderer())
-            using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, null, new Split { Mode = TimelapseMode.Second, Value = 15 }))
+            using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, new Split { Mode = TimelapseMode.Second, Value = 15 }))
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
@@ -113,7 +113,7 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
             TestHelper.CleanDirectory("/home/pi/videos/tests");
                 
-            using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "avi"))
+            using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "h264"))
             using (var preview = new MMALVideoRenderer())
             using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler))
             {
@@ -172,27 +172,27 @@ namespace MMALSharp.Tests
             TestHelper.SetConfigurationDefaults();
             TestHelper.CleanDirectory("/home/pi/videos/tests");
 
-            using (var handler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "avi"))
-            using (var handler2 = new VideoStreamCaptureHandler("/home/pi/video/tests", "avi"))
-            using (var handler3 = new VideoStreamCaptureHandler("/home/pi/video/tests", "avi"))
-            using (var handler4 = new VideoStreamCaptureHandler("/home/pi/video/tests", "avi"))
+            using (var handler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "h264"))
+            using (var handler2 = new VideoStreamCaptureHandler("/home/pi/videos/tests", "h264"))
+            using (var handler3 = new VideoStreamCaptureHandler("/home/pi/videos/tests", "h264"))
+            using (var handler4 = new VideoStreamCaptureHandler("/home/pi/videos/tests", "h264"))
             using (var splitter = new MMALSplitterComponent(null))
-            using (var vidEncoder = new MMALVideoEncoder(handler, DateTime.Now.AddSeconds(10)))
-            using (var vidEncoder2 = new MMALVideoEncoder(handler2, DateTime.Now.AddSeconds(15)))
-            using (var vidEncoder3 = new MMALVideoEncoder(handler3, DateTime.Now.AddSeconds(10)))
-            using (var vidEncoder4 = new MMALVideoEncoder(handler4, DateTime.Now.AddSeconds(10)))
-            using (var renderer = new MMALVideoRenderer())
+            using (var vidEncoder = new MMALVideoEncoder(handler))
+            using (var vidEncoder2 = new MMALVideoEncoder(handler2))
+            using (var vidEncoder3 = new MMALVideoEncoder(handler3))
+            using (var vidEncoder4 = new MMALVideoEncoder(handler4))
+            using (var renderer = new MMALNullSinkComponent())
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                var splitterPortConfig = new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420, 0);
-                var portConfig1 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 25, 10, 25000000, null);
-                var portConfig2 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 25, 20, 25000000, null);
-                var portConfig3 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 25, 30, 25000000, null);
-                var portConfig4 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 25, 40, 25000000, null);
+                var splitterPortConfig = new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420, 10, 0, 13000000, null);
+                var portConfig1 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, 10, 13000000, DateTime.Now.AddSeconds(20));
+                var portConfig2 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, 20, 13000000, DateTime.Now.AddSeconds(15));
+                var portConfig3 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 25, 30, 13000000, DateTime.Now.AddSeconds(10));
+                var portConfig4 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 25, 40, 13000000, DateTime.Now.AddSeconds(10));
 
                 // Create our component pipeline.         
-                splitter.ConfigureInputPort(MMALEncoding.I420, MMALEncoding.I420, Fixture.MMALCamera.Camera.VideoPort);
+                splitter.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, Fixture.MMALCamera.Camera.VideoPort);
                 splitter.ConfigureOutputPort(0, splitterPortConfig);
                 splitter.ConfigureOutputPort(1, splitterPortConfig);
                 splitter.ConfigureOutputPort(2, splitterPortConfig);
@@ -230,7 +230,7 @@ namespace MMALSharp.Tests
             }
         }
         
-        /*[Fact]
+        [Fact]
         public void ChangeColorSpace()
         {
             TestHelper.BeginTest("ChangeColorSpace");
@@ -239,36 +239,42 @@ namespace MMALSharp.Tests
 
             MMALCameraConfig.VideoColorSpace = MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT601;
             
-            using (var handler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "avi"))
-            using (var handler2 = new VideoStreamCaptureHandler("/home/pi/video/tests", "avi"))
-            using (var handler3 = new VideoStreamCaptureHandler("/home/pi/video/tests", "avi"))
-            using (var handler4 = new VideoStreamCaptureHandler("/home/pi/video/tests", "avi"))
+            using (var handler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "h264"))
+            using (var handler2 = new VideoStreamCaptureHandler("/home/pi/video/tests", "h264"))
+            using (var handler3 = new VideoStreamCaptureHandler("/home/pi/video/tests", "h264"))
+            using (var handler4 = new VideoStreamCaptureHandler("/home/pi/video/tests", "h264"))
             using (var splitter = new MMALSplitterComponent(null))
-            using (var vidEncoder = new MMALVideoEncoder(handler, DateTime.Now.AddSeconds(10)))
-            using (var vidEncoder2 = new MMALVideoEncoder(handler2, DateTime.Now.AddSeconds(15)))
-            using (var vidEncoder3 = new MMALVideoEncoder(handler3, DateTime.Now.AddSeconds(10)))
-            using (var vidEncoder4 = new MMALVideoEncoder(handler4, DateTime.Now.AddSeconds(10)))
+            using (var vidEncoder = new MMALVideoEncoder(handler))
+            using (var vidEncoder2 = new MMALVideoEncoder(handler2))
+            using (var vidEncoder3 = new MMALVideoEncoder(handler3))
+            using (var vidEncoder4 = new MMALVideoEncoder(handler4))
             using (var renderer = new MMALVideoRenderer())
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
+                var splitterPortConfig = new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420, 10, 0, 13000000, null);
+                var portConfig1 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, 10, 13000000, DateTime.Now.AddSeconds(20));
+                var portConfig2 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, 20, 13000000, DateTime.Now.AddSeconds(15));
+                var portConfig3 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 25, 30, 13000000, DateTime.Now.AddSeconds(10));
+                var portConfig4 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 25, 40, 13000000, DateTime.Now.AddSeconds(10));
+
                 // Create our component pipeline.         
-                splitter.ConfigureInputPort(MMALEncoding.I420, MMALEncoding.I420, Fixture.MMALCamera.Camera.VideoPort);
-                splitter.ConfigureOutputPort(0, MMALEncoding.OPAQUE, MMALEncoding.I420, 0);
-                splitter.ConfigureOutputPort(1, MMALEncoding.OPAQUE, MMALEncoding.I420, 0);
-                splitter.ConfigureOutputPort(2, MMALEncoding.OPAQUE, MMALEncoding.I420, 0);
-                splitter.ConfigureOutputPort(3, MMALEncoding.OPAQUE, MMALEncoding.I420, 0);
+                splitter.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, Fixture.MMALCamera.Camera.VideoPort);
+                splitter.ConfigureOutputPort(0, splitterPortConfig);
+                splitter.ConfigureOutputPort(1, splitterPortConfig);
+                splitter.ConfigureOutputPort(2, splitterPortConfig);
+                splitter.ConfigureOutputPort(3, splitterPortConfig);
 
                 vidEncoder.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[0]);
-                vidEncoder.ConfigureOutputPort(0, MMALEncoding.H264, MMALEncoding.I420, 10, 25000000);
+                vidEncoder.ConfigureOutputPort(0, portConfig1);
 
                 vidEncoder2.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[1]);
-                vidEncoder2.ConfigureOutputPort(0, MMALEncoding.H264, MMALEncoding.I420, 20, 25000000);
+                vidEncoder2.ConfigureOutputPort(0, portConfig2);
                 vidEncoder3.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[2]);
-                vidEncoder3.ConfigureOutputPort(0, MMALEncoding.H264, MMALEncoding.I420, 30, 25000000);
+                vidEncoder3.ConfigureOutputPort(0, portConfig3);
 
                 vidEncoder4.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[3]);
-                vidEncoder4.ConfigureOutputPort(0, MMALEncoding.H264, MMALEncoding.I420, 40, 25000000);
+                vidEncoder4.ConfigureOutputPort(0, portConfig4);
 
                 Fixture.MMALCamera.Camera.VideoPort.ConnectTo(splitter);
 
@@ -280,18 +286,18 @@ namespace MMALSharp.Tests
                 Fixture.MMALCamera.Camera.PreviewPort.ConnectTo(renderer);
 
                 // Assert that all output ports have the same video color space.
-                Assert.True(Fixture.MMALCamera.Camera.VideoPort.VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
+                Assert.True(Fixture.MMALCamera.Camera.VideoPort.VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT601.EncodingVal);
                 
-                Assert.True(splitter.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
-                Assert.True(splitter.Outputs[1].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
-                Assert.True(splitter.Outputs[2].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
-                Assert.True(splitter.Outputs[3].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
+                Assert.True(splitter.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT601.EncodingVal);
+                Assert.True(splitter.Outputs[1].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT601.EncodingVal);
+                Assert.True(splitter.Outputs[2].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT601.EncodingVal);
+                Assert.True(splitter.Outputs[3].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT601.EncodingVal);
                 
-                Assert.True(vidEncoder.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
-                Assert.True(vidEncoder2.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
-                Assert.True(vidEncoder3.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
-                Assert.True(vidEncoder4.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_JPEG_JFIF.EncodingVal);
+                Assert.True(vidEncoder.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT601.EncodingVal);
+                Assert.True(vidEncoder2.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT601.EncodingVal);
+                Assert.True(vidEncoder3.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT601.EncodingVal);
+                Assert.True(vidEncoder4.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT601.EncodingVal);
             }
-        }*/
+        }
     }
 }

@@ -3,8 +3,10 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using System;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Components
 {
@@ -22,6 +24,26 @@ namespace MMALSharp.Components
         public MMALSplitterComponent(params ICaptureHandler[] handler)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER, handler)
         {
+        }
+
+        /// <inheritdoc />
+        public override unsafe MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, PortBase copyPort, bool zeroCopy = false)
+        {
+            base.ConfigureInputPort(encodingType, pixelFormat, copyPort, zeroCopy);
+
+            this.Inputs[0].Ptr->BufferNum = Math.Max(this.Inputs[0].Ptr->BufferNumRecommended, 3);
+            
+            return this;
+        }
+
+        /// <inheritdoc />
+        public override unsafe MMALDownstreamComponent ConfigureInputPort(MMALPortConfig config)
+        {
+            base.ConfigureInputPort(config);
+
+            this.Inputs[0].Ptr->BufferNum = Math.Max(this.Inputs[0].Ptr->BufferNumRecommended, 3);
+
+            return this;
         }
     }
 }

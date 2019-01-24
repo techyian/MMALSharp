@@ -18,6 +18,7 @@ namespace MMALSharp.Ports.Controls
     /// </summary>
     public unsafe class ControlPort : ControlPortBase
     {
+        /// <inheritdoc />
         public override Resolution Resolution
         {
             get => new Resolution(0, 0);

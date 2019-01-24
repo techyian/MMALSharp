@@ -15,6 +15,7 @@ namespace MMALSharp.Ports
     /// </summary>
     public unsafe class GenericPort : PortBase
     {
+        /// <inheritdoc />
         public override Resolution Resolution
         {
             get => new Resolution(this.Ptr->Format->Es->Video.Width, this.Ptr->Format->Es->Video.Height);

@@ -131,10 +131,7 @@ namespace MMALSharp.Components
             {
                 this.Inputs[0].NativeEncodingSubformat = config.PixelFormat.EncodingVal;
             }
-
-            this.Inputs[0].BufferNum = Math.Max(this.Inputs[0].Ptr->BufferNumMin, this.Inputs[0].Ptr->BufferNumRecommended);
-            this.Inputs[0].BufferSize = Math.Max(this.Inputs[0].Ptr->BufferSizeMin, this.Inputs[0].Ptr->BufferSizeRecommended);
-
+            
             if (config.Width > 0 && config.Height > 0)
             {
                 this.Inputs[0].Resolution = new Resolution(config.Width, config.Height);
@@ -169,6 +166,9 @@ namespace MMALSharp.Components
                 this.Inputs[0].ZeroCopy = true;
                 this.Inputs[0].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
             }
+
+            this.Inputs[0].BufferNum = Math.Max(this.Inputs[0].Ptr->BufferNumMin, this.Inputs[0].Ptr->BufferNumRecommended);
+            this.Inputs[0].BufferSize = Math.Max(this.Inputs[0].Ptr->BufferSizeMin, this.Inputs[0].Ptr->BufferSizeRecommended);
 
             return this;
         }
@@ -271,7 +271,7 @@ namespace MMALSharp.Components
                     this.Outputs[outputPort].Crop = new Rectangle(0, 0, this.Outputs[outputPort].Resolution.Width, this.Outputs[outputPort].Resolution.Height);
                 }
             }
-            
+
             // It is important to re-commit changes to width and height.
             this.Outputs[outputPort].Commit();
 

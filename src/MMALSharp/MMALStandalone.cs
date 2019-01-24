@@ -6,6 +6,9 @@ using MMALSharp.Native;
 
 namespace MMALSharp
 {
+    /// <summary>
+    /// Used for Standalone use of MMALSharp without camera.
+    /// </summary>
     public class MMALStandalone
     {
         /// <summary>

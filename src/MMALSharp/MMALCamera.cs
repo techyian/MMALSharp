@@ -91,7 +91,7 @@ namespace MMALSharp
                 split = null;
             }
 
-            using (var vidEncoder = new MMALVideoEncoder(handler, null, split))
+            using (var vidEncoder = new MMALVideoEncoder(handler, split))
             using (var renderer = new MMALVideoRenderer())
             {
                 this.ConfigureCameraSettings();

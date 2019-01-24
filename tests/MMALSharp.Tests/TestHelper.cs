@@ -11,18 +11,18 @@ namespace MMALSharp.Tests
         public static void SetConfigurationDefaults()
         {
             MMALCameraConfig.Debug = true;
-            MMALCameraConfig.Brightness = 50;
-            MMALCameraConfig.Sharpness = 0;
-            MMALCameraConfig.Contrast = 0;
-            MMALCameraConfig.Saturation = 0;
+            MMALCameraConfig.Brightness = 70;
+            MMALCameraConfig.Sharpness = 60;
+            MMALCameraConfig.Contrast = 60;
+            MMALCameraConfig.Saturation = 50;
             MMALCameraConfig.AwbGainsB = 0;
             MMALCameraConfig.AwbGainsR = 0;
             MMALCameraConfig.AwbMode = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_AUTO;
-            MMALCameraConfig.ColourFx = new ColourEffects();
+            MMALCameraConfig.ColourFx = default(ColourEffects);
             MMALCameraConfig.ExposureCompensation = -1;
             MMALCameraConfig.ExposureMeterMode = MMAL_PARAM_EXPOSUREMETERINGMODE_T.MMAL_PARAM_EXPOSUREMETERINGMODE_AVERAGE;
             MMALCameraConfig.ExposureMode = MMAL_PARAM_EXPOSUREMODE_T.MMAL_PARAM_EXPOSUREMODE_AUTO;
-            MMALCameraConfig.ROI = new Zoom();
+            MMALCameraConfig.ROI = default(Zoom);
             MMALCameraConfig.ISO = 0;
             MMALCameraConfig.StatsPass = false;
             MMALCameraConfig.Flips = MMAL_PARAM_MIRROR_T.MMAL_PARAM_MIRROR_NONE;
@@ -31,10 +31,13 @@ namespace MMALSharp.Tests
             MMALCameraConfig.DrcLevel = MMAL_PARAMETER_DRC_STRENGTH_T.MMAL_PARAMETER_DRC_STRENGTH_OFF;
             MMALCameraConfig.ShutterSpeed = 0;
             MMALCameraConfig.SensorMode = MMALSensorMode.Mode0;
-            MMALCameraConfig.VideoStabilisation = true; 
+            MMALCameraConfig.VideoStabilisation = true;
+            MMALCameraConfig.VideoEncoding = MMALEncoding.OPAQUE;
+            MMALCameraConfig.VideoSubformat = MMALEncoding.I420;
+            MMALCameraConfig.VideoFramerate = new MMAL_RATIONAL_T(10, 1);
             MMALCameraConfig.StillEncoding = MMALEncoding.OPAQUE;
             MMALCameraConfig.StillSubFormat = MMALEncoding.I420;
-            //MMALCameraConfig.VideoColorSpace = MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT709;
+            MMALCameraConfig.VideoColorSpace = MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT709;
         }
 
         public static void CleanDirectory(string directory)
