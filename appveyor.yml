@@ -1,27 +1,25 @@
-version: '0.5.0.{build}'
-
-# prevent the double build when a branch has an active PR
-skip_branch_with_pr: true
-
-
-
-os: Visual Studio 2017
-
-artifacts:
-- path: '**\MMALSharp*.nupkg'
-
-before_build:
-  - dotnet --info
-  - dotnet restore src\MMALSharp\MMALSharp.csproj
-  - dotnet restore src\MMALSharp.Common\MMALSharp.Common.csproj
-  - dotnet restore src\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj
-  - dotnet restore src\MMALSharp.Processing\MMALSharp.Processing.csproj
-  - dotnet restore tests\MMALSharp.Tests\MMALSharp.Tests.csproj
-
-test: off
-
 #Dev
 -
+    version: '0.5.0.{build}'
+
+    # prevent the double build when a branch has an active PR
+    skip_branch_with_pr: true
+
+    os: Visual Studio 2017
+
+    artifacts:
+    - path: '**\MMALSharp*.nupkg'
+
+    before_build:
+      - dotnet --info
+      - dotnet restore src\MMALSharp\MMALSharp.csproj
+      - dotnet restore src\MMALSharp.Common\MMALSharp.Common.csproj
+      - dotnet restore src\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj
+      - dotnet restore src\MMALSharp.Processing\MMALSharp.Processing.csproj
+      - dotnet restore tests\MMALSharp.Tests\MMALSharp.Tests.csproj
+
+    test: off
+
     # branches to build
     branches:  
       only:        
@@ -51,6 +49,27 @@ test: off
     
 #Release
 - 
+
+    version: '0.5.0.{build}'
+
+    # prevent the double build when a branch has an active PR
+    skip_branch_with_pr: true
+
+    os: Visual Studio 2017
+
+    artifacts:
+    - path: '**\MMALSharp*.nupkg'
+
+    before_build:
+      - dotnet --info
+      - dotnet restore src\MMALSharp\MMALSharp.csproj
+      - dotnet restore src\MMALSharp.Common\MMALSharp.Common.csproj
+      - dotnet restore src\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj
+      - dotnet restore src\MMALSharp.Processing\MMALSharp.Processing.csproj
+      - dotnet restore tests\MMALSharp.Tests\MMALSharp.Tests.csproj
+
+    test: off
+
     # branches to build
     branches:  
       only:
