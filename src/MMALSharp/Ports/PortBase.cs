@@ -194,6 +194,18 @@ namespace MMALSharp.Ports
             internal set => this.Ptr->Format->Bitrate = value;
         }
 
+        internal int Width
+        {
+            get => this.Ptr->Format->Es->Video.Width;
+            set => this.Ptr->Format->Es->Video.Width = value;
+        }
+
+        internal int Height
+        {
+            get => this.Ptr->Format->Es->Video.Height;
+            set => this.Ptr->Format->Es->Video.Height = value;
+        }
+
         #endregion
 
         /// <summary>
@@ -238,10 +250,10 @@ namespace MMALSharp.Ports
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port this is.</param>
         /// <param name="guid">A managed unique identifier for this port.</param>
-        protected PortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
+        protected PortBase(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid)
         {
-            this.Ptr = ptr;
-            this.Comp = ptr->Component;
+            this.Ptr = (MMAL_PORT_T*)ptr;
+            this.Comp = ((MMAL_PORT_T*)ptr)->Component;
             this.ComponentReference = comp;
             this.PortType = type;
             this.Guid = guid;
@@ -255,7 +267,7 @@ namespace MMALSharp.Ports
         /// <param name="type">The type of port this is.</param>
         /// <param name="guid">A managed unique identifier for this port.</param>
         /// <param name="handler">The capture handler.</param>
-        protected PortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler)
+        protected PortBase(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler)
             : this(ptr, comp, type, guid)
         {
             this.Handler = handler;

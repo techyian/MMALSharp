@@ -13,6 +13,7 @@ using MMALSharp.Config;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
+using MMALSharp.Ports.Inputs;
 using MMALSharp.Ports.Outputs;
 using static MMALSharp.MMALNativeExceptionHelper;
 
@@ -75,6 +76,8 @@ namespace MMALSharp.Components
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, handler)
         {
             this.Split = split;
+            this.Inputs.Add(new InputPort(&(*this.Ptr->Input[0]), this, PortType.Input, Guid.NewGuid()));
+            this.Outputs.Add(new VideoPort(&(*this.Ptr->Output[0]), this, PortType.Output, Guid.NewGuid()));
         }
         
         /// <inheritdoc />

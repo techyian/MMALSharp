@@ -3,9 +3,11 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using System;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
+using MMALSharp.Ports.Inputs;
 using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp.Components
@@ -19,9 +21,11 @@ namespace MMALSharp.Components
         /// Creates a new instance of <see cref="MMALVideoDecoder"/>.
         /// </summary>
         /// <param name="handler">The capture handler.</param>
-        public MMALVideoDecoder(ICaptureHandler handler)
+        public unsafe MMALVideoDecoder(ICaptureHandler handler)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_DECODER, handler)
         {
+            this.Inputs.Add(new InputPort(&(*this.Ptr->Input[0]), this, PortType.Input, Guid.NewGuid()));
+            this.Outputs.Add(new VideoPort(&(*this.Ptr->Output[0]), this, PortType.Output, Guid.NewGuid()));
         }
 
         /// <inheritdoc />

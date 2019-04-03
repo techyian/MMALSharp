@@ -4,9 +4,13 @@
 // </copyright>
 
 using System;
+using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
+using MMALSharp.Callbacks.Providers;
+using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp.Ports.Inputs
 {
@@ -15,6 +19,17 @@ namespace MMALSharp.Ports.Inputs
     /// </summary>
     public abstract class InputPortBase : PortBase
     {
+        /// <inheritdoc />
+        public override Resolution Resolution
+        {
+            get => new Resolution(this.Width, this.Height);
+            internal set
+            {
+                this.Width = value.Pad().Width;
+                this.Height = value.Pad().Height;
+            }
+        }
+
         /// <summary>
         /// Creates a new instance of <see cref="InputPortBase"/>. 
         /// </summary>
@@ -22,7 +37,7 @@ namespace MMALSharp.Ports.Inputs
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
-        protected unsafe InputPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
+        protected InputPortBase(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid)
             : base(ptr, comp, type, guid)
         {
         }
@@ -35,7 +50,7 @@ namespace MMALSharp.Ports.Inputs
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
         /// <param name="handler">The capture handler.</param>
-        protected unsafe InputPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler)
+        protected InputPortBase(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler)
             : base(ptr, comp, type, guid, handler)
         {
         }
@@ -43,22 +58,115 @@ namespace MMALSharp.Ports.Inputs
         /// <summary>
         /// Managed callback which is called by the native function callback method.
         /// </summary>
-        internal abstract IInputCallbackHandler ManagedInputCallback { get; set; }
-        
+        internal IInputCallbackHandler ManagedInputCallback { get; set; }
+
         /// <summary>
         /// Enables processing on an input port.
         /// </summary>
-        internal abstract void EnableInputPort();
+        internal virtual unsafe void EnableInputPort()
+        {
+            if (!this.Enabled)
+            {
+                this.ManagedInputCallback = InputCallbackProvider.FindCallback(this);
+
+                this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeInputPortCallback);
+
+                IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
+
+                MMALLog.Logger.Debug("Enabling input port.");
+
+                if (this.ManagedInputCallback == null)
+                {
+                    MMALLog.Logger.Warn("Callback null");
+
+                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
+                }
+                else
+                {
+                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
+                }
+
+                this.InitialiseBufferPool();
+            }
+
+            if (!this.Enabled)
+            {
+                throw new PiCameraError("Unknown error occurred whilst enabling port");
+            }
+        }
+
+        internal virtual unsafe void NativeInputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        {
+            if (MMALCameraConfig.Debug)
+            {
+                MMALLog.Logger.Debug("In native input callback");
+            }
+
+            var bufferImpl = new MMALBufferImpl(buffer);
+
+            bufferImpl.PrintProperties();
+
+            this.ReleaseInputBuffer(bufferImpl);
+        }
 
         /// <summary>
         /// Releases an input port buffer and reads further data from user provided image data if not reached end of file.
         /// </summary>
         /// <param name="bufferImpl">A managed buffer object.</param>
-        internal abstract void ReleaseInputBuffer(MMALBufferImpl bufferImpl);
+        internal virtual void ReleaseInputBuffer(MMALBufferImpl bufferImpl)
+        {
+            bufferImpl.Release();
+
+            if (this.Enabled && this.BufferPool != null)
+            {
+                MMALBufferImpl newBuffer;
+                while (true)
+                {
+                    newBuffer = this.BufferPool.Queue.GetBuffer();
+                    if (newBuffer != null)
+                    {
+                        break;
+                    }
+                }
+
+                // Populate the new input buffer with user provided image data.
+                var result = this.ManagedInputCallback.Callback(newBuffer);
+                newBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
+
+                try
+                {
+                    if (!this.Trigger && result.EOF)
+                    {
+                        MMALLog.Logger.Debug("Received EOF. Releasing.");
+
+                        newBuffer.Release();
+                        newBuffer = null;
+                        this.Trigger = true;
+                    }
+
+                    if (newBuffer != null)
+                    {
+                        this.SendBuffer(newBuffer);
+                    }
+                    else
+                    {
+                        MMALLog.Logger.Warn("Buffer null. Continuing.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MMALLog.Logger.Error($"Buffer handling failed. {ex.Message}");
+                    throw;
+                }
+            }
+        }
 
         /// <summary>
         /// Starts the input port.
         /// </summary>
-        internal abstract void Start();
+        internal void Start()
+        {
+            this.EnableInputPort();
+        }
     }
 }

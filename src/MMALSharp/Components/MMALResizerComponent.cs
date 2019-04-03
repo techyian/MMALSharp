@@ -5,6 +5,9 @@
 
 using MMALSharp.Handlers;
 using System;
+using MMALSharp.Ports;
+using MMALSharp.Ports.Inputs;
+using MMALSharp.Ports.Outputs;
 using static MMALSharp.Native.MMALParameters;
 
 namespace MMALSharp.Components
@@ -23,9 +26,21 @@ namespace MMALSharp.Components
         /// <param name="height">The height of the output frames. Value must be greater than 1.</param>
         /// <param name="handler">The capture handler associated with this component.</param>
         /// <exception cref="ArgumentOutOfRangeException"/>
-        public MMALResizerComponent(ICaptureHandler handler)
+        public unsafe MMALResizerComponent(ICaptureHandler handler)
             : base(MMAL_COMPONENT_DEFAULT_RESIZER, handler)
         {
+            // Default to use still image port behaviour.
+            this.Inputs.Add(new InputPort(&(*this.Ptr->Input[0]), this, PortType.Input, Guid.NewGuid()));
+            this.Outputs.Add(new StillPort(&(*this.Ptr->Output[0]), this, PortType.Output, Guid.NewGuid()));
+        }
+
+        public unsafe MMALResizerComponent(ICaptureHandler handler, Type outputPort)
+            : base(MMAL_COMPONENT_DEFAULT_RESIZER, handler)
+        {
+            this.Inputs.Add(new InputPort(&(*this.Ptr->Input[0]), this, PortType.Input, Guid.NewGuid()));
+            Activator.CreateInstance(outputPort, IntPtr.Zero, this, PortType.Output, Guid.NewGuid());
+
+            this.Outputs.Add(new StillPort(&(*this.Ptr->Output[0]), this, PortType.Output, Guid.NewGuid()));
         }
     }
 }
