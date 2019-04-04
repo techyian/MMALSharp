@@ -3,8 +3,6 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using MMALSharp.Handlers;
-
 namespace MMALSharp.Components
 {
     /// <summary>
@@ -17,16 +15,9 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="name">The name of the component.</param>
         /// <param name="handlers">The handlers to associate with each port.</param>
-        protected MMALDownstreamHandlerComponent(string name, params ICaptureHandler[] handlers)
+        protected MMALDownstreamHandlerComponent(string name)
             : base(name)
         {
-            if (handlers != null)
-            {
-                for (var i = 0; i < this.Outputs.Count; i++)
-                {
-                    this.Outputs[i].Handler = handlers[i];
-                }    
-            }
         }
     }
 }

@@ -22,25 +22,26 @@ namespace MMALSharp.Components
         /// Creates a new instance of the <see cref="MMALResizerComponent"/> class that can be used to change the size
         /// and the pixel format of resulting frames. 
         /// </summary>
-        /// <param name="width">The width of the output frames. Value must be greater than 1.</param>
-        /// <param name="height">The height of the output frames. Value must be greater than 1.</param>
         /// <param name="handler">The capture handler associated with this component.</param>
-        /// <exception cref="ArgumentOutOfRangeException"/>
         public unsafe MMALResizerComponent(ICaptureHandler handler)
-            : base(MMAL_COMPONENT_DEFAULT_RESIZER, handler)
+            : base(MMAL_COMPONENT_DEFAULT_RESIZER)
         {
             // Default to use still image port behaviour.
-            this.Inputs.Add(new InputPort(&(*this.Ptr->Input[0]), this, PortType.Input, Guid.NewGuid()));
-            this.Outputs.Add(new StillPort(&(*this.Ptr->Output[0]), this, PortType.Output, Guid.NewGuid()));
+            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
+            this.Outputs.Add(new StillPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
         }
 
-        public unsafe MMALResizerComponent(ICaptureHandler handler, Type outputPort)
-            : base(MMAL_COMPONENT_DEFAULT_RESIZER, handler)
+        /// <summary>
+        /// Creates a new instance of the <see cref="MMALResizerComponent"/> class that can be used to change the size
+        /// and the pixel format of resulting frames. 
+        /// </summary>
+        /// <param name="handler">The capture handler associated with this component.</param>
+        /// <param name="outputPortType">The user defined output port type.</param>
+        public unsafe MMALResizerComponent(ICaptureHandler handler, Type outputPortType)
+            : base(MMAL_COMPONENT_DEFAULT_RESIZER)
         {
-            this.Inputs.Add(new InputPort(&(*this.Ptr->Input[0]), this, PortType.Input, Guid.NewGuid()));
-            Activator.CreateInstance(outputPort, IntPtr.Zero, this, PortType.Output, Guid.NewGuid());
-
-            this.Outputs.Add(new StillPort(&(*this.Ptr->Output[0]), this, PortType.Output, Guid.NewGuid()));
+            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
+            this.Outputs.Add((OutputPortBase)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
         }
     }
 }

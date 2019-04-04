@@ -21,24 +21,8 @@ namespace MMALSharp.Ports.Outputs
     public unsafe class OutputPort : OutputPortBase
     {
         /// <inheritdoc />
-        public override Resolution Resolution
-        {
-            get => new Resolution(this.Ptr->Format->Es->Video.Width, this.Ptr->Format->Es->Video.Height);
-            internal set
-            {
-                this.Ptr->Format->Es->Video.Width = value.Width;
-                this.Ptr->Format->Es->Video.Height = value.Height;
-            }
-        }
-
-        /// <inheritdoc />
         internal override IOutputCallbackHandler ManagedOutputCallback { get; set; }
         
-        /// <summary>
-        /// Monitor lock for output port callback method.
-        /// </summary>
-        internal static object OutputLock = new object();
-
         /// <summary>
         /// Creates a new instance of <see cref="OutputPort"/>. 
         /// </summary>
@@ -46,7 +30,7 @@ namespace MMALSharp.Ports.Outputs
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
-        public OutputPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid) 
+        public OutputPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid) 
             : base(ptr, comp, type, guid)
         {
         }
@@ -59,7 +43,7 @@ namespace MMALSharp.Ports.Outputs
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
         /// <param name="handler">The capture handler.</param>
-        public OutputPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler) 
+        public OutputPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler) 
             : base(ptr, comp, type, guid, handler)
         {
         }
@@ -89,7 +73,7 @@ namespace MMALSharp.Ports.Outputs
         }
         
         /// <inheritdoc />
-        internal override unsafe void ReleaseOutputBuffer(MMALBufferImpl bufferImpl)
+        internal override void ReleaseOutputBuffer(MMALBufferImpl bufferImpl)
         {
             bufferImpl.Release();
             
@@ -126,7 +110,7 @@ namespace MMALSharp.Ports.Outputs
         }
         
         /// <inheritdoc />
-        internal override unsafe void EnableOutputPort(bool sendBuffers = true)
+        internal override void EnableOutputPort(bool sendBuffers = true)
         {            
             if (!this.Enabled)
             {
@@ -178,39 +162,36 @@ namespace MMALSharp.Ports.Outputs
         /// </summary>
         /// <param name="port">The port the buffer is sent to.</param>
         /// <param name="buffer">The buffer header.</param>
-        internal virtual unsafe void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        internal virtual void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
-            lock (OutputLock)
+            if (MMALCameraConfig.Debug)
             {
-                if (MMALCameraConfig.Debug)
-                {
-                    MMALLog.Logger.Debug("In native output callback");
-                }
-                
-                var bufferImpl = new MMALBufferImpl(buffer);
+                MMALLog.Logger.Debug("In native output callback");
+            }
+            
+            var bufferImpl = new MMALBufferImpl(buffer);
 
-                bufferImpl.PrintProperties();
-                
-                var failed = bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
-                
-                var eos = bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) ||
-                          bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) ||
-                          this.ComponentReference.ForceStopProcessing;
+            bufferImpl.PrintProperties();
+            
+            var failed = bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
+            
+            var eos = bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) ||
+                      bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) ||
+                      this.ComponentReference.ForceStopProcessing;
 
-                if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !failed && !this.Trigger) || (eos && !this.Trigger))
-                {
-                    this.ManagedOutputCallback.Callback(bufferImpl);
-                }
-                
-                // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
-                this.ReleaseOutputBuffer(bufferImpl);
+            if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !failed && !this.Trigger) || (eos && !this.Trigger))
+            {
+                this.ManagedOutputCallback.Callback(bufferImpl);
+            }
+            
+            // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
+            this.ReleaseOutputBuffer(bufferImpl);
 
-                // If this buffer signals the end of data stream, allow waiting thread to continue.
-                if (eos || failed)
-                {
-                    MMALLog.Logger.Debug($"{this.ComponentReference.Name} {this.Name} End of stream. Signaling completion...");
-                    this.Trigger = true;
-                }
+            // If this buffer signals the end of data stream, allow waiting thread to continue.
+            if (eos || failed)
+            {
+                MMALLog.Logger.Debug($"{this.ComponentReference.Name} {this.Name} End of stream. Signaling completion...");
+                this.Trigger = true;
             }
         }
     }

@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using MMALSharp.Common.Utility;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 using MMALSharp.Ports.Controls;
 using MMALSharp.Ports.Outputs;
 
@@ -107,19 +108,18 @@ namespace MMALSharp.Components
         /// <summary>
         /// Initialises a new MMALCameraComponent.
         /// </summary>
-        public MMALCameraComponent()
+        public unsafe MMALCameraComponent()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA)
         {
+            this.Outputs.Add(new OutputPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid()));
+            this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[1])), this, PortType.Output, Guid.NewGuid()));
+            this.Outputs.Add(new StillPort((IntPtr)(&(*this.Ptr->Output[2])), this, PortType.Output, Guid.NewGuid()));
+            
             if (this.CameraInfo == null)
             {
                 this.SetSensorDefaults();
             }
-
-            if (this.Outputs.Count == 0)
-            {
-                throw new PiCameraError("Camera doesn't have any output ports.");
-            }
-
+            
             this.PreviewPort = this.Outputs[MMALCameraPreviewPort];
             this.VideoPort = this.Outputs[MMALCameraVideoPort];
             this.StillPort = this.Outputs[MMALCameraStillPort];

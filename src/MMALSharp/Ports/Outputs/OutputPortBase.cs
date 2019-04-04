@@ -5,9 +5,9 @@
 
 using System;
 using MMALSharp.Callbacks;
+using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
-using MMALSharp.Native;
 using MMALSharp.Ports.Inputs;
 
 namespace MMALSharp.Ports.Outputs
@@ -17,6 +17,17 @@ namespace MMALSharp.Ports.Outputs
     /// </summary>
     public abstract class OutputPortBase : PortBase
     {
+        /// <inheritdoc />
+        public override Resolution Resolution
+        {
+            get => new Resolution(this.Width, this.Height);
+            internal set
+            {
+                this.Width = value.Pad().Width;
+                this.Height = value.Pad().Height;
+            }
+        }
+
         /// <summary>
         /// Creates a new instance of <see cref="OutputPortBase"/>. 
         /// </summary>
@@ -24,7 +35,7 @@ namespace MMALSharp.Ports.Outputs
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
-        protected unsafe OutputPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
+        protected OutputPortBase(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid)
             : base(ptr, comp, type, guid)
         {
         }
@@ -37,7 +48,7 @@ namespace MMALSharp.Ports.Outputs
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
         /// <param name="handler">The capture handler.</param>
-        protected unsafe OutputPortBase(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler)
+        protected OutputPortBase(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler)
             : base(ptr, comp, type, guid, handler)
         {
         }

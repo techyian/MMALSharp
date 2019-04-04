@@ -34,7 +34,7 @@ namespace MMALSharp.Ports.Controls
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
-        public ControlPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
+        public ControlPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid)
             : base(ptr, comp, type, guid)
         {
         }

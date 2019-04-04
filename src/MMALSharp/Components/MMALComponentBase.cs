@@ -77,26 +77,16 @@ namespace MMALSharp
             this.Clocks = new List<PortBase>();
             this.Ports = new List<PortBase>();
 
-            this.Control = new ControlPort(this.Ptr->Control, this, PortType.Control, Guid.NewGuid());
-
-            for (int i = 0; i < this.Ptr->InputNum; i++)
-            {
-                this.Inputs.Add(new InputPort(&(*this.Ptr->Input[i]), this, PortType.Input, Guid.NewGuid()));
-            }
-
-            for (int i = 0; i < this.Ptr->OutputNum; i++)
-            {
-                this.Outputs.Add(new OutputPort(&(*this.Ptr->Output[i]), this, PortType.Output, Guid.NewGuid()));
-            }
-
+            this.Control = new ControlPort((IntPtr)this.Ptr->Control, this, PortType.Control, Guid.NewGuid());
+            
             for (int i = 0; i < this.Ptr->ClockNum; i++)
             {
-                this.Clocks.Add(new ClockPort(&(*this.Ptr->Clock[i]), this, PortType.Clock, Guid.NewGuid()));
+                this.Clocks.Add(new ClockPort((IntPtr)(&(*this.Ptr->Clock[i])), this, PortType.Clock, Guid.NewGuid()));
             }
 
             for (int i = 0; i < this.Ptr->PortNum; i++)
             {
-                this.Ports.Add(new GenericPort(&(*this.Ptr->Port[i]), this, PortType.Generic, Guid.NewGuid()));
+                this.Ports.Add(new GenericPort((IntPtr)(&(*this.Ptr->Port[i])), this, PortType.Generic, Guid.NewGuid()));
             }
         }
 

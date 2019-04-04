@@ -17,8 +17,8 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="encoderName">The name of the encoder component.</param>
         /// <param name="handler">The capture handler used.</param>
-        protected MMALEncoderBase(string encoderName, ICaptureHandler handler)
-            : base(encoderName, handler)
+        protected MMALEncoderBase(string encoderName)
+            : base(encoderName)
         {
         }
     }

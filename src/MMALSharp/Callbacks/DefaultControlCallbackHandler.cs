@@ -3,7 +3,6 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using MMALSharp.Native;
 using MMALSharp.Ports.Controls;
 
 namespace MMALSharp.Callbacks

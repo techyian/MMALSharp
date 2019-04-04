@@ -89,15 +89,15 @@ namespace MMALSharp.Processors.Effects
                                     }
                                 }
                                 
-                                ptr1[(row * 3) + column * stride] = (byte)Math.Max(0,r1);
-                                ptr1[(row * 3) + column * stride + 1] = (byte)Math.Max(0, g1);
-                                ptr1[(row * 3) + column * stride + 2] = (byte)Math.Max(0, b1);
+                                ptr1[(row * 3) + (column * stride)] = (byte)Math.Max(0,r1);
+                                ptr1[(row * 3) + (column * stride) + 1] = (byte)Math.Max(0, g1);
+                                ptr1[(row * 3) + (column * stride) + 2] = (byte)Math.Max(0, b1);
                             }
                             else
                             {
-                                ptr1[(row * 3) + column * stride] = 0;
-                                ptr1[(row * 3) + column * stride + 1] = 0;
-                                ptr1[(row * 3) + column * stride + 2] = 0;
+                                ptr1[(row * 3) + (column * stride)] = 0;
+                                ptr1[(row * 3) + (column * stride) + 1] = 0;
+                                ptr1[(row * 3) + (column * stride) + 2] = 0;
                             }
                         }
                     }

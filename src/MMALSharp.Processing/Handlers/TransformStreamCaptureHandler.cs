@@ -67,6 +67,7 @@ namespace MMALSharp.Handlers
                 throw new IOException("Stream not writable.");
         }
 
+        /// <inheritdoc />
         public override string TotalProcessed()
         {
             return $"{Helpers.ConvertBytesToMegabytes(this.TotalRead)} of {Helpers.ConvertBytesToMegabytes(this.InputStream.Length)}";

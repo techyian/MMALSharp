@@ -7,6 +7,8 @@ using System;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
+using MMALSharp.Ports.Inputs;
+using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp.Components
 {
@@ -20,10 +22,38 @@ namespace MMALSharp.Components
         /// <summary>
         /// Creates a new instance of <see cref="MMALSplitterComponent"/>.
         /// </summary>
-        /// <param name="handler">The capture handlers to associate with each splitter port.</param>
-        public MMALSplitterComponent(params ICaptureHandler[] handler)
-            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER, handler)
+        /// <param name="handlers">The capture handlers to associate with each splitter port.</param>
+        public unsafe MMALSplitterComponent(params ICaptureHandler[] handlers)
+            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER)
         {
+            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
+
+            if (handlers != null)
+            {
+                for (var i = 0; i < handlers.Length; i++)
+                {
+                    this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[i])), this, PortType.Output, Guid.NewGuid(), handlers[i]));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="MMALSplitterComponent"/>.
+        /// </summary>
+        /// <param name="handlers">The capture handlers to associate with each splitter port.</param>
+        /// <param name="outputPortType">The user defined output port type to use for each splitter output port.</param>
+        public unsafe MMALSplitterComponent(ICaptureHandler[] handlers, Type outputPortType)
+            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER)
+        {
+            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
+
+            if (handlers != null)
+            {
+                for (int i = 0; i < handlers.Length; i++)
+                {
+                    this.Outputs.Add((OutputPortBase)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handlers[i]));
+                }
+            }
         }
 
         /// <inheritdoc />

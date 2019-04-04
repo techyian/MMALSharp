@@ -325,7 +325,7 @@ namespace MMALSharp
 
                 try
                 {
-                    MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, (MMAL_PARAMETER_HEADER_T*) ptrV4),
+                    MMALCheck(MMALPort.mmal_port_parameter_set(camera.Control.Ptr, (MMAL_PARAMETER_HEADER_T*)ptrV4),
                         "Unable to set annotate");
                 }
                 catch

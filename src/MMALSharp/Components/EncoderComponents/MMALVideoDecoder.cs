@@ -22,10 +22,10 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="handler">The capture handler.</param>
         public unsafe MMALVideoDecoder(ICaptureHandler handler)
-            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_DECODER, handler)
+            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_DECODER)
         {
-            this.Inputs.Add(new InputPort(&(*this.Ptr->Input[0]), this, PortType.Input, Guid.NewGuid()));
-            this.Outputs.Add(new VideoPort(&(*this.Ptr->Output[0]), this, PortType.Output, Guid.NewGuid()));
+            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
+            this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
         }
 
         /// <inheritdoc />
@@ -39,12 +39,6 @@ namespace MMALSharp.Components
             }
             
             return this;
-        }
-        
-        /// <inheritdoc />
-        internal override void InitialiseOutputPort(int outputPort)
-        {
-            this.Outputs[outputPort] = new VideoPort(this.Outputs[outputPort]);
         }
     }
 }

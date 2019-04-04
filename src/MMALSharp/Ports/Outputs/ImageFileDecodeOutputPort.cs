@@ -6,6 +6,7 @@
 using System;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
+using MMALSharp.Handlers;
 using MMALSharp.Native;
 
 namespace MMALSharp.Ports.Outputs
@@ -15,30 +16,16 @@ namespace MMALSharp.Ports.Outputs
     /// </summary>
     public unsafe class ImageFileDecodeOutputPort : OutputPort
     {
-        private int _width;
-        private int _height;
-
-        /// <inheritdoc />
-        public override Resolution Resolution
+        /// <summary>
+        /// Creates a new instance of <see cref="ImageFileDecodeOutputPort"/>. 
+        /// </summary>
+        /// <param name="ptr">The native pointer.</param>
+        /// <param name="comp">The component this port is associated with.</param>
+        /// <param name="type">The type of port.</param>
+        /// <param name="guid">Managed unique identifier for this port.</param>
+        public ImageFileDecodeOutputPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid)
+            : base(ptr, comp, type, guid)
         {
-            get
-            {
-                if (_width == 0 || _height == 0)
-                {
-                    return new Resolution(this.Ptr->Format->Es->Video.Width, this.Ptr->Format->Es->Video.Height);
-                }
-
-                return new Resolution(_width, _height);
-            }
-
-            internal set
-            {
-                _width = value.Pad().Width;
-                _height = value.Pad().Height;
-
-                this.Ptr->Format->Es->Video.Width = value.Pad().Width;
-                this.Ptr->Format->Es->Video.Height = value.Pad().Height;
-            }
         }
 
         /// <summary>
@@ -47,9 +34,10 @@ namespace MMALSharp.Ports.Outputs
         /// <param name="ptr">The native pointer.</param>
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port.</param>
-        /// <param name="guid">Managed unique identifier for this component.</param>
-        public ImageFileDecodeOutputPort(MMAL_PORT_T* ptr, MMALComponentBase comp, PortType type, Guid guid)
-            : base(ptr, comp, type, guid)
+        /// <param name="guid">Managed unique identifier for this port.</param>
+        /// <param name="handler">The capture handler for this port.</param>
+        public ImageFileDecodeOutputPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler)
+            : base(ptr, comp, type, guid, handler)
         {
         }
 
@@ -58,7 +46,7 @@ namespace MMALSharp.Ports.Outputs
         /// </summary>
         /// <param name="copyFrom">The port to copy data from.</param>
         public ImageFileDecodeOutputPort(PortBase copyFrom)
-            : base(copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid, copyFrom.Handler)
+            : base((IntPtr)copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid, copyFrom.Handler)
         {
         }
 
@@ -69,30 +57,27 @@ namespace MMALSharp.Ports.Outputs
         /// <param name="buffer">The buffer header.</param>
         internal override void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
-            lock (OutputLock)
+            var bufferImpl = new MMALBufferImpl(buffer);
+
+            if (bufferImpl.CheckState())
             {
-                var bufferImpl = new MMALBufferImpl(buffer);
-
-                if (bufferImpl.CheckState())
+                if (MMALCameraConfig.Debug)
                 {
-                    if (MMALCameraConfig.Debug)
-                    {
-                        MMALLog.Logger.Debug($"Putting output port buffer back into queue {((IntPtr)MMALImageFileDecoder.WorkingQueue.Ptr).ToString()}");
-                    }
-
-                    bufferImpl.PrintProperties();
-
-                    MMALImageFileDecoder.WorkingQueue.Put(bufferImpl);
-                }
-                else
-                {
-                    MMALLog.Logger.Debug($"Invalid output buffer received");
+                    MMALLog.Logger.Debug($"Putting output port buffer back into queue {((IntPtr)MMALImageFileDecoder.WorkingQueue.Ptr).ToString()}");
                 }
 
-                if (port->IsEnabled == 1 && !this.Trigger)
-                {
-                    this.Trigger = true;
-                }
+                bufferImpl.PrintProperties();
+
+                MMALImageFileDecoder.WorkingQueue.Put(bufferImpl);
+            }
+            else
+            {
+                MMALLog.Logger.Debug($"Invalid output buffer received");
+            }
+
+            if (port->IsEnabled == 1 && !this.Trigger)
+            {
+                this.Trigger = true;
             }
         }
     }

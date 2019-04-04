@@ -85,8 +85,6 @@ namespace MMALSharp.Components
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, PortBase copyPort, bool zeroCopy = false)
         {
-            this.InitialiseInputPort(0);
-
             if (copyPort != null)
             {
                 copyPort.ShallowCopy(this.Inputs[0]);
@@ -120,8 +118,6 @@ namespace MMALSharp.Components
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual unsafe MMALDownstreamComponent ConfigureInputPort(MMALPortConfig config)
         {
-            this.InitialiseInputPort(0);
-
             if (config.EncodingType != null)
             {
                 this.Inputs[0].NativeEncodingType = config.EncodingType.EncodingVal;
@@ -191,8 +187,6 @@ namespace MMALSharp.Components
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
         {
-            this.InitialiseOutputPort(outputPort);
-
             if (this.ProcessingPorts.ContainsKey(outputPort))
             {
                 this.ProcessingPorts.Remove(outputPort);
@@ -298,23 +292,7 @@ namespace MMALSharp.Components
 
             base.Dispose();
         }
-
-        /// <summary>
-        /// Initialises the input port specified by constructing the correct port type to be used by the component.
-        /// </summary>
-        /// <param name="inputPort">The input port to initialise.</param>
-        internal virtual void InitialiseInputPort(int inputPort)
-        {
-        }
-
-        /// <summary>
-        /// Initialises the output port specified by constructing the correct port type to be used by the component.
-        /// </summary>
-        /// <param name="outputPort">The output port to initialise.</param>
-        internal virtual void InitialiseOutputPort(int outputPort)
-        {
-        }
-
+        
         /// <summary>
         /// Responsible for closing and destroying any connections associated with this component prior to disposing.
         /// </summary>

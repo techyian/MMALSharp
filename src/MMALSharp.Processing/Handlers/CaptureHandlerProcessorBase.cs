@@ -29,7 +29,6 @@ namespace MMALSharp.Handlers
         /// <param name="data">The image data.</param>
         public virtual void Process(byte[] data)
         {
-            
         }
 
         /// <summary>
@@ -37,7 +36,6 @@ namespace MMALSharp.Handlers
         /// </summary>
         public virtual void PostProcess()
         {
-            
         }
 
         /// <summary>

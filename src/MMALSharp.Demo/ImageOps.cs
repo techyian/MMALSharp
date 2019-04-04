@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Demo
 {
@@ -78,10 +79,12 @@ namespace MMALSharp.Demo
             using (var nullSink = new MMALNullSinkComponent())
             {
                 this.Cam.ConfigureCameraSettings();
-                await Task.Delay(2000);        
-                
+                await Task.Delay(2000);
+
+                var encoderConfig = new MMALPortConfig(encoding, pixelFormat, 90);
+
                 // Create our component pipeline.         
-                imgEncoder.ConfigureOutputPort(0, encoding, pixelFormat, 90);
+                imgEncoder.ConfigureOutputPort(0, encoderConfig);
                 
                 this.Cam.Camera.StillPort.ConnectTo(imgEncoder);                    
                 this.Cam.Camera.PreviewPort.ConnectTo(nullSink);
@@ -101,7 +104,7 @@ namespace MMALSharp.Demo
         private async Task ResizePicture(string extension, MMALEncoding encoding, MMALEncoding pixelFormat, int width, int height)
         {
             using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/", extension))
-            using (var resizer = new MMALResizerComponent(width, height, null))
+            using (var resizer = new MMALResizerComponent(null))
             using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
             using (var nullSink = new MMALNullSinkComponent())
             {
@@ -109,11 +112,13 @@ namespace MMALSharp.Demo
 
                 await Task.Delay(2000);
                 
+                var resizerConfig = new MMALPortConfig(pixelFormat, pixelFormat, width, height, 0, 0, 0, false, null);
+                var encoderConfig = new MMALPortConfig(encoding, pixelFormat, 90);
+
                 // Create our component pipeline.         
                 resizer.ConfigureInputPort(MMALCameraConfig.StillEncoding, MMALCameraConfig.StillSubFormat, this.Cam.Camera.StillPort);
-                resizer.ConfigureOutputPort(0, pixelFormat, pixelFormat, 0);
-            
-                imgEncoder.ConfigureOutputPort(0, encoding, pixelFormat, 90);
+                resizer.ConfigureOutputPort(0, resizerConfig);
+                imgEncoder.ConfigureOutputPort(0, encoderConfig);
                     
                 this.Cam.Camera.StillPort.ConnectTo(resizer);                    
                 resizer.Outputs[0].ConnectTo(imgEncoder);

@@ -232,11 +232,7 @@ namespace MMALSharp.Ports
         /// Delegate for native port callback.
         /// </summary>
         internal MMALPort.MMAL_PORT_BH_CB_T NativeCallback { get; set; }
-
-        private int _width;
-
-        private int _height;
-
+        
         /// <inheritdoc />
         public override bool CheckState()
         {

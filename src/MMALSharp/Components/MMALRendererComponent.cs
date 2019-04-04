@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using MMALSharp.Common.Utility;
 using MMALSharp.Config;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 using MMALSharp.Ports.Inputs;
 using static MMALSharp.MMALNativeExceptionHelper;
 
@@ -26,9 +27,10 @@ namespace MMALSharp.Components
         /// Create a new instance of a renderer component.
         /// </summary>
         /// <param name="name">The name of the component.</param>
-        protected MMALRendererBase(string name)
+        protected unsafe MMALRendererBase(string name)
             : base(name)
         {
+            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
         }
     }
 
@@ -305,19 +307,16 @@ namespace MMALSharp.Components
         /// <param name="imageData">Byte array containing the image data encoded like configured.</param>
         public void UpdateOverlay(byte[] imageData)
         {
-            lock (InputPort.InputLock)
-            {
-                var buffer = this.Inputs[0].BufferPool.Queue.GetBuffer();
+            var buffer = this.Inputs[0].BufferPool.Queue.GetBuffer();
 
-                if (buffer == null)
-                {
-                    MMALLog.Logger.Warn("Received null buffer when updating overlay.");
-                    return;
-                }
-                
-                buffer.ReadIntoBuffer(imageData, imageData.Length, false);
-                this.Inputs[0].SendBuffer(buffer);
+            if (buffer == null)
+            {
+                MMALLog.Logger.Warn("Received null buffer when updating overlay.");
+                return;
             }
+            
+            buffer.ReadIntoBuffer(imageData, imageData.Length, false);
+            this.Inputs[0].SendBuffer(buffer);
         }
     }
 }

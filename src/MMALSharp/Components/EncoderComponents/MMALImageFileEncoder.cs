@@ -20,18 +20,17 @@ namespace MMALSharp.Components
     /// <summary>
     /// This component is used to encode image data stored in a stream.
     /// </summary>
-    public class MMALImageFileEncoder : MMALImageEncoder, IMMALConvert
+    public class MMALImageFileEncoder : MMALEncoderBase, IMMALConvert
     {
         /// <summary>
         /// Creates a new instance of <see cref="MMALImageFileEncoder"/>.
         /// </summary>
         /// <param name="handler">The capture handler.</param>
         public unsafe MMALImageFileEncoder(ICaptureHandler handler)
-            : base(handler)
+            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
         {
-            this.Inputs[0].Handler = handler;
-            this.Inputs.Add(new ImageFileEncodeInputPort(&(*this.Ptr->Input[0]), this, PortType.Input, Guid.NewGuid()));
-            this.Outputs.Add(new ImageFileEncodeOutputPort(&(*this.Ptr->Output[0]), this, PortType.Output, Guid.NewGuid()));
+            this.Inputs.Add(new ImageFileEncodeInputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid(), handler));
+            this.Outputs.Add(new ImageFileEncodeOutputPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
         }
 
         /// <summary>
@@ -42,8 +41,6 @@ namespace MMALSharp.Components
         /// <inheritdoc />
         public override unsafe MMALDownstreamComponent ConfigureInputPort(MMALPortConfig config)
         {
-            this.InitialiseInputPort(0);
-
             if (config.EncodingType != null)
             {
                 this.Inputs[0].Ptr->Format->Encoding = config.EncodingType.EncodingVal;
@@ -86,9 +83,7 @@ namespace MMALSharp.Components
         public override unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
         {
             this.Outputs[outputPort].Ptr->Format->Es->Video.Par = new MMAL_RATIONAL_T(1, 1);
-
-            this.InitialiseOutputPort(outputPort);
-
+            
             if (this.ProcessingPorts.ContainsKey(outputPort))
             {
                 this.ProcessingPorts.Remove(outputPort);
@@ -156,12 +151,8 @@ namespace MMALSharp.Components
                 MMALLog.Logger.Debug("Getting processed output pool buffer");
                 while (true)
                 {
-                    MMALBufferImpl buffer;
-                    lock (OutputPort.OutputLock)
-                    {
-                        buffer = WorkingQueue.GetBuffer();
-                    }
-
+                    MMALBufferImpl buffer = WorkingQueue.GetBuffer();
+                    
                     if (buffer.CheckState())
                     {
                         eosReceived = ((int)buffer.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS;
@@ -174,13 +165,8 @@ namespace MMALSharp.Components
                             }
                             else
                             {
-                                lock (OutputPort.OutputLock)
-                                {
-                                    buffer.Release();
-                                }
+                                buffer.Release();
                             }
-                            
-                            continue;
                         }
                         else
                         {
@@ -194,10 +180,7 @@ namespace MMALSharp.Components
                             }
 
                             // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.                    
-                            lock (OutputPort.OutputLock)
-                            {
-                                buffer.Release();
-                            }
+                            buffer.Release();
                         }
                     }
                     else
@@ -215,16 +198,6 @@ namespace MMALSharp.Components
             this.DisableComponent();
             this.CleanPortPools();
             WorkingQueue.Dispose();
-        }
-        
-        internal override void InitialiseInputPort(int inputPort)
-        {
-            this.Inputs[inputPort] = new ImageFileEncodeInputPort(this.Inputs[inputPort]);
-        }
-
-        internal override void InitialiseOutputPort(int outputPort)
-        {
-            this.Outputs[outputPort] = new ImageFileEncodeOutputPort(this.Outputs[outputPort]);
         }
         
         private async Task WaitForTriggers()
@@ -279,8 +252,6 @@ namespace MMALSharp.Components
                     case PortType.Control:
                         sb.AppendLine("Port Type: Control");
                         break;
-                    default:
-                        break;
                 }
             }
 
@@ -301,19 +272,15 @@ namespace MMALSharp.Components
         private void GetAndSendInputBuffer()
         {
             // Get buffer from input port pool                
-            MMALBufferImpl inputBuffer;
-            lock (InputPort.InputLock)
+            MMALBufferImpl inputBuffer = this.Inputs[0].BufferPool.Queue.GetBuffer();
+
+            if (inputBuffer.CheckState())
             {
-                inputBuffer = this.Inputs[0].BufferPool.Queue.GetBuffer();
+                // Populate the new input buffer with user provided image data.
+                var result = this.Inputs[0].ManagedInputCallback.Callback(inputBuffer);
+                inputBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
 
-                if (inputBuffer.CheckState())
-                {
-                    // Populate the new input buffer with user provided image data.
-                    var result = this.Inputs[0].ManagedInputCallback.Callback(inputBuffer);
-                    inputBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
-
-                    this.Inputs[0].SendBuffer(inputBuffer);
-                }
+                this.Inputs[0].SendBuffer(inputBuffer);
             }
         }
 
@@ -321,20 +288,17 @@ namespace MMALSharp.Components
         {
             while (true)
             {
-                lock (OutputPort.OutputLock)
-                {
-                    var tempBuf2 = this.Outputs[0].BufferPool.Queue.GetBuffer();
+                var tempBuf2 = this.Outputs[0].BufferPool.Queue.GetBuffer();
 
-                    if (tempBuf2.CheckState())
-                    {
-                        // Send empty buffers to the output port of the decoder                                          
-                        this.Outputs[0].SendBuffer(tempBuf2);
-                    }
-                    else
-                    {
-                        MMALLog.Logger.Debug("GetAndSendOutputBuffer: Buffer null.");
-                        break;
-                    }
+                if (tempBuf2.CheckState())
+                {
+                    // Send empty buffers to the output port of the decoder                                          
+                    this.Outputs[0].SendBuffer(tempBuf2);
+                }
+                else
+                {
+                    MMALLog.Logger.Debug("GetAndSendOutputBuffer: Buffer null.");
+                    break;
                 }
             }
         }
@@ -351,22 +315,16 @@ namespace MMALSharp.Components
             MMALLog.Logger.Info("-- To -- ");
             this.LogFormat(ev, null);
             
-            lock (OutputPort.OutputLock)
-            {
-                buffer.Release();
-            }
-
+            buffer.Release();
+            
             this.Outputs[0].DisablePort();
 
             while (this.Outputs[0].BufferPool.Queue.QueueLength() < this.Outputs[0].BufferPool.HeadersNum)
             {
                 MMALLog.Logger.Debug("Queue length less than buffer pool num");
-                lock (OutputPort.OutputLock)
-                {
-                    MMALLog.Logger.Debug("Getting buffer via Queue.Wait");
-                    var tempBuf = WorkingQueue.Wait();
-                    tempBuf.Release();
-                }
+                MMALLog.Logger.Debug("Getting buffer via Queue.Wait");
+                var tempBuf = WorkingQueue.Wait();
+                tempBuf.Release();
             }
 
             this.Outputs[0].BufferPool.Dispose();

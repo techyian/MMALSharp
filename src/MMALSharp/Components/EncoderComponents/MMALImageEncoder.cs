@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using MMALSharp.Callbacks;
-using MMALSharp.Common.Utility;
 using MMALSharp.Config;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
@@ -65,7 +64,7 @@ namespace MMALSharp.Components
         /// <param name="thumbnailConfig">Configures the embedded JPEG thumbnail.</param>
         /// <param name="exifTags">A collection of custom EXIF tags.</param>
         public MMALImageEncoder(ICaptureHandler handler, bool rawBayer = false, bool useExif = true, bool continuousCapture = false, JpegThumbnail thumbnailConfig = null, params ExifTag[] exifTags)
-            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER, handler)
+            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
         {
             this.RawBayer = rawBayer;
             this.UseExif = useExif;
@@ -73,15 +72,15 @@ namespace MMALSharp.Components
             this.ContinuousCapture = continuousCapture;
             this.JpegThumbnailConfig = thumbnailConfig;
             
-            this.Inputs.Add(new InputPort(&(*this.Ptr->Input[0]), this, PortType.Input, Guid.NewGuid()));
+            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
 
             if (this.ContinuousCapture)
             {
-                this.Outputs.Add(new FastStillPort(&(*this.Ptr->Output[0]), this, PortType.Output, Guid.NewGuid()));
+                this.Outputs.Add(new FastStillPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
             }
             else
             {
-                this.Outputs.Add(new StillPort(&(*this.Ptr->Output[0]), this, PortType.Output, Guid.NewGuid()));
+                this.Outputs.Add(new StillPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
             }
         }
         
@@ -119,19 +118,7 @@ namespace MMALSharp.Components
             
             return this;
         }
-
-        internal override void InitialiseOutputPort(int outputPort)
-        {
-            if (this.ContinuousCapture)
-            {
-                this.Outputs[outputPort] = new FastStillPort(this.Outputs[outputPort]);
-            }
-            else
-            {
-                this.Outputs[outputPort] = new StillPort(this.Outputs[outputPort]);    
-            }
-        }
-
+        
         /// <summary>
         /// Adds EXIF tags to the resulting image.
         /// </summary>

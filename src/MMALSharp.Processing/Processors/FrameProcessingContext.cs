@@ -3,7 +3,6 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using System;
 using MMALSharp.Common;
 
 namespace MMALSharp.Processors

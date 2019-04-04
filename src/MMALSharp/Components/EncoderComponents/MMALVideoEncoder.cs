@@ -73,11 +73,11 @@ namespace MMALSharp.Components
         /// <param name="handler">The capture handler.</param>
         /// <param name="split">Configure this component to split into multiple files.</param>
         public MMALVideoEncoder(ICaptureHandler handler, Split split = null)
-            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER, handler)
+            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
         {
             this.Split = split;
-            this.Inputs.Add(new InputPort(&(*this.Ptr->Input[0]), this, PortType.Input, Guid.NewGuid()));
-            this.Outputs.Add(new VideoPort(&(*this.Ptr->Output[0]), this, PortType.Output, Guid.NewGuid()));
+            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
+            this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
         }
         
         /// <inheritdoc />
@@ -121,12 +121,6 @@ namespace MMALSharp.Components
             this.RegisterOutputCallback(new VideoOutputCallbackHandler(this.Outputs[outputPort]));
             
             return this;
-        }
-        
-        /// <inheritdoc />>
-        internal override void InitialiseOutputPort(int outputPort)
-        {
-            this.Outputs[outputPort] = new VideoPort(this.Outputs[outputPort]);
         }
         
         internal DateTime CalculateSplit()

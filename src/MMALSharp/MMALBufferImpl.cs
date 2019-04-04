@@ -124,9 +124,14 @@ namespace MMALSharp
             }
         }
 
+        /// <summary>
+        /// Checks whether a buffer header contains a certain status code.
+        /// </summary>
+        /// <param name="property">The status code.</param>
+        /// <returns>True if the buffer header contains the status code.</returns>
         public bool AssertProperty(MMALBufferProperties property)
         {
-            return ((int) this.Flags & (int) property) == (int) property;
+            return ((int)this.Flags & (int)property) == (int)property;
         }
 
         /// <summary>
