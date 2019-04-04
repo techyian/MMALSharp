@@ -35,12 +35,6 @@ namespace MMALSharp.Ports.Outputs
         }
 
         /// <summary>
-        /// This is used when the user provides a timeout DateTime and
-        /// will signal an end to video recording.
-        /// </summary>
-        public DateTime? Timeout { get; set; }
-
-        /// <summary>
         /// Creates a new instance of <see cref="VideoPort"/>. 
         /// </summary>
         /// <param name="ptr">The native pointer.</param>
@@ -90,7 +84,7 @@ namespace MMALSharp.Ports.Outputs
 
             bufferImpl.PrintProperties();
             
-            var eos = (this.Timeout.HasValue && DateTime.Now.CompareTo(this.Timeout.Value) > 0) || this.ComponentReference.ForceStopProcessing;
+            var eos = (this.PortConfig.Timeout.HasValue && DateTime.Now.CompareTo(this.PortConfig.Timeout.Value) > 0) || this.ComponentReference.ForceStopProcessing;
 
             if (bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !this.Trigger)
             {

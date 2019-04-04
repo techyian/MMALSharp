@@ -27,18 +27,5 @@ namespace MMALSharp.Components
             this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
             this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
         }
-
-        /// <inheritdoc />
-        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
-        {
-            base.ConfigureOutputPort(outputPort, config);
-
-            if (this.Outputs[outputPort].GetType() == typeof(VideoPort) || this.Outputs[outputPort].GetType().IsSubclassOf(typeof(VideoPort)))
-            {
-                ((VideoPort)this.Outputs[outputPort]).Timeout = config.Timeout;
-            }
-            
-            return this;
-        }
     }
 }

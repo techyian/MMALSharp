@@ -11,6 +11,9 @@ namespace MMALSharp.Processors
 {
     public class BayerMetaProcessor : IFrameProcessor
     {
+        /// <summary>
+        /// The camera version being used.
+        /// </summary>
         public CameraVersion CameraVersion { get; }
         
         private const int BayerMetaLengthV1 = 6404096;
@@ -21,6 +24,7 @@ namespace MMALSharp.Processors
             this.CameraVersion = camVersion;
         }
 
+        /// <inheritdoc />
         public void Apply(IImageContext context)
         {
             byte[] array = null;

@@ -59,6 +59,11 @@ namespace MMALSharp.Ports
         public ICaptureHandler Handler { get; internal set; }
 
         /// <summary>
+        /// The config for this port.
+        /// </summary>
+        public MMALPortConfig PortConfig { get; internal set; }
+
+        /// <summary>
         /// Indicates whether ZeroCopy mode should be enabled on this port. When enabled, data is not copied to the ARM processor and is handled directly by the GPU. Useful when
         /// transferring large amounts of data or raw capture.
         /// See: https://www.raspberrypi.org/forums/viewtopic.php?t=170024

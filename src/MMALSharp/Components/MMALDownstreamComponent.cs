@@ -118,6 +118,8 @@ namespace MMALSharp.Components
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual unsafe MMALDownstreamComponent ConfigureInputPort(MMALPortConfig config)
         {
+            this.Inputs[0].PortConfig = config;
+
             if (config.EncodingType != null)
             {
                 this.Inputs[0].NativeEncodingType = config.EncodingType.EncodingVal;
@@ -187,6 +189,8 @@ namespace MMALSharp.Components
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
         {
+            this.Outputs[outputPort].PortConfig = config;
+
             if (this.ProcessingPorts.ContainsKey(outputPort))
             {
                 this.ProcessingPorts.Remove(outputPort);

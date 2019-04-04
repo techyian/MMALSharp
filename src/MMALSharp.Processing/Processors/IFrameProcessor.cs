@@ -12,7 +12,6 @@ namespace MMALSharp.Processors
         /// <summary>
         /// Apply the convolution.
         /// </summary>
-        /// <param name="store">The image data.</param>
         /// <param name="context">The image's metadata.</param>
         void Apply(IImageContext context);
     }

@@ -35,6 +35,13 @@ namespace MMALSharp.Components
                     this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[i])), this, PortType.Output, Guid.NewGuid(), handlers[i]));
                 }
             }
+            else
+            {
+                for (var i = 0; i < 4; i++)
+                {
+                    this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[i])), this, PortType.Output, Guid.NewGuid(), null));
+                }
+            }
         }
 
         /// <summary>
@@ -51,7 +58,14 @@ namespace MMALSharp.Components
             {
                 for (int i = 0; i < handlers.Length; i++)
                 {
-                    this.Outputs.Add((OutputPortBase)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handlers[i]));
+                    this.Outputs.Add((OutputPortBase)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[i])), this, PortType.Output, Guid.NewGuid(), handlers[i]));
+                }
+            }
+            else
+            {
+                for (var i = 0; i < 4; i++)
+                {
+                    this.Outputs.Add((OutputPortBase)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[i])), this, PortType.Output, Guid.NewGuid(), null));
                 }
             }
         }
