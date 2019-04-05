@@ -4,6 +4,8 @@
 // </copyright>
 
 using System;
+using MMALSharp.Callbacks.Providers;
+using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
@@ -86,6 +88,76 @@ namespace MMALSharp.Components
             base.ConfigureInputPort(config);
 
             this.Inputs[0].Ptr->BufferNum = Math.Max(this.Inputs[0].Ptr->BufferNumRecommended, 3);
+
+            return this;
+        }
+
+        /// <inheritdoc />
+        public override unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
+        {
+            // The splitter component should not have its resolution set on the output port so override method accordingly.
+            this.Outputs[outputPort].PortConfig = config;
+
+            if (this.ProcessingPorts.ContainsKey(outputPort))
+            {
+                this.ProcessingPorts.Remove(outputPort);
+            }
+
+            this.ProcessingPorts.Add(outputPort, this.Outputs[outputPort]);
+
+            this.Inputs[0].ShallowCopy(this.Outputs[outputPort]);
+
+            if (config.EncodingType != null)
+            {
+                this.Outputs[outputPort].NativeEncodingType = config.EncodingType.EncodingVal;
+            }
+
+            if (config.PixelFormat != null)
+            {
+                this.Outputs[outputPort].NativeEncodingSubformat = config.PixelFormat.EncodingVal;
+            }
+
+            MMAL_VIDEO_FORMAT_T tempVid = this.Outputs[outputPort].Ptr->Format->Es->Video;
+
+            try
+            {
+                this.Outputs[outputPort].Commit();
+            }
+            catch
+            {
+                // If commit fails using new settings, attempt to reset using old temp MMAL_VIDEO_FORMAT_T.
+                MMALLog.Logger.Warn("Commit of output port failed. Attempting to reset values.");
+                this.Outputs[outputPort].Ptr->Format->Es->Video = tempVid;
+                this.Outputs[outputPort].Commit();
+            }
+
+            if (config.EncodingType == MMALEncoding.JPEG)
+            {
+                this.Outputs[outputPort].SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, config.Quality);
+            }
+
+            if (config.ZeroCopy)
+            {
+                this.Outputs[outputPort].ZeroCopy = true;
+                this.Outputs[outputPort].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
+            }
+
+            if (MMALCameraConfig.VideoColorSpace != null &&
+                MMALCameraConfig.VideoColorSpace.EncType == MMALEncoding.EncodingType.ColorSpace)
+            {
+                this.Outputs[outputPort].VideoColorSpace = MMALCameraConfig.VideoColorSpace;
+            }
+            
+            this.Outputs[outputPort].EncodingType = config.EncodingType;
+            this.Outputs[outputPort].PixelFormat = config.PixelFormat;
+            
+            // It is important to re-commit changes to width and height.
+            this.Outputs[outputPort].Commit();
+
+            this.Outputs[outputPort].BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
+            this.Outputs[outputPort].BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
+
+            this.Outputs[outputPort].ManagedOutputCallback = OutputCallbackProvider.FindCallback(this.Outputs[outputPort]);
 
             return this;
         }

@@ -16,8 +16,8 @@ namespace MMALSharp.Processors
         /// </summary>
         public CameraVersion CameraVersion { get; }
         
-        private const int BayerMetaLengthV1 = 6404096;
-        private const int BayerMetaLengthV2 = 10270208;
+        public const int BayerMetaLengthV1 = 6404096;
+        public const int BayerMetaLengthV2 = 10270208;
         
         public BayerMetaProcessor(CameraVersion camVersion)
         {

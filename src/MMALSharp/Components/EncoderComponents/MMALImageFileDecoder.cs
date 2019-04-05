@@ -41,14 +41,16 @@ namespace MMALSharp.Components
         /// <inheritdoc />
         public override unsafe MMALDownstreamComponent ConfigureInputPort(MMALPortConfig config)
         {
+            this.Inputs[0].PortConfig = config;
+
             if (config.EncodingType != null)
             {
                 this.Inputs[0].Ptr->Format->Encoding = config.EncodingType.EncodingVal;
             }
                         
             this.Inputs[0].Ptr->Format->Type = MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_VIDEO;
-            this.Inputs[0].Resolution = new Resolution(config.Width, config.Height);
-            this.Inputs[0].Crop = new Rectangle(0, 0, config.Width, config.Height);
+            this.Inputs[0].Ptr->Format->Es->Video.Height = 0;
+            this.Inputs[0].Ptr->Format->Es->Video.Width = 0;
             this.Inputs[0].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(0, 1);
             this.Inputs[0].Ptr->Format->Es->Video.Par = new MMAL_RATIONAL_T(1, 1);
             
@@ -65,6 +67,8 @@ namespace MMALSharp.Components
         /// <inheritdoc />
         public override unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
         {
+            this.Outputs[outputPort].PortConfig = config;
+
             if (this.ProcessingPorts.ContainsKey(outputPort))
             {
                 this.ProcessingPorts.Remove(outputPort);

@@ -447,9 +447,12 @@ namespace MMALSharp.Tests
             byte[] meta = new byte[4];
 
             var array = File.ReadAllBytes(filepath);
-                
-            Array.Copy(array, 0, meta, 0, 4);
-            
+
+            // Uncomment depending on which version of the camera you're using.
+
+            // Array.Copy(array, array.Length - BayerMetaProcessor.BayerMetaLengthV1, meta, 0, 4);
+            Array.Copy(array, array.Length - BayerMetaProcessor.BayerMetaLengthV2, meta, 0, 4);
+
             Assert.True(Encoding.ASCII.GetString(meta) == "BRCM");
         }
         
