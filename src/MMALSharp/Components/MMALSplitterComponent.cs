@@ -30,7 +30,7 @@ namespace MMALSharp.Components
         {
             this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
 
-            if (handlers != null)
+            if (handlers != null && handlers.Length > 0)
             {
                 for (var i = 0; i < handlers.Length; i++)
                 {
@@ -56,7 +56,7 @@ namespace MMALSharp.Components
         {
             this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
 
-            if (handlers != null)
+            if (handlers != null && handlers.Length > 0)
             {
                 for (int i = 0; i < handlers.Length; i++)
                 {
