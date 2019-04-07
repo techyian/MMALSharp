@@ -17,7 +17,6 @@ namespace MMALSharp.Processors
         /// <summary>
         /// Creates a new instance of <see cref="FrameProcessingContext"/>.
         /// </summary>
-        /// <param name="currentState">The image frame.</param>
         /// <param name="context">Metadata for the image frame.</param>
         public FrameProcessingContext(IImageContext context)
         {

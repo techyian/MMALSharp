@@ -14,7 +14,6 @@ namespace MMALSharp.Components
         /// Creates a new instance of <see cref="MMALDownstreamHandlerComponent"/>.
         /// </summary>
         /// <param name="name">The name of the component.</param>
-        /// <param name="handlers">The handlers to associate with each port.</param>
         protected MMALDownstreamHandlerComponent(string name)
             : base(name)
         {

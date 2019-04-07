@@ -33,6 +33,14 @@ namespace MMALSharp.Handlers
         }
 
         /// <summary>
+        /// Creates a new instance of the <see cref="TransformStreamCaptureHandler"/> class with the specified input stream and full file path.
+        /// </summary>
+        /// <param name="inputStream">The stream to retrieve input data from.</param>
+        /// <param name="fullPath">The absolute full path to save captured data to.</param>
+        public TransformStreamCaptureHandler(Stream inputStream, string fullPath)
+            : base(fullPath) { }
+
+        /// <summary>
         /// Reads data from this class' input stream to a <see cref="ProcessResult"/> object.
         /// </summary>
         /// <param name="allocSize">The count of bytes to return at most in the <see cref="ProcessResult"/>.</param>

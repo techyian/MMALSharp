@@ -11,6 +11,7 @@ namespace MMALSharp.Handlers
         
         public abstract void Dispose();
 
+        /// <inheritdoc />
         public abstract string TotalProcessed();
         
         /// <summary>

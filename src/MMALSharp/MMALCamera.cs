@@ -129,12 +129,7 @@ namespace MMALSharp
             }
 
             this.Camera.StillPort.Handler = handler ?? throw new ArgumentNullException(nameof(handler));
-
-            if (this.Camera.StillPort.Handler.GetType().IsSubclassOf(typeof(FileStreamCaptureHandler)))
-            {
-                ((FileStreamCaptureHandler)this.Camera.StillPort.Handler).NewFile();
-            }
-                
+ 
             using (var renderer = new MMALNullSinkComponent())
             {
                 this.ConfigureCameraSettings();                

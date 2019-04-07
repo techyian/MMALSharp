@@ -17,7 +17,14 @@ namespace MMALSharp.Handlers
         /// <param name="extension">The filename extension for saving files.</param>
         public VideoStreamCaptureHandler(string directory, string extension)
             : base(directory, extension) { }
-        
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="VideoStreamCaptureHandler"/> class with the specified file path.
+        /// </summary>
+        /// <param name="fullPath">The absolute full path to save captured data to.</param>
+        public VideoStreamCaptureHandler(string fullPath)
+            : base(fullPath) { }
+
         /// <summary>
         /// Splits the current file by closing the current stream and opening a new one.
         /// </summary>

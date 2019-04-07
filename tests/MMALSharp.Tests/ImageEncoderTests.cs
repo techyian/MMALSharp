@@ -26,7 +26,7 @@ namespace MMALSharp.Tests
     public class ImageEncoderTests : TestBase
     {
         [Theory]
-        [MemberData("Data", MemberType = typeof(ImageData))]
+        [MemberData(nameof(ImageData.Data), MemberType = typeof(ImageData))]
         public async Task TakePicture(string extension, MMALEncoding encodingType, MMALEncoding pixelFormat)
         {
             TestHelper.BeginTest("TakePicture", encodingType.EncodingName, pixelFormat.EncodingName);
@@ -59,7 +59,7 @@ namespace MMALSharp.Tests
         }
 
         [Theory]
-        [MemberData("Data", MemberType = typeof(BasicImageData))]
+        [MemberData(nameof(BasicImageData.Data), MemberType = typeof(BasicImageData))]
         public async Task TakePictureRawBayer(string extension, MMALEncoding encodingType, MMALEncoding pixelFormat)
         {
             TestHelper.BeginTest("TakePictureRawBayer", encodingType.EncodingName, pixelFormat.EncodingName);
@@ -92,7 +92,7 @@ namespace MMALSharp.Tests
         }
 
         [Theory]
-        [MemberData("Data", MemberType = typeof(RawImageData))]
+        [MemberData(nameof(RawImageData.Data), MemberType = typeof(RawImageData))]
         public async Task TakePictureRawSensor(string extension, MMALEncoding encodingType, MMALEncoding pixelFormat)
         {
             TestHelper.BeginTest("TakePictureRawSensor", encodingType.EncodingName, pixelFormat.EncodingName);
@@ -126,7 +126,7 @@ namespace MMALSharp.Tests
         }
         
         [Theory]
-        [MemberData("Data", MemberType = typeof(BasicImageData))]
+        [MemberData(nameof(BasicImageData.Data), MemberType = typeof(BasicImageData))]
         public async Task TakePicturesFromVideoPort(string extension, MMALEncoding encodingType, MMALEncoding pixelFormat)
         {
             TestHelper.BeginTest("TakePicturesFromVideoPort", encodingType.EncodingName, pixelFormat.EncodingName);
@@ -158,7 +158,42 @@ namespace MMALSharp.Tests
                 
                 await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.VideoPort, cts.Token);
                 
-                DirectoryInfo info = new DirectoryInfo(imgCaptureHandler.Directory);
+                Fixture.CheckAndAssertDirectory(imgCaptureHandler.Directory);
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(BasicImageData.Data), MemberType = typeof(BasicImageData))]
+        public async Task TakePicturesFromVideoPortWithCustomFilename(string extension, MMALEncoding encodingType, MMALEncoding pixelFormat)
+        {
+            TestHelper.BeginTest("TakePicturesFromVideoPortWithCustomFilename", encodingType.EncodingName, pixelFormat.EncodingName);
+            TestHelper.SetConfigurationDefaults();
+            TestHelper.CleanDirectory("/home/pi/images/tests");
+
+            using (var imgCaptureHandler = new ImageStreamCaptureHandler($"/home/pi/images/tests/fromVideoPort.{extension}"))
+            using (var splitter = new MMALSplitterComponent(null))
+            using (var preview = new MMALNullSinkComponent())
+            using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler, continuousCapture: true))
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+
+                var portConfig = new MMALPortConfig(encodingType, pixelFormat, 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig);
+
+                // Create our component pipeline.
+                Fixture.MMALCamera.Camera.VideoPort
+                    .ConnectTo(splitter);
+                splitter.Outputs[0].ConnectTo(imgEncoder);
+                Fixture.MMALCamera.Camera.PreviewPort
+                    .ConnectTo(preview);
+
+                // Camera warm up time
+                await Task.Delay(2000);
+
+                var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.VideoPort, cts.Token);
 
                 Fixture.CheckAndAssertDirectory(imgCaptureHandler.Directory);
             }
@@ -303,18 +338,17 @@ namespace MMALSharp.Tests
         {
             TestHelper.BeginTest("StaticOverlay");
             TestHelper.SetConfigurationDefaults();
+            TestHelper.CleanDirectory("/home/pi/images/tests");
+            TestHelper.CleanDirectory("/home/pi/images/tests/staticoverlay");
 
             MMALCameraConfig.StillResolution = Resolution.As03MPixel;
             MMALCameraConfig.StillEncoding = MMALEncoding.I420;
             MMALCameraConfig.StillSubFormat = MMALEncoding.I420;
             
             var filename = string.Empty;
-
+            
             using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests/staticoverlay", "raw"))
             {
-                TestHelper.CleanDirectory("/home/pi/images/tests");
-                TestHelper.CleanDirectory("/home/pi/images/tests/staticoverlay");
-
                 await Fixture.MMALCamera.TakeRawPicture(imgCaptureHandler);
 
                 filename = imgCaptureHandler.GetFilepath();

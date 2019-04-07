@@ -148,12 +148,6 @@ namespace MMALSharp.Ports.Outputs
         internal override void Start()
         {
             MMALLog.Logger.Debug($"Starting output port {this.Name}");
-            
-            if (this.Handler != null && this.Handler.GetType().IsSubclassOf(typeof(FileStreamCaptureHandler)))
-            {
-                ((FileStreamCaptureHandler)this.Handler).NewFile();
-            }
-            
             this.EnableOutputPort();
         }
         
