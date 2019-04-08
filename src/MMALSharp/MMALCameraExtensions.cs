@@ -283,7 +283,7 @@ namespace MMALSharp
                     showFrame = 1;
                 }
 
-                if (MMALCameraConfig.Annotate.ShowBlackBackground)
+                if (MMALCameraConfig.Annotate.AllowCustomBackgroundColour)
                 {
                     enableTextBackground = 1;
                 }
@@ -293,7 +293,7 @@ namespace MMALSharp
                 if (MMALCameraConfig.Annotate.TextColour != Color.Empty)
                 {
                     customTextColor = 1;
-
+                    
                     var yuv = MMALColor.RGBToYUVBytes(MMALCameraConfig.Annotate.TextColour);
                     customTextY = yuv.Item1;
                     customTextU = yuv.Item2;
@@ -318,7 +318,7 @@ namespace MMALSharp
                                                                                                     1, showShutter, showAnalogGain, showLens,
                                                                                                     showCaf, showMotion, showFrame, enableTextBackground,
                                                                                                     customBackgroundColor, customBackgroundY, customBackgroundU, customBackgroundV, 0, customTextColor,
-                                                                                                    customTextY, customTextU, customTextV, textSize, text, justify, xOffset, yOffset);
+                                                                                                    customTextY, customTextU, customTextV, textSize, text, (int)justify, xOffset, yOffset);
 
                 var ptrV4 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V4_T>());
                 Marshal.StructureToPtr(strV4, ptrV4, false);
