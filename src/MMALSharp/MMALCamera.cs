@@ -96,7 +96,7 @@ namespace MMALSharp
             {
                 this.ConfigureCameraSettings();
 
-                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 25, 10, MMALVideoEncoder.MaxBitrateLevel4, null);
+                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, MMALVideoEncoder.MaxBitrateLevel4, null);
 
                 vidEncoder.ConfigureOutputPort(portConfig);
 
@@ -104,7 +104,7 @@ namespace MMALSharp
                 this.Camera.VideoPort.ConnectTo(vidEncoder);
                 this.Camera.PreviewPort.ConnectTo(renderer);
 
-                MMALLog.Logger.Info($"Preparing to take video. Resolution: {vidEncoder.Outputs[0].Resolution.Width} x {vidEncoder.Outputs[0].Resolution.Height}. " +
+                MMALLog.Logger.Info($"Preparing to take video. Resolution: {this.Camera.VideoPort.Resolution.Width} x {this.Camera.VideoPort.Resolution.Height}. " +
                                     $"Encoder: {vidEncoder.Outputs[0].EncodingType.EncodingName}. Pixel Format: {vidEncoder.Outputs[0].PixelFormat.EncodingName}.");
 
                 // Camera warm up time
@@ -136,7 +136,7 @@ namespace MMALSharp
                 this.Camera.PreviewPort.ConnectTo(renderer);
                 
                 // Enable the image encoder output port.
-                MMALLog.Logger.Info($"Preparing to take raw picture - Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}. " +
+                MMALLog.Logger.Info($"Preparing to take raw picture - Resolution: {this.Camera.StillPort.Resolution.Width} x {this.Camera.StillPort.Resolution.Height}. " +
                                   $"Encoder: {MMALCameraConfig.StillEncoding.EncodingName}. Pixel Format: {MMALCameraConfig.StillSubFormat.EncodingName}.");
 
                 // Camera warm up time
@@ -169,7 +169,7 @@ namespace MMALSharp
                 this.Camera.PreviewPort.ConnectTo(renderer);
                 
                 // Enable the image encoder output port.
-                MMALLog.Logger.Info($"Preparing to take picture. Resolution: {imgEncoder.Outputs[0].Resolution.Width} x {imgEncoder.Outputs[0].Resolution.Height}. " +
+                MMALLog.Logger.Info($"Preparing to take picture. Resolution: {this.Camera.StillPort.Resolution.Width} x {this.Camera.StillPort.Resolution.Height}. " +
                                     $"Encoder: {encodingType.EncodingName}. Pixel Format: {pixelFormat.EncodingName}.");
 
                 // Camera warm up time
