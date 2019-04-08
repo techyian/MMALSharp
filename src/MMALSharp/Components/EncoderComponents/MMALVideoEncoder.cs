@@ -84,7 +84,9 @@ namespace MMALSharp.Components
         public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
         {
             base.ConfigureOutputPort(outputPort, config);
-            
+
+            this.Quality = config.Quality;
+
             if (MMALCameraConfig.VideoColorSpace != null &&
                 MMALCameraConfig.VideoColorSpace.EncType == MMALEncoding.EncodingType.ColorSpace)
             {
@@ -92,9 +94,21 @@ namespace MMALSharp.Components
             }
             
             this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, 3);
-            this.Outputs[outputPort].Ptr->BufferSize = 512 * 1024;
-            this.Quality = config.Quality;
+
+            if (config.EncodingType == MMALEncoding.H264)
+            {
+                this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
+            }
+            else
+            {
+                // Follow raspivid logic.
+                this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, 256 << 10);
+            }
             
+            this.Outputs[outputPort].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(0, 1);
+            this.ConfigureBitrate(outputPort);
+            this.Outputs[outputPort].Commit();
+
             if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264)
             {
                 this.ConfigureIntraPeriod(outputPort);
@@ -111,7 +125,6 @@ namespace MMALSharp.Components
             }
 
             this.ConfigureImmutableInput(outputPort);
-            this.ConfigureBitrate(outputPort);
 
             this.RegisterOutputCallback(new VideoOutputCallbackHandler(this.Outputs[outputPort]));
             
@@ -168,10 +181,6 @@ namespace MMALSharp.Components
                     this.Outputs[outputPort].Bitrate = MaxBitrateMJPEG;
                 }
             }
-
-            this.Outputs[outputPort].Ptr->Format->Bitrate = this.Outputs[outputPort].Bitrate;
-            this.Outputs[outputPort].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(0, 1);
-            this.Outputs[outputPort].Commit();
 
             this.Outputs[outputPort].Ptr->Format->Bitrate = this.Outputs[outputPort].Bitrate;
         }

@@ -63,7 +63,7 @@ namespace MMALSharp.Ports
         /// </summary>
         /// <param name="encodingType">The encoding type.</param>
         /// <param name="pixelFormat">The pixel format.</param>
-        /// <param name="quality">The output quality.</param>
+        /// <param name="quality">The output quality. Only affects JPEG quality for image stills.</param>
         public MMALPortConfig(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality)
         {
             this.EncodingType = encodingType;
@@ -77,14 +77,32 @@ namespace MMALSharp.Ports
         /// <param name="encodingType">The encoding type.</param>
         /// <param name="pixelFormat">The pixel format.</param>
         /// <param name="framerate">The output framerate.</param>
-        /// <param name="quality">The output quality.</param>
+        /// <param name="quality">The output quality. Affects the quantization parameter for H.264 encoding.</param>
         /// <param name="bitrate">The output bitrate.</param>
-        /// <param name="timeout">Video record timeout.</param>
+        /// <param name="timeout">Video record timeout. This is useful if you have multiple video recording streams which you want to stop at different times.</param>
+        [Obsolete("Framerate parameter does not affect video record behaviour and should be set in the MMALCameraConfig class instead. Use constructor without framerate parameter for video capture.")]
         public MMALPortConfig(MMALEncoding encodingType, MMALEncoding pixelFormat, int framerate, int quality, int bitrate, DateTime? timeout)
         {
             this.EncodingType = encodingType;
             this.PixelFormat = pixelFormat;
             this.Framerate = framerate;
+            this.Quality = quality;
+            this.Bitrate = bitrate;
+            this.Timeout = timeout;
+        }
+
+        /// <summary>
+        /// Create a new instance of <see cref="MMALPortConfig"/> with parameters useful for video capture.
+        /// </summary>
+        /// <param name="encodingType">The encoding type.</param>
+        /// <param name="pixelFormat">The pixel format.</param>
+        /// <param name="quality">The output quality. Affects the quantization parameter for H.264 encoding. Set bitrate 0 and set this for variable bitrate.</param>
+        /// <param name="bitrate">The output bitrate.</param>
+        /// <param name="timeout">Video record timeout. This is useful if you have multiple video recording streams which you want to stop at different times.</param>
+        public MMALPortConfig(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate, DateTime? timeout)
+        {
+            this.EncodingType = encodingType;
+            this.PixelFormat = pixelFormat;
             this.Quality = quality;
             this.Bitrate = bitrate;
             this.Timeout = timeout;

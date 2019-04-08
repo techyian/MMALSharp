@@ -241,11 +241,6 @@ namespace MMALSharp.Components
                 this.Outputs[outputPort].VideoColorSpace = MMALCameraConfig.VideoColorSpace;
             }
 
-            if (config.Framerate > 0)
-            {
-                this.Outputs[outputPort].FrameRate = new MMAL_RATIONAL_T(config.Framerate, 1);
-            }
-
             if (config.Bitrate > 0)
             {
                 this.Outputs[outputPort].Bitrate = config.Bitrate;
