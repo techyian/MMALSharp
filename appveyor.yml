@@ -91,7 +91,7 @@
     - provider: NuGet   
       server:   
       api_key:
-        secure: NpGo4b3x7b399YTd8IrsTiCVQ+e8gnefOo7nAQwGLOW4B5eighq7fOJDYpVLd9pv
+        secure: m3TpIMzCZUs0ag9bsE0pQ0xV4Em1VQxwtMaTFLUxjMYepJAcceW61l9riyo8oBeZ
       artifact: /.*\.nupkg/
       on:
         branch: master
