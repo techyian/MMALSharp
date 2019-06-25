@@ -3,8 +3,8 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/r3o4bqxektnulw7l?svg=true)](https://ci.appveyor.com/project/techyian/mmalsharp) 
 [![Join the chat at https://gitter.im/MMALSharp/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/MMALSharp/Lobby?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
 
-**If you like this project, please support it by giving it a** 
-<a class="github-button" href="https://github.com/techyian/MMALSharp" data-icon="octicon-star" data-show-count="true" aria-label="Star techyian/MMALSharp on GitHub">Star</a>
+**If you like this project, please support it by giving it a star!** 
+![GitHub stars](https://img.shields.io/github/stars/techyian/MMALSharp.svg?style=popout)
 
 MMALSharp is an unofficial C# API for the Raspberry Pi camera. Under the hood, MMALSharp makes use of the native MMAL interface designed by Broadcom.
 
