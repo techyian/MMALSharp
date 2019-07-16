@@ -17,6 +17,6 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="outputPort">The output port to begin processing on.</param>
         /// <returns>An awaitable task.</returns>
-        Task Convert(int outputPort);
+        void Convert(int outputPort);
     }
 }

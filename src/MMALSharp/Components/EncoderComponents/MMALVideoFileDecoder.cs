@@ -6,6 +6,7 @@
 using System;
 using System.Drawing;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using MMALSharp.Callbacks.Providers;
 using MMALSharp.Common.Utility;
@@ -120,8 +121,7 @@ namespace MMALSharp.Components
         /// Encodes/decodes user provided image data.
         /// </summary>
         /// <param name="outputPort">The output port to begin processing on. Usually will be 0.</param>
-        /// <returns>An awaitable task.</returns>
-        public virtual async Task Convert(int outputPort = 0)
+        public virtual void Convert(int outputPort = 0)
         {
             MMALLog.Logger.Info("Beginning Video decode from stream. Please note, this process may take some time depending on the size of the input stream.");
 
@@ -141,8 +141,7 @@ namespace MMALSharp.Components
 
             while (!eosReceived)
             {
-                await this.WaitForTriggers().ConfigureAwait(false);
-
+                this.WaitForTriggers();
                 this.GetAndSendInputBuffer();
 
                 MMALLog.Logger.Debug("Getting processed output pool buffer");
@@ -315,17 +314,11 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].EnableOutputPort(false);
         }
 
-        private async Task WaitForTriggers()
+        private void WaitForTriggers()
         {
-            MMALLog.Logger.Debug("Waiting for trigger signal");
-
             // Wait until the process is complete.
-            await this.Inputs[0].Trigger.Task;
-            await this.Outputs[0].Trigger.Task;
-            
-            MMALLog.Logger.Debug("Resetting trigger state.");
-            this.Inputs[0].Trigger = new TaskCompletionSource<bool>();
-            this.Outputs[0].Trigger = new TaskCompletionSource<bool>();
+            MMALLog.Logger.Info("Awaiting...");
+            Thread.Sleep(2000);
         }
     }
 }

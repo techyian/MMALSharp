@@ -575,7 +575,7 @@ namespace MMALSharp.Tests
                 imgDecoder.ConfigureInputPort(inputConfig)
                     .ConfigureOutputPort(outputConfig);
 
-                await imgDecoder.Convert();
+                imgDecoder.Convert();
 
                 Fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
 
@@ -593,7 +593,7 @@ namespace MMALSharp.Tests
                 imgEncoder.ConfigureInputPort(inputConfig)
                     .ConfigureOutputPort(outputConfig);
 
-                await imgEncoder.Convert();
+                imgEncoder.Convert();
 
                 Fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
             }
