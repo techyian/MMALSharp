@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Threading.Tasks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
@@ -59,9 +60,9 @@ namespace MMALSharp.Ports.Inputs
             var bufferImpl = new MMALBufferImpl(buffer);
             bufferImpl.Release();
 
-            if (!this.Trigger)
+            if (!this.Trigger.Task.IsCompleted)
             {
-                this.Trigger = true;
+                Task.Run(() => { this.Trigger.SetResult(true); });
             }
         }
     }

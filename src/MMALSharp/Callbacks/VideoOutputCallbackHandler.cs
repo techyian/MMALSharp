@@ -15,7 +15,7 @@ namespace MMALSharp.Callbacks
     /// <summary>
     /// Represents a callback handler specifically for <see cref="MMALVideoEncoder"/> components.
     /// </summary>
-    public class VideoOutputCallbackHandler : DefaultOutputCallbackHandler
+    public class VideoOutputCallbackHandler : DefaultPortCallbackHandler
     {
         /// <summary>
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.

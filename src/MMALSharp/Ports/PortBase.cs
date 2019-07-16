@@ -6,6 +6,7 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
@@ -216,7 +217,7 @@ namespace MMALSharp.Ports
         /// <summary>
         /// Asynchronous trigger which is set when processing has completed on this port.
         /// </summary>
-        public bool Trigger { get; internal set; }
+        public TaskCompletionSource<bool> Trigger { get; internal set; }
 
         /// <summary>
         /// Native pointer that represents the component this port is associated with.

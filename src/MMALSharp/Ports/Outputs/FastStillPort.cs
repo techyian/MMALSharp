@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Threading.Tasks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
@@ -67,8 +68,8 @@ namespace MMALSharp.Ports.Outputs
             
             var failed = bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
             
-            if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !this.ComponentReference.ForceStopProcessing && !failed && !this.Trigger) || 
-                (this.ComponentReference.ForceStopProcessing && !this.Trigger))
+            if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !this.ComponentReference.ForceStopProcessing && !failed && !this.Trigger.Task.IsCompleted) || 
+                (this.ComponentReference.ForceStopProcessing && !this.Trigger.Task.IsCompleted))
             {
                 this.ManagedOutputCallback.Callback(bufferImpl);
             }
@@ -80,7 +81,7 @@ namespace MMALSharp.Ports.Outputs
             if (this.ComponentReference.ForceStopProcessing || failed)
             {
                 MMALLog.Logger.Debug($"{this.ComponentReference.Name} {this.Name} Signaling completion of continuous still frame capture...");
-                this.Trigger = true;
+                Task.Run(() => { this.Trigger.SetResult(true); });
             }
         }
     }

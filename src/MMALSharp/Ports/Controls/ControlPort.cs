@@ -42,7 +42,7 @@ namespace MMALSharp.Ports.Controls
         /// <summary>
         /// A callback handler for Control ports we use to do further processing on buffer headers after they've been received by the native callback delegate.
         /// </summary>
-        internal override IControlCallbackHandler ManagedControlCallback { get; set; }
+        internal override ICallbackHandler ManagedControlCallback { get; set; }
 
         /// <summary>
         /// Monitor lock for control port callback method.
@@ -54,7 +54,7 @@ namespace MMALSharp.Ports.Controls
         {
             if (!this.Enabled)
             {
-                this.ManagedControlCallback = ControlCallbackProvider.FindCallback(this);
+                this.ManagedControlCallback = PortCallbackProvider.FindCallback(this);
 
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeControlPortCallback);
 

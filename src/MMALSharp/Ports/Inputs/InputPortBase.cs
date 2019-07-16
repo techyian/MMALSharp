@@ -5,6 +5,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using MMALSharp.Callbacks;
 using MMALSharp.Callbacks.Providers;
 using MMALSharp.Common.Utility;
@@ -58,7 +59,7 @@ namespace MMALSharp.Ports.Inputs
         /// <summary>
         /// Managed callback which is called by the native function callback method.
         /// </summary>
-        internal IInputCallbackHandler ManagedInputCallback { get; set; }
+        internal ICallbackHandler ManagedInputCallback { get; set; }
 
         /// <summary>
         /// Enables processing on an input port.
@@ -67,7 +68,7 @@ namespace MMALSharp.Ports.Inputs
         {
             if (!this.Enabled)
             {
-                this.ManagedInputCallback = InputCallbackProvider.FindCallback(this);
+                this.ManagedInputCallback = PortCallbackProvider.FindCallback(this);
 
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeInputPortCallback);
 
@@ -130,18 +131,19 @@ namespace MMALSharp.Ports.Inputs
                 }
 
                 // Populate the new input buffer with user provided image data.
-                var result = this.ManagedInputCallback.Callback(newBuffer);
+                var result = this.ManagedInputCallback.InputCallback(newBuffer);
                 newBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
 
                 try
                 {
-                    if (!this.Trigger && result.EOF)
+                    if (result.EOF)
                     {
                         MMALLog.Logger.Debug("Received EOF. Releasing.");
 
                         newBuffer.Release();
                         newBuffer = null;
-                        this.Trigger = true;
+
+                        Task.Run(() => { this.Trigger.SetResult(true); });
                     }
 
                     if (newBuffer != null)

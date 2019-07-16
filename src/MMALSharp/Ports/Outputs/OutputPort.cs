@@ -5,6 +5,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using MMALSharp.Callbacks;
 using MMALSharp.Callbacks.Providers;
 using MMALSharp.Common.Utility;
@@ -21,7 +22,7 @@ namespace MMALSharp.Ports.Outputs
     public unsafe class OutputPort : OutputPortBase
     {
         /// <inheritdoc />
-        internal override IOutputCallbackHandler ManagedOutputCallback { get; set; }
+        internal override ICallbackHandler ManagedOutputCallback { get; set; }
         
         /// <summary>
         /// Creates a new instance of <see cref="OutputPort"/>. 
@@ -114,7 +115,7 @@ namespace MMALSharp.Ports.Outputs
         {            
             if (!this.Enabled)
             {
-                this.ManagedOutputCallback = OutputCallbackProvider.FindCallback(this);
+                this.ManagedOutputCallback = PortCallbackProvider.FindCallback(this);
 
                 this.NativeCallback = this.NativeOutputPortCallback;
                 
@@ -173,7 +174,7 @@ namespace MMALSharp.Ports.Outputs
                       bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) ||
                       this.ComponentReference.ForceStopProcessing;
 
-            if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !failed && !this.Trigger) || (eos && !this.Trigger))
+            if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !failed && !this.Trigger.Task.IsCompleted) || (eos && !this.Trigger.Task.IsCompleted))
             {
                 this.ManagedOutputCallback.Callback(bufferImpl);
             }
@@ -185,7 +186,8 @@ namespace MMALSharp.Ports.Outputs
             if (eos || failed)
             {
                 MMALLog.Logger.Debug($"{this.ComponentReference.Name} {this.Name} End of stream. Signaling completion...");
-                this.Trigger = true;
+                
+                Task.Run(() => { this.Trigger.SetResult(true); });
             }
         }
     }

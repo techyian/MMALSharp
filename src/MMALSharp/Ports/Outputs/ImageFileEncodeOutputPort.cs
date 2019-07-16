@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Threading.Tasks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
@@ -68,9 +69,9 @@ namespace MMALSharp.Ports.Outputs
 
             MMALImageFileEncoder.WorkingQueue.Put(bufferImpl);
 
-            if (port->IsEnabled == 1 && !this.Trigger)
+            if (port->IsEnabled == 1 && !this.Trigger.Task.IsCompleted)
             {
-                this.Trigger = true;
+                Task.Run(() => { this.Trigger.SetResult(true); });
             }
         }
     }

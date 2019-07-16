@@ -36,31 +36,19 @@ namespace MMALSharp.Components
         /// A list of working ports which are processing data in the component pipeline.
         /// </summary>
         public Dictionary<int, OutputPortBase> ProcessingPorts { get; set; }
+
+        /// <summary>
+        /// Registers a <see cref="ICallbackHandler"/>.
+        /// </summary>
+        /// <param name="handler">The port handler.</param>
+        public void RegisterPortCallback(ICallbackHandler handler) => PortCallbackProvider.RegisterCallback(handler);
+
+        /// <summary>
+        /// If it exists, removes a <see cref="ICallbackHandler"/> on this component's input port.
+        /// </summary>
+        /// <param name="port">The port to remove a handler on.</param>
+        public void RemovePortCallback(PortBase port) => PortCallbackProvider.RemoveCallback(port);
         
-        /// <summary>
-        /// Registers a <see cref="IInputCallbackHandler"/>.
-        /// </summary>
-        /// <param name="handler">The input handler.</param>
-        public void RegisterInputCallback(IInputCallbackHandler handler) => InputCallbackProvider.RegisterCallback(handler);
-
-        /// <summary>
-        /// If it exists, removes a <see cref="IInputCallbackHandler"/> on this component's input port.
-        /// </summary>
-        public void RemoveInputCallback() => InputCallbackProvider.RemoveCallback(this.Inputs[0]);
-        
-        /// <summary>
-        /// Registers a <see cref="IOutputCallbackHandler"/>.
-        /// </summary>
-        /// <param name="handler">The output handler.</param>
-        public void RegisterOutputCallback(IOutputCallbackHandler handler) => OutputCallbackProvider.RegisterCallback(handler);
-
-        /// <summary>
-        /// If it exists, removes a <see cref="IOutputCallbackHandler"/> on the port specified.
-        /// </summary>
-        /// <param name="outputPort">The output port number.</param>
-        public void RemoveOutputCallback(int outputPort) =>
-            OutputCallbackProvider.RemoveCallback(this.Outputs[outputPort]);
-
         /// <summary>
         /// Registers a <see cref="IConnectionCallbackHandler"/>.
         /// </summary>
@@ -271,7 +259,7 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
             this.Outputs[outputPort].BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
             
-            this.Outputs[outputPort].ManagedOutputCallback = OutputCallbackProvider.FindCallback(this.Outputs[outputPort]);
+            this.Outputs[outputPort].ManagedOutputCallback = PortCallbackProvider.FindCallback(this.Outputs[outputPort]);
 
             return this;
         }

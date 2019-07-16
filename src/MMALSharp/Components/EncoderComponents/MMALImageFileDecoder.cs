@@ -21,7 +21,9 @@ namespace MMALSharp.Components
     /// This component is used to decode image data stored in a stream.
     /// </summary>
     public class MMALImageFileDecoder : MMALEncoderBase, IMMALConvert
-    {        
+    {
+        private TaskCompletionSource<bool> _finalCompletionSource;
+
         /// <summary>
         /// Creates a new instance of <see cref="MMALImageFileDecoder"/>.
         /// </summary>
@@ -96,7 +98,7 @@ namespace MMALSharp.Components
 
             this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
             this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
-            this.Outputs[outputPort].ManagedOutputCallback = OutputCallbackProvider.FindCallback(this.Outputs[outputPort]);
+            this.Outputs[outputPort].ManagedOutputCallback = PortCallbackProvider.FindCallback(this.Outputs[outputPort]);
 
             return this;
         }
@@ -109,6 +111,9 @@ namespace MMALSharp.Components
         public virtual async Task Convert(int outputPort = 0)
         {
             MMALLog.Logger.Info("Beginning Image decode from filestream. Please note, this process may take some time depending on the size of the input image.");
+
+            this.Inputs[0].Trigger = new TaskCompletionSource<bool>();
+            this.Outputs[0].Trigger = new TaskCompletionSource<bool>();
 
             // Enable control, input and output ports. Input & Output ports should have been pre-configured by user prior to this point.
             this.Control.Start();
@@ -243,7 +248,7 @@ namespace MMALSharp.Components
             if (inputBuffer.CheckState())
             {
                 // Populate the new input buffer with user provided image data.
-                var result = this.Inputs[0].ManagedInputCallback.Callback(inputBuffer);
+                var result = this.Inputs[0].ManagedInputCallback.InputCallback(inputBuffer);
                 inputBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
 
                 this.Inputs[0].SendBuffer(inputBuffer);
@@ -303,21 +308,17 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].EnableOutputPort(false);            
         }
         
-        private async Task WaitForTriggers(int outputPort = 0)
+        private async Task WaitForTriggers()
         {
-            MMALLog.Logger.Debug("Waiting for trigger signal");
+            MMALLog.Logger.Info("Waiting for trigger signal");
 
-            // Wait until the process is complete.
-            while (!this.Inputs[0].Trigger)
-            {
-                MMALLog.Logger.Info("Awaiting...");
-                await Task.Delay(2000).ConfigureAwait(false);
-                break;
-            }
-            
-            MMALLog.Logger.Debug("Resetting trigger state.");
-            this.Inputs[0].Trigger = false;
-            this.Outputs[outputPort].Trigger = false;
+            MMALLog.Logger.Info("Awaiting...");
+            await this.Inputs[0].Trigger.Task;
+            await this.Outputs[0].Trigger.Task;
+
+            MMALLog.Logger.Info("Resetting trigger state.");
+            this.Inputs[0].Trigger = new TaskCompletionSource<bool>();
+            this.Outputs[0].Trigger = new TaskCompletionSource<bool>();
         }
     }
 }

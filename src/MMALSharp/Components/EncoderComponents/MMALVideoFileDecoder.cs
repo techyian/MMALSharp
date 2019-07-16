@@ -111,7 +111,7 @@ namespace MMALSharp.Components
 
             this.Outputs[outputPort].EncodingType = config.EncodingType;
             
-            this.Outputs[outputPort].ManagedOutputCallback = OutputCallbackProvider.FindCallback(this.Outputs[outputPort]);
+            this.Outputs[outputPort].ManagedOutputCallback = PortCallbackProvider.FindCallback(this.Outputs[outputPort]);
             
             return this;
         }
@@ -124,6 +124,9 @@ namespace MMALSharp.Components
         public virtual async Task Convert(int outputPort = 0)
         {
             MMALLog.Logger.Info("Beginning Video decode from stream. Please note, this process may take some time depending on the size of the input stream.");
+
+            this.Inputs[0].Trigger = new TaskCompletionSource<bool>();
+            this.Outputs[0].Trigger = new TaskCompletionSource<bool>();
 
             // Enable control, input and output ports. Input & Output ports should have been pre-configured by user prior to this point.
             this.Control.Start();
@@ -252,7 +255,7 @@ namespace MMALSharp.Components
             if (inputBuffer.CheckState())
             {
                 // Populate the new input buffer with user provided image data.
-                var result = this.Inputs[0].ManagedInputCallback.Callback(inputBuffer);
+                var result = this.Inputs[0].ManagedInputCallback.InputCallback(inputBuffer);
                 inputBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
 
                 this.Inputs[0].SendBuffer(inputBuffer);
@@ -312,20 +315,17 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].EnableOutputPort(false);
         }
 
-        private async Task WaitForTriggers(int outputPort = 0)
+        private async Task WaitForTriggers()
         {
             MMALLog.Logger.Debug("Waiting for trigger signal");
 
             // Wait until the process is complete.
-            while (!this.Inputs[0].Trigger)
-            {
-                await Task.Delay(2000).ConfigureAwait(false);
-                break;
-            }
-
+            await this.Inputs[0].Trigger.Task;
+            await this.Outputs[0].Trigger.Task;
+            
             MMALLog.Logger.Debug("Resetting trigger state.");
-            this.Inputs[0].Trigger = false;
-            this.Outputs[outputPort].Trigger = false;
+            this.Inputs[0].Trigger = new TaskCompletionSource<bool>();
+            this.Outputs[0].Trigger = new TaskCompletionSource<bool>();
         }
     }
 }

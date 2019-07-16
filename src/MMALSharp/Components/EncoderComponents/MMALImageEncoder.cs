@@ -101,7 +101,7 @@ namespace MMALSharp.Components
 
             if (this.ContinuousCapture)
             {
-                this.RegisterOutputCallback(new FastImageOutputCallbackHandler(this.Outputs[outputPort]));    
+                this.RegisterPortCallback(new FastImageOutputCallbackHandler(this.Outputs[outputPort]));    
             }
 
             if (this.JpegThumbnailConfig != null)

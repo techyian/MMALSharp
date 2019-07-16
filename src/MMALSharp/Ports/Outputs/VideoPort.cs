@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Threading.Tasks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
@@ -86,7 +87,7 @@ namespace MMALSharp.Ports.Outputs
             
             var eos = (this.PortConfig.Timeout.HasValue && DateTime.Now.CompareTo(this.PortConfig.Timeout.Value) > 0) || this.ComponentReference.ForceStopProcessing;
 
-            if (bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !this.Trigger)
+            if (bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !this.Trigger.Task.IsCompleted)
             {
                 this.ManagedOutputCallback.Callback(bufferImpl);
             }
@@ -96,10 +97,10 @@ namespace MMALSharp.Ports.Outputs
 
             if (eos)
             {
-                if (!this.Trigger)
+                if (!this.Trigger.Task.IsCompleted)
                 {
                     MMALLog.Logger.Debug($"{this.ComponentReference.Name} {this.Name} Timeout exceeded, triggering signal.");
-                    this.Trigger = true;
+                    Task.Run(() => { this.Trigger.SetResult(true); });
                 }
             }
         }

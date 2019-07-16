@@ -73,7 +73,10 @@ namespace MMALSharp
         /// <param name="port">The capture port.</param>
         public void ForceStop(OutputPortBase port)
         {
-            port.Trigger = true;
+            Task.Run(() =>
+            {
+                port.Trigger.SetResult(true);
+            });
         }
 
         /// <summary>
@@ -295,8 +298,8 @@ namespace MMALSharp
                 return;
             }
             
-            List<Task> tasks = new List<Task>();
-            
+            var tasks = new List<Task>();
+           
             // Enable all connections associated with these components
             foreach (var component in handlerComponents)
             {
@@ -305,17 +308,10 @@ namespace MMALSharp
 
                 foreach (var port in component.ProcessingPorts.Values)
                 {
-                    port.Trigger = false;
+                    port.Trigger = new TaskCompletionSource<bool>();
                     if (port.ConnectedReference == null)
                     {
-                        tasks.Add(Task.Run(async () =>
-                        {
-                            while (!port.Trigger)
-                            {
-                                await Task.Delay(50).ConfigureAwait(false);
-                            }
-                        }, cancellationToken));
-                        
+                        tasks.Add(port.Trigger.Task);
                         port.Start();
                     }
                 }
@@ -458,25 +454,23 @@ namespace MMALSharp
         private async Task ProcessRawAsync(OutputPortBase cameraPort,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            cameraPort.Trigger = false;
-            
-            var t = Task.Run(async () =>
+            cameraPort.Trigger = new TaskCompletionSource<bool>();
+
+            using (cancellationToken.Register(() => {
+                // this callback will be executed when token is cancelled
+                cameraPort.Trigger.TrySetCanceled();
+            }))
             {
-                while (!cameraPort.Trigger)
-                {
-                    await Task.Delay(50).ConfigureAwait(false);
-                }
-            }, cancellationToken);
-            
-            cameraPort.DisablePort();
-            cameraPort.Start();
-                
-            this.StartCapture(cameraPort);
-            await t.ConfigureAwait(false);
-            
-            cameraPort.Handler?.PostProcess();
-            this.StopCapture(cameraPort);
-            this.Camera.CleanPortPools();
+                cameraPort.DisablePort();
+                cameraPort.Start();
+
+                this.StartCapture(cameraPort);
+                await cameraPort.Trigger.Task.ConfigureAwait(false);
+
+                cameraPort.Handler?.PostProcess();
+                this.StopCapture(cameraPort);
+                this.Camera.CleanPortPools();
+            }
         }
         
         /// <summary>

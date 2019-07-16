@@ -14,7 +14,7 @@ namespace MMALSharp.Callbacks
     /// <summary>
     /// A callback handler specifically for rapid image capture from the camera's video port.
     /// </summary>
-    public class FastImageOutputCallbackHandler : DefaultOutputCallbackHandler
+    public class FastImageOutputCallbackHandler : DefaultPortCallbackHandler
     {
         /// <summary>
         /// Creates a new instance of <see cref="FastImageOutputCallbackHandler"/>.

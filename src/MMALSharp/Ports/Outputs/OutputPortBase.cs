@@ -56,7 +56,7 @@ namespace MMALSharp.Ports.Outputs
         /// <summary>
         /// Output callback handler which is called by the native function callback.
         /// </summary>
-        internal abstract IOutputCallbackHandler ManagedOutputCallback { get; set; }
+        internal abstract ICallbackHandler ManagedOutputCallback { get; set; }
 
         /// <summary>
         /// Connects two components together by their input and output ports.

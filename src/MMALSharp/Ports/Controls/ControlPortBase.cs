@@ -25,7 +25,7 @@ namespace MMALSharp.Ports.Controls
         {
         }
 
-        internal abstract IControlCallbackHandler ManagedControlCallback { get; set; }
+        internal abstract ICallbackHandler ManagedControlCallback { get; set; }
 
         /// <summary>
         /// Enables processing on a control port.

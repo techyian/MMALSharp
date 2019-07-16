@@ -126,7 +126,7 @@ namespace MMALSharp.Components
 
             this.ConfigureImmutableInput(outputPort);
 
-            this.RegisterOutputCallback(new VideoOutputCallbackHandler(this.Outputs[outputPort]));
+            this.RegisterPortCallback(new VideoOutputCallbackHandler(this.Outputs[outputPort]));
             
             return this;
         }
