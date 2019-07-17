@@ -6,7 +6,7 @@
 namespace MMALSharp.Handlers
 {
     /// <summary>
-    /// Processes the video data to a stream.
+    /// Processes the video data to a FileStream.
     /// </summary>
     public class VideoStreamCaptureHandler : FileStreamCaptureHandler
     {

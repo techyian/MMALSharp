@@ -42,11 +42,11 @@ namespace MMALSharp.Callbacks.Providers
 
         /// <summary>
         /// Finds and returns a <see cref="ICallbackHandler"/> for a given port. If no handler is registered, a 
-        /// <see cref="DefaultCallbackHandler"/> will be returned.
+        /// <see cref="DefaultPortCallbackHandler"/> will be returned.
         /// </summary>
         /// <param name="port">The port we are retrieving the callback handler on.</param>
         /// <returns>A <see cref="ICallbackHandler"/> for a given port. If no handler is registered, a 
-        /// <see cref="DefaultCallbackHandler"/> will be returned.</returns>
+        /// <see cref="DefaultPortCallbackHandler"/> will be returned.</returns>
         public static ICallbackHandler FindCallback(PortBase port)
         {
             if (WorkingHandlers.ContainsKey(port))
