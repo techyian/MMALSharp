@@ -263,7 +263,7 @@ namespace MMALSharp.Components
             if (inputBuffer.CheckState())
             {
                 // Populate the new input buffer with user provided image data.
-                var result = this.Inputs[0].ManagedInputCallback.InputCallback(inputBuffer);
+                var result = this.Inputs[0].ManagedInputCallback.CallbackWithResult(inputBuffer);
                 inputBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
 
                 this.Inputs[0].SendBuffer(inputBuffer);

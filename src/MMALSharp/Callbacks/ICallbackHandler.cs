@@ -1,4 +1,8 @@
-using System;
+// <copyright file="ICallbackHandler.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
@@ -9,12 +13,7 @@ namespace MMALSharp.Callbacks
     /// Represents an output port callback handler.
     /// </summary>
     public interface ICallbackHandler
-    {
-        /// <summary>
-        /// Flag to state whether completed status has been sent to observers.
-        /// </summary>
-        bool Triggered { get; set; }
-
+    {        
         /// <summary>
         /// A whitelisted Encoding Type that this callback handler will operate on.
         /// </summary>
@@ -26,26 +25,16 @@ namespace MMALSharp.Callbacks
         PortBase WorkingPort { get; }
 
         /// <summary>
-        /// The input callback function to carry out.
+        /// The callback function to carry out. Generally applies to input ports.
         /// </summary>
         /// <param name="buffer">The working buffer header.</param>
         /// <returns>A <see cref="ProcessResult"/> object based on the result of the callback function.</returns>
-        ProcessResult InputCallback(MMALBufferImpl buffer);
+        ProcessResult CallbackWithResult(MMALBufferImpl buffer);
 
         /// <summary>
         /// The callback function to carry out. Applies to output, control and connection ports.
         /// </summary>
         /// <param name="buffer">The working buffer header.</param>
-        void Callback(MMALBufferImpl buffer);
-                
-        /// <summary>
-        /// Send completed status to observers.
-        /// </summary>
-        void SendCompleted();
-
-        /// <summary>
-        /// Send exception to observers.
-        /// </summary>
-        void SendError(Exception e);
+        void Callback(MMALBufferImpl buffer);     
     }
 }

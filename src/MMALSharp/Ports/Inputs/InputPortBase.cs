@@ -131,7 +131,7 @@ namespace MMALSharp.Ports.Inputs
                 }
 
                 // Populate the new input buffer with user provided image data.
-                var result = this.ManagedInputCallback.InputCallback(newBuffer);
+                var result = this.ManagedInputCallback.CallbackWithResult(newBuffer);
                 newBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
 
                 try
