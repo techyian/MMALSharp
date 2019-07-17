@@ -6,8 +6,9 @@ namespace MMALSharp.Handlers
 {
     public abstract class CaptureHandlerProcessorBase : ICaptureHandler
     {
-        protected Action<IFrameProcessingContext> _manipulate;
-        protected IImageContext _imageContext;
+        protected Action<IFrameProcessingContext> OnManipulate { get; set; }
+        protected Func<IFrameProcessingContext, IFrameAnalyser> OnAnalyse { get; set; }
+        protected IImageContext ImageContext { get; set; }
         
         public abstract void Dispose();
 
@@ -46,8 +47,13 @@ namespace MMALSharp.Handlers
         /// <param name="imageContext">Metadata for the image frame.</param>
         public void Manipulate(Action<IFrameProcessingContext> context, IImageContext imageContext)
         {
-            _manipulate = context;
-            _imageContext = imageContext;
+            this.OnManipulate = context;
+            this.ImageContext = imageContext;
+        }
+
+        public void Analyse(Func<IFrameProcessingContext, IFrameAnalyser> context)
+        {
+            
         }
     }
 }

@@ -14,6 +14,7 @@ using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using MMALSharp.Ports.Outputs;
+using MMALSharp.Processors.Motion;
 
 namespace MMALSharp
 {
@@ -430,6 +431,12 @@ namespace MMALSharp
         public MMALOverlayRenderer AddOverlay(MMALVideoRenderer parent, PreviewOverlayConfiguration config, byte[] source)
             => new MMALOverlayRenderer(parent, config, source);
         
+        public MMALCamera WithMotionDetection(IMotionCaptureHandler handler, MotionConfig config, Action onDetect)
+        {
+            handler.DetectMotion(config, onDetect);
+            return this;
+        }
+
         /// <summary>
         /// Cleans up any unmanaged resources. It is intended for this method to be run when no more activity is to be done on the camera.
         /// </summary>

@@ -38,11 +38,11 @@ namespace MMALSharp.Handlers
         /// <inheritdoc />
         public override void PostProcess()
         {
-            if (_manipulate != null && _imageContext != null)
+            if (this.OnManipulate != null && this.ImageContext != null)
             {
-                _imageContext.Data = this.WorkingData.ToArray();
-                _manipulate(new FrameProcessingContext(_imageContext));
-                this.WorkingData = new List<byte>(_imageContext.Data);     
+                this.ImageContext.Data = this.WorkingData.ToArray();
+                this.OnManipulate(new FrameProcessingContext(this.ImageContext));
+                this.WorkingData = new List<byte>(this.ImageContext.Data);     
             }
         }
 

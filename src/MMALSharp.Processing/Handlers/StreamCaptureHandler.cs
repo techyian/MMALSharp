@@ -47,7 +47,7 @@ namespace MMALSharp.Handlers
                 
                 if (this.CurrentStream != null && this.CurrentStream.Length > 0)
                 {
-                    if (_manipulate != null && _imageContext != null)
+                    if (this.OnManipulate != null && this.ImageContext != null)
                     {
                         byte[] arr = null;
 
@@ -58,12 +58,12 @@ namespace MMALSharp.Handlers
 
                             arr = ms.ToArray();
 
-                            _imageContext.Data = arr;
+                            this.ImageContext.Data = arr;
                             
-                            _manipulate(new FrameProcessingContext(_imageContext));
+                            this.OnManipulate(new FrameProcessingContext(this.ImageContext));
                         }
 
-                        using (var ms = new MemoryStream(_imageContext.Data))
+                        using (var ms = new MemoryStream(this.ImageContext.Data))
                         {   
                             this.CurrentStream.SetLength(0);
                             this.CurrentStream.Position = 0;
