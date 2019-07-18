@@ -29,7 +29,8 @@ namespace MMALSharp.Handlers
         /// Processes the data passed into this method to this class' Stream instance.
         /// </summary>
         /// <param name="data">The image data.</param>
-        public virtual void Process(byte[] data)
+        /// <param name="eos">Is end of stream.</param>
+        public virtual void Process(byte[] data, bool eos)
         {
         }
 
@@ -51,9 +52,9 @@ namespace MMALSharp.Handlers
             this.ImageContext = imageContext;
         }
 
-        public void Analyse(Func<IFrameProcessingContext, IFrameAnalyser> context)
+        public void AnalyseFrame(IFrameAnalyser analyser)
         {
-            
+            analyser.Apply();
         }
     }
 }

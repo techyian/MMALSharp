@@ -18,11 +18,9 @@ namespace MMALSharp.Handlers
 
         protected bool ShouldDetectMotion { get; set; }
 
-        protected Action OnDetect { get; set; }
-
-        protected MotionConfig MotionConfig { get; set; }
-
         protected FileStream MotionRecording { get; set; }
+
+        protected MotionAnalyser Analyser { get; set; }
 
         /// <summary>
         /// Creates a new instance of the <see cref="VideoStreamCaptureHandler"/> class with the specified directory and filename extension.
@@ -44,38 +42,34 @@ namespace MMALSharp.Handlers
         /// </summary>
         public void Split() => this.NewFile();
 
-        public override void Process(byte[] data)
+        public override void Process(byte[] data, bool eos)
         {
-            base.Process(data);
+            base.Process(data, eos);
 
             if (this.ShouldDetectMotion)
             {
-                //this.Analyse(context =>
-                //{
-                //    context.Apply(new SharpenProcessor());
-                //}, new ImageContext(MMALCameraConfig.StillResolution));
+                this.AnalyseFrame(this.Analyser);
             }                        
         }
 
         public void DetectMotion(MotionConfig config, Action onDetect)
         {
             this.ShouldDetectMotion = true;            
-            this.MotionConfig = config;
-            this.OnDetect = onDetect;
+            this.Analyser = new MotionAnalyser(config, onDetect);
         }
 
         public void StartRecording(string filepath)
         {
             _isRecordingMotion = true;
             this.MotionRecording = File.Create(filepath);
-            this.MotionConfig.RecordingElapsed.Start();
+            this.Analyser.MotionConfig.RecordingElapsed.Start();
         }
 
         public override void Dispose()
         {
-            if (this.ShouldDetectMotion && this.MotionRecording != null)
+            if (this.ShouldDetectMotion)
             {
-                this.MotionRecording.Dispose();
+                this.MotionRecording?.Dispose();
             }
 
             base.Dispose();

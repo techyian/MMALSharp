@@ -38,8 +38,10 @@ namespace MMALSharp.Callbacks
             base.Callback(buffer);
             
             var data = buffer.GetBufferData();
+            var eos = buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) ||
+                      buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
 
-            this.WorkingPort.Handler?.Process(data);
+            this.WorkingPort.Handler?.Process(data, eos);
         }
     }
 }

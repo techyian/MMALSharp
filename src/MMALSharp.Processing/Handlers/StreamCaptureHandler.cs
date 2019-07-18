@@ -28,7 +28,7 @@ namespace MMALSharp.Handlers
         protected int Processed { get; set; }
 
         /// <inheritdoc />
-        public override void Process(byte[] data)
+        public override void Process(byte[] data, bool eos)
         {
             this.Processed += data.Length;
                         
