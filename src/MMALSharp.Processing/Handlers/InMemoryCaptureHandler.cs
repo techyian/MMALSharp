@@ -30,7 +30,7 @@ namespace MMALSharp.Handlers
         }
         
         /// <inheritdoc />
-        public override void Process(byte[] data)
+        public override void Process(byte[] data, bool eos)
         {
             this.WorkingData.AddRange(data);
         }

@@ -113,7 +113,7 @@ namespace MMALSharp.Handlers
         /// Writes frame data to the StandardInput stream to be processed by FFmpeg.
         /// </summary>
         /// <param name="data">The frame data to push to FFmpeg.</param>
-        public void Process(byte[] data)
+        public void Process(byte[] data, bool eos)
         {
             try
             {

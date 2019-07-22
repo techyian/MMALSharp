@@ -468,7 +468,7 @@ namespace MMALSharp.Tests
                 imgCaptureHandler.Manipulate(context =>
                 {
                     context.StripBayerMetadata(CameraVersion.OV5647);
-                }, new ImageContext(MMALCameraConfig.StillResolution, PixelFormat.Format24bppRgb, false));
+                }, new ImageContext(MMALCameraConfig.StillResolution, PixelFormat.Format24bppRgb, false, ImageFormat.Jpeg));
                 
                 // Camera warm up time
                 await Task.Delay(2000);
@@ -518,7 +518,7 @@ namespace MMALSharp.Tests
                 imgCaptureHandler.Manipulate(context =>
                 {
                     context.StripBayerMetadata(CameraVersion.OV5647);
-                }, new ImageContext(MMALCameraConfig.StillResolution, PixelFormat.Format24bppRgb, false));
+                }, new ImageContext(MMALCameraConfig.StillResolution, PixelFormat.Format24bppRgb, false, ImageFormat.Jpeg));
                 
                 // Camera warm up time
                 await Task.Delay(2000);

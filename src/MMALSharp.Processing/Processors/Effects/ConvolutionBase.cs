@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using MMALSharp.Common;
 
 namespace MMALSharp.Processors.Effects
@@ -30,9 +31,8 @@ namespace MMALSharp.Processors.Effects
             Bitmap bmp = null;
             BitmapData bmpData = null;
             IntPtr pNative = IntPtr.Zero;
-            int bytes, stride;
-            byte[] rgbValues = null;
-            
+            int bytes;
+                        
             using (var ms = new MemoryStream(store))
             {
                 if (context.Raw)
@@ -58,68 +58,100 @@ namespace MMALSharp.Processors.Effects
                     pNative = bmpData.Scan0;
                 }
 
-                unsafe
+                // Split image into 4 quadrants and process individually.
+                var quadA = new Rectangle(0, 0, bmpData.Width / 2, bmpData.Height / 2);
+                var quadB = new Rectangle(bmpData.Width / 2, 0, bmpData.Width / 2, bmpData.Height / 2);
+                var quadC = new Rectangle(0, bmpData.Height / 2, bmpData.Width / 2, bmpData.Height / 2);
+                var quadD = new Rectangle(bmpData.Width / 2, bmpData.Height / 2, bmpData.Width / 2, bmpData.Height / 2);
+
+                bytes = bmpData.Stride * bmp.Height;
+
+                var rgbValues = new byte[bytes];
+
+                // Copy the RGB values into the array.
+                Marshal.Copy(pNative, rgbValues, 0, bytes);
+
+                var bpp = Image.GetPixelFormatSize(bmp.PixelFormat);
+
+                var t1 = Task.Run(() =>
                 {
-                    // Declare an array to hold the bytes of the bitmap.
-                    bytes = bmpData.Stride * bmp.Height;
-                    stride = bmpData.Stride;
-                    
-                    byte* ptr1 = (byte*)bmpData.Scan0;
-                    
-                    rgbValues = new byte[bytes];
-                    
-                    // Copy the RGB values into the array.
-                    Marshal.Copy(pNative, rgbValues, 0, bytes);
-    
-                    for (int column = 0; column < bmpData.Height; column++)
-                    {
-                        for (int row = 0; row < bmpData.Width; row++)
-                        {
-                            if (column > 3 && row > 3)
-                            {
-                                int r1 = 0, g1 = 0, b1 = 0;
-    
-                                for (var l = 0; l < kernelWidth; l++)
-                                {
-                                    for (var m = 0; m < kernelHeight; m++)
-                                    {
-                                        r1 += (int)(rgbValues[(this.Bound(column + m, bmpData.Height) * stride) + (this.Bound(row + l, bmpData.Width) * 3)] * kernel[l, m]);
-                                        g1 += (int)(rgbValues[(this.Bound(column + m, bmpData.Height) * stride) + (this.Bound(row + l, bmpData.Width) * 3) + 1] * kernel[l, m]);
-                                        b1 += (int)(rgbValues[(this.Bound(column + m, bmpData.Height) * stride) + (this.Bound(row + l, bmpData.Width) * 3) + 2] * kernel[l, m]);
-                                    }
-                                }
-                                
-                                ptr1[(row * 3) + (column * stride)] = (byte)Math.Max(0,r1);
-                                ptr1[(row * 3) + (column * stride) + 1] = (byte)Math.Max(0, g1);
-                                ptr1[(row * 3) + (column * stride) + 2] = (byte)Math.Max(0, b1);
-                            }
-                            else
-                            {
-                                ptr1[(row * 3) + (column * stride)] = 0;
-                                ptr1[(row * 3) + (column * stride) + 1] = 0;
-                                ptr1[(row * 3) + (column * stride) + 2] = 0;
-                            }
-                        }
-                    }
-                }
-               
+                    this.ProcessQuadrant(quadA, bmp, bmpData, rgbValues, kernel, kernelWidth, kernelHeight, bpp);
+                });
+                var t2 = Task.Run(() =>
+                {
+                    this.ProcessQuadrant(quadB, bmp, bmpData, rgbValues, kernel, kernelWidth, kernelHeight, bpp);
+                });
+                var t3 = Task.Run(() =>
+                {
+                    this.ProcessQuadrant(quadC, bmp, bmpData, rgbValues, kernel, kernelWidth, kernelHeight, bpp);
+                });
+                var t4 = Task.Run(() =>
+                {
+                    this.ProcessQuadrant(quadD, bmp, bmpData, rgbValues, kernel, kernelWidth, kernelHeight, bpp);
+                });
+
+                Task.WaitAll(t1, t2, t3, t4);
+                               
                 bmp.UnlockBits(bmpData);
             }
             
             if (context.Raw)
-            {
+            {                
                 Marshal.Copy(pNative, store, 0, bytes);
             }
             else
             {
                 using (var ms = new MemoryStream())
                 {
-                    bmp.Save(ms, ImageFormat.Jpeg);
+                    bmp.Save(ms, context.StoreFormat);
                     Array.Copy(ms.ToArray(), 0, store, 0, ms.Length);
                 }
             }
             
             bmp.Dispose();
+        }
+
+        private void ProcessQuadrant(Rectangle quad, Bitmap bmp, BitmapData bmpData, byte[] rgbValues, double[,] kernel, int kernelWidth, int kernelHeight, int pixelDepth)
+        {
+            unsafe
+            {
+                // Declare an array to hold the bytes of the bitmap.
+                var bytes = bmpData.Stride * bmp.Height;
+                var stride = bmpData.Stride;
+
+                byte* ptr1 = (byte*)bmpData.Scan0;
+
+                for (int column = quad.X; column < quad.X + quad.Width; column++)
+                {
+                    for (int row = quad.Y; row < quad.Y + quad.Height; row++)
+                    {
+                        if (column > kernelWidth && row > kernelHeight)
+                        {
+                            int r1 = 0, g1 = 0, b1 = 0;
+
+                            for (var l = 0; l < kernelWidth; l++)
+                            {
+                                for (var m = 0; m < kernelHeight; m++)
+                                {
+                                    r1 += (int)(rgbValues[(this.Bound(row + m, quad.Y + quad.Height) * stride) + (this.Bound(column + l, quad.X + quad.Width) * pixelDepth)] * kernel[l, m]);
+                                    g1 += (int)(rgbValues[(this.Bound(row + m, quad.Y + quad.Height) * stride) + (this.Bound(column + l, quad.X + quad.Width) * pixelDepth) + 1] * kernel[l, m]);
+                                    b1 += (int)(rgbValues[(this.Bound(row + m, quad.Y + quad.Height) * stride) + (this.Bound(column + l, quad.X + quad.Width) * pixelDepth) + 2] * kernel[l, m]);
+                                }
+                            }
+
+                            ptr1[(column * pixelDepth) + (row * stride)] = (byte)Math.Max(0, r1);
+                            ptr1[(column * pixelDepth) + (row * stride) + 1] = (byte)Math.Max(0, g1);
+                            ptr1[(column * pixelDepth) + (row * stride) + 2] = (byte)Math.Max(0, b1);
+                        }
+                        else
+                        {
+                            ptr1[(column * pixelDepth) + (row * stride)] = 0;
+                            ptr1[(column * pixelDepth) + (row * stride) + 1] = 0;
+                            ptr1[(column * pixelDepth) + (row * stride) + 2] = 0;
+                        }
+                    }
+                }
+            }
         }
         
         private int Bound(int value, int endIndex)

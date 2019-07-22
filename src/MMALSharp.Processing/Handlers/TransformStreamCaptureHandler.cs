@@ -65,7 +65,8 @@ namespace MMALSharp.Handlers
         /// Processes the data passed into this method to this class' Stream instance.
         /// </summary>
         /// <param name="data">The image data.</param>
-        public override void Process(byte[] data)
+        /// <param name="eos">Is end of stream.</param>
+        public override void Process(byte[] data, bool eos)
         {
             this.Processed += data.Length;
 
