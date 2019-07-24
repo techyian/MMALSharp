@@ -71,7 +71,7 @@ namespace MMALSharp.Processors.Effects
                 // Copy the RGB values into the array.
                 Marshal.Copy(pNative, rgbValues, 0, bytes);
 
-                var bpp = Image.GetPixelFormatSize(bmp.PixelFormat);
+                var bpp = Image.GetPixelFormatSize(bmp.PixelFormat) / 8;
 
                 var t1 = Task.Run(() =>
                 {
