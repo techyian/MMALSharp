@@ -26,38 +26,30 @@ namespace MMALSharp.Processors.Effects
         /// <param name="kernelWidth">The kernel's width.</param>
         /// <param name="kernelHeight">The kernel's height.</param>
         /// <param name="context">An image context providing additional metadata on the data passed in.</param>
-        public void Convolute(byte[] store, double[,] kernel, int kernelWidth, int kernelHeight, IImageContext context)
+        public void ApplyConvolution(double[,] kernel, int kernelWidth, int kernelHeight, IImageContext context)
         {
             Bitmap bmp = null;
             BitmapData bmpData = null;
-            IntPtr pNative = IntPtr.Zero;
+            IntPtr pNative;
             int bytes;
+            byte[] rawStore = null;
                         
-            using (var ms = new MemoryStream(store))
+            using (var ms = new MemoryStream(context.Data))
             {
+                bmp = this.LoadBitmap(context, ms);
+                bmpData = bmp.LockBits(new Rectangle(0, 0,
+                        bmp.Width,
+                        bmp.Height),
+                    ImageLockMode.ReadWrite,
+                    bmp.PixelFormat);
+
                 if (context.Raw)
                 {
-                    bmp = new Bitmap(context.Resolution.Width, context.Resolution.Height, context.PixelFormat);
-                    bmpData = bmp.LockBits(new Rectangle(0, 0,
-                            bmp.Width,
-                            bmp.Height),
-                        ImageLockMode.ReadWrite,
-                        bmp.PixelFormat);
-
-                    pNative = bmpData.Scan0;
-                    Marshal.Copy(store, 0, pNative, store.Length);
-                }
-                else
-                {
-                    bmp = new Bitmap(ms);
-                    bmpData = bmp.LockBits(new Rectangle(0, 0,
-                            bmp.Width,
-                            bmp.Height),
-                        ImageLockMode.ReadWrite,
-                        bmp.PixelFormat);
-                    pNative = bmpData.Scan0;
+                    this.InitBitmapData(context, bmpData);
                 }
 
+                pNative = bmpData.Scan0;
+                
                 // Split image into 4 quadrants and process individually.
                 var quadA = new Rectangle(0, 0, bmpData.Width / 2, bmpData.Height / 2);
                 var quadB = new Rectangle(bmpData.Width / 2, 0, bmpData.Width / 2, bmpData.Height / 2);
@@ -91,24 +83,47 @@ namespace MMALSharp.Processors.Effects
                 });
 
                 Task.WaitAll(t1, t2, t3, t4);
-                               
+
+                if (context.Raw)
+                {
+                    rawStore = new byte[bytes];
+                    Marshal.Copy(pNative, rawStore, 0, bytes);
+                }
+
                 bmp.UnlockBits(bmpData);
             }
-            
+
             if (context.Raw)
-            {                
-                Marshal.Copy(pNative, store, 0, bytes);
+            {
+                context.Data = rawStore;
             }
             else
             {
                 using (var ms = new MemoryStream())
                 {
+                    context.Data = new byte[ms.Length];
                     bmp.Save(ms, context.StoreFormat);
-                    Array.Copy(ms.ToArray(), 0, store, 0, ms.Length);
+                    Array.Copy(ms.ToArray(), 0, context.Data, 0, ms.Length);
                 }
             }
             
             bmp.Dispose();
+        }
+
+        private Bitmap LoadBitmap(IImageContext imageContext, MemoryStream stream)
+        {
+            if (imageContext.Raw)
+            {
+                return new Bitmap(imageContext.Resolution.Width, imageContext.Resolution.Height, imageContext.PixelFormat);
+            }
+
+            return new Bitmap(stream);
+        }
+
+        private void InitBitmapData(IImageContext imageContext, BitmapData bmpData)
+        {
+            var pNative = bmpData.Scan0;
+            Marshal.Copy(imageContext.Data, 0, pNative, imageContext.Data.Length);
         }
 
         private void ProcessQuadrant(Rectangle quad, Bitmap bmp, BitmapData bmpData, byte[] rgbValues, double[,] kernel, int kernelWidth, int kernelHeight, int pixelDepth)

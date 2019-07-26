@@ -9,6 +9,7 @@ using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports.Outputs;
+using MMALSharp.Processors.Motion;
 
 namespace MMALSharp.Callbacks
 {
@@ -24,6 +25,11 @@ namespace MMALSharp.Callbacks
         public VideoOutputCallbackHandler(OutputPortBase port) 
             : base(port)
         {
+            var motionType = this.WorkingPort.EncodingType == MMALEncoding.H264
+                ? MotionType.MotionVector
+                : MotionType.FrameDiff;
+
+            ((IVideoCaptureHandler)this.WorkingPort.Handler).MotionType = motionType;
         }
 
         /// <summary>
@@ -34,6 +40,11 @@ namespace MMALSharp.Callbacks
         public VideoOutputCallbackHandler(OutputPortBase port, MMALEncoding encoding)
             : base(port, encoding)
         {
+            var motionType = this.WorkingPort.EncodingType == MMALEncoding.H264
+                ? MotionType.MotionVector
+                : MotionType.FrameDiff;
+
+            ((IVideoCaptureHandler)this.WorkingPort.Handler).MotionType = motionType;
         }
 
         /// <summary>

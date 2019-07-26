@@ -36,12 +36,25 @@ namespace MMALSharp.Common
         public ImageFormat StoreFormat { get; }
 
         /// <summary>
-        /// Create a new instance of <see cref="ImageContext"/> with the provided resolution. Assumes RGB24 and stores result to JPEG format.
+        /// Create a new instance of <see cref="ImageContext"/> with the provided resolution. Assumes RGB24 and stores result to JPEG format when using image convolution techniques.
         /// </summary>
         /// <param name="res">The resolution of the image to process.</param>
         public ImageContext(Resolution res)
         {
             this.Resolution = res;
+        }
+
+        /// <summary>
+        /// Create a new instance of <see cref="ImageContext"/> with the provided resolution. Stores result to JPEG format when using image convolution techniques.
+        /// </summary>
+        /// <param name="res">The resolution of the image to process.</param>
+        /// <param name="format">The pixel format of the data to process.</param>
+        /// <param name="raw">Image frame is raw data.</param>
+        public ImageContext(Resolution res, PixelFormat format, bool raw)
+        {
+            this.Resolution = res;
+            this.PixelFormat = format;
+            this.Raw = raw;
         }
 
         /// <summary>

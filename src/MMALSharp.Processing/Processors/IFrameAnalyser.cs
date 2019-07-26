@@ -8,6 +8,6 @@ namespace MMALSharp.Processors
 {
     public interface IFrameAnalyser
     {
-        void Apply();
+        void Apply(byte[] data, bool eos);
     }
 }

@@ -74,7 +74,7 @@ namespace MMALSharp.Handlers
             }
             catch(Exception e)
             {
-                MMALLog.Logger.Warn($"Something went wrong while processing stream: {e.Message}");                
+                MMALLog.Logger.Warn($"Something went wrong while processing stream: {e.InnerException?.Message}. {e.StackTrace}");
             }
         }
         

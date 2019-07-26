@@ -19,13 +19,34 @@ namespace MMALSharp.Processors.Effects
     /// </summary>
     public class EdgeDetection : ConvolutionBase, IFrameProcessor
     {
-        private const int KernelWidth = 3;
-        private const int KernelHeight = 3;
-        
-        private double[,] Kernel { get; }
+        public static double[,] LowStrengthKernel = new double[KernelWidth, KernelHeight]
+        {
+            { -1, 0, 1 },
+            { 0, 0, 0 },
+            { 1, 0, -1 }
+        };
+
+        public static double[,] MediumStrengthKernel = new double[KernelWidth, KernelHeight]
+        {
+            { 0, 1, 0 },
+            { 1, -4, 1 },
+            { 0, 1, 0 }
+        };
+
+        public static double[,] HighStrengthKernel = new double[KernelWidth, KernelHeight]
+        {
+            { -1, -1, -1 },
+            { -1, 8, -1 },
+            { -1, -1, -1 }
+        };
+
+        public double[,] Kernel { get; }
+
+        public const int KernelWidth = 3;
+        public const int KernelHeight = 3;
         
         /// <summary>
-        /// Creates a new instance of <see cref="EdgeDetection"/>.
+        /// Creates a new instance of <see cref="EdgeDetection"/> processor used to apply Edge detection convolution.
         /// </summary>
         /// <param name="strength">The Edge detection strength.</param>
         public EdgeDetection(EDStrength strength)
@@ -33,28 +54,13 @@ namespace MMALSharp.Processors.Effects
             switch (strength)
             {
                 case EDStrength.Low:
-                    Kernel = new double[KernelWidth, KernelHeight]
-                    {
-                        { -1, 0, 1 },
-                        { 0,  0, 0 },
-                        { 1, 0, -1 }
-                    };
+                    Kernel = LowStrengthKernel;
                     break;
                 case EDStrength.Medium:
-                    Kernel = new double[KernelWidth, KernelHeight]
-                    {
-                        { 0, 1, 0 },
-                        { 1, -4, 1 },
-                        { 0, 1, 0 }
-                    };
+                    Kernel = MediumStrengthKernel;
                     break;
                 case EDStrength.High:
-                    Kernel = new double[KernelWidth, KernelHeight]
-                    {
-                        { -1, -1, -1 },
-                        { -1, 8, -1 },
-                        { -1, -1, -1 }
-                    };
+                    Kernel = HighStrengthKernel;
                     break;
             }
         }
@@ -62,7 +68,7 @@ namespace MMALSharp.Processors.Effects
         /// <inheritdoc />
         public void Apply(IImageContext context)
         {
-            this.Convolute(context.Data, this.Kernel, KernelWidth, KernelHeight, context);
+            this.ApplyConvolution(this.Kernel, KernelWidth, KernelHeight, context);
         }
     }
 }

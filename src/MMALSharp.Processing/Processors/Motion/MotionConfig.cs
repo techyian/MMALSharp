@@ -1,14 +1,20 @@
 ﻿
 using System;
-using System.Diagnostics;
+using MMALSharp.Processors.Effects;
 
 namespace MMALSharp.Processors.Motion
 {
     public class MotionConfig
     {
-        public MotionSensitivity Sensitivity { get; set; }
-        public int FramesPerSecond { get; set; }
+        public EDStrength Sensitivity { get; set; }
         public DateTime RecordDuration { get; set; }
-        public Stopwatch RecordingElapsed { get; set; }
+        public int Threshold { get; set; }
+
+        public MotionConfig(EDStrength sensitivity, DateTime recordDuration, int threshold)
+        {
+            this.Sensitivity = sensitivity;
+            this.RecordDuration = recordDuration;
+            this.Threshold = threshold;
+        }
     }
 }

@@ -5,8 +5,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Config;
@@ -430,10 +432,18 @@ namespace MMALSharp
         /// <returns>The created <see cref="MMALOverlayRenderer"/> object.</returns>
         public MMALOverlayRenderer AddOverlay(MMALVideoRenderer parent, PreviewOverlayConfiguration config, byte[] source)
             => new MMALOverlayRenderer(parent, config, source);
-        
-        public MMALCamera WithMotionDetection(IMotionCaptureHandler handler, MotionConfig config, Action onDetect)
+
+        public MMALCamera StoreMotionVectors(IMotionVectorCaptureHandler handler, FileStream stream)
         {
-            handler.DetectMotion(config, onDetect);
+            MMALCameraConfig.InlineMotionVectors = true;
+            handler.InitialiseMotionStore(stream);
+            return this;
+        }
+
+        public MMALCamera WithMotionDetection(IMotionCaptureHandler handler, MotionConfig config, Action onDetect, IImageContext imageContext)
+        {
+            MMALCameraConfig.InlineMotionVectors = true;
+            handler.DetectMotion(config, onDetect, imageContext);
             return this;
         }
 

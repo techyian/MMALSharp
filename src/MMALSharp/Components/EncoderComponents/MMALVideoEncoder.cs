@@ -259,10 +259,7 @@ namespace MMALSharp.Components
 
         internal void ConfigureInlineVectorsFlag(int outputPort)
         {
-            if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264)
-            {
-                this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INLINE_VECTORS, MMALCameraConfig.InlineMotionVectors);
-            }
+            this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INLINE_VECTORS, MMALCameraConfig.InlineMotionVectors);
         }
 
         internal void ConfigureIntraRefresh(int outputPort)

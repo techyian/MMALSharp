@@ -4,7 +4,9 @@
 // </copyright>
 
 using System;
+using System.Diagnostics;
 using System.IO;
+using MMALSharp.Common;
 using MMALSharp.Processors.Motion;
 
 namespace MMALSharp.Handlers
@@ -12,15 +14,11 @@ namespace MMALSharp.Handlers
     /// <summary>
     /// Processes the video data to a FileStream.
     /// </summary>
-    public class VideoStreamCaptureHandler : FileStreamCaptureHandler, IMotionCaptureHandler
+    public class VideoStreamCaptureHandler : FileStreamCaptureHandler, IMotionVectorCaptureHandler, IVideoCaptureHandler
     {
-        private bool _isRecordingMotion;
+        public MotionType MotionType { get; set; }
 
-        protected bool ShouldDetectMotion { get; set; }
-
-        protected FileStream MotionRecording { get; set; }
-
-        protected MotionAnalyser Analyser { get; set; }
+        protected FileStream MotionVectorStore { get; set; }
 
         /// <summary>
         /// Creates a new instance of the <see cref="VideoStreamCaptureHandler"/> class with the specified directory and filename extension.
@@ -46,33 +44,15 @@ namespace MMALSharp.Handlers
         {
             base.Process(data, eos);
 
-            if (this.ShouldDetectMotion)
+            if (this.MotionType == MotionType.MotionVector && this.MotionVectorStore != null)
             {
-                this.AnalyseFrame(this.Analyser);
-            }                        
-        }
-
-        public void DetectMotion(MotionConfig config, Action onDetect)
-        {
-            this.ShouldDetectMotion = true;            
-            this.Analyser = new MotionAnalyser(config, onDetect);
-        }
-
-        public void StartRecording(string filepath)
-        {
-            _isRecordingMotion = true;
-            this.MotionRecording = File.Create(filepath);
-            this.Analyser.MotionConfig.RecordingElapsed.Start();
-        }
-
-        public override void Dispose()
-        {
-            if (this.ShouldDetectMotion)
-            {
-                this.MotionRecording?.Dispose();
+                // TODO: Process inline motion vector to FileStream.
             }
+        }
 
-            base.Dispose();
+        public void InitialiseMotionStore(FileStream stream)
+        {
+            this.MotionVectorStore = stream;
         }
     }
 }

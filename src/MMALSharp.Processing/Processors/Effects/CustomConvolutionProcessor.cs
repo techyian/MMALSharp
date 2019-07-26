@@ -12,8 +12,8 @@ namespace MMALSharp.Processors.Effects
     /// </summary>
     public class CustomConvolutionProcessor : ConvolutionBase, IFrameProcessor
     {
-        private readonly int _kernelWidth = 3;
-        private readonly int _kernelHeight = 3;
+        private readonly int _kernelWidth;
+        private readonly int _kernelHeight;
 
         private double[,] Kernel { get; }
 
@@ -34,7 +34,7 @@ namespace MMALSharp.Processors.Effects
         /// <inheritdoc />
         public void Apply(IImageContext context)
         {
-            this.Convolute(context.Data, this.Kernel, _kernelWidth, _kernelHeight, context);
+            this.ApplyConvolution(this.Kernel, _kernelWidth, _kernelHeight, context);
         }
     }
 }

@@ -51,10 +51,5 @@ namespace MMALSharp.Handlers
             this.OnManipulate = context;
             this.ImageContext = imageContext;
         }
-
-        public void AnalyseFrame(IFrameAnalyser analyser)
-        {
-            analyser.Apply();
-        }
     }
 }

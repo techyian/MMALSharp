@@ -25,7 +25,7 @@ namespace MMALSharp.Processors.Effects
         /// <inheritdoc />
         public void Apply(IImageContext context)
         {
-            this.Convolute(context.Data, _kernel, KernelWidth, KernelHeight, context);
+            this.ApplyConvolution(_kernel, KernelWidth, KernelHeight, context);
         }
     }
 }
