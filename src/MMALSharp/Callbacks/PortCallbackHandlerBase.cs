@@ -20,13 +20,13 @@ namespace MMALSharp.Callbacks
         public MMALEncoding EncodingType { get; }
 
         /// <inheritdoc />
-        public PortBase WorkingPort { get; }
-        
+        public IPort WorkingPort { get; }
+
         /// <summary>
         /// Creates a new instance of <see cref="PortCallbackHandlerBase"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="PortBase"/>.</param>
-        protected PortCallbackHandlerBase(PortBase port)
+        /// <param name="port">The working <see cref="IPort"/>.</param>
+        protected PortCallbackHandlerBase(IPort port)
         {
             this.WorkingPort = port;        
         }
@@ -34,16 +34,16 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="PortCallbackHandlerBase"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="PortBase"/>.</param>
+        /// <param name="port">The working <see cref="IPort"/>.</param>
         /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        protected PortCallbackHandlerBase(PortBase port, MMALEncoding encodingType)
+        protected PortCallbackHandlerBase(IPort port, MMALEncoding encodingType)
         {
             this.WorkingPort = port;
             this.EncodingType = encodingType;       
         }
         
         /// <inheritdoc />
-        public virtual void Callback(MMALBufferImpl buffer)
+        public virtual void Callback(IBuffer buffer)
         {
             if (MMALCameraConfig.Debug)
             {
@@ -57,7 +57,7 @@ namespace MMALSharp.Callbacks
         }
 
         /// <inheritdoc />
-        public virtual ProcessResult CallbackWithResult(MMALBufferImpl buffer)
+        public virtual ProcessResult CallbackWithResult(IBuffer buffer)
         {
             if (MMALCameraConfig.Debug)
             {

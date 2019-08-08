@@ -66,17 +66,17 @@ namespace MMALSharp
         /// <summary>
         /// List of properties associated with this buffer header.
         /// </summary>
-        public List<MMALBufferProperties> Properties { get; set; }
+        public List<MMALBufferProperties> Properties { get; }
 
         /// <summary>
         /// List of events associated with this buffer header.
         /// </summary>
-        public List<int> Events { get; set; }
+        public List<int> Events { get; }
 
         /// <summary>
         /// Native pointer that represents this buffer header.
         /// </summary>
-        internal MMAL_BUFFER_HEADER_T* Ptr { get; set; }
+        internal MMAL_BUFFER_HEADER_T* Ptr { get; }
 
         /// <summary>
         /// Creates a new Managed reference to a MMAL Buffer.
@@ -85,6 +85,8 @@ namespace MMALSharp
         public MMALBufferImpl(MMAL_BUFFER_HEADER_T* ptr)
         {
             this.Ptr = ptr;
+            this.Properties = new List<MMALBufferProperties>();
+            this.Events = new List<int>();
         }
         
         /// <summary>
@@ -274,7 +276,7 @@ namespace MMALSharp
         /// </summary>
         private void InitialiseProperties()
         {
-            this.Properties = new List<MMALBufferProperties>();
+            this.Properties.Clear();
 
             if (!this.CheckState())
             {

@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using MMALSharp.Callbacks;
@@ -19,10 +20,23 @@ namespace MMALSharp.Ports.Outputs
     /// <summary>
     /// Represents an output port.
     /// </summary>
-    public unsafe class OutputPort : OutputPortBase
+    public unsafe class OutputPort : PortBase, IOutputPort
     {
         /// <inheritdoc />
-        internal override ICallbackHandler ManagedOutputCallback { get; set; }
+        public override Resolution Resolution
+        {
+            get => new Resolution(this.Width, this.Height);
+            internal set
+            {
+                this.Width = value.Pad().Width;
+                this.Height = value.Pad().Height;
+            }
+        }
+        
+        /// <summary>
+        /// Output callback handler which is called by the native function callback.
+        /// </summary>
+        public virtual ICallbackHandler ManagedCallback { get; set; }
         
         /// <summary>
         /// Creates a new instance of <see cref="OutputPort"/>. 
@@ -48,9 +62,95 @@ namespace MMALSharp.Ports.Outputs
             : base(ptr, comp, type, guid, handler)
         {
         }
-        
-        /// <inheritdoc />
-        public override InputPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort = 0, bool useCallback = false)
+
+        public void Configure(MMALPortConfig config, IInputPort copyFrom)
+        {
+            this.PortConfig = config;
+            
+            copyFrom.ShallowCopy(this);
+            
+            if (config.EncodingType != null)
+            {
+                this.NativeEncodingType = config.EncodingType.EncodingVal;
+            }
+
+            if (config.PixelFormat != null)
+            {
+                this.NativeEncodingSubformat = config.PixelFormat.EncodingVal;
+            }
+
+            MMAL_VIDEO_FORMAT_T tempVid = this.Ptr->Format->Es->Video;
+
+            try
+            {
+                this.Commit();
+            }
+            catch
+            {
+                // If commit fails using new settings, attempt to reset using old temp MMAL_VIDEO_FORMAT_T.
+                MMALLog.Logger.Warn("Commit of output port failed. Attempting to reset values.");
+                this.Ptr->Format->Es->Video = tempVid;
+                this.Commit();
+            }
+
+            if (config.EncodingType == MMALEncoding.JPEG)
+            {
+                this.SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, config.Quality);
+            }
+
+            if (config.ZeroCopy)
+            {
+                this.ZeroCopy = true;
+                this.SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
+            }
+
+            if (MMALCameraConfig.VideoColorSpace != null &&
+                MMALCameraConfig.VideoColorSpace.EncType == MMALEncoding.EncodingType.ColorSpace)
+            {
+                this.VideoColorSpace = MMALCameraConfig.VideoColorSpace;
+            }
+
+            if (config.Bitrate > 0)
+            {
+                this.Bitrate = config.Bitrate;
+            }
+
+            this.EncodingType = config.EncodingType;
+            this.PixelFormat = config.PixelFormat;
+
+            if (config.Width > 0 && config.Height > 0)
+            {
+                this.Resolution = new Resolution(config.Width, config.Height).Pad();
+                this.Crop = new Rectangle(0, 0, this.Resolution.Width, this.Resolution.Height);
+            }
+            else
+            {
+                // Use config or don't set depending on port type.
+                this.Resolution = new Resolution(0, 0);
+
+                if (this.Resolution.Width > 0 && this.Resolution.Height > 0)
+                {
+                    this.Crop = new Rectangle(0, 0, this.Resolution.Width, this.Resolution.Height);
+                }
+            }
+
+            // It is important to re-commit changes to width and height.
+            this.Commit();
+
+            this.BufferNum = Math.Max(this.Ptr->BufferNumRecommended, this.Ptr->BufferNumMin);
+            this.BufferSize = Math.Max(this.Ptr->BufferSizeRecommended, this.Ptr->BufferSizeMin);
+
+            this.ManagedCallback = PortCallbackProvider.FindCallback(this);
+        }
+
+        /// <summary>
+        /// Connects two components together by their input and output ports.
+        /// </summary>
+        /// <param name="destinationComponent">The component we want to connect to.</param>
+        /// <param name="inputPort">The input port of the component we want to connect to.</param>
+        /// <param name="useCallback">Flag to use connection callback (adversely affects performance).</param>
+        /// <returns>The input port of the component we're connecting to - allows chain calling of this method.</returns>
+        public virtual IInputPort ConnectTo(IDownstreamComponent destinationComponent, int inputPort = 0, bool useCallback = false)
         {
             if (this.ConnectedReference != null)
             {
@@ -65,16 +165,11 @@ namespace MMALSharp.Ports.Outputs
             return destinationComponent.Inputs[inputPort];
         }
 
-        /// <inheritdoc />
-        public override InputPortBase ConnectTo(MMALDownstreamComponent destinationComponent, int inputPort, Func<PortBase> callback)
-        {
-            this.ConnectTo(destinationComponent, inputPort);
-            callback();
-            return destinationComponent.Inputs[inputPort];
-        }
-        
-        /// <inheritdoc />
-        internal override void ReleaseOutputBuffer(MMALBufferImpl bufferImpl)
+        /// <summary>
+        /// Release an output port buffer, get a new one from the queue and send it for processing.
+        /// </summary>
+        /// <param name="bufferImpl">A managed buffer object.</param>
+        public virtual void ReleaseBuffer(IBuffer bufferImpl)
         {
             bufferImpl.Release();
             
@@ -92,7 +187,7 @@ namespace MMALSharp.Ports.Outputs
 
                 if (this.Enabled && this.BufferPool != null)
                 {
-                    var newBuffer = MMALQueueImpl.GetBuffer(this.BufferPool.Queue.Ptr);
+                    var newBuffer = this.BufferPool.Queue.GetBuffer();
                     
                     if (newBuffer != null)
                     {
@@ -109,20 +204,23 @@ namespace MMALSharp.Ports.Outputs
                 MMALLog.Logger.Warn($"Unable to send buffer header. {e.Message}");
             }
         }
-        
-        /// <inheritdoc />
-        internal override void EnableOutputPort(bool sendBuffers = true)
+
+        /// <summary>
+        /// Enables processing on an output port.
+        /// </summary>
+        /// <param name="sendBuffers">Indicates whether we want to send all the buffers in the port pool or simply create the pool.</param>
+        public virtual void Enable(bool sendBuffers = true)
         {            
             if (!this.Enabled)
             {
-                this.ManagedOutputCallback = PortCallbackProvider.FindCallback(this);
+                this.ManagedCallback = PortCallbackProvider.FindCallback(this);
 
                 this.NativeCallback = this.NativeOutputPortCallback;
                 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
                 this.PtrCallback = ptrCallback;
                 
-                if (this.ManagedOutputCallback == null)
+                if (this.ManagedCallback == null)
                 {
                     MMALLog.Logger.Warn("Callback null");
 
@@ -133,7 +231,7 @@ namespace MMALSharp.Ports.Outputs
                     this.EnablePort(ptrCallback);
                 }
                 
-                if (this.ManagedOutputCallback != null)
+                if (this.ManagedCallback != null)
                 {
                     this.SendAllBuffers(sendBuffers);
                 }
@@ -144,12 +242,14 @@ namespace MMALSharp.Ports.Outputs
                 throw new PiCameraError("Unknown error occurred whilst enabling port");
             }
         }
-        
-        /// <inheritdoc />
-        internal override void Start()
+
+        /// <summary>
+        /// Enable the port specified.
+        /// </summary>
+        public void Start()
         {
             MMALLog.Logger.Debug($"Starting output port {this.Name}");
-            this.EnableOutputPort();
+            this.Enable();
         }
         
         /// <summary>
@@ -176,11 +276,11 @@ namespace MMALSharp.Ports.Outputs
 
             if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !failed && !this.Trigger.Task.IsCompleted) || (eos && !this.Trigger.Task.IsCompleted))
             {
-                this.ManagedOutputCallback.Callback(bufferImpl);
+                this.ManagedCallback.Callback(bufferImpl);
             }
             
             // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
-            this.ReleaseOutputBuffer(bufferImpl);
+            this.ReleaseBuffer(bufferImpl);
 
             // If this buffer signals the end of data stream, allow waiting thread to continue.
             if (eos || failed)

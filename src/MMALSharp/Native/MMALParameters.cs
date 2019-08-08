@@ -2478,6 +2478,8 @@ namespace MMALSharp.Native
         // @waveform80 The following two components aren't in the MMAL headers, but do exist
         public const string MMAL_COMPONENT_DEFAULT_NULL_SINK = "vc.null_sink";
         public const string MMAL_COMPONENT_DEFAULT_RESIZER = "vc.ril.resize";
+
+        public const string MMAL_COMPONENT_ISP = "vc.ril.isp";
     }
 
     [StructLayout(LayoutKind.Sequential)]

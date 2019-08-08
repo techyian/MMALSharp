@@ -17,20 +17,20 @@ namespace MMALSharp
     public unsafe class MMALPoolImpl : MMALObject
     {
         /// <summary>
+        /// Native pointer that represents this buffer header pool.
+        /// </summary>
+        public MMAL_POOL_T* Ptr { get; }
+
+        /// <summary>
         /// Accessor to the queue of buffer headers this pool has.
         /// </summary>
-        public MMALQueueImpl Queue { get; set; }
+        public MMALQueueImpl Queue { get; }
 
         /// <summary>
         /// The number of buffer headers in this pool.
         /// </summary>
         public uint HeadersNum => this.Ptr->HeadersNum;
-
-        /// <summary>
-        /// Native pointer that represents this buffer header pool.
-        /// </summary>
-        internal MMAL_POOL_T* Ptr { get; set; }
-
+        
         /// <summary>
         /// Creates a new instance of <see cref="MMALPoolImpl"/> based on a port.
         /// </summary>
@@ -72,7 +72,7 @@ namespace MMALSharp
         /// <summary>
         /// Destroy a pool of MMAL_BUFFER_HEADER_T. This will also deallocate all of the memory which was allocated when creating or resizing the pool.
         /// </summary>
-        internal void Destroy()
+        private void Destroy()
         {
             MMALPool.mmal_pool_destroy(this.Ptr);
         }

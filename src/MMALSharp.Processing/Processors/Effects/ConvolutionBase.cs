@@ -21,22 +21,20 @@ namespace MMALSharp.Processors.Effects
         /// <summary>
         /// Apply a convolution based on the kernel passed in.
         /// </summary>
-        /// <param name="store">The image data.</param>
         /// <param name="kernel">The kernel.</param>
         /// <param name="kernelWidth">The kernel's width.</param>
         /// <param name="kernelHeight">The kernel's height.</param>
         /// <param name="context">An image context providing additional metadata on the data passed in.</param>
         public void ApplyConvolution(double[,] kernel, int kernelWidth, int kernelHeight, IImageContext context)
         {
-            Bitmap bmp = null;
             BitmapData bmpData = null;
-            IntPtr pNative;
+            IntPtr pNative = IntPtr.Zero;
             int bytes;
-            byte[] rawStore = null;
-                        
+            byte[] store = null;
+
             using (var ms = new MemoryStream(context.Data))
+            using (var bmp = this.LoadBitmap(context, ms))
             {
-                bmp = this.LoadBitmap(context, ms);
                 bmpData = bmp.LockBits(new Rectangle(0, 0,
                         bmp.Width,
                         bmp.Height),
@@ -49,7 +47,7 @@ namespace MMALSharp.Processors.Effects
                 }
 
                 pNative = bmpData.Scan0;
-                
+
                 // Split image into 4 quadrants and process individually.
                 var quadA = new Rectangle(0, 0, bmpData.Width / 2, bmpData.Height / 2);
                 var quadB = new Rectangle(bmpData.Width / 2, 0, bmpData.Width / 2, bmpData.Height / 2);
@@ -86,28 +84,24 @@ namespace MMALSharp.Processors.Effects
 
                 if (context.Raw)
                 {
-                    rawStore = new byte[bytes];
-                    Marshal.Copy(pNative, rawStore, 0, bytes);
+                    store = new byte[bytes];
+                    Marshal.Copy(pNative, store, 0, bytes);
                 }
 
                 bmp.UnlockBits(bmpData);
-            }
 
-            if (context.Raw)
-            {
-                context.Data = rawStore;
-            }
-            else
-            {
-                using (var ms = new MemoryStream())
+                if (!context.Raw)
                 {
-                    context.Data = new byte[ms.Length];
-                    bmp.Save(ms, context.StoreFormat);
-                    Array.Copy(ms.ToArray(), 0, context.Data, 0, ms.Length);
+                    using (var ms2 = new MemoryStream())
+                    {
+                        bmp.Save(ms2, context.StoreFormat);
+                        store = new byte[ms2.Length];
+                        Array.Copy(ms2.ToArray(), 0, store, 0, ms2.Length);
+                    }
                 }
             }
             
-            bmp.Dispose();
+            context.Data = store;
         }
 
         private Bitmap LoadBitmap(IImageContext imageContext, MemoryStream stream)
@@ -131,7 +125,6 @@ namespace MMALSharp.Processors.Effects
             unsafe
             {
                 // Declare an array to hold the bytes of the bitmap.
-                var bytes = bmpData.Stride * bmp.Height;
                 var stride = bmpData.Stride;
 
                 byte* ptr1 = (byte*)bmpData.Scan0;

@@ -19,8 +19,13 @@ namespace MMALSharp.Components
     /// Represents a downstream component. A downstream component is a component that can have data passed to it from further up the component
     /// heirarchy.
     /// </summary>
-    public abstract class MMALDownstreamComponent : MMALComponentBase
+    public abstract class MMALDownstreamComponent : MMALComponentBase, IDownstreamComponent
     {
+        /// <summary>
+        /// A list of working ports which are processing data in the component pipeline.
+        /// </summary>
+        public Dictionary<int, IOutputPort> ProcessingPorts { get; set; }
+
         /// <summary>
         /// Creates a new instance of a Downstream component.
         /// </summary>
@@ -29,13 +34,8 @@ namespace MMALSharp.Components
             : base(name)
         {
             MMALBootstrapper.DownstreamComponents.Add(this);
-            this.ProcessingPorts = new Dictionary<int, OutputPortBase>();
+            this.ProcessingPorts = new Dictionary<int, IOutputPort>();
         }
-
-        /// <summary>
-        /// A list of working ports which are processing data in the component pipeline.
-        /// </summary>
-        public Dictionary<int, OutputPortBase> ProcessingPorts { get; set; }
 
         /// <summary>
         /// Registers a <see cref="ICallbackHandler"/>.
@@ -47,7 +47,7 @@ namespace MMALSharp.Components
         /// If it exists, removes a <see cref="ICallbackHandler"/> on this component's input port.
         /// </summary>
         /// <param name="port">The port to remove a handler on.</param>
-        public void RemovePortCallback(PortBase port) => PortCallbackProvider.RemoveCallback(port);
+        public void RemovePortCallback(IPort port) => PortCallbackProvider.RemoveCallback(port);
         
         /// <summary>
         /// Registers a <see cref="IConnectionCallbackHandler"/>.
@@ -71,7 +71,7 @@ namespace MMALSharp.Components
         /// <param name="copyPort">The output port we are copying format data from.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual MMALDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, PortBase copyPort, bool zeroCopy = false)
+        public virtual IDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, IPort copyPort, bool zeroCopy = false)
         {
             if (copyPort != null)
             {
@@ -104,7 +104,7 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="config">User provided port configuration object.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual unsafe MMALDownstreamComponent ConfigureInputPort(MMALPortConfig config)
+        public virtual unsafe IDownstreamComponent ConfigureInputPort(MMALPortConfig config)
         {
             this.Inputs[0].PortConfig = config;
 
@@ -164,7 +164,7 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="config">User provided port configuration object.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual MMALDownstreamComponent ConfigureOutputPort(MMALPortConfig config)
+        public virtual IDownstreamComponent ConfigureOutputPort(MMALPortConfig config)
         {
             return this.ConfigureOutputPort(0, config);
         }
@@ -175,10 +175,8 @@ namespace MMALSharp.Components
         /// <param name="outputPort">The output port number to configure.</param>
         /// <param name="config">User provided port configuration object.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual unsafe MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
+        public virtual unsafe IDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
         {
-            this.Outputs[outputPort].PortConfig = config;
-
             if (this.ProcessingPorts.ContainsKey(outputPort))
             {
                 this.ProcessingPorts.Remove(outputPort);
@@ -186,80 +184,7 @@ namespace MMALSharp.Components
 
             this.ProcessingPorts.Add(outputPort, this.Outputs[outputPort]);
             
-            this.Inputs[0].ShallowCopy(this.Outputs[outputPort]);
-
-            if (config.EncodingType != null)
-            {
-                this.Outputs[outputPort].NativeEncodingType = config.EncodingType.EncodingVal;
-            }
-
-            if (config.PixelFormat != null)
-            {
-                this.Outputs[outputPort].NativeEncodingSubformat = config.PixelFormat.EncodingVal;
-            }
-
-            MMAL_VIDEO_FORMAT_T tempVid = this.Outputs[outputPort].Ptr->Format->Es->Video;
-
-            try
-            {
-                this.Outputs[outputPort].Commit();
-            }
-            catch
-            {
-                // If commit fails using new settings, attempt to reset using old temp MMAL_VIDEO_FORMAT_T.
-                MMALLog.Logger.Warn("Commit of output port failed. Attempting to reset values.");
-                this.Outputs[outputPort].Ptr->Format->Es->Video = tempVid;
-                this.Outputs[outputPort].Commit();
-            }
-
-            if (config.EncodingType == MMALEncoding.JPEG)
-            {
-                this.Outputs[outputPort].SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, config.Quality);
-            }
-
-            if (config.ZeroCopy)
-            {
-                this.Outputs[outputPort].ZeroCopy = true;
-                this.Outputs[outputPort].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
-            }
-
-            if (MMALCameraConfig.VideoColorSpace != null &&
-                MMALCameraConfig.VideoColorSpace.EncType == MMALEncoding.EncodingType.ColorSpace)
-            {
-                this.Outputs[outputPort].VideoColorSpace = MMALCameraConfig.VideoColorSpace;
-            }
-
-            if (config.Bitrate > 0)
-            {
-                this.Outputs[outputPort].Bitrate = config.Bitrate;
-            }
-            
-            this.Outputs[outputPort].EncodingType = config.EncodingType;
-            this.Outputs[outputPort].PixelFormat = config.PixelFormat;
-
-            if (config.Width > 0 && config.Height > 0)
-            {
-                this.Outputs[outputPort].Resolution = new Resolution(config.Width, config.Height).Pad();
-                this.Outputs[outputPort].Crop = new Rectangle(0, 0, this.Outputs[outputPort].Resolution.Width, this.Outputs[outputPort].Resolution.Height);
-            }
-            else
-            {
-                // Use config or don't set depending on port type.
-                this.Outputs[outputPort].Resolution = new Resolution(0, 0);
-
-                if (this.Outputs[outputPort].Resolution.Width > 0 && this.Outputs[outputPort].Resolution.Height > 0)
-                {
-                    this.Outputs[outputPort].Crop = new Rectangle(0, 0, this.Outputs[outputPort].Resolution.Width, this.Outputs[outputPort].Resolution.Height);
-                }
-            }
-
-            // It is important to re-commit changes to width and height.
-            this.Outputs[outputPort].Commit();
-
-            this.Outputs[outputPort].BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, this.Outputs[outputPort].Ptr->BufferNumMin);
-            this.Outputs[outputPort].BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
-            
-            this.Outputs[outputPort].ManagedOutputCallback = PortCallbackProvider.FindCallback(this.Outputs[outputPort]);
+            this.Outputs[outputPort].Configure(config, this.Inputs[0]);
 
             return this;
         }

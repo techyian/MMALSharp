@@ -26,7 +26,7 @@ namespace MMALSharp
         }
         
         /// <summary>
-        /// Cleans up any unmanaged resources. It is intended for this method to be run when no more activity is to be done on the camera.
+        /// Cleans up any unmanaged resources. It is intended for this method to be run when no more activity is to be done with MMAL.
         /// </summary>
         public void Cleanup()
         {

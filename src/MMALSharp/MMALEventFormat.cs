@@ -9,6 +9,14 @@ namespace MMALSharp
     /// </summary>
     public unsafe class MMALEventFormat
     {
+        // Dereferenced struct.
+        private MMAL_ES_FORMAT_T Format { get; }
+
+        /// <summary>
+        /// Native pointer that represents this event format.
+        /// </summary>
+        public MMAL_ES_FORMAT_T* Ptr { get; }
+
         /// <summary>
         /// The FourCC code of the component.
         /// </summary>
@@ -20,63 +28,55 @@ namespace MMALSharp
         public int Bitrate => this.Format.Bitrate;
         
         /// <summary>
-        /// The working width of the component.
+        /// The changed width value.
         /// </summary>
         public int Width => this.Format.Es->Video.Width;
         
         /// <summary>
-        /// The working height of the component.
+        /// The changed height value.
         /// </summary>
         public int Height => this.Format.Es->Video.Height;
         
         /// <summary>
-        /// The region of interest X value of the component.
+        /// The changed CropX value.
         /// </summary>
         public int CropX => this.Format.Es->Video.Crop.X;
         
         /// <summary>
-        /// The region of interest Y value of the component.
+        /// The changed CropY value.
         /// </summary>
         public int CropY => this.Format.Es->Video.Crop.Y;
         
         /// <summary>
-        /// The region of interest width value of the component.
+        /// The changed crop width value.
         /// </summary>
         public int CropWidth => this.Format.Es->Video.Crop.Width;
         
         /// <summary>
-        /// The region of interest height value of the component.
+        /// The changed crop height value.
         /// </summary>
         public int CropHeight => this.Format.Es->Video.Crop.Height;
         
         /// <summary>
-        /// The pixel aspect ratio numerator value component.
+        /// The changed pixel aspect ratio numerator value.
         /// </summary>
         public int ParNum => this.Format.Es->Video.Par.Num;
-        
+
         /// <summary>
-        /// The pixel aspect ratio denominator value component.
+        /// The changed pixel aspect ratio denominator value.
         /// </summary>
         public int ParDen => this.Format.Es->Video.Par.Den;
         
         /// <summary>
-        /// The framerate numerator value component.
+        /// The changed framerate numerator value.
         /// </summary>
         public int FramerateNum => this.Format.Es->Video.FrameRate.Num;
         
         /// <summary>
-        /// The framerate denominator value component.
+        /// The changed framerate denominator value.
         /// </summary>
         public int FramerateDen => this.Format.Es->Video.FrameRate.Den;
-
-        // Dereferenced struct.
-        internal MMAL_ES_FORMAT_T Format { get; set; }
-
-        /// <summary>
-        /// Native pointer that represents this event format.
-        /// </summary>
-        internal MMAL_ES_FORMAT_T* Ptr { get; set; }
-
+        
         /// <summary>
         /// Creates a new instance of <see cref="MMALEventFormat"/>.
         /// </summary>

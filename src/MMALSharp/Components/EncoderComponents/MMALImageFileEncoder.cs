@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using MMALSharp.Callbacks.Providers;
 using MMALSharp.Common.Utility;
+using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Handlers;
 using MMALSharp.Ports;
 using MMALSharp.Ports.Inputs;
@@ -21,7 +22,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// This component is used to encode image data stored in a stream.
     /// </summary>
-    public class MMALImageFileEncoder : MMALEncoderBase, IMMALConvert
+    public class MMALImageFileEncoder : MMALEncoderBase, IImageFileEncoder
     {
         /// <summary>
         /// Creates a new instance of <see cref="MMALImageFileEncoder"/>.

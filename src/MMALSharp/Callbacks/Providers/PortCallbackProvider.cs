@@ -17,7 +17,7 @@ namespace MMALSharp.Callbacks.Providers
         /// <summary>
         /// The list of active callback handlers.
         /// </summary>
-        public static Dictionary<PortBase, ICallbackHandler> WorkingHandlers { get; private set; } = new Dictionary<PortBase, ICallbackHandler>();
+        public static Dictionary<IPort, ICallbackHandler> WorkingHandlers { get; private set; } = new Dictionary<IPort, ICallbackHandler>();
 
         /// <summary>
         /// Register a new <see cref="ICallbackHandler"/>.
@@ -47,7 +47,7 @@ namespace MMALSharp.Callbacks.Providers
         /// <param name="port">The port we are retrieving the callback handler on.</param>
         /// <returns>A <see cref="ICallbackHandler"/> for a given port. If no handler is registered, a 
         /// <see cref="DefaultPortCallbackHandler"/> will be returned.</returns>
-        public static ICallbackHandler FindCallback(PortBase port)
+        public static ICallbackHandler FindCallback(IPort port)
         {
             if (WorkingHandlers.ContainsKey(port))
             {
@@ -61,7 +61,7 @@ namespace MMALSharp.Callbacks.Providers
         /// Remove a callback handler for a given port.
         /// </summary>
         /// <param name="port">The port we are removing the callback handler on.</param>
-        public static void RemoveCallback(PortBase port)
+        public static void RemoveCallback(IPort port)
         {
             if (WorkingHandlers.ContainsKey(port))
             {

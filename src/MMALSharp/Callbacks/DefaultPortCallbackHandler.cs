@@ -16,8 +16,8 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="DefaultPortCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="PortBase"/>.</param>
-        public DefaultPortCallbackHandler(PortBase port)
+        /// <param name="port">The working <see cref="IPort"/>.</param>
+        public DefaultPortCallbackHandler(IPort port)
             : base(port)
         {
         }
@@ -25,15 +25,15 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="DefaultPortCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="PortBase"/>.</param>
+        /// <param name="port">The working <see cref="IPort"/>.</param>
         /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        public DefaultPortCallbackHandler(PortBase port, MMALEncoding encodingType)
+        public DefaultPortCallbackHandler(IPort port, MMALEncoding encodingType)
             : base(port, encodingType)
         {
         }
 
         /// <inheritdoc />
-        public override void Callback(MMALBufferImpl buffer)
+        public override void Callback(IBuffer buffer)
         {
             base.Callback(buffer);
             

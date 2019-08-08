@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using MMALSharp.Callbacks;
+using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Config;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
@@ -21,7 +22,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// Represents an image encoder component.
     /// </summary>
-    public unsafe class MMALImageEncoder : MMALEncoderBase
+    public unsafe class MMALImageEncoder : MMALEncoderBase, IImageEncoder
     {
         /// <summary>
         /// Represents the maximum length of a formatted EXIF tag. This includes the tag's key, an equals sign, the tag's value and a null char.

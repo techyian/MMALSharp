@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using MMALSharp.Common;
+using MMALSharp.Common.Utility;
 
 namespace MMALSharp.Processors
 {
@@ -17,16 +18,14 @@ namespace MMALSharp.Processors
 
         public virtual void Apply(byte[] data, bool eos)
         {
-            if (!eos && this.FullFrame)
+            if (this.FullFrame)
             {
-                // Start fresh frame.
+                MMALLog.Logger.Info("Clearing frame");
                 this.WorkingData.Clear();
+                this.FullFrame = false;
             }
 
-            if (!this.FullFrame)
-            {
-                this.WorkingData.AddRange(data);
-            }
+            this.WorkingData.AddRange(data);
 
             if (eos)
             {

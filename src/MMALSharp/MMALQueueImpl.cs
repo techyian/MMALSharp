@@ -17,7 +17,7 @@ namespace MMALSharp
         /// <summary>
         /// Native pointer to the buffer header queue this object represents.
         /// </summary>
-        internal MMAL_QUEUE_T* Ptr { get; set; }
+        public MMAL_QUEUE_T* Ptr { get; }
 
         /// <summary>
         /// Creates a new instance of <see cref="MMALQueueImpl"/>.
@@ -28,12 +28,34 @@ namespace MMALSharp
             this.Ptr = ptr;
         }
 
+        /// <summary>
+        /// Get a MMAL_BUFFER_HEADER_T from a queue.
+        /// </summary>
+        /// <returns>A new managed buffer header object.</returns>
+        public MMALBufferImpl GetBuffer()
+        {
+            var ptr = MMALQueue.mmal_queue_get(this.Ptr);
+
+            if (!this.CheckState())
+            {
+                MMALLog.Logger.Warn("Buffer retrieved null.");
+                return null;
+            }
+
+            return new MMALBufferImpl(ptr);
+        }
+
         /// <inheritdoc />
         public override void Dispose()
         {
             MMALLog.Logger.Debug("Disposing queue.");
             this.Destroy();
             base.Dispose();
+        }
+
+        public override string ToString()
+        {
+            return $"Ptr address: {((IntPtr)this.Ptr).ToString()}";
         }
 
         /// <inheritdoc />
@@ -48,40 +70,6 @@ namespace MMALSharp
             return new MMALQueueImpl(ptr);
         }
 
-        /// <summary>
-        /// Get a MMAL_BUFFER_HEADER_T from a queue.
-        /// </summary>
-        /// <param name="ptr">The queue to get a buffer from.</param>
-        /// <returns>A new managed buffer header object.</returns>
-        internal static MMALBufferImpl GetBuffer(MMAL_QUEUE_T* ptr)
-        {
-            var bufPtr = MMALQueue.mmal_queue_get(ptr);
-
-            if (bufPtr == null || (IntPtr)bufPtr == IntPtr.Zero)
-            {
-                return null;
-            }
-
-            return new MMALBufferImpl(bufPtr);
-        }
-
-        /// <summary>
-        /// Get a MMAL_BUFFER_HEADER_T from a queue.
-        /// </summary>
-        /// <returns>A new managed buffer header object.</returns>
-        internal MMALBufferImpl GetBuffer()
-        {           
-            var ptr = MMALQueue.mmal_queue_get(this.Ptr);
-
-            if (!this.CheckState())
-            {
-                MMALLog.Logger.Warn("Buffer retrieved null.");
-                return null;                
-            }
-
-            return new MMALBufferImpl(ptr);
-        }
-        
         /// <summary>
         /// Get the number of MMAL_BUFFER_HEADER_T currently in a queue.
         /// </summary>
@@ -105,7 +93,7 @@ namespace MMALSharp
         /// <summary>
         /// Destroy a queue of MMAL_BUFFER_HEADER_T.
         /// </summary>
-        internal void Destroy()
+        private void Destroy()
         {
             MMALQueue.mmal_queue_destroy(this.Ptr);
         }

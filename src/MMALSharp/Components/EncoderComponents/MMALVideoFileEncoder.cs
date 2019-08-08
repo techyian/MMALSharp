@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MMALSharp.Callbacks.Providers;
 using MMALSharp.Common.Utility;
+using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
@@ -21,7 +22,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// This component is used to encode video data stored in a stream.
     /// </summary>
-    public class MMALVideoFileEncoder : MMALEncoderBase, IMMALConvert
+    public class MMALVideoFileEncoder : MMALEncoderBase, IVideoFileEncoder
     {
         /// <summary>
         /// Creates a new instance of <see cref="MMALImageFileEncoder"/>.

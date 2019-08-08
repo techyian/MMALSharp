@@ -14,7 +14,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// Represents a Camera Info component.
     /// </summary>
-    public unsafe class MMALCameraInfoComponent : MMALComponentBase
+    public unsafe class MMALCameraInfoComponent : MMALComponentBase, ICameraInfoComponent
     {
         /// <summary>
         /// The sensor name of the camera.

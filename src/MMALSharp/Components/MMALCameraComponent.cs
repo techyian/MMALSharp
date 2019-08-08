@@ -68,7 +68,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// Represents a camera component.
     /// </summary>
-    public sealed class MMALCameraComponent : MMALComponentBase
+    public sealed class MMALCameraComponent : MMALComponentBase, ICameraComponent
     {
         /// <summary>
         /// The output port number of the camera's preview port.
@@ -88,22 +88,22 @@ namespace MMALSharp.Components
         /// <summary>
         /// Managed reference to the Preview port of the camera.
         /// </summary>
-        public OutputPortBase PreviewPort { get; set; }
+        public IOutputPort PreviewPort { get; set; }
 
         /// <summary>
         /// Managed reference to the Video port of the camera.
         /// </summary>
-        public OutputPortBase VideoPort { get; set; }
+        public IOutputPort VideoPort { get; set; }
 
         /// <summary>
         /// Managed reference to the Still port of the camera.
         /// </summary>
-        public OutputPortBase StillPort { get; set; }
+        public IOutputPort StillPort { get; set; }
 
         /// <summary>
         /// Camera Info component. This is used to provide detailed info about the camera itself.
         /// </summary>
-        public MMALCameraInfoComponent CameraInfo { get; set; }
+        public ICameraInfoComponent CameraInfo { get; set; }
         
         /// <summary>
         /// Initialises a new MMALCameraComponent.
@@ -203,7 +203,7 @@ namespace MMALSharp.Components
             }
         }
 
-        internal void Initialise()
+        public void Initialise()
         {
             this.DisableComponent();
             

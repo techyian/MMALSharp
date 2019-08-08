@@ -6,6 +6,7 @@
 using System;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
+using MMALSharp.Config;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports.Outputs;
@@ -18,6 +19,24 @@ namespace MMALSharp.Callbacks
     /// </summary>
     public class VideoOutputCallbackHandler : DefaultPortCallbackHandler
     {
+        private DateTime? _lastSplit;
+
+        /// <summary>
+        /// Object containing properties used to determine when we should perform a file split.
+        /// </summary>
+        public Split Split { get; }
+
+        /// <summary>
+        /// States the time we last did a file split.
+        /// </summary>
+        public DateTime? LastSplit => _lastSplit;
+
+        /// <summary>
+        /// Property to indicate whether on the next callback we should split. This is used so that we can request an I-Frame from the camera
+        /// and this can be applied on the next run to the newly created file.
+        /// </summary>
+        private bool PrepareSplit { get; set; }
+
         /// <summary>
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
         /// </summary>
@@ -36,6 +55,17 @@ namespace MMALSharp.Callbacks
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
         /// </summary>
         /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
+        /// <param name="split">Configure to split into multiple files.</param>
+        public VideoOutputCallbackHandler(OutputPortBase port, Split split)
+            : this(port)
+        {
+            this.Split = split;
+        }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
+        /// </summary>
+        /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
         /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
         public VideoOutputCallbackHandler(OutputPortBase port, MMALEncoding encoding)
             : base(port, encoding)
@@ -45,6 +75,18 @@ namespace MMALSharp.Callbacks
                 : MotionType.FrameDiff;
 
             ((IVideoCaptureHandler)this.WorkingPort.Handler).MotionType = motionType;
+        }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
+        /// </summary>
+        /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
+        /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
+        /// <param name="split">Configure to split into multiple files.</param>
+        public VideoOutputCallbackHandler(OutputPortBase port, MMALEncoding encoding, Split split)
+            : this(port, encoding)
+        {
+            this.Split = split;
         }
 
         /// <summary>
@@ -62,29 +104,45 @@ namespace MMALSharp.Callbacks
 
             var component = (MMALVideoEncoder)this.WorkingPort.ComponentReference;
 
-            if (component.PrepareSplit && buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))
+            if (this.PrepareSplit && buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))
             {
                 ((VideoStreamCaptureHandler)this.WorkingPort.Handler).Split();
-                component.LastSplit = DateTime.Now;
-                component.PrepareSplit = false;
+                _lastSplit = DateTime.Now;
+                this.PrepareSplit = false;
             }
 
             // Ensure that if we need to split then this is done before processing the buffer data.
-            if (component.Split != null)
+            if (this.Split != null)
             {
-                if (!component.LastSplit.HasValue)
+                if (!this.LastSplit.HasValue)
                 {
-                    component.LastSplit = DateTime.Now;
+                    _lastSplit = DateTime.Now;
                 }
 
-                if (DateTime.Now.CompareTo(component.CalculateSplit()) > 0)
+                if (DateTime.Now.CompareTo(this.CalculateSplit()) > 0)
                 {
-                    component.PrepareSplit = true;
+                    this.PrepareSplit = true;
                     this.WorkingPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_REQUEST_I_FRAME, true);
                 }
             }
             
             base.Callback(buffer);
+        }
+
+        private DateTime CalculateSplit()
+        {
+            DateTime tempDt = new DateTime(this.LastSplit.Value.Ticks);
+            switch (this.Split.Mode)
+            {
+                case TimelapseMode.Millisecond:
+                    return tempDt.AddMilliseconds(this.Split.Value);
+                case TimelapseMode.Second:
+                    return tempDt.AddSeconds(this.Split.Value);
+                case TimelapseMode.Minute:
+                    return tempDt.AddMinutes(this.Split.Value);
+                default:
+                    return tempDt.AddMinutes(this.Split.Value);
+            }
         }
     }
 }

@@ -11,8 +11,10 @@ using MMALSharp.Processors.Effects;
 
 namespace MMALSharp.Processors.Motion
 {
-    public abstract class FrameDiffAnalyser : FrameAnalyser
+    public class FrameDiffAnalyser : FrameAnalyser
     {
+        internal Action OnDetect { get; set; }
+
         /// <summary>
         /// Working storage for the Test Frame. This is the original static image we are comparing to.
         /// </summary>
@@ -24,18 +26,52 @@ namespace MMALSharp.Processors.Motion
         protected bool FullTestFrame { get; set; }
 
         protected MotionConfig MotionConfig { get; set; }
-
-        protected FrameDiffAnalyser(MotionConfig config, IImageContext imageContext)
+        
+        public FrameDiffAnalyser(MotionConfig config, Action onDetect, IImageContext imageContext)
             : base(imageContext)
         {
             this.TestFrame = new List<byte>();
             this.MotionConfig = config;
+            this.OnDetect = onDetect;
         }
 
-        public void CheckForChanges(Action onDetect)
+        public override void Apply(byte[] data, bool eos)
+        {
+            if (this.FullTestFrame)
+            {
+                MMALLog.Logger.Info("Have full test frame");
+                // If we have a full test frame stored then we can start storing subsequent frame data to check.
+                base.Apply(data, eos);
+            }
+            else
+            {
+                this.TestFrame.AddRange(data);
+
+                if (eos)
+                {
+                    this.FullTestFrame = true;
+                    MMALLog.Logger.Info("EOS reached for test frame. Applying edge detection.");
+
+                    // We want to apply Edge Detection to the test frame to make it easier to detect changes.
+                    var edgeDetection = new EdgeDetection(this.MotionConfig.Sensitivity);
+                    this.ImageContext.Data = this.TestFrame.ToArray();
+                    edgeDetection.ApplyConvolution(edgeDetection.Kernel, EdgeDetection.KernelWidth, EdgeDetection.KernelHeight, this.ImageContext);
+                }
+            }
+
+            if (this.FullFrame)
+            {
+                MMALLog.Logger.Info("Have full frame, checking for changes.");
+
+                // TODO: Check for changes.
+                this.CheckForChanges(this.OnDetect);
+            }
+        }
+        
+        private void CheckForChanges(Action onDetect)
         {
             var edgeDetection = new EdgeDetection(EDStrength.Medium);
-            this.ImageContext.Data = this.TestFrame.ToArray();
+            this.ImageContext.Data = this.WorkingData.ToArray();
             edgeDetection.ApplyConvolution(EdgeDetection.MediumStrengthKernel, 3, 3, this.ImageContext);
             var diff = this.Analyse();
 
@@ -58,72 +94,70 @@ namespace MMALSharp.Processors.Motion
             return new Bitmap(stream);
         }
 
-        private void InitBitmapData(BitmapData bmpData)
+        private void InitBitmapData(BitmapData bmpData, byte[] data)
         {
             var pNative = bmpData.Scan0;
-            Marshal.Copy(this.ImageContext.Data, 0, pNative, this.ImageContext.Data.Length);
+            Marshal.Copy(data, 0, pNative, data.Length);
         }
 
         private int Analyse()
         {
             using (var testMemStream = new MemoryStream(this.TestFrame.ToArray()))
             using (var currentMemStream = new MemoryStream(this.WorkingData.ToArray()))
+            using (var testBmp = this.LoadBitmap(testMemStream))
+            using (var currentBmp = this.LoadBitmap(currentMemStream))
             {
-                var testBmp = this.LoadBitmap(testMemStream);
-                var currentBmp = this.LoadBitmap(currentMemStream);
                 var testBmpData = testBmp.LockBits(new Rectangle(0, 0, testBmp.Width, testBmp.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, testBmp.PixelFormat);
                 var currentBmpData = currentBmp.LockBits(new Rectangle(0, 0, currentBmp.Width, currentBmp.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, currentBmp.PixelFormat);
 
                 if (this.ImageContext.Raw)
                 {
-                    this.InitBitmapData(testBmpData);
-                    this.InitBitmapData(currentBmpData);
+                    this.InitBitmapData(testBmpData, this.TestFrame.ToArray());
+                    this.InitBitmapData(currentBmpData, this.WorkingData.ToArray());
                 }
 
                 var quadA = new Rectangle(0, 0, testBmpData.Width / 2, testBmpData.Height / 2);
                 var quadB = new Rectangle(testBmpData.Width / 2, 0, testBmpData.Width / 2, testBmpData.Height / 2);
                 var quadC = new Rectangle(0, testBmpData.Height / 2, testBmpData.Width / 2, testBmpData.Height / 2);
                 var quadD = new Rectangle(testBmpData.Width / 2, testBmpData.Height / 2, testBmpData.Width / 2, testBmpData.Height / 2);
-                
+
                 int diff = 0;
 
                 var bpp = Image.GetPixelFormatSize(testBmp.PixelFormat) / 8;
 
                 var t1 = Task.Run(() =>
                 {
-                    diff += this.CheckDiff(quadA, testBmpData, currentBmpData, bpp);
+                    diff += this.CheckDiff(quadA, testBmpData, currentBmpData, bpp, this.MotionConfig.Threshold);
                 });
                 var t2 = Task.Run(() =>
                 {
-                    diff += this.CheckDiff(quadB, testBmpData, currentBmpData, bpp);
+                    diff += this.CheckDiff(quadB, testBmpData, currentBmpData, bpp, this.MotionConfig.Threshold);
                 });
                 var t3 = Task.Run(() =>
                 {
-                    diff += this.CheckDiff(quadC, testBmpData, currentBmpData, bpp);
+                    diff += this.CheckDiff(quadC, testBmpData, currentBmpData, bpp, this.MotionConfig.Threshold);
                 });
                 var t4 = Task.Run(() =>
                 {
-                    diff += this.CheckDiff(quadD, testBmpData, currentBmpData, bpp);
+                    diff += this.CheckDiff(quadD, testBmpData, currentBmpData, bpp, this.MotionConfig.Threshold);
                 });
 
                 Task.WaitAll(t1, t2, t3, t4);
 
                 testBmp.UnlockBits(testBmpData);
                 currentBmp.UnlockBits(currentBmpData);
-                testBmp.Dispose();
-                currentBmp.Dispose();
-
+             
                 return diff;
             }
         }
 
-        private int CheckDiff(Rectangle quad, BitmapData bmpData, BitmapData bmpData2, int pixelDepth)
+        private int CheckDiff(Rectangle quad, BitmapData bmpData, BitmapData bmpData2, int pixelDepth, int threshold)
         {
             unsafe
             {
                 var stride1 = bmpData.Stride;
                 var stride2 = bmpData2.Stride;
-               
+
                 byte* ptr1 = (byte*)bmpData.Scan0;
                 byte* ptr2 = (byte*)bmpData2.Scan0;
               
@@ -134,15 +168,15 @@ namespace MMALSharp.Processors.Motion
                 {
                     for (int row = quad.Y; row < quad.Y + quad.Height; row++)
                     {
-                        var rgb1 = ptr1[(column * 3) + (row * stride1)] +
+                        var rgb1 = ptr1[(column * pixelDepth) + (row * stride1)] +
                         ptr1[(column * pixelDepth) + (row * stride1) + 1] +
                         ptr1[(column * pixelDepth) + (row * stride1) + 2];
 
-                        var rgb2 = ptr2[(column * 3) + (row * stride2)] +
+                        var rgb2 = ptr2[(column * pixelDepth) + (row * stride2)] +
                         ptr2[(column * pixelDepth) + (row * stride2) + 1] +
                         ptr2[(column * pixelDepth) + (row * stride2) + 2];
-
-                        if (rgb2 > rgb1)
+                        
+                        if (rgb2 > rgb1 + threshold)
                         {
                             diff++;
 

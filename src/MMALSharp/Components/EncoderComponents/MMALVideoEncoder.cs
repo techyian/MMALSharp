@@ -9,7 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
-using MMALSharp.Config;
+using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
@@ -22,7 +22,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// Represents a video encoder component
     /// </summary>
-    public unsafe class MMALVideoEncoder : MMALEncoderBase
+    public unsafe class MMALVideoEncoder : MMALEncoderBase, IVideoEncoder
     {
         /// <summary>
         /// Signifies the max bitrate supported for MJPEG (25Mbits/s)
@@ -40,42 +40,19 @@ namespace MMALSharp.Components
         public const int MaxBitrateLevel42 = 62500000; // 62.5Mbits/s
         
         /// <summary>
-        /// The working H.264 level.
-        /// </summary>
-        public int Level { get; set; } = (int)MMALParametersVideo.MMAL_VIDEO_LEVEL_T.MMAL_VIDEO_LEVEL_H264_4;
-
-        /// <summary>
         /// Quality of the encoder output. Valid property for both H264 and MJPEG encoders.
         /// H264 encoding - High: 10 Low: 40 Average: 20-25.
         /// MJPEG encoding - Uses same quality scale as JPEG encoder (Lowest: 1  Highest: 100).
         /// </summary>
-        public int Quality { get; set; }
-        
-        /// <summary>
-        /// Object containing properties used to determine when we should perform a file split.
-        /// </summary>
-        public Split Split { get; }
-
-        /// <summary>
-        /// States the time we last did a file split.
-        /// </summary>
-        public DateTime? LastSplit { get; set; }
-
-        /// <summary>
-        /// Property to indicate whether on the next callback we should split. This is used so that we can request an I-Frame from the camera
-        /// and this can be applied on the next run to the newly created file.
-        /// </summary>
-        public bool PrepareSplit { get; set; }
+        private int Quality { get; set; }
         
         /// <summary>
         /// Creates a new instance of <see cref="MMALVideoEncoder"/>.
         /// </summary>
         /// <param name="handler">The capture handler.</param>
-        /// <param name="split">Configure this component to split into multiple files.</param>
-        public MMALVideoEncoder(ICaptureHandler handler, Split split = null)
+        public MMALVideoEncoder(ICaptureHandler handler)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
         {
-            this.Split = split;
             this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
             this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
         }
@@ -130,24 +107,8 @@ namespace MMALSharp.Components
             
             return this;
         }
-        
-        internal DateTime CalculateSplit()
-        {
-            DateTime tempDt = new DateTime(this.LastSplit.Value.Ticks);
-            switch (this.Split.Mode)
-            {
-                case TimelapseMode.Millisecond:
-                    return tempDt.AddMilliseconds(this.Split.Value);
-                case TimelapseMode.Second:
-                    return tempDt.AddSeconds(this.Split.Value);
-                case TimelapseMode.Minute:
-                    return tempDt.AddMinutes(this.Split.Value);
-                default:
-                    return tempDt.AddMinutes(this.Split.Value);
-            }
-        }
 
-        internal void ConfigureBitrate(int outputPort)
+        private void ConfigureBitrate(int outputPort)
         {
             if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264)
             {
@@ -185,13 +146,13 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].Ptr->Format->Bitrate = this.Outputs[outputPort].Bitrate;
         }
 
-        internal void ConfigureRateControl(int outputPort)
+        private void ConfigureRateControl(int outputPort)
         {
             MMAL_PARAMETER_VIDEO_RATECONTROL_T param = new MMAL_PARAMETER_VIDEO_RATECONTROL_T(new MMAL_PARAMETER_HEADER_T(MMALParametersVideo.MMAL_PARAMETER_RATECONTROL, Marshal.SizeOf<MMAL_PARAMETER_VIDEO_RATECONTROL_T>()), MMALCameraConfig.RateControl);
             MMALCheck(MMALPort.mmal_port_parameter_set(this.Outputs[outputPort].Ptr, param.HdrPtr), "Unable to set ratecontrol.");
         }
 
-        internal void ConfigureIntraPeriod(int outputPort)
+        private void ConfigureIntraPeriod(int outputPort)
         {
             if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264 && MMALCameraConfig.IntraPeriod != -1)
             {
@@ -199,14 +160,14 @@ namespace MMALSharp.Components
             }
         }
 
-        internal void ConfigureQuantisationParameter(int outputPort)
+        private void ConfigureQuantisationParameter(int outputPort)
         {
             this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INITIAL_QUANT, this.Quality);
             this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_MIN_QUANT, this.Quality);
             this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_MAX_QUANT, this.Quality);
         }
 
-        internal void ConfigureVideoProfile(int outputPort)
+        private void ConfigureVideoProfile(int outputPort)
         {
             var macroblocks = (MMALCameraConfig.VideoResolution.Width >> 4) * (MMALCameraConfig.VideoResolution.Height >> 4);
             var macroblocksPSec = macroblocks * (MMALCameraConfig.VideoFramerate.Num / MMALCameraConfig.VideoFramerate.Den);
@@ -247,22 +208,22 @@ namespace MMALSharp.Components
             }
         }
 
-        internal void ConfigureImmutableInput(int outputPort)
+        private void ConfigureImmutableInput(int outputPort)
         {
             this.Inputs[0].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_IMMUTABLE_INPUT, MMALCameraConfig.ImmutableInput);
         }
 
-        internal void ConfigureInlineHeaderFlag(int outputPort)
+        private void ConfigureInlineHeaderFlag(int outputPort)
         {
             this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INLINE_HEADER, MMALCameraConfig.InlineHeaders);
         }
 
-        internal void ConfigureInlineVectorsFlag(int outputPort)
+        private void ConfigureInlineVectorsFlag(int outputPort)
         {
             this.Outputs[outputPort].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_ENCODE_INLINE_VECTORS, MMALCameraConfig.InlineMotionVectors);
         }
 
-        internal void ConfigureIntraRefresh(int outputPort)
+        private void ConfigureIntraRefresh(int outputPort)
         {
             MMAL_PARAMETER_VIDEO_INTRA_REFRESH_T param = new MMAL_PARAMETER_VIDEO_INTRA_REFRESH_T(new MMAL_PARAMETER_HEADER_T(MMALParametersVideo.MMAL_PARAMETER_VIDEO_INTRA_REFRESH, Marshal.SizeOf<MMAL_PARAMETER_VIDEO_INTRA_REFRESH_T>()), MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T.MMAL_VIDEO_INTRA_REFRESH_BOTH, 0, 0, 0, 0);
 

@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using MMALSharp.Common.Utility;
+using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using static MMALSharp.MMALNativeExceptionHelper;
@@ -17,7 +18,7 @@ namespace MMALSharp.Ports
     /// <summary>
     /// Base class for port objects.
     /// </summary>
-    public abstract unsafe class PortBase : MMALObject
+    public abstract unsafe class PortBase : MMALObject, IPort
     {
         /// <summary>
         /// Specifies the type of port this is.
@@ -27,17 +28,17 @@ namespace MMALSharp.Ports
         /// <summary>
         /// Managed reference to the component this port is associated with.
         /// </summary>
-        public MMALComponentBase ComponentReference { get; }
+        public IComponent ComponentReference { get; }
 
         /// <summary>
         /// Managed reference to the downstream component this port is connected to.
         /// </summary>
-        public MMALConnectionImpl ConnectedReference { get; internal set; }
+        public IConnection ConnectedReference { get; internal set; }
 
         /// <summary>
         /// Managed reference to the pool of buffer headers associated with this port.
         /// </summary>
-        public MMALPoolImpl BufferPool { get; internal set; }
+        public IBufferPool BufferPool { get; }
 
         /// <summary>
         /// Managed name given to this object (user defined).
@@ -57,7 +58,7 @@ namespace MMALSharp.Ports
         /// <summary>
         /// The handler to process the final data.
         /// </summary>
-        public ICaptureHandler Handler { get; internal set; }
+        public ICaptureHandler Handler { get; }
 
         /// <summary>
         /// The config for this port.
@@ -69,7 +70,7 @@ namespace MMALSharp.Ports
         /// transferring large amounts of data or raw capture.
         /// See: https://www.raspberrypi.org/forums/viewtopic.php?t=170024
         /// </summary>
-        public bool ZeroCopy { get; internal set; }
+        public bool ZeroCopy { get; set; }
 
         #region Native properties
 
@@ -222,12 +223,12 @@ namespace MMALSharp.Ports
         /// <summary>
         /// Native pointer that represents the component this port is associated with.
         /// </summary>
-        internal MMAL_COMPONENT_T* Comp { get; set; }
+        internal MMAL_COMPONENT_T* Comp { get; }
 
         /// <summary>
         /// Native pointer that represents this port.
         /// </summary>
-        internal MMAL_PORT_T* Ptr { get; set; }
+        public MMAL_PORT_T* Ptr { get; }
 
         /// <summary>
         /// Native pointer to the native callback function.
@@ -304,7 +305,7 @@ namespace MMALSharp.Ports
         /// Commit format changes on this port.
         /// </summary>
         /// <exception cref="MMALException"/>
-        internal void Commit()
+        public void Commit()
         {
             MMALLog.Logger.Debug("Committing port format changes");
             MMALCheck(MMALPort.mmal_port_format_commit(this.Ptr), "Unable to commit port changes.");
@@ -314,7 +315,7 @@ namespace MMALSharp.Ports
         /// Shallow copy a format structure. It is worth noting that the extradata buffer will not be copied in the new format.
         /// </summary>
         /// <param name="destination">The destination port we're copying to.</param>
-        internal void ShallowCopy(PortBase destination)
+        public void ShallowCopy(PortBase destination)
         {
             MMALLog.Logger.Debug("Shallow copy port format");
             MMALFormat.mmal_format_copy(destination.Ptr->Format, this.Ptr->Format);
@@ -324,7 +325,7 @@ namespace MMALSharp.Ports
         /// Shallow copy a format structure. It is worth noting that the extradata buffer will not be copied in the new format.
         /// </summary>
         /// <param name="eventFormatSource">The source event format we're copying from.</param>
-        internal void ShallowCopy(MMALEventFormat eventFormatSource)
+        public void ShallowCopy(MMALEventFormat eventFormatSource)
         {
             MMALLog.Logger.Debug("Shallow copy event format");
             MMALFormat.mmal_format_copy(this.Ptr->Format, eventFormatSource.Ptr);
@@ -334,7 +335,7 @@ namespace MMALSharp.Ports
         /// Fully copy a format structure, including the extradata buffer.
         /// </summary>
         /// <param name="destination">The destination port we're copying to.</param>
-        internal void FullCopy(PortBase destination)
+        public void FullCopy(PortBase destination)
         {
             MMALLog.Logger.Debug("Full copy port format");
             MMALFormat.mmal_format_full_copy(destination.Ptr->Format, this.Ptr->Format);
@@ -344,7 +345,7 @@ namespace MMALSharp.Ports
         /// Fully copy a format structure, including the extradata buffer.
         /// </summary>
         /// <param name="eventFormatSource">The source event format we're copying from.</param>
-        internal void FullCopy(MMALEventFormat eventFormatSource)
+        public void FullCopy(MMALEventFormat eventFormatSource)
         {
             MMALLog.Logger.Debug("Full copy event format");
             MMALFormat.mmal_format_full_copy(this.Ptr->Format, eventFormatSource.Ptr);
@@ -354,7 +355,7 @@ namespace MMALSharp.Ports
         /// Ask a port to release all the buffer headers it currently has. This is an asynchronous operation and the
         /// flush call will return before all the buffer headers are returned to the client.
         /// </summary>
-        internal void Flush()
+        public void Flush()
         {            
             MMALLog.Logger.Debug("Flushing port buffers");
             MMALCheck(MMALPort.mmal_port_flush(this.Ptr), "Unable to flush port.");
@@ -364,7 +365,7 @@ namespace MMALSharp.Ports
         /// Send a buffer header to a port.
         /// </summary>
         /// <param name="buffer">A managed buffer object.</param>
-        internal void SendBuffer(MMALBufferImpl buffer)
+        public void SendBuffer(MMALBufferImpl buffer)
         {
             if (this.Enabled)
             {
@@ -381,7 +382,7 @@ namespace MMALSharp.Ports
         /// Attempts to send all available buffers in the queue to this port.
         /// </summary>
         /// <param name="sendBuffers">If false, only initialise the buffer pool with headers.</param>
-        internal void SendAllBuffers(bool sendBuffers = true)
+        public void SendAllBuffers(bool sendBuffers = true)
         {
             this.InitialiseBufferPool();
             
@@ -404,7 +405,7 @@ namespace MMALSharp.Ports
         /// Attempts to send all available buffers in the specified pool's queue to this port.
         /// </summary>
         /// <param name="pool">The specified pool.</param>
-        internal void SendAllBuffers(MMALPoolImpl pool)
+        public void SendAllBuffers(MMALPoolImpl pool)
         {
             var length = pool.Queue.QueueLength();
 
@@ -422,7 +423,7 @@ namespace MMALSharp.Ports
         /// Destroy a pool of MMAL_BUFFER_HEADER_T associated with a specific port. This will also deallocate all of the memory
         /// which was allocated when creating or resizing the pool.
         /// </summary>
-        internal void DestroyPortPool()
+        public void DestroyPortPool()
         {
             if (this.BufferPool != null)
             {
@@ -434,13 +435,13 @@ namespace MMALSharp.Ports
         /// <summary>
         /// Initialises a new buffer pool.
         /// </summary>
-        internal void InitialiseBufferPool()
+        public void InitialiseBufferPool()
         {
             MMALLog.Logger.Debug($"Initialising buffer pool.");
             this.BufferPool = new MMALPoolImpl(this);
         }
 
-        internal void ExtraDataAlloc(int size)
+        public void ExtraDataAlloc(int size)
         {
             MMALCheck(MMALFormat.mmal_format_extradata_alloc(this.Ptr->Format, (uint)size), "Unable to alloc extradata.");
         }

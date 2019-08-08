@@ -22,19 +22,19 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// The port this callback handler is used with.
         /// </summary>
-        PortBase WorkingPort { get; }
+        IPort WorkingPort { get; }
 
         /// <summary>
         /// The callback function to carry out. Generally applies to input ports.
         /// </summary>
         /// <param name="buffer">The working buffer header.</param>
         /// <returns>A <see cref="ProcessResult"/> object based on the result of the callback function.</returns>
-        ProcessResult CallbackWithResult(MMALBufferImpl buffer);
+        ProcessResult CallbackWithResult(IBuffer buffer);
 
         /// <summary>
         /// The callback function to carry out. Applies to output, control and connection ports.
         /// </summary>
         /// <param name="buffer">The working buffer header.</param>
-        void Callback(MMALBufferImpl buffer);     
+        void Callback(IBuffer buffer);     
     }
 }

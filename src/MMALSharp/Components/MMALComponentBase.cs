@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using MMALSharp.Common.Utility;
+using MMALSharp.Components;
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using MMALSharp.Ports.Clocks;
@@ -20,32 +21,32 @@ namespace MMALSharp
     /// <summary>
     /// Base class for all components.
     /// </summary>
-    public abstract unsafe class MMALComponentBase : MMALObject
+    public abstract unsafe class MMALComponentBase : MMALObject, IComponent
     {
         /// <summary>
         /// Reference to the Control port of this component.
         /// </summary>
-        public ControlPortBase Control { get; }
+        public IControlPort Control { get; }
 
         /// <summary>
         /// Reference to all input ports associated with this component.
         /// </summary>
-        public List<InputPortBase> Inputs { get; }
+        public List<IInputPort> Inputs { get; }
 
         /// <summary>
         /// Reference to all output ports associated with this component.
         /// </summary>
-        public List<OutputPortBase> Outputs { get; }
+        public List<IOutputPort> Outputs { get; }
 
         /// <summary>
         /// Reference to all clock ports associated with this component.
         /// </summary>
-        public List<PortBase> Clocks { get; }
+        public List<IPort> Clocks { get; }
 
         /// <summary>
         /// Reference to all ports associated with this component.
         /// </summary>
-        public List<PortBase> Ports { get; }
+        public List<IPort> Ports { get; }
         
         /// <summary>
         /// Name of the component
@@ -57,7 +58,7 @@ namespace MMALSharp
         /// </summary>
         public bool Enabled => this.Ptr->IsEnabled == 1;
 
-        internal bool ForceStopProcessing { get; set; }
+        public bool ForceStopProcessing { get; set; }
         
         /// <summary>
         /// Native pointer to the component this object represents.
@@ -72,10 +73,10 @@ namespace MMALSharp
         {
             this.Ptr = CreateComponent(name);
 
-            this.Inputs = new List<InputPortBase>();
-            this.Outputs = new List<OutputPortBase>();
-            this.Clocks = new List<PortBase>();
-            this.Ports = new List<PortBase>();
+            this.Inputs = new List<IInputPort>();
+            this.Outputs = new List<IOutputPort>();
+            this.Clocks = new List<IPort>();
+            this.Ports = new List<IPort>();
 
             this.Control = new ControlPort((IntPtr)this.Ptr->Control, this, PortType.Control, Guid.NewGuid());
             
@@ -100,10 +101,16 @@ namespace MMALSharp
         /// Enables any connections associated with this component, traversing down the pipeline to enable those connections
         /// also.
         /// </summary>
+        /// <exception cref="MMALPortConnectedException">Thrown when port enabled prior to enabling connection.</exception>
         public void EnableConnections()
         {
-            foreach (OutputPortBase port in this.Outputs)
+            foreach (IOutputPort port in this.Outputs)
             {
+                if (port.Enabled)
+                {
+                    throw new MMALPortConnectedException("Port already enabled prior to enabling connection.");
+                }
+
                 if (port.ConnectedReference != null)
                 {
                     // This component has an output port connected to another component.
@@ -119,10 +126,16 @@ namespace MMALSharp
         /// Disables any connections associated with this component, traversing down the pipeline to disable those connections
         /// also.
         /// </summary>
+        /// <exception cref="MMALPortConnectedException">Thrown when port still enabled prior to disabling connection.</exception>
         public void DisableConnections()
         {
-            foreach (OutputPortBase port in this.Outputs)
+            foreach (IOutputPort port in this.Outputs)
             {
+                if (port.Enabled)
+                {
+                    throw new MMALPortConnectedException("Port still enabled prior to disabling connection.");
+                }
+
                 if (port.ConnectedReference != null)
                 {
                     // This component has an output port connected to another component.
@@ -208,7 +221,7 @@ namespace MMALSharp
         /// acquired reference is released (by a call to mmal_component_destroy). References are internally counted so all acquired references 
         /// need a matching call to release them.
         /// </summary>
-        internal void AcquireComponent()
+        public void AcquireComponent()
         {
             MMALComponent.mmal_component_acquire(this.Ptr);
         }
@@ -217,7 +230,7 @@ namespace MMALSharp
         /// Release a reference on a component Release an acquired reference on a component. Triggers the destruction of the component 
         /// when the last reference is being released.
         /// </summary>
-        internal void ReleaseComponent()
+        public void ReleaseComponent()
         {
             MMALCheck(MMALComponent.mmal_component_release(this.Ptr), "Unable to release component");
         }
@@ -226,7 +239,7 @@ namespace MMALSharp
         /// Destroy a previously created component Release an acquired reference on a component. 
         /// Only actually destroys the component when the last reference is being released.
         /// </summary>
-        internal void DestroyComponent()
+        public void DestroyComponent()
         {
             MMALCheck(MMALComponent.mmal_component_destroy(this.Ptr), "Unable to destroy component");
         }
@@ -234,7 +247,7 @@ namespace MMALSharp
         /// <summary>
         /// Enable processing on a component.
         /// </summary>
-        internal void EnableComponent()
+        public void EnableComponent()
         {
             if (!this.Enabled)
             {
@@ -245,7 +258,7 @@ namespace MMALSharp
         /// <summary>
         /// Disable processing on a component.
         /// </summary>
-        internal void DisableComponent()
+        public void DisableComponent()
         {
             if (this.Enabled)
             {
@@ -256,7 +269,7 @@ namespace MMALSharp
         /// <summary>
         /// Helper method to destroy any port pools still in action. Failure to do this will cause MMAL to block indefinitely.
         /// </summary>
-        internal void CleanPortPools()
+        public void CleanPortPools()
         {
             // See if any pools need disposing before destroying component.
             foreach (var port in this.Inputs)

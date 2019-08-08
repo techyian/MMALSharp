@@ -21,30 +21,30 @@ namespace MMALSharp
     public unsafe class MMALConnectionImpl : MMALObject
     {
         /// <summary>
+        /// The pool of buffer headers in this connection.
+        /// </summary>
+        private MMALPoolImpl ConnectionPool { get; set; }
+
+        /// <summary>
         /// The downstream component associated with the connection.
         /// </summary>
-        public MMALDownstreamComponent DownstreamComponent { get; set; }
+        public MMALDownstreamComponent DownstreamComponent { get; }
 
         /// <summary>
         /// The upstream component associated with the connection.
         /// </summary>
-        public MMALComponentBase UpstreamComponent { get; set; }
+        public MMALComponentBase UpstreamComponent { get; }
 
         /// <summary>
         /// The input port of this connection.
         /// </summary>
-        public InputPortBase InputPort { get; set; }
+        public InputPortBase InputPort { get; }
 
         /// <summary>
         /// The output port of this connection.
         /// </summary>
-        public OutputPortBase OutputPort { get; set; }
+        public OutputPortBase OutputPort { get; }
         
-        /// <summary>
-        /// The pool of buffer headers in this connection.
-        /// </summary>
-        public MMALPoolImpl ConnectionPool { get; set; }
-
         /// <summary>
         /// Monitor lock for connection callback method.
         /// </summary>
@@ -89,7 +89,7 @@ namespace MMALSharp
         /// <summary>
         /// Native pointer to the connection that this object represents.
         /// </summary>
-        private MMAL_CONNECTION_T* Ptr { get; set; }
+        private MMAL_CONNECTION_T* Ptr { get; }
 
         /// <inheritdoc />
         public override bool CheckState()
@@ -216,7 +216,7 @@ namespace MMALSharp
         /// </summary>
         /// <param name="connection">The native pointer to a MMAL_CONNECTION_T struct.</param>
         /// <returns>The value of all flags set against this connection.</returns>
-        internal virtual int NativeConnectionCallback(MMAL_CONNECTION_T* connection)
+        protected virtual int NativeConnectionCallback(MMAL_CONNECTION_T* connection)
         {
             lock (MMALConnectionImpl.ConnectionLock)
             {

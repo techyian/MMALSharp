@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using MMALSharp.Callbacks.Providers;
 using MMALSharp.Common.Utility;
+using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Handlers;
 using MMALSharp.Ports;
 using MMALSharp.Ports.Inputs;
@@ -21,7 +22,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// This component is used to decode image data stored in a stream.
     /// </summary>
-    public class MMALImageFileDecoder : MMALEncoderBase, IMMALConvert
+    public class MMALImageFileDecoder : MMALEncoderBase, IImageFileDecoder
     {
         private TaskCompletionSource<bool> _finalCompletionSource;
 

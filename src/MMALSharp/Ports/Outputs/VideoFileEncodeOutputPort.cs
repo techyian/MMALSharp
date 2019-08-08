@@ -64,7 +64,7 @@ namespace MMALSharp.Ports.Outputs
             {
                 if (MMALCameraConfig.Debug)
                 {
-                    MMALLog.Logger.Debug($"Putting output port buffer back into queue {((IntPtr)MMALVideoFileEncoder.WorkingQueue.Ptr).ToString()}");
+                    MMALLog.Logger.Debug($"Putting output port buffer back into queue {MMALVideoFileEncoder.WorkingQueue}");
                 }
 
                 bufferImpl.PrintProperties();

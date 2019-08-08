@@ -49,9 +49,7 @@ namespace MMALSharp.Components
             this.EnableComponent();
         }
 
-        /// <summary>
-        /// Prints the name of this component to the console.
-        /// </summary>
+        /// <inheritdoc />
         public override void PrintComponent()
         {
             MMALLog.Logger.Info($"Component: Null sink renderer");
@@ -172,17 +170,13 @@ namespace MMALSharp.Components
             }
         }
 
-        /// <summary>
-        /// Prints the name of this component to the console.
-        /// </summary>
+        /// <inheritdoc />
         public override void PrintComponent()
         {
             MMALLog.Logger.Info($"Component: Video renderer");
         }
 
-        /// <summary>
-        /// Disposes the component, and frees any native resources still in use by it.
-        /// </summary>
+        /// <inheritdoc />
         public override void Dispose()
         {
             if (this.GetType() == typeof(MMALVideoRenderer))

@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
@@ -15,7 +16,7 @@ namespace MMALSharp.Components
     /// <summary>
     /// Represents an image decoder component.
     /// </summary>
-    public class MMALImageDecoder : MMALEncoderBase
+    public class MMALImageDecoder : MMALEncoderBase, IImageDecoder
     {
         /// <summary>
         /// Creates a new instance of <see cref="MMALImageDecoder"/>.
