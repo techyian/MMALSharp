@@ -14,7 +14,7 @@ namespace MMALSharp.Callbacks
         /// Create a new instance of <see cref="DefaultConnectionCallbackHandler"/>.
         /// </summary>
         /// <param name="connection">The connection object.</param>
-        public DefaultConnectionCallbackHandler(MMALConnectionImpl connection) 
+        public DefaultConnectionCallbackHandler(IConnection connection) 
             : base(connection)
         {
         }

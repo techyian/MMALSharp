@@ -129,6 +129,8 @@ namespace MMALSharp.Native
 
         public uint Cmd => this.cmd;
 
+        public byte* Data => this.data;
+
         public uint AllocSize => this.allocSize;
 
         public uint Length => this.length;

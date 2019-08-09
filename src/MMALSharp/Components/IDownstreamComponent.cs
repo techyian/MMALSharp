@@ -17,8 +17,7 @@ namespace MMALSharp.Components
 
         void RemoveConnectionCallback(IPort port);
 
-        IDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, IPort copyPort,
-            bool zeroCopy = false);
+        IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, bool zeroCopy = false);
 
         IDownstreamComponent ConfigureInputPort(MMALPortConfig config);
 

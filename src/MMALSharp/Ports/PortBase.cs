@@ -38,7 +38,7 @@ namespace MMALSharp.Ports
         /// <summary>
         /// Managed reference to the pool of buffer headers associated with this port.
         /// </summary>
-        public IBufferPool BufferPool { get; }
+        public IBufferPool BufferPool { get; internal set; }
 
         /// <summary>
         /// Managed name given to this object (user defined).
@@ -58,7 +58,7 @@ namespace MMALSharp.Ports
         /// <summary>
         /// The handler to process the final data.
         /// </summary>
-        public ICaptureHandler Handler { get; }
+        public ICaptureHandler Handler { get; internal set; }
 
         /// <summary>
         /// The config for this port.
@@ -201,6 +201,15 @@ namespace MMALSharp.Ports
             internal set => this.Ptr->Format->Bitrate = value;
         }
 
+        /// <summary>
+        /// The working bitrate of this port.
+        /// </summary>
+        public MMAL_RATIONAL_T Par
+        {
+            get => this.Ptr->Format->Es->Video.Par;
+            internal set => this.Ptr->Format->Es->Video.Par = value;
+        }
+
         internal int Width
         {
             get => this.Ptr->Format->Es->Video.Width;
@@ -253,7 +262,7 @@ namespace MMALSharp.Ports
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port this is.</param>
         /// <param name="guid">A managed unique identifier for this port.</param>
-        protected PortBase(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid)
+        protected PortBase(IntPtr ptr, IComponent comp, PortType type, Guid guid)
         {
             this.Ptr = (MMAL_PORT_T*)ptr;
             this.Comp = ((MMAL_PORT_T*)ptr)->Component;
@@ -270,7 +279,7 @@ namespace MMALSharp.Ports
         /// <param name="type">The type of port this is.</param>
         /// <param name="guid">A managed unique identifier for this port.</param>
         /// <param name="handler">The capture handler.</param>
-        protected PortBase(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler)
+        protected PortBase(IntPtr ptr, IComponent comp, PortType type, Guid guid, ICaptureHandler handler)
             : this(ptr, comp, type, guid)
         {
             this.Handler = handler;
@@ -315,7 +324,7 @@ namespace MMALSharp.Ports
         /// Shallow copy a format structure. It is worth noting that the extradata buffer will not be copied in the new format.
         /// </summary>
         /// <param name="destination">The destination port we're copying to.</param>
-        public void ShallowCopy(PortBase destination)
+        public void ShallowCopy(IPort destination)
         {
             MMALLog.Logger.Debug("Shallow copy port format");
             MMALFormat.mmal_format_copy(destination.Ptr->Format, this.Ptr->Format);
@@ -325,7 +334,7 @@ namespace MMALSharp.Ports
         /// Shallow copy a format structure. It is worth noting that the extradata buffer will not be copied in the new format.
         /// </summary>
         /// <param name="eventFormatSource">The source event format we're copying from.</param>
-        public void ShallowCopy(MMALEventFormat eventFormatSource)
+        public void ShallowCopy(IBufferEvent eventFormatSource)
         {
             MMALLog.Logger.Debug("Shallow copy event format");
             MMALFormat.mmal_format_copy(this.Ptr->Format, eventFormatSource.Ptr);
@@ -335,7 +344,7 @@ namespace MMALSharp.Ports
         /// Fully copy a format structure, including the extradata buffer.
         /// </summary>
         /// <param name="destination">The destination port we're copying to.</param>
-        public void FullCopy(PortBase destination)
+        public void FullCopy(IPort destination)
         {
             MMALLog.Logger.Debug("Full copy port format");
             MMALFormat.mmal_format_full_copy(destination.Ptr->Format, this.Ptr->Format);
@@ -345,7 +354,7 @@ namespace MMALSharp.Ports
         /// Fully copy a format structure, including the extradata buffer.
         /// </summary>
         /// <param name="eventFormatSource">The source event format we're copying from.</param>
-        public void FullCopy(MMALEventFormat eventFormatSource)
+        public void FullCopy(IBufferEvent eventFormatSource)
         {
             MMALLog.Logger.Debug("Full copy event format");
             MMALFormat.mmal_format_full_copy(this.Ptr->Format, eventFormatSource.Ptr);
@@ -365,7 +374,7 @@ namespace MMALSharp.Ports
         /// Send a buffer header to a port.
         /// </summary>
         /// <param name="buffer">A managed buffer object.</param>
-        public void SendBuffer(MMALBufferImpl buffer)
+        public void SendBuffer(IBuffer buffer)
         {
             if (this.Enabled)
             {
@@ -405,7 +414,7 @@ namespace MMALSharp.Ports
         /// Attempts to send all available buffers in the specified pool's queue to this port.
         /// </summary>
         /// <param name="pool">The specified pool.</param>
-        public void SendAllBuffers(MMALPoolImpl pool)
+        public void SendAllBuffers(IBufferPool pool)
         {
             var length = pool.Queue.QueueLength();
 

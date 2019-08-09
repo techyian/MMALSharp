@@ -1,5 +1,6 @@
 ﻿using MMALSharp.Callbacks;
 using MMALSharp.Components;
+using MMALSharp.Handlers;
 using MMALSharp.Ports.Inputs;
 
 namespace MMALSharp.Ports.Outputs
@@ -16,5 +17,6 @@ namespace MMALSharp.Ports.Outputs
 
         void Enable(bool sendBuffers = true);
         void ReleaseBuffer(IBuffer bufferImpl);
+        void SetCaptureHandler(ICaptureHandler handler);
     }
 }

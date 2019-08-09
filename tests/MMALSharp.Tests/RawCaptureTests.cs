@@ -67,7 +67,7 @@ namespace MMALSharp.Tests
                 var splitterPortConfig = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420, 0, 0, null);
 
                 // Create our component pipeline.         
-                splitter.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, Fixture.MMALCamera.Camera.VideoPort);
+                splitter.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420, 0), Fixture.MMALCamera.Camera.VideoPort);
                 splitter.ConfigureOutputPort(0, splitterPortConfig);
                 splitter.ConfigureOutputPort(1, splitterPortConfig);
                 splitter.ConfigureOutputPort(2, splitterPortConfig);
@@ -117,7 +117,7 @@ namespace MMALSharp.Tests
                 var splitterPortConfig = new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420, 0, 0, null);
 
                 // Create our component pipeline.         
-                splitter.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, Fixture.MMALCamera.Camera.VideoPort);
+                splitter.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420, 0), Fixture.MMALCamera.Camera.VideoPort);
                 splitter.ConfigureOutputPort(0, splitterPortConfig);
                 splitter.ConfigureOutputPort(1, splitterPortConfig);
                 splitter.ConfigureOutputPort(2, splitterPortConfig);

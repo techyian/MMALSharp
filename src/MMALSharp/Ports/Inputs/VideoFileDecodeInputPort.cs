@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using MMALSharp.Common.Utility;
+using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 
@@ -36,7 +37,7 @@ namespace MMALSharp.Ports.Inputs
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this port.</param>
         /// <param name="handler">The capture handler for this port.</param>
-        public VideoFileDecodeInputPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler)
+        public VideoFileDecodeInputPort(IntPtr ptr, IComponent comp, PortType type, Guid guid, ICaptureHandler handler)
             : base(ptr, comp, type, guid, handler)
         {
         }
@@ -45,7 +46,7 @@ namespace MMALSharp.Ports.Inputs
         /// Creates a new instance of <see cref="VideoFileDecodeInputPort"/>.
         /// </summary>
         /// <param name="copyFrom">The port to copy data from.</param>
-        public VideoFileDecodeInputPort(PortBase copyFrom)
+        public VideoFileDecodeInputPort(IPort copyFrom)
             : base((IntPtr)copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid, copyFrom.Handler)
         {
         }

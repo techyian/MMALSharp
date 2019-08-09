@@ -58,33 +58,27 @@ namespace MMALSharp.Components
         }
         
         /// <inheritdoc />
-        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
+        public override IDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
         {
-            base.ConfigureOutputPort(outputPort, config);
-
             this.Quality = config.Quality;
-
-            if (MMALCameraConfig.VideoColorSpace != null &&
-                MMALCameraConfig.VideoColorSpace.EncType == MMALEncoding.EncodingType.ColorSpace)
-            {
-                this.Outputs[outputPort].VideoColorSpace = MMALCameraConfig.VideoColorSpace;
-            }
             
-            this.Outputs[outputPort].Ptr->BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, 3);
+            config.BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, 3);
 
             if (config.EncodingType == MMALEncoding.H264)
             {
-                this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
+                config.BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
             }
             else
             {
                 // Follow raspivid logic.
-                this.Outputs[outputPort].Ptr->BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, 256 << 10);
+                config.BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, 256 << 10);
             }
+
+            config.Framerate = 0;
             
-            this.Outputs[outputPort].Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(0, 1);
-            this.ConfigureBitrate(outputPort);
-            this.Outputs[outputPort].Commit();
+            this.ConfigureBitrate(outputPort, config);
+
+            base.ConfigureOutputPort(outputPort, config);
 
             if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264)
             {
@@ -108,7 +102,7 @@ namespace MMALSharp.Components
             return this;
         }
 
-        private void ConfigureBitrate(int outputPort)
+        private void ConfigureBitrate(int outputPort, MMALPortConfig config)
         {
             if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264)
             {
@@ -127,9 +121,9 @@ namespace MMALSharp.Components
                     levelList = GetNormalLevelLimits();
                 }
 
-                var level = levelList.Where(c => c.Level == MMALCameraConfig.VideoLevel).First();
+                var level = levelList.First(c => c.Level == MMALCameraConfig.VideoLevel);
 
-                if (this.Outputs[outputPort].Bitrate > level.Maxbitrate)
+                if (config.Bitrate > level.Maxbitrate)
                 {
                     throw new PiCameraError("Bitrate requested exceeds maximum for selected Video Level and Profile");
                 }
@@ -139,11 +133,9 @@ namespace MMALSharp.Components
                 if (this.Outputs[outputPort].Bitrate > MaxBitrateMJPEG)
                 {
                     MMALLog.Logger.Warn("Bitrate too high: Reducing to 25MBit/s");
-                    this.Outputs[outputPort].Bitrate = MaxBitrateMJPEG;
+                    config.Bitrate = MaxBitrateMJPEG;
                 }
             }
-
-            this.Outputs[outputPort].Ptr->Format->Bitrate = this.Outputs[outputPort].Bitrate;
         }
 
         private void ConfigureRateControl(int outputPort)

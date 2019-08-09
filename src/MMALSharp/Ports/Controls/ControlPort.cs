@@ -16,7 +16,7 @@ namespace MMALSharp.Ports.Controls
     /// <summary>
     /// Represents a control port.
     /// </summary>
-    public unsafe class ControlPort : ControlPortBase
+    public unsafe class ControlPort : PortBase, IControlPort
     {
         /// <inheritdoc />
         public override Resolution Resolution
@@ -42,19 +42,21 @@ namespace MMALSharp.Ports.Controls
         /// <summary>
         /// A callback handler for Control ports we use to do further processing on buffer headers after they've been received by the native callback delegate.
         /// </summary>
-        internal override ICallbackHandler ManagedControlCallback { get; set; }
+        public virtual ICallbackHandler ManagedCallback { get; set; }
 
         /// <summary>
         /// Monitor lock for control port callback method.
         /// </summary>
         private static object ControlLock = new object();
-        
-        /// <inheritdoc />
-        internal override void EnableControlPort()
+
+        /// <summary>
+        /// Enables processing on a control port.
+        /// </summary>
+        public void Enable()
         {
             if (!this.Enabled)
             {
-                this.ManagedControlCallback = PortCallbackProvider.FindCallback(this);
+                this.ManagedCallback = PortCallbackProvider.FindCallback(this);
 
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeControlPortCallback);
 
@@ -62,27 +64,29 @@ namespace MMALSharp.Ports.Controls
 
                 MMALLog.Logger.Debug("Enabling control port.");
 
-                if (this.ManagedControlCallback == null)
+                if (this.ManagedCallback == null)
                 {
                     MMALLog.Logger.Debug("Callback null");
-
-                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, IntPtr.Zero), "Unable to enable port.");
+                    this.EnablePort(IntPtr.Zero);
                 }
                 else
                 {
-                    MMALCheck(MMALPort.mmal_port_enable(this.Ptr, ptrCallback), "Unable to enable port.");
+                    this.EnablePort(ptrCallback);
                 }
             }
         }
 
-        /// <inheritdoc />
-        internal override void Start()
+        /// <summary>
+        /// Starts the control port.
+        /// </summary>
+        public void Start()
         {
-            this.EnableControlPort();
+            this.Enable();
         }
 
         /// <summary>
-        /// Represents the native callback method for a control port that's called by MMAL.
+        /// This is the camera's control port callback function. The callback is used if
+        /// MMALCameraConfig.SetChangeEventRequest is set to true.
         /// </summary>
         /// <param name="port">Native port struct pointer.</param>
         /// <param name="buffer">Native buffer header pointer.</param>
@@ -90,6 +94,29 @@ namespace MMALSharp.Ports.Controls
         {
             lock (ControlLock)
             {
+                if (buffer->Cmd == MMALEvents.MMAL_EVENT_PARAMETER_CHANGED)
+                {
+                    var data = (MMAL_EVENT_PARAMETER_CHANGED_T*)buffer->Data;
+
+                    if (data->Hdr.Id == MMALParametersCamera.MMAL_PARAMETER_CAMERA_SETTINGS)
+                    {
+                        var settings = (MMAL_PARAMETER_CAMERA_SETTINGS_T*)data;
+
+                        MMALLog.Logger.Debug($"Analog gain num {settings->AnalogGain.Num}");
+                        MMALLog.Logger.Debug($"Analog gain den {settings->AnalogGain.Den}");
+                        MMALLog.Logger.Debug($"Exposure {settings->Exposure}");
+                        MMALLog.Logger.Debug($"Focus position {settings->FocusPosition}");
+                    }
+                }
+                else if (buffer->Cmd == MMALEvents.MMAL_EVENT_ERROR)
+                {
+                    MMALLog.Logger.Info("No data received from sensor. Check all connections, including the Sunny one on the camera board");
+                }
+                else
+                {
+                    MMALLog.Logger.Info("Received unexpected camera control callback event");
+                }
+
                 if (MMALCameraConfig.Debug)
                 {
                     MMALLog.Logger.Debug("In native control callback.");
@@ -106,7 +133,7 @@ namespace MMALSharp.Ports.Controls
 
                     bufferImpl.PrintProperties();
 
-                    this.ManagedControlCallback.Callback(bufferImpl);
+                    this.ManagedCallback.Callback(bufferImpl);
 
                     if (MMALCameraConfig.Debug)
                     {

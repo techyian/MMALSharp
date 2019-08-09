@@ -16,7 +16,7 @@ namespace MMALSharp
     /// <summary>
     /// Represents a buffer header object.
     /// </summary>
-    public unsafe class MMALBufferImpl : MMALObject
+    public unsafe class MMALBufferImpl : MMALObject, IBuffer
     {
         /// <summary>
         /// Pointer to the data associated with this buffer header.
@@ -76,7 +76,7 @@ namespace MMALSharp
         /// <summary>
         /// Native pointer that represents this buffer header.
         /// </summary>
-        internal MMAL_BUFFER_HEADER_T* Ptr { get; }
+        public MMAL_BUFFER_HEADER_T* Ptr { get; }
 
         /// <summary>
         /// Creates a new Managed reference to a MMAL Buffer.
@@ -173,7 +173,7 @@ namespace MMALSharp
         /// Gathers all data in this payload and returns as a byte array.
         /// </summary>
         /// <returns>A byte array containing the image frame.</returns>
-        internal byte[] GetBufferData()
+        public byte[] GetBufferData()
         {
             if (MMALCameraConfig.Debug)
             {
@@ -206,7 +206,7 @@ namespace MMALSharp
         /// <param name="source">The array of image data to write to buffer header.</param>
         /// <param name="length">The length of the data being written.</param>
         /// <param name="eof">Signal that we've reached the end of the input file.</param>
-        internal void ReadIntoBuffer(byte[] source, int length, bool eof)
+        public void ReadIntoBuffer(byte[] source, int length, bool eof)
         {
             if (MMALCameraConfig.Debug)
             {
@@ -229,7 +229,7 @@ namespace MMALSharp
         /// Acquire a buffer header. Acquiring a buffer header increases a reference counter on it and makes 
         /// sure that the buffer header won't be recycled until all the references to it are gone.
         /// </summary>
-        internal void Acquire()
+        public void Acquire()
         {
             if (this.CheckState())
             {
@@ -241,7 +241,7 @@ namespace MMALSharp
         /// Release a buffer header. Releasing a buffer header will decrease its reference counter and when no more references are left, 
         /// the buffer header will be recycled by calling its 'release' callback function.
         /// </summary>
-        internal void Release()
+        public void Release()
         {
             if (this.CheckState())
             {
@@ -263,7 +263,7 @@ namespace MMALSharp
         /// <summary>
         /// Reset a buffer header. Resets all header variables to default values.
         /// </summary>
-        internal void Reset()
+        public void Reset()
         {
             if (this.CheckState())
             {

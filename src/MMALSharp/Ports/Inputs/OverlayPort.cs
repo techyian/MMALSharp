@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using MMALSharp.Components;
 using MMALSharp.Native;
 
 namespace MMALSharp.Ports.Inputs
@@ -21,7 +22,7 @@ namespace MMALSharp.Ports.Inputs
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
-        public OverlayPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid) 
+        public OverlayPort(IntPtr ptr, IComponent comp, PortType type, Guid guid) 
             : base(ptr, comp, type, guid)
         {
         }
@@ -30,7 +31,7 @@ namespace MMALSharp.Ports.Inputs
         /// Creates a new instance of <see cref="OverlayPort"/>.
         /// </summary>
         /// <param name="copyFrom">The port to copy data from.</param>
-        public OverlayPort(PortBase copyFrom)
+        public OverlayPort(IPort copyFrom)
             : base((IntPtr)copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
         {
         }

@@ -7,7 +7,7 @@ namespace MMALSharp
     /// <summary>
     /// Represents an MMAL Event Format.
     /// </summary>
-    public unsafe class MMALEventFormat
+    public unsafe class MMALEventFormat : IBufferEvent
     {
         // Dereferenced struct.
         private MMAL_ES_FORMAT_T Format { get; }
@@ -97,7 +97,7 @@ namespace MMALSharp
             this.Ptr = ptr;
         }
 
-        internal static MMALEventFormat GetEventFormat(MMALBufferImpl buffer)
+        internal static MMALEventFormat GetEventFormat(IBuffer buffer)
         {
             var ev = MMALEvents.mmal_event_format_changed_get(buffer.Ptr);                                    
             return new MMALEventFormat(Marshal.PtrToStructure<MMAL_ES_FORMAT_T>((IntPtr)ev->Format), ev->Format);

@@ -59,41 +59,24 @@ namespace MMALSharp.Components
         /// If it exists, removes a <see cref="IConnectionCallbackHandler"/> on the port specified.
         /// </summary>
         /// <param name="port">The port with a created connection.</param>
-        public void RemoveConnectionCallback(PortBase port) =>
+        public void RemoveConnectionCallback(IPort port) =>
             ConnectionCallbackProvider.RemoveCallback(port.ConnectedReference);
-        
+
         /// <summary>
         /// Configures a specific input port on a downstream component. This method will perform a shallow copy of the output
         /// port it is to be connected to.
         /// </summary>
-        /// <param name="encodingType">The encoding type the input port shall be expecting.</param>
-        /// <param name="pixelFormat">The pixel format the input port shall be expecting.</param>
+        /// <param name="config">User provided port configuration object.</param>
         /// <param name="copyPort">The output port we are copying format data from.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual IDownstreamComponent ConfigureInputPort(MMALEncoding encodingType, MMALEncoding pixelFormat, IPort copyPort, bool zeroCopy = false)
+        public virtual unsafe IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, bool zeroCopy = false)
         {
-            if (copyPort != null)
-            {
-                copyPort.ShallowCopy(this.Inputs[0]);
-            }
+            this.Inputs[0].Configure(config, copyPort, zeroCopy);
 
-            if (encodingType != null)
+            if (this.Outputs.Count > 0 && this.Outputs[0].Ptr->Format->Type == MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_UNKNOWN)
             {
-                this.Inputs[0].NativeEncodingType = encodingType.EncodingVal;
-            }
-
-            if (pixelFormat != null)
-            {
-                this.Inputs[0].NativeEncodingSubformat = pixelFormat.EncodingVal;
-            }
-
-            this.Inputs[0].Commit();
-
-            if (zeroCopy)
-            {
-                this.Inputs[0].ZeroCopy = true;
-                this.Inputs[0].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
+                throw new PiCameraError("Unable to determine settings for output port.");
             }
 
             return this;
@@ -106,55 +89,12 @@ namespace MMALSharp.Components
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual unsafe IDownstreamComponent ConfigureInputPort(MMALPortConfig config)
         {
-            this.Inputs[0].PortConfig = config;
-
-            if (config.EncodingType != null)
-            {
-                this.Inputs[0].NativeEncodingType = config.EncodingType.EncodingVal;
-            }
-
-            if (config.PixelFormat != null)
-            {
-                this.Inputs[0].NativeEncodingSubformat = config.PixelFormat.EncodingVal;
-            }
-            
-            if (config.Width > 0 && config.Height > 0)
-            {
-                this.Inputs[0].Resolution = new Resolution(config.Width, config.Height);
-            }
-            else
-            {
-                // Use config.
-                this.Inputs[0].Resolution = new Resolution(0, 0);
-            }
-
-            if (config.Framerate > 0)
-            {
-                this.Inputs[0].FrameRate = new MMAL_RATIONAL_T(config.Framerate, 1);
-            }
-
-            if (config.Bitrate > 0)
-            {
-                this.Inputs[0].Bitrate = config.Bitrate;
-            }
-
-            this.Inputs[0].EncodingType = config.EncodingType;
-
-            this.Inputs[0].Commit();
+            this.Inputs[0].Configure(config);
 
             if (this.Outputs.Count > 0 && this.Outputs[0].Ptr->Format->Type == MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_UNKNOWN)
             {
                 throw new PiCameraError("Unable to determine settings for output port.");
             }
-
-            if (config.ZeroCopy)
-            {
-                this.Inputs[0].ZeroCopy = true;
-                this.Inputs[0].SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
-            }
-
-            this.Inputs[0].BufferNum = Math.Max(this.Inputs[0].Ptr->BufferNumMin, this.Inputs[0].Ptr->BufferNumRecommended);
-            this.Inputs[0].BufferSize = Math.Max(this.Inputs[0].Ptr->BufferSizeMin, this.Inputs[0].Ptr->BufferSizeRecommended);
 
             return this;
         }
@@ -216,12 +156,8 @@ namespace MMALSharp.Components
                 if (input.ConnectedReference != null)
                 {
                     MMALLog.Logger.Debug($"Removing {input.ConnectedReference.ToString()}");
-
                     input.ConnectedReference.OutputPort.ConnectedReference?.Dispose();
-                    input.ConnectedReference.OutputPort.ConnectedReference = null;
-
                     input.ConnectedReference.Dispose();
-                    input.ConnectedReference = null;
                 }
             }
 
@@ -230,9 +166,7 @@ namespace MMALSharp.Components
                 if (output.ConnectedReference != null)
                 {
                     MMALLog.Logger.Debug($"Removing {output.ConnectedReference.ToString()}");
-
                     output.ConnectedReference.Dispose();
-                    output.ConnectedReference = null;
                 }
             }
         }

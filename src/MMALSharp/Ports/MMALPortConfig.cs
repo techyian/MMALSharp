@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Drawing;
 using MMALSharp.Native;
 
 namespace MMALSharp.Ports
@@ -59,12 +60,27 @@ namespace MMALSharp.Ports
         public DateTime? Timeout { get; set; }
 
         /// <summary>
+        /// Requested number of buffer headers.
+        /// </summary>
+        public int BufferNum { get; set; }
+
+        /// <summary>
+        /// Requested size of buffer headers.
+        /// </summary>
+        public int BufferSize { get; set; }
+
+        /// <summary>
+        /// The Region of Interest requested.
+        /// </summary>
+        public Rectangle? Crop { get; set; }
+
+        /// <summary>
         /// Create a new instance of <see cref="MMALPortConfig"/> with parameters useful for image capture.
         /// </summary>
         /// <param name="encodingType">The encoding type.</param>
         /// <param name="pixelFormat">The pixel format.</param>
         /// <param name="quality">The output quality. Only affects JPEG quality for image stills.</param>
-        public MMALPortConfig(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality)
+        public MMALPortConfig(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality = 0)
         {
             this.EncodingType = encodingType;
             this.PixelFormat = pixelFormat;
@@ -100,8 +116,11 @@ namespace MMALSharp.Ports
         /// <param name="bitrate">The output bitrate.</param>
         /// <param name="zeroCopy">Specify zero copy.</param>
         /// <param name="timeout">Video record timeout.</param>
+        /// <param name="bufferNum">Requested number of buffer headers.</param>
+        /// <param name="bufferSize">Requested size of buffer headers.</param>
+        /// <param name="crop">The Region of Interest requested.</param>
         public MMALPortConfig(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, int framerate,
-                                int quality, int bitrate, bool zeroCopy, DateTime? timeout)
+                                int quality, int bitrate, bool zeroCopy, DateTime? timeout, int bufferNum = 0, int bufferSize = 0, Rectangle? crop = null)
         {
             this.EncodingType = encodingType;
             this.PixelFormat = pixelFormat;
@@ -112,6 +131,9 @@ namespace MMALSharp.Ports
             this.Bitrate = bitrate;
             this.ZeroCopy = zeroCopy;
             this.Timeout = timeout;
+            this.BufferNum = bufferNum;
+            this.BufferSize = bufferSize;
+            this.Crop = crop;
         }
     }
 }

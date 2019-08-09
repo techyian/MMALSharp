@@ -12,7 +12,7 @@ namespace MMALSharp
     /// <summary>
     /// Represents a queue of buffer headers.
     /// </summary>
-    public unsafe class MMALQueueImpl : MMALObject
+    public unsafe class MMALQueueImpl : MMALObject, IBufferQueue
     {
         /// <summary>
         /// Native pointer to the buffer header queue this object represents.
@@ -32,7 +32,7 @@ namespace MMALSharp
         /// Get a MMAL_BUFFER_HEADER_T from a queue.
         /// </summary>
         /// <returns>A new managed buffer header object.</returns>
-        public MMALBufferImpl GetBuffer()
+        public IBuffer GetBuffer()
         {
             var ptr = MMALQueue.mmal_queue_get(this.Ptr);
 
@@ -64,30 +64,30 @@ namespace MMALSharp
             return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;
         }
 
-        internal static MMALQueueImpl Create()
-        {
-            var ptr = MMALQueue.mmal_queue_create();
-            return new MMALQueueImpl(ptr);
-        }
-
         /// <summary>
         /// Get the number of MMAL_BUFFER_HEADER_T currently in a queue.
         /// </summary>
         /// <returns>The number of buffers currently in this queue.</returns>
-        internal uint QueueLength()
+        public uint QueueLength()
         {
             var length = MMALQueue.mmal_queue_length(this.Ptr);
             return length;
         }
 
-        internal MMALBufferImpl Wait()
+        public IBuffer Wait()
         {
             return new MMALBufferImpl(MMALQueue.mmal_queue_wait(this.Ptr));
         }
 
-        internal void Put(MMALBufferImpl buffer)
+        public void Put(IBuffer buffer)
         {
             MMALQueue.mmal_queue_put(this.Ptr, buffer.Ptr);
+        }
+
+        internal static MMALQueueImpl Create()
+        {
+            var ptr = MMALQueue.mmal_queue_create();
+            return new MMALQueueImpl(ptr);
         }
 
         /// <summary>

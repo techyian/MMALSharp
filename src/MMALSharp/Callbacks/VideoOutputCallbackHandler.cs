@@ -6,6 +6,7 @@
 using System;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
+using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Config;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
@@ -40,8 +41,8 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
-        public VideoOutputCallbackHandler(OutputPortBase port) 
+        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
+        public VideoOutputCallbackHandler(IOutputPort port) 
             : base(port)
         {
             var motionType = this.WorkingPort.EncodingType == MMALEncoding.H264
@@ -54,9 +55,9 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
+        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
         /// <param name="split">Configure to split into multiple files.</param>
-        public VideoOutputCallbackHandler(OutputPortBase port, Split split)
+        public VideoOutputCallbackHandler(IOutputPort port, Split split)
             : this(port)
         {
             this.Split = split;
@@ -65,9 +66,9 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
+        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
         /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        public VideoOutputCallbackHandler(OutputPortBase port, MMALEncoding encoding)
+        public VideoOutputCallbackHandler(IOutputPort port, MMALEncoding encoding)
             : base(port, encoding)
         {
             var motionType = this.WorkingPort.EncodingType == MMALEncoding.H264
@@ -83,7 +84,7 @@ namespace MMALSharp.Callbacks
         /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
         /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
         /// <param name="split">Configure to split into multiple files.</param>
-        public VideoOutputCallbackHandler(OutputPortBase port, MMALEncoding encoding, Split split)
+        public VideoOutputCallbackHandler(IOutputPort port, MMALEncoding encoding, Split split)
             : this(port, encoding)
         {
             this.Split = split;
@@ -93,17 +94,15 @@ namespace MMALSharp.Callbacks
         /// The callback function to carry out.
         /// </summary>
         /// <param name="buffer">The working buffer header.</param>
-        public override void Callback(MMALBufferImpl buffer)
+        public override void Callback(IBuffer buffer)
         {
-            if (this.WorkingPort.ComponentReference.GetType() != typeof(MMALVideoEncoder))
+            if (this.WorkingPort.ComponentReference.GetType() != typeof(IVideoEncoder))
             {
-                throw new ArgumentException($"Working port component is not of type {nameof(MMALVideoEncoder)}");
+                throw new ArgumentException($"Working port component is not of type {nameof(IVideoEncoder)}");
             }
             
             MMALLog.Logger.Debug("In video output callback");
-
-            var component = (MMALVideoEncoder)this.WorkingPort.ComponentReference;
-
+            
             if (this.PrepareSplit && buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))
             {
                 ((VideoStreamCaptureHandler)this.WorkingPort.Handler).Split();

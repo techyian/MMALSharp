@@ -237,22 +237,23 @@ namespace MMALSharp.Components
             parent.Overlays.Add(this);
             
             this.Inputs[0] = new OverlayPort(this.Inputs[0]);
+
+            var width = 0;
+            var height = 0;
             
             if (config != null)
             {
                 if (config.Resolution.Width > 0 && config.Resolution.Height > 0)
                 {
-                    this.Inputs[0].Resolution = config.Resolution;
-                    this.Inputs[0].Crop = new Rectangle(0, 0, config.Resolution.Width, config.Resolution.Height);
+                    width = config.Resolution.Width;
+                    height = config.Resolution.Height;
                 }
                 else
                 {
-                    this.Inputs[0].Resolution = parent.Inputs[0].Resolution;
-                    this.Inputs[0].Crop = new Rectangle(0, 0, parent.Inputs[0].Resolution.Width, parent.Inputs[0].Resolution.Height);
+                    width = parent.Inputs[0].Resolution.Width;
+                    height = parent.Inputs[0].Resolution.Height;
                 }
-
-                this.Inputs[0].FrameRate = new MMAL_RATIONAL_T(0, 0);
-
+                
                 if (config.Encoding == null)
                 {
                     var sourceLength = source.Length;
@@ -272,16 +273,16 @@ namespace MMALSharp.Components
                         throw new PiCameraError("Unable to determine encoding from image size.");
                     }
                 }
-
-                this.Inputs[0].NativeEncodingType = config.Encoding.EncodingVal;
             }
 
             if (!this.AllowedEncodings.Any(c => c.EncodingVal == this.Inputs[0].NativeEncodingType))
             {
-                throw new PiCameraError($"Incompatible encoding type for use with Preview Render overlay {MMALEncodingHelpers.ParseEncoding(this.Inputs[0].NativeEncodingType).EncodingName}.");
+                throw new PiCameraError($"Incompatible encoding type for use with Preview Render overlay {this.Inputs[0].NativeEncodingType.ParseEncoding().EncodingName}.");
             }
 
-            this.Inputs[0].Commit();
+            var portConfig = new MMALPortConfig(config.Encoding, null, width, height, 0, 0, 0, false, null, 0, 0);
+            
+            this.Inputs[0].Configure(portConfig);
             
             this.Control.Start();
             this.Inputs[0].Start();

@@ -280,7 +280,6 @@ namespace MMALSharp
                     
                     port.DisablePort();
                     port.DestroyPortPool();
-                    port.BufferPool = null;
                 }
             }
 
@@ -292,7 +291,6 @@ namespace MMALSharp
                     
                     port.DisablePort();
                     port.DestroyPortPool();
-                    port.BufferPool = null;
                 }
             }
         }

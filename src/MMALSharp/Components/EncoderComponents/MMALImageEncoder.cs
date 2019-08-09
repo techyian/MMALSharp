@@ -86,7 +86,7 @@ namespace MMALSharp.Components
         }
         
         /// <inheritdoc />
-        public override MMALDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
+        public override IDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
         {
             base.ConfigureOutputPort(outputPort, config);
 

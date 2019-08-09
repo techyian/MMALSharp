@@ -18,32 +18,32 @@ namespace MMALSharp
     /// <summary>
     /// Represents a connection between two ports.
     /// </summary>
-    public unsafe class MMALConnectionImpl : MMALObject
+    public unsafe class MMALConnectionImpl : MMALObject, IConnection
     {
         /// <summary>
         /// The pool of buffer headers in this connection.
         /// </summary>
-        private MMALPoolImpl ConnectionPool { get; set; }
+        public IBufferPool ConnectionPool { get; set; }
 
         /// <summary>
         /// The downstream component associated with the connection.
         /// </summary>
-        public MMALDownstreamComponent DownstreamComponent { get; }
+        public IDownstreamComponent DownstreamComponent { get; }
 
         /// <summary>
         /// The upstream component associated with the connection.
         /// </summary>
-        public MMALComponentBase UpstreamComponent { get; }
+        public IComponent UpstreamComponent { get; }
 
         /// <summary>
         /// The input port of this connection.
         /// </summary>
-        public InputPortBase InputPort { get; }
+        public IInputPort InputPort { get; }
 
         /// <summary>
         /// The output port of this connection.
         /// </summary>
-        public OutputPortBase OutputPort { get; }
+        public IOutputPort OutputPort { get; }
         
         /// <summary>
         /// Monitor lock for connection callback method.
@@ -89,7 +89,7 @@ namespace MMALSharp
         /// <summary>
         /// Native pointer to the connection that this object represents.
         /// </summary>
-        private MMAL_CONNECTION_T* Ptr { get; }
+        public MMAL_CONNECTION_T* Ptr { get; }
 
         /// <inheritdoc />
         public override bool CheckState()
@@ -106,7 +106,7 @@ namespace MMALSharp
         /// <param name="inputComponent">The upstream component.</param>
         /// <param name="outputComponent">The downstream component.</param>
         /// <param name="useCallback">Configure the connection to intercept native callbacks. Note: will adversely impact performance.</param>
-        protected MMALConnectionImpl(MMAL_CONNECTION_T* ptr, OutputPortBase output, InputPortBase input, MMALDownstreamComponent inputComponent, MMALComponentBase outputComponent, bool useCallback)
+        protected MMALConnectionImpl(MMAL_CONNECTION_T* ptr, IOutputPort output, IInputPort input, IDownstreamComponent inputComponent, IComponent outputComponent, bool useCallback)
         {
             this.Ptr = ptr;
             this.OutputPort = output;
@@ -131,7 +131,7 @@ namespace MMALSharp
         /// The managed connection callback method.
         /// </summary>
         /// <param name="buffer">The working buffer header.</param>
-        public virtual void ManagedConnectionCallback(MMALBufferImpl buffer)
+        public virtual void ManagedConnectionCallback(IBuffer buffer)
         {
             MMALLog.Logger.Debug("Inside Managed connection callback");
         }
@@ -158,7 +158,7 @@ namespace MMALSharp
         /// <param name="inputComponent">The managed instance of the component we are connecting to.</param>
         /// <param name="useCallback">When set to true, enable the connection callback delegate (adversely affects performance).</param>
         /// <returns>A new managed connection object.</returns>
-        internal static MMALConnectionImpl CreateConnection(OutputPortBase output, InputPortBase input, MMALDownstreamComponent inputComponent, bool useCallback)
+        internal static MMALConnectionImpl CreateConnection(IOutputPort output, IInputPort input, IDownstreamComponent inputComponent, bool useCallback)
         {
             IntPtr ptr = IntPtr.Zero;
 
@@ -178,7 +178,7 @@ namespace MMALSharp
         /// Enable a connection. The format of the two ports must have been committed before calling this function, although note that on creation, 
         /// the connection automatically copies and commits the output port's format to the input port.
         /// </summary>
-        internal void Enable()
+        public void Enable()
         {
             if (!this.Enabled)
             {
@@ -189,7 +189,7 @@ namespace MMALSharp
         /// <summary>
         /// Disable a connection.
         /// </summary>
-        internal void Disable()
+        public void Disable()
         {
             if (this.Enabled)
             {
@@ -202,7 +202,7 @@ namespace MMALSharp
         /// being released. The actual destruction of the connection will start by disabling it, if necessary. Any pool, queue, and so on owned by 
         /// the connection shall then be destroyed.
         /// </summary>
-        internal void Destroy()
+        public void Destroy()
         {
             // Cleaning port pools for sanity.
             this.UpstreamComponent.CleanPortPools();
@@ -271,7 +271,7 @@ namespace MMALSharp
             return (int)connection->Flags;
         }
         
-        private void ConfigureConnectionCallback(OutputPortBase output, InputPortBase input)
+        private void ConfigureConnectionCallback(IOutputPort output, IInputPort input)
         {
             output.SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
             input.SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);

@@ -7,7 +7,7 @@ using MMALSharp.Native;
 
 namespace MMALSharp
 {
-    public interface IBuffer
+    public interface IBuffer : IMMALObject
     {
         uint Cmd { get; }
         uint AllocSize { get; }

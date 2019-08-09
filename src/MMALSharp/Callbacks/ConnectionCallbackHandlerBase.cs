@@ -13,13 +13,13 @@ namespace MMALSharp.Callbacks
     public abstract class ConnectionCallbackHandlerBase : IConnectionCallbackHandler
     {
         /// <inheritdoc />
-        public MMALConnectionImpl WorkingConnection { get; }
+        public IConnection WorkingConnection { get; }
 
         /// <summary>
         /// Creates a new instance of <see cref="ConnectionCallbackHandlerBase"/>.
         /// </summary>
         /// <param name="connection">The connection.</param>
-        protected ConnectionCallbackHandlerBase(MMALConnectionImpl connection)
+        protected ConnectionCallbackHandlerBase(IConnection connection)
         {
             this.WorkingConnection = connection;
         }
@@ -28,7 +28,7 @@ namespace MMALSharp.Callbacks
         /// The input port callback function to carry out.
         /// </summary>
         /// <param name="buffer">The working buffer header.</param>
-        public virtual void InputCallback(MMALBufferImpl buffer)
+        public virtual void InputCallback(IBuffer buffer)
         {
             if (MMALCameraConfig.Debug)
             {
@@ -37,7 +37,7 @@ namespace MMALSharp.Callbacks
         }
 
         /// <inheritdoc />
-        public virtual void OutputCallback(MMALBufferImpl buffer)
+        public virtual void OutputCallback(IBuffer buffer)
         {
             if (MMALCameraConfig.Debug)
             {

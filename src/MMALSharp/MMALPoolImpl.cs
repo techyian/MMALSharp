@@ -14,7 +14,7 @@ namespace MMALSharp
     /// <summary>
     /// Represents a pool of buffer headers. An instance of this class can be created via a MMALPortImpl.
     /// </summary>
-    public unsafe class MMALPoolImpl : MMALObject
+    public unsafe class MMALPoolImpl : MMALObject, IBufferPool
     {
         /// <summary>
         /// Native pointer that represents this buffer header pool.
@@ -24,7 +24,7 @@ namespace MMALSharp
         /// <summary>
         /// Accessor to the queue of buffer headers this pool has.
         /// </summary>
-        public MMALQueueImpl Queue { get; }
+        public IBufferQueue Queue { get; }
 
         /// <summary>
         /// The number of buffer headers in this pool.
@@ -61,6 +61,16 @@ namespace MMALSharp
             return this.Ptr != null && (IntPtr)this.Ptr != IntPtr.Zero;
         }
 
+        /// <summary>
+        /// Resize a pool of MMAL_BUFFER_HEADER_T. This allows modifying either the number of allocated buffers, the payload size or both at the same time.
+        /// </summary>
+        /// <param name="numHeaders">Number of headers to be contained in this pool.</param>
+        /// <param name="size">The size of the headers.</param>
+        public void Resize(uint numHeaders, uint size)
+        {
+            MMALCheck(MMALPool.mmal_pool_resize(this.Ptr, numHeaders, size), "Unable to resize pool");
+        }
+
         /// <inheritdoc />
         public override void Dispose()
         {
@@ -75,16 +85,6 @@ namespace MMALSharp
         private void Destroy()
         {
             MMALPool.mmal_pool_destroy(this.Ptr);
-        }
-
-        /// <summary>
-        /// Resize a pool of MMAL_BUFFER_HEADER_T. This allows modifying either the number of allocated buffers, the payload size or both at the same time.
-        /// </summary>
-        /// <param name="numHeaders">Number of headers to be contained in this pool.</param>
-        /// <param name="size">The size of the headers.</param>
-        internal void Resize(uint numHeaders, uint size)
-        {
-            MMALCheck(MMALPool.mmal_pool_resize(this.Ptr, numHeaders, size), "Unable to resize pool");
         }
     }
 }

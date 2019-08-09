@@ -80,7 +80,7 @@ namespace MMALSharp.Tests
             
             using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests/split_test", "h264"))
             using (var preview = new MMALVideoRenderer())
-            using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler, new Split { Mode = TimelapseMode.Second, Value = 15 }))
+            using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler))
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
@@ -192,21 +192,21 @@ namespace MMALSharp.Tests
                 var portConfig4 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 40, 13000000, DateTime.Now.AddSeconds(10));
 
                 // Create our component pipeline.         
-                splitter.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, Fixture.MMALCamera.Camera.VideoPort);
+                splitter.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420, 0), Fixture.MMALCamera.Camera.VideoPort);
                 splitter.ConfigureOutputPort(0, splitterPortConfig);
                 splitter.ConfigureOutputPort(1, splitterPortConfig);
                 splitter.ConfigureOutputPort(2, splitterPortConfig);
                 splitter.ConfigureOutputPort(3, splitterPortConfig);
 
-                vidEncoder.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[0]);
+                vidEncoder.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420), splitter.Outputs[0]);
                 vidEncoder.ConfigureOutputPort(0, portConfig1);
 
-                vidEncoder2.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[1]);
+                vidEncoder2.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420), splitter.Outputs[1]);
                 vidEncoder2.ConfigureOutputPort(0, portConfig2);
-                vidEncoder3.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[2]);
+                vidEncoder3.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420), splitter.Outputs[2]);
                 vidEncoder3.ConfigureOutputPort(0, portConfig3);
 
-                vidEncoder4.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[3]);
+                vidEncoder4.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420), splitter.Outputs[3]);
                 vidEncoder4.ConfigureOutputPort(0, portConfig4);
 
                 Fixture.MMALCamera.Camera.VideoPort.ConnectTo(splitter);
@@ -259,21 +259,21 @@ namespace MMALSharp.Tests
                 var portConfig4 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 40, 13000000, DateTime.Now.AddSeconds(10));
 
                 // Create our component pipeline.         
-                splitter.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, Fixture.MMALCamera.Camera.VideoPort);
+                splitter.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420), Fixture.MMALCamera.Camera.VideoPort);
                 splitter.ConfigureOutputPort(0, splitterPortConfig);
                 splitter.ConfigureOutputPort(1, splitterPortConfig);
                 splitter.ConfigureOutputPort(2, splitterPortConfig);
                 splitter.ConfigureOutputPort(3, splitterPortConfig);
 
-                vidEncoder.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[0]);
+                vidEncoder.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420), splitter.Outputs[0]);
                 vidEncoder.ConfigureOutputPort(0, portConfig1);
 
-                vidEncoder2.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[1]);
+                vidEncoder2.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420), splitter.Outputs[1]);
                 vidEncoder2.ConfigureOutputPort(0, portConfig2);
-                vidEncoder3.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[2]);
+                vidEncoder3.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420), splitter.Outputs[2]);
                 vidEncoder3.ConfigureOutputPort(0, portConfig3);
 
-                vidEncoder4.ConfigureInputPort(MMALEncoding.OPAQUE, MMALEncoding.I420, splitter.Outputs[3]);
+                vidEncoder4.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420), splitter.Outputs[3]);
                 vidEncoder4.ConfigureOutputPort(0, portConfig4);
 
                 Fixture.MMALCamera.Camera.VideoPort.ConnectTo(splitter);

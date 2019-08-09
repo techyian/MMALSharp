@@ -42,6 +42,7 @@ namespace MMALSharp.Ports
         int NativeEncodingType { get; }
         int NativeEncodingSubformat { get; }
         int Bitrate { get; }
+        MMAL_RATIONAL_T Par { get; }
         bool ZeroCopy { get; set; }
         TaskCompletionSource<bool> Trigger { get; }
         void EnablePort(IntPtr callback);
@@ -50,21 +51,21 @@ namespace MMALSharp.Ports
 
         void Commit();
 
-        void ShallowCopy(PortBase destination);
+        void ShallowCopy(IPort destination);
 
-        void ShallowCopy(MMALEventFormat eventFormatSource);
+        void ShallowCopy(IBufferEvent eventFormatSource);
 
-        void FullCopy(PortBase destination);
+        void FullCopy(IPort destination);
 
-        void FullCopy(MMALEventFormat eventFormatSource);
+        void FullCopy(IBufferEvent eventFormatSource);
 
         void Flush();
 
-        void SendBuffer(MMALBufferImpl buffer);
+        void SendBuffer(IBuffer buffer);
 
         void SendAllBuffers(bool sendBuffers = true);
 
-        void SendAllBuffers(MMALPoolImpl pool);
+        void SendAllBuffers(IBufferPool pool);
 
         void DestroyPortPool();
 

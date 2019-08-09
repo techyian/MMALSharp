@@ -32,7 +32,7 @@ namespace MMALSharp.Components
             : base(MMAL_COMPONENT_ISP)
         {
             this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
-            this.Outputs.Add((OutputPortBase)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
+            this.Outputs.Add((IOutputPort)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
         }
     }
 }

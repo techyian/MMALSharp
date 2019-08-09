@@ -9,7 +9,7 @@ using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp
 {
-    public interface IConnection
+    public interface IConnection : IMMALObject
     {
         IDownstreamComponent DownstreamComponent { get; }
         IComponent UpstreamComponent { get; }

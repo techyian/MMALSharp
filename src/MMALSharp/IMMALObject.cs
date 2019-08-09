@@ -1,6 +1,8 @@
-﻿namespace MMALSharp
+﻿using System;
+
+namespace MMALSharp
 {
-    public interface IMMALObject
+    public interface IMMALObject : IDisposable
     {
         /// <summary>
         /// Checks whether a native MMAL pointer is valid.

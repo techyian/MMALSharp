@@ -71,11 +71,11 @@ namespace MMALSharp.Ports.Outputs
             if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !this.ComponentReference.ForceStopProcessing && !failed && !this.Trigger.Task.IsCompleted) || 
                 (this.ComponentReference.ForceStopProcessing && !this.Trigger.Task.IsCompleted))
             {
-                this.ManagedOutputCallback.Callback(bufferImpl);
+                this.ManagedCallback.Callback(bufferImpl);
             }
             
             // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
-            this.ReleaseOutputBuffer(bufferImpl);
+            this.ReleaseBuffer(bufferImpl);
 
             // If this buffer signals the end of data stream, allow waiting thread to continue.
             if (this.ComponentReference.ForceStopProcessing || failed)

@@ -50,7 +50,7 @@ namespace MMALSharp
         /// Begin capture on one of the camera's output ports.
         /// </summary>
         /// <param name="port">An output port of the camera component.</param>
-        public void StartCapture(OutputPortBase port)
+        public void StartCapture(IOutputPort port)
         {
             if (port == this.Camera.StillPort || port == this.Camera.VideoPort)
             {
@@ -62,7 +62,7 @@ namespace MMALSharp
         /// Stop capture on one of the camera's output ports.
         /// </summary>
         /// <param name="port">An output port of the camera component.</param>
-        public void StopCapture(OutputPortBase port)
+        public void StopCapture(IOutputPort port)
         {
             if (port == this.Camera.StillPort || port == this.Camera.VideoPort)
             {
@@ -74,7 +74,7 @@ namespace MMALSharp
         /// Force capture to stop on a port (Still or Video).
         /// </summary>
         /// <param name="port">The capture port.</param>
-        public void ForceStop(OutputPortBase port)
+        public void ForceStop(IOutputPort port)
         {
             Task.Run(() =>
             {
@@ -134,7 +134,12 @@ namespace MMALSharp
                 throw new PiCameraError("A connection was found to the Camera still port. No encoder should be connected to the Camera's still port for raw capture.");
             }
 
-            this.Camera.StillPort.Handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            if (handler == null)
+            {
+                throw new ArgumentNullException(nameof(handler));
+            }
+
+            this.Camera.StillPort.SetCaptureHandler(handler);
  
             using (var renderer = new MMALNullSinkComponent())
             {
@@ -291,7 +296,7 @@ namespace MMALSharp
         /// <param name="cameraPort">The camera port which image data is coming from.</param>
         /// <param name="cancellationToken">A CancellationToken to observe while waiting for a task to complete.</param>
         /// <returns>The awaitable Task.</returns>
-        public async Task ProcessAsync(OutputPortBase cameraPort, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task ProcessAsync(IOutputPort cameraPort, CancellationToken cancellationToken = default(CancellationToken))
         {
             var handlerComponents = this.PopulateProcessingList();
             
@@ -311,7 +316,6 @@ namespace MMALSharp
 
                 foreach (var port in component.ProcessingPorts.Values)
                 {
-                    port.Trigger = new TaskCompletionSource<bool>();
                     if (port.ConnectedReference == null)
                     {
                         tasks.Add(port.Trigger.Task);
@@ -468,11 +472,9 @@ namespace MMALSharp
         /// <param name="cameraPort">The camera component port (still or video).</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The awaitable task.</returns>
-        private async Task ProcessRawAsync(OutputPortBase cameraPort,
+        private async Task ProcessRawAsync(IOutputPort cameraPort,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            cameraPort.Trigger = new TaskCompletionSource<bool>();
-
             using (cancellationToken.Register(() => {
                 // this callback will be executed when token is cancelled
                 cameraPort.Trigger.TrySetCanceled();
@@ -503,9 +505,9 @@ namespace MMALSharp
             }
         }
 
-        private List<MMALDownstreamComponent> PopulateProcessingList()
+        private List<IDownstreamComponent> PopulateProcessingList()
         {
-            var list = new List<MMALDownstreamComponent>();
+            var list = new List<IDownstreamComponent>();
             var initialStillDownstream = this.Camera.StillPort.ConnectedReference?.DownstreamComponent;
             var initialVideoDownstream = this.Camera.VideoPort.ConnectedReference?.DownstreamComponent;
             var initialPreviewDownstream = this.Camera.PreviewPort.ConnectedReference?.DownstreamComponent;
@@ -528,7 +530,7 @@ namespace MMALSharp
             return list;
         }
 
-        private void FindComponents(MMALDownstreamComponent downstream, List<MMALDownstreamComponent> list)
+        private void FindComponents(IDownstreamComponent downstream, List<IDownstreamComponent> list)
         {
             if (downstream.Outputs.Count == 0)
             {

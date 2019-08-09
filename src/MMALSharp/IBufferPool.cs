@@ -1,8 +1,12 @@
 ﻿
+using System;
+using MMALSharp.Native;
+
 namespace MMALSharp
 {
-    public interface IBufferPool
+    public interface IBufferPool : IDisposable
     {
+        unsafe MMAL_POOL_T* Ptr { get; }
         IBufferQueue Queue { get; }
         uint HeadersNum { get; }
 

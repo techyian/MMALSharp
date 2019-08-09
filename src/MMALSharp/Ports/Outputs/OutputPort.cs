@@ -45,7 +45,7 @@ namespace MMALSharp.Ports.Outputs
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
-        public OutputPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid) 
+        public OutputPort(IntPtr ptr, IComponent comp, PortType type, Guid guid) 
             : base(ptr, comp, type, guid)
         {
         }
@@ -58,16 +58,16 @@ namespace MMALSharp.Ports.Outputs
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
         /// <param name="handler">The capture handler.</param>
-        public OutputPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler) 
+        public OutputPort(IntPtr ptr, IComponent comp, PortType type, Guid guid, ICaptureHandler handler) 
             : base(ptr, comp, type, guid, handler)
         {
         }
 
-        public void Configure(MMALPortConfig config, IInputPort copyFrom)
+        public virtual void Configure(MMALPortConfig config, IInputPort copyFrom)
         {
             this.PortConfig = config;
             
-            copyFrom.ShallowCopy(this);
+            copyFrom?.ShallowCopy(this);
             
             if (config.EncodingType != null)
             {
@@ -78,6 +78,8 @@ namespace MMALSharp.Ports.Outputs
             {
                 this.NativeEncodingSubformat = config.PixelFormat.EncodingVal;
             }
+
+            this.Par = new MMAL_RATIONAL_T(1, 1);
 
             MMAL_VIDEO_FORMAT_T tempVid = this.Ptr->Format->Es->Video;
 
@@ -121,7 +123,15 @@ namespace MMALSharp.Ports.Outputs
             if (config.Width > 0 && config.Height > 0)
             {
                 this.Resolution = new Resolution(config.Width, config.Height).Pad();
-                this.Crop = new Rectangle(0, 0, this.Resolution.Width, this.Resolution.Height);
+
+                if (config.Crop.HasValue)
+                {
+                    this.Crop = config.Crop.Value;
+                }
+                else
+                {
+                    this.Crop = new Rectangle(0, 0, this.Resolution.Width, this.Resolution.Height);
+                }
             }
             else
             {
@@ -137,8 +147,8 @@ namespace MMALSharp.Ports.Outputs
             // It is important to re-commit changes to width and height.
             this.Commit();
 
-            this.BufferNum = Math.Max(this.Ptr->BufferNumRecommended, this.Ptr->BufferNumMin);
-            this.BufferSize = Math.Max(this.Ptr->BufferSizeRecommended, this.Ptr->BufferSizeMin);
+            this.BufferNum = Math.Max(this.BufferNumMin, config.BufferNum > 0 ? config.BufferNum : this.BufferNumRecommended);
+            this.BufferSize = Math.Max(this.BufferSizeMin, config.BufferSize > 0 ? config.BufferSize : this.BufferSizeRecommended);
 
             this.ManagedCallback = PortCallbackProvider.FindCallback(this);
         }
@@ -160,7 +170,8 @@ namespace MMALSharp.Ports.Outputs
 
             var connection = MMALConnectionImpl.CreateConnection(this, destinationComponent.Inputs[inputPort], destinationComponent, useCallback);
             this.ConnectedReference = connection;
-            destinationComponent.Inputs[inputPort].ConnectedReference = connection;
+
+            destinationComponent.Inputs[inputPort].ConnectTo(this, connection);
 
             return destinationComponent.Inputs[inputPort];
         }
@@ -203,6 +214,11 @@ namespace MMALSharp.Ports.Outputs
             {
                 MMALLog.Logger.Warn($"Unable to send buffer header. {e.Message}");
             }
+        }
+
+        public void SetCaptureHandler(ICaptureHandler handler)
+        {
+            this.Handler = handler;
         }
 
         /// <summary>
@@ -249,6 +265,7 @@ namespace MMALSharp.Ports.Outputs
         public void Start()
         {
             MMALLog.Logger.Debug($"Starting output port {this.Name}");
+            this.Trigger = new TaskCompletionSource<bool>();
             this.Enable();
         }
         

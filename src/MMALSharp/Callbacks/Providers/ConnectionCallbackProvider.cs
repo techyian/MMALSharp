@@ -13,7 +13,7 @@ namespace MMALSharp.Callbacks.Providers
         /// <summary>
         /// The list of active callback handlers.
         /// </summary>
-        public static Dictionary<MMALConnectionImpl, IConnectionCallbackHandler> WorkingHandlers { get; private set; } = new Dictionary<MMALConnectionImpl, IConnectionCallbackHandler>();
+        public static Dictionary<IConnection, IConnectionCallbackHandler> WorkingHandlers { get; private set; } = new Dictionary<IConnection, IConnectionCallbackHandler>();
 
         /// <summary>
         /// Register a new <see cref="IConnectionCallbackHandler"/>.
@@ -43,7 +43,7 @@ namespace MMALSharp.Callbacks.Providers
         /// <param name="connection">The connection for which we are retrieving the callback handler.</param>
         /// <returns>A <see cref="IConnectionCallbackHandler"/> for a given connection. If no handler is registered, a 
         /// <see cref="DefaultConnectionCallbackHandler"/> will be returned.</returns>
-        public static IConnectionCallbackHandler FindCallback(MMALConnectionImpl connection)
+        public static IConnectionCallbackHandler FindCallback(IConnection connection)
         {
             if (WorkingHandlers.ContainsKey(connection))
             {
@@ -57,7 +57,7 @@ namespace MMALSharp.Callbacks.Providers
         /// Remove a callback handler for a given connection.
         /// </summary>
         /// <param name="connection">The connection we are removing the callback handler for.</param>
-        public static void RemoveCallback(MMALConnectionImpl connection)
+        public static void RemoveCallback(IConnection connection)
         {
             if (WorkingHandlers.ContainsKey(connection))
             {

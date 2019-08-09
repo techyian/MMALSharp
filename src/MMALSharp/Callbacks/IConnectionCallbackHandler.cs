@@ -8,18 +8,18 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// The connection this callback handler is used with.
         /// </summary>
-        MMALConnectionImpl WorkingConnection { get; }
+        IConnection WorkingConnection { get; }
         
         /// <summary>
         /// The input port callback function to carry out.
         /// </summary>
         /// <param name="buffer">The working buffer header.</param>
-        void InputCallback(MMALBufferImpl buffer);
+        void InputCallback(IBuffer buffer);
         
         /// <summary>
         /// The output port callback function to carry out.
         /// </summary>
         /// <param name="buffer">The working buffer header.</param>
-        void OutputCallback(MMALBufferImpl buffer);
+        void OutputCallback(IBuffer buffer);
     }
 }

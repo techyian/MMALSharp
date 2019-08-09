@@ -5,6 +5,7 @@
 
 using System;
 using MMALSharp.Components;
+using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports.Outputs;
@@ -19,8 +20,8 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="FastImageOutputCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
-        public FastImageOutputCallbackHandler(OutputPortBase port)
+        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
+        public FastImageOutputCallbackHandler(IOutputPort port)
             : base(port)
         {
         }
@@ -28,19 +29,19 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="FastImageOutputCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
+        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
         /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        public FastImageOutputCallbackHandler(OutputPortBase port, MMALEncoding encoding)
+        public FastImageOutputCallbackHandler(IOutputPort port, MMALEncoding encoding)
             : base(port, encoding)
         {
         }
 
         /// <inheritdoc />
-        public override void Callback(MMALBufferImpl buffer)
+        public override void Callback(IBuffer buffer)
         {
-            if (this.WorkingPort.ComponentReference.GetType() != typeof(MMALImageEncoder))
+            if (this.WorkingPort.ComponentReference.GetType() != typeof(IImageEncoder))
             {
-                throw new ArgumentException($"Working port component is not of type {nameof(MMALImageEncoder)}");
+                throw new ArgumentException($"Working port component is not of type {nameof(IImageEncoder)}");
             }
 
             base.Callback(buffer);
