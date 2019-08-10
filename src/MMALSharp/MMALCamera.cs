@@ -318,8 +318,8 @@ namespace MMALSharp
                 {
                     if (port.ConnectedReference == null)
                     {
-                        tasks.Add(port.Trigger.Task);
                         port.Start();
+                        tasks.Add(port.Trigger.Task);
                     }
                 }
             }

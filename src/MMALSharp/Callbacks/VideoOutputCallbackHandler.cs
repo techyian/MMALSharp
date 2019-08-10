@@ -20,8 +20,6 @@ namespace MMALSharp.Callbacks
     /// </summary>
     public class VideoOutputCallbackHandler : DefaultPortCallbackHandler
     {
-        private DateTime? _lastSplit;
-
         /// <summary>
         /// Object containing properties used to determine when we should perform a file split.
         /// </summary>
@@ -30,7 +28,7 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// States the time we last did a file split.
         /// </summary>
-        public DateTime? LastSplit => _lastSplit;
+        public DateTime? LastSplit { get; private set; }
 
         /// <summary>
         /// Property to indicate whether on the next callback we should split. This is used so that we can request an I-Frame from the camera
@@ -48,7 +46,7 @@ namespace MMALSharp.Callbacks
             var motionType = this.WorkingPort.EncodingType == MMALEncoding.H264
                 ? MotionType.MotionVector
                 : MotionType.FrameDiff;
-
+            
             ((IVideoCaptureHandler)this.WorkingPort.Handler).MotionType = motionType;
         }
 
@@ -81,7 +79,7 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="OutputPortBase"/>.</param>
+        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
         /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
         /// <param name="split">Configure to split into multiple files.</param>
         public VideoOutputCallbackHandler(IOutputPort port, MMALEncoding encoding, Split split)
@@ -106,7 +104,7 @@ namespace MMALSharp.Callbacks
             if (this.PrepareSplit && buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))
             {
                 ((VideoStreamCaptureHandler)this.WorkingPort.Handler).Split();
-                _lastSplit = DateTime.Now;
+                LastSplit = DateTime.Now;
                 this.PrepareSplit = false;
             }
 
@@ -115,7 +113,7 @@ namespace MMALSharp.Callbacks
             {
                 if (!this.LastSplit.HasValue)
                 {
-                    _lastSplit = DateTime.Now;
+                    LastSplit = DateTime.Now;
                 }
 
                 if (DateTime.Now.CompareTo(this.CalculateSplit()) > 0)

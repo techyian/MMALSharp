@@ -74,7 +74,7 @@ namespace MMALSharp
         /// <inheritdoc />
         public override void Dispose()
         {
-            MMALLog.Logger.Debug("Disposing pool.");
+            MMALLog.Logger.Debug("Disposing buffer pool.");
             this.Destroy();
             base.Dispose();
         }

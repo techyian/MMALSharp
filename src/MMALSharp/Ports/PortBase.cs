@@ -434,10 +434,10 @@ namespace MMALSharp.Ports
         /// </summary>
         public void DestroyPortPool()
         {
-            if (this.BufferPool != null)
+            if (this.BufferPool != null && !this.BufferPool.IsDisposed)
             {
                 this.DisablePort();
-                MMALUtil.mmal_port_pool_destroy(this.Ptr, this.BufferPool.Ptr);
+                this.BufferPool.Dispose();
             }
         }
 

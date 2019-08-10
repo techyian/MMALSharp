@@ -9,5 +9,10 @@ namespace MMALSharp
         /// </summary>
         /// <returns>True if the pointer is valid.</returns>
         bool CheckState();
+
+        /// <summary>
+        /// Returns whether this MMAL object has been disposed of.
+        /// </summary>
+        bool IsDisposed { get; }
     }
 }
