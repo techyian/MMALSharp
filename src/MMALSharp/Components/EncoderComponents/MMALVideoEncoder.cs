@@ -50,15 +50,15 @@ namespace MMALSharp.Components
         /// Creates a new instance of <see cref="MMALVideoEncoder"/>.
         /// </summary>
         /// <param name="handler">The capture handler.</param>
-        public MMALVideoEncoder(ICaptureHandler handler)
+        public MMALVideoEncoder()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
         {
             this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
-            this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
+            this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid()));
         }
         
         /// <inheritdoc />
-        public override IDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
+        public override IDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config, IOutputCaptureHandler handler)
         {
             this.Quality = config.Quality;
             
@@ -78,7 +78,7 @@ namespace MMALSharp.Components
             
             this.ConfigureBitrate(outputPort, config);
 
-            base.ConfigureOutputPort(outputPort, config);
+            base.ConfigureOutputPort(outputPort, config, handler);
 
             if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264)
             {
@@ -97,8 +97,6 @@ namespace MMALSharp.Components
 
             this.ConfigureImmutableInput(outputPort);
 
-            this.RegisterPortCallback(new VideoOutputCallbackHandler(this.Outputs[outputPort]));
-            
             return this;
         }
 

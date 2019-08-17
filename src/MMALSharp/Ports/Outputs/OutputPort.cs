@@ -8,7 +8,6 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using MMALSharp.Callbacks;
-using MMALSharp.Callbacks.Providers;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
@@ -20,7 +19,7 @@ namespace MMALSharp.Ports.Outputs
     /// <summary>
     /// Represents an output port.
     /// </summary>
-    public unsafe class OutputPort : PortBase, IOutputPort
+    public unsafe class OutputPort : PortBase<IOutputCallbackHandler>, IOutputPort
     {
         /// <inheritdoc />
         public override Resolution Resolution
@@ -34,11 +33,6 @@ namespace MMALSharp.Ports.Outputs
         }
         
         /// <summary>
-        /// Output callback handler which is called by the native function callback.
-        /// </summary>
-        public virtual ICallbackHandler ManagedCallback { get; set; }
-        
-        /// <summary>
         /// Creates a new instance of <see cref="OutputPort"/>. 
         /// </summary>
         /// <param name="ptr">The native pointer.</param>
@@ -50,107 +44,100 @@ namespace MMALSharp.Ports.Outputs
         {
         }
 
-        /// <summary>
-        /// Creates a new instance of <see cref="OutputPort"/>. 
-        /// </summary>
-        /// <param name="ptr">The native pointer.</param>
-        /// <param name="comp">The component this port is associated with.</param>
-        /// <param name="type">The type of port.</param>
-        /// <param name="guid">Managed unique identifier for this component.</param>
-        /// <param name="handler">The capture handler.</param>
-        public OutputPort(IntPtr ptr, IComponent comp, PortType type, Guid guid, ICaptureHandler handler) 
-            : base(ptr, comp, type, guid, handler)
+        public virtual void Configure(MMALPortConfig config, IInputPort copyFrom, IOutputCaptureHandler handler)
         {
-        }
-
-        public virtual void Configure(MMALPortConfig config, IInputPort copyFrom)
-        {
-            this.PortConfig = config;
-            
-            copyFrom?.ShallowCopy(this);
-            
-            if (config.EncodingType != null)
+            if (config != null)
             {
-                this.NativeEncodingType = config.EncodingType.EncodingVal;
-            }
+                this.PortConfig = config;
 
-            if (config.PixelFormat != null)
-            {
-                this.NativeEncodingSubformat = config.PixelFormat.EncodingVal;
-            }
+                copyFrom?.ShallowCopy(this);
 
-            this.Par = new MMAL_RATIONAL_T(1, 1);
-
-            MMAL_VIDEO_FORMAT_T tempVid = this.Ptr->Format->Es->Video;
-
-            try
-            {
-                this.Commit();
-            }
-            catch
-            {
-                // If commit fails using new settings, attempt to reset using old temp MMAL_VIDEO_FORMAT_T.
-                MMALLog.Logger.Warn("Commit of output port failed. Attempting to reset values.");
-                this.Ptr->Format->Es->Video = tempVid;
-                this.Commit();
-            }
-
-            if (config.EncodingType == MMALEncoding.JPEG)
-            {
-                this.SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, config.Quality);
-            }
-
-            if (config.ZeroCopy)
-            {
-                this.ZeroCopy = true;
-                this.SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
-            }
-
-            if (MMALCameraConfig.VideoColorSpace != null &&
-                MMALCameraConfig.VideoColorSpace.EncType == MMALEncoding.EncodingType.ColorSpace)
-            {
-                this.VideoColorSpace = MMALCameraConfig.VideoColorSpace;
-            }
-
-            if (config.Bitrate > 0)
-            {
-                this.Bitrate = config.Bitrate;
-            }
-
-            this.EncodingType = config.EncodingType;
-            this.PixelFormat = config.PixelFormat;
-
-            if (config.Width > 0 && config.Height > 0)
-            {
-                this.Resolution = new Resolution(config.Width, config.Height).Pad();
-
-                if (config.Crop.HasValue)
+                if (config.EncodingType != null)
                 {
-                    this.Crop = config.Crop.Value;
+                    this.NativeEncodingType = config.EncodingType.EncodingVal;
+                }
+
+                if (config.PixelFormat != null)
+                {
+                    this.NativeEncodingSubformat = config.PixelFormat.EncodingVal;
+                }
+
+                this.Par = new MMAL_RATIONAL_T(1, 1);
+
+                MMAL_VIDEO_FORMAT_T tempVid = this.Ptr->Format->Es->Video;
+
+                try
+                {
+                    this.Commit();
+                }
+                catch
+                {
+                    // If commit fails using new settings, attempt to reset using old temp MMAL_VIDEO_FORMAT_T.
+                    MMALLog.Logger.Warn("Commit of output port failed. Attempting to reset values.");
+                    this.Ptr->Format->Es->Video = tempVid;
+                    this.Commit();
+                }
+
+                if (config.EncodingType == MMALEncoding.JPEG)
+                {
+                    this.SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, config.Quality);
+                }
+
+                if (config.ZeroCopy)
+                {
+                    this.ZeroCopy = true;
+                    this.SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
+                }
+
+                if (MMALCameraConfig.VideoColorSpace != null &&
+                    MMALCameraConfig.VideoColorSpace.EncType == MMALEncoding.EncodingType.ColorSpace)
+                {
+                    this.VideoColorSpace = MMALCameraConfig.VideoColorSpace;
+                }
+
+                if (config.Bitrate > 0)
+                {
+                    this.Bitrate = config.Bitrate;
+                }
+
+                this.EncodingType = config.EncodingType;
+                this.PixelFormat = config.PixelFormat;
+
+                if (config.Width > 0 && config.Height > 0)
+                {
+                    this.Resolution = new Resolution(config.Width, config.Height).Pad();
+
+                    if (config.Crop.HasValue)
+                    {
+                        this.Crop = config.Crop.Value;
+                    }
+                    else
+                    {
+                        this.Crop = new Rectangle(0, 0, this.Resolution.Width, this.Resolution.Height);
+                    }
                 }
                 else
                 {
-                    this.Crop = new Rectangle(0, 0, this.Resolution.Width, this.Resolution.Height);
+                    // Use config or don't set depending on port type.
+                    this.Resolution = new Resolution(0, 0);
+
+                    if (this.Resolution.Width > 0 && this.Resolution.Height > 0)
+                    {
+                        this.Crop = new Rectangle(0, 0, this.Resolution.Width, this.Resolution.Height);
+                    }
                 }
+
+                // It is important to re-commit changes to width and height.
+                this.Commit();
+
+                this.BufferNum = Math.Max(this.BufferNumMin, config.BufferNum > 0 ? config.BufferNum : this.BufferNumRecommended);
+                this.BufferSize = Math.Max(this.BufferSizeMin, config.BufferSize > 0 ? config.BufferSize : this.BufferSizeRecommended);
             }
-            else
+            
+            if (this.CallbackHandler == null)
             {
-                // Use config or don't set depending on port type.
-                this.Resolution = new Resolution(0, 0);
-
-                if (this.Resolution.Width > 0 && this.Resolution.Height > 0)
-                {
-                    this.Crop = new Rectangle(0, 0, this.Resolution.Width, this.Resolution.Height);
-                }
+                this.CallbackHandler = new DefaultOutputPortCallbackHandler(this, handler);
             }
-
-            // It is important to re-commit changes to width and height.
-            this.Commit();
-
-            this.BufferNum = Math.Max(this.BufferNumMin, config.BufferNum > 0 ? config.BufferNum : this.BufferNumRecommended);
-            this.BufferSize = Math.Max(this.BufferSizeMin, config.BufferSize > 0 ? config.BufferSize : this.BufferSizeRecommended);
-
-            this.ManagedCallback = PortCallbackProvider.FindCallback(this);
         }
 
         /// <summary>
@@ -216,9 +203,9 @@ namespace MMALSharp.Ports.Outputs
             }
         }
 
-        public void SetCaptureHandler(ICaptureHandler handler)
+        public void RegisterCallbackHandler(IOutputCallbackHandler callbackHandler)
         {
-            this.Handler = handler;
+            this.CallbackHandler = callbackHandler;
         }
 
         /// <summary>
@@ -229,14 +216,12 @@ namespace MMALSharp.Ports.Outputs
         {            
             if (!this.Enabled)
             {
-                this.ManagedCallback = PortCallbackProvider.FindCallback(this);
-
                 this.NativeCallback = this.NativeOutputPortCallback;
                 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
                 this.PtrCallback = ptrCallback;
                 
-                if (this.ManagedCallback == null)
+                if (this.CallbackHandler == null)
                 {
                     MMALLog.Logger.Warn("Callback null");
 
@@ -247,7 +232,7 @@ namespace MMALSharp.Ports.Outputs
                     this.EnablePort(ptrCallback);
                 }
                 
-                if (this.ManagedCallback != null)
+                if (this.CallbackHandler != null)
                 {
                     this.SendAllBuffers(sendBuffers);
                 }
@@ -293,7 +278,7 @@ namespace MMALSharp.Ports.Outputs
 
             if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !failed && !this.Trigger.Task.IsCompleted) || (eos && !this.Trigger.Task.IsCompleted))
             {
-                this.ManagedCallback.Callback(bufferImpl);
+                this.CallbackHandler.Callback(bufferImpl);
             }
             
             // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.

@@ -14,31 +14,34 @@ namespace MMALSharp.Callbacks
     /// <summary>
     /// The base class for Output port callback handlers.
     /// </summary>
-    public abstract class PortCallbackHandlerBase : ICallbackHandler
-    {      
-        /// <inheritdoc />
+    public abstract class PortCallbackHandler<TPort, TCaptureHandler> : IOutputCallbackHandler
+        where TPort : IPort
+        where TCaptureHandler : IOutputCaptureHandler
+    {
         public MMALEncoding EncodingType { get; }
+        
+        public TPort WorkingPort { get; }
 
-        /// <inheritdoc />
-        public IPort WorkingPort { get; }
+        public TCaptureHandler CaptureHandler { get; }
 
         /// <summary>
-        /// Creates a new instance of <see cref="PortCallbackHandlerBase"/>.
+        /// Creates a new instance of <see cref="PortCallbackHandler"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IPort"/>.</param>
-        protected PortCallbackHandlerBase(IPort port)
+        protected PortCallbackHandler(TPort port, TCaptureHandler captureHandler)
         {
-            this.WorkingPort = port;        
+            this.WorkingPort = port;
+            this.CaptureHandler = captureHandler;
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="PortCallbackHandlerBase"/>.
+        /// Creates a new instance of <see cref="PortCallbackHandler"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IPort"/>.</param>
         /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        protected PortCallbackHandlerBase(IPort port, MMALEncoding encodingType)
+        protected PortCallbackHandler(TPort port, TCaptureHandler captureHandler, MMALEncoding encodingType)
+            : this(port, captureHandler)
         {
-            this.WorkingPort = port;
             this.EncodingType = encodingType;       
         }
         
@@ -54,24 +57,17 @@ namespace MMALSharp.Callbacks
             {
                 throw new ArgumentException("Port Encoding Type not supported for this handler.");
             }
+
+            var data = buffer.GetBufferData();
+            var eos = buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) ||
+                      buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
+
+            this.CaptureHandler?.Process(data, eos);
+
+            if (eos)
+            {
+                this.CaptureHandler?.PostProcess();
+            }
         }
-
-        /// <inheritdoc />
-        public virtual ProcessResult CallbackWithResult(IBuffer buffer)
-        {
-            if (MMALCameraConfig.Debug)
-            {
-                MMALLog.Logger.Debug($"In managed {this.WorkingPort.PortType.GetPortType()} callback");
-            }
-
-            if (this.EncodingType != null && this.WorkingPort.EncodingType != this.EncodingType)
-            {
-                throw new ArgumentException("Port Encoding Type not supported for this handler.");
-            }
-
-            MMALLog.Logger.Info($"Processing {this.WorkingPort.Handler?.TotalProcessed()}");
-
-            return this.WorkingPort.Handler?.Process(buffer.AllocSize);
-        }               
     }
 }

@@ -282,7 +282,7 @@ namespace MMALSharp.Components
 
             var portConfig = new MMALPortConfig(config.Encoding, null, width, height, 0, 0, 0, false, null, 0, 0);
             
-            this.Inputs[0].Configure(portConfig);
+            this.Inputs[0].Configure(portConfig, null);
             
             this.Control.Start();
             this.Inputs[0].Start();

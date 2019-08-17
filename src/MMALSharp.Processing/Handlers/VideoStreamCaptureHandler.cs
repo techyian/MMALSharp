@@ -14,7 +14,7 @@ namespace MMALSharp.Handlers
     /// <summary>
     /// Processes the video data to a FileStream.
     /// </summary>
-    public class VideoStreamCaptureHandler : FileStreamCaptureHandler, IMotionVectorCaptureHandler, IVideoCaptureHandler, IVideoStreamCaptureHandler
+    public class VideoStreamCaptureHandler : FileStreamCaptureHandler, IMotionVectorCaptureHandler, IVideoCaptureHandler
     {
         public MotionType MotionType { get; set; }
 

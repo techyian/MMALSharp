@@ -7,14 +7,14 @@ using MMALSharp.Processors.Motion;
 
 namespace MMALSharp.Handlers
 {
-    public sealed class CircularBufferCaptureHandler : CaptureHandlerProcessorBase, IMotionCaptureHandler, IVideoCaptureHandler
+    public sealed class CircularBufferCaptureHandler : OutputCaptureHandlerProcessor, IMotionCaptureHandler, IVideoCaptureHandler
     {
         private bool _isRecordingMotion;
         private int _bufferSize;
         private int _currentIndex;
 
         public MotionType MotionType { get; set; }
-
+        
         private byte[] Buffer { get; }
 
         private bool ShouldDetectMotion { get; set; }
@@ -30,6 +30,11 @@ namespace MMALSharp.Handlers
         public CircularBufferCaptureHandler(int bufferSize)
         {
             this.Buffer = new byte[bufferSize];
+        }
+
+        public void Split()
+        {
+            throw new NotImplementedException();
         }
 
         public override void Process(byte[] data, bool eos)

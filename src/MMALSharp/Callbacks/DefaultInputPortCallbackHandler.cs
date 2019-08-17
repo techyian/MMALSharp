@@ -5,20 +5,20 @@
 
 using MMALSharp.Handlers;
 using MMALSharp.Native;
-using MMALSharp.Ports;
+using MMALSharp.Ports.Inputs;
 
 namespace MMALSharp.Callbacks
 {
     /// <summary>
     /// A default callback handler for ports.
     /// </summary>
-    public class DefaultPortCallbackHandler : PortCallbackHandler<IPort, IOutputCaptureHandler>
+    public class DefaultInputPortCallbackHandler : InputPortCallbackHandler<IInputPort, IInputCaptureHandler>
     {
         /// <summary>
         /// Creates a new instance of <see cref="DefaultPortCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="IPort"/>.</param>
-        public DefaultPortCallbackHandler(IPort port, IOutputCaptureHandler handler)
+        /// <param name="port">The working <see cref="IInputPort"/>.</param>
+        public DefaultInputPortCallbackHandler(IInputPort port, IInputCaptureHandler handler)
             : base(port, handler)
         {
         }
@@ -26,9 +26,9 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="DefaultPortCallbackHandler"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="IPort"/>.</param>
+        /// <param name="port">The working <see cref="IInputPort"/>.</param>
         /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        public DefaultPortCallbackHandler(IPort port, IOutputCaptureHandler handler, MMALEncoding encodingType)
+        public DefaultInputPortCallbackHandler(IInputPort port, IInputCaptureHandler handler, MMALEncoding encodingType)
             : base(port, handler, encodingType)
         {
         }

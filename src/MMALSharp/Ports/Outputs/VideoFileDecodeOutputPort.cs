@@ -28,26 +28,13 @@ namespace MMALSharp.Ports.Outputs
             : base(ptr, comp, type, guid)
         {
         }
-
-        /// <summary>
-        /// Creates a new instance of <see cref="VideoFileDecodeOutputPort"/>. 
-        /// </summary>
-        /// <param name="ptr">The native pointer.</param>
-        /// <param name="comp">The component this port is associated with.</param>
-        /// <param name="type">The type of port.</param>
-        /// <param name="guid">Managed unique identifier for this port.</param>
-        /// <param name="handler">The capture handler for this port.</param>
-        public VideoFileDecodeOutputPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler)
-            : base(ptr, comp, type, guid, handler)
-        {
-        }
-
+        
         /// <summary>
         /// Creates a new instance of <see cref="VideoFileDecodeOutputPort"/>.
         /// </summary>
         /// <param name="copyFrom">The port to copy data from.</param>
-        public VideoFileDecodeOutputPort(PortBase copyFrom)
-            : base((IntPtr)copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid, copyFrom.Handler)
+        public VideoFileDecodeOutputPort(IPort copyFrom)
+            : base((IntPtr)copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
         {
         }
         

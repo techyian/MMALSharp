@@ -22,11 +22,11 @@ namespace MMALSharp.Components
         /// Creates a new instance of <see cref="MMALImageFileEncoder"/>.
         /// </summary>
         /// <param name="handler">The capture handler.</param>
-        public unsafe MMALImageFileEncoder(ICaptureHandler handler)
+        public unsafe MMALImageFileEncoder()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
         {
-            this.Inputs.Add(new ImageFileEncodeInputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid(), handler));
-            this.Outputs.Add(new ImageFileEncodeOutputPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
+            this.Inputs.Add(new ImageFileEncodeInputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
+            this.Outputs.Add(new ImageFileEncodeOutputPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid()));
         }
     }
 }

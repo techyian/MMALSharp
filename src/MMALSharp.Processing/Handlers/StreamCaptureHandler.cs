@@ -14,7 +14,7 @@ namespace MMALSharp.Handlers
     /// Processes the image data to a stream.
     /// </summary>
     /// <typeparam name="T">The <see cref="Stream"/> type.</typeparam>
-    public abstract class StreamCaptureHandler<T> : CaptureHandlerProcessorBase 
+    public abstract class StreamCaptureHandler<T> : OutputCaptureHandlerProcessor
         where T : Stream
     {
         /// <summary>

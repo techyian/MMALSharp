@@ -7,7 +7,6 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using MMALSharp.Callbacks;
-using MMALSharp.Callbacks.Providers;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
@@ -19,7 +18,7 @@ namespace MMALSharp.Ports.Inputs
     /// <summary>
     /// Represents an input port.
     /// </summary>
-    public class InputPort : PortBase, IInputPort
+    public class InputPort : PortBase<IInputCallbackHandler>, IInputPort
     {
         /// <inheritdoc />
         public override Resolution Resolution
@@ -33,11 +32,6 @@ namespace MMALSharp.Ports.Inputs
         }
 
         /// <summary>
-        /// Managed callback which is called by the native function callback method.
-        /// </summary>
-        public virtual ICallbackHandler ManagedCallback { get; set; }
-
-        /// <summary>
         /// Creates a new instance of <see cref="InputPort"/>. 
         /// </summary>
         /// <param name="ptr">The native pointer.</param>
@@ -49,25 +43,12 @@ namespace MMALSharp.Ports.Inputs
         {
         }
 
-        /// <summary>
-        /// Creates a new instance of <see cref="InputPort"/>. 
-        /// </summary>
-        /// <param name="ptr">The native pointer.</param>
-        /// <param name="comp">The component this port is associated with.</param>
-        /// <param name="type">The type of port.</param>
-        /// <param name="guid">Managed unique identifier for this component.</param>
-        /// <param name="handler">The capture handler.</param>
-        public InputPort(IntPtr ptr, IComponent comp, PortType type, Guid guid, ICaptureHandler handler)
-            : base(ptr, comp, type, guid, handler)
-        {
-        }
-
         public void ConnectTo(IOutputPort outputPort, IConnection connection)
         {
             this.ConnectedReference = connection;
         }
 
-        public virtual void Configure(MMALPortConfig config)
+        public virtual void Configure(MMALPortConfig config, IInputCaptureHandler handler)
         {
             this.PortConfig = config;
 
@@ -113,9 +94,10 @@ namespace MMALSharp.Ports.Inputs
 
             this.BufferNum = Math.Max(this.BufferNumMin, config.BufferNum > 0 ? config.BufferNum : this.BufferNumRecommended);
             this.BufferSize = Math.Max(this.BufferSizeMin, config.BufferSize > 0 ? config.BufferSize : this.BufferSizeRecommended);
+            this.CallbackHandler = new DefaultInputPortCallbackHandler(this, handler);
         }
 
-        public void Configure(MMALPortConfig config, IPort copyPort, bool zeroCopy = false)
+        public void Configure(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler, bool zeroCopy = false)
         {
             copyPort?.ShallowCopy(this);
 
@@ -139,6 +121,11 @@ namespace MMALSharp.Ports.Inputs
 
             this.BufferNum = Math.Max(this.BufferNumMin, config.BufferNum > 0 ? config.BufferNum : this.BufferNumRecommended);
             this.BufferSize = Math.Max(this.BufferSizeMin, config.BufferSize > 0 ? config.BufferSize : this.BufferSizeRecommended);
+
+            if (this.CallbackHandler == null)
+            {
+                this.CallbackHandler = new DefaultInputPortCallbackHandler(this, handler);
+            }
         }
 
         /// <summary>
@@ -148,15 +135,13 @@ namespace MMALSharp.Ports.Inputs
         {
             if (!this.Enabled)
             {
-                this.ManagedCallback = PortCallbackProvider.FindCallback(this);
-
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeInputPortCallback);
 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
                 MMALLog.Logger.Debug("Enabling input port.");
 
-                if (this.ManagedCallback == null)
+                if (this.CallbackHandler == null)
                 {
                     MMALLog.Logger.Warn("Callback null");
                     this.EnablePort(IntPtr.Zero);
@@ -210,7 +195,7 @@ namespace MMALSharp.Ports.Inputs
                 }
 
                 // Populate the new input buffer with user provided image data.
-                var result = this.ManagedCallback.CallbackWithResult(newBuffer);
+                var result = this.CallbackHandler.CallbackWithResult(newBuffer);
                 newBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
 
                 try
@@ -250,6 +235,11 @@ namespace MMALSharp.Ports.Inputs
             MMALLog.Logger.Debug($"Starting input port {this.Name}");
             this.Trigger = new TaskCompletionSource<bool>();
             this.Enable();
+        }
+
+        public void RegisterCallbackHandler(IInputCallbackHandler callbackHandler)
+        {
+            this.CallbackHandler = callbackHandler;
         }
     }
 }

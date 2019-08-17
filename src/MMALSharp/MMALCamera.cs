@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using MMALSharp.Callbacks;
 using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
@@ -89,7 +90,7 @@ namespace MMALSharp
         /// <param name="cancellationToken">A cancellationToken to signal when to stop video capture.</param>
         /// <param name="split">Used for Segmented video mode.</param>
         /// <returns>The awaitable Task.</returns>
-        public async Task TakeVideo(ICaptureHandler handler, CancellationToken cancellationToken, Split split = null)
+        public async Task TakeVideo(IOutputCaptureHandler handler, CancellationToken cancellationToken, Split split = null)
         {
             if (split != null && !MMALCameraConfig.InlineHeaders)
             {
@@ -97,14 +98,14 @@ namespace MMALSharp
                 split = null;
             }
 
-            using (var vidEncoder = new MMALVideoEncoder(handler))
+            using (var vidEncoder = new MMALVideoEncoder())
             using (var renderer = new MMALVideoRenderer())
             {
                 this.ConfigureCameraSettings();
 
                 var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, MMALVideoEncoder.MaxBitrateLevel4, null);
 
-                vidEncoder.ConfigureOutputPort(portConfig);
+                vidEncoder.ConfigureOutputPort(portConfig, handler);
 
                 // Create our component pipeline.
                 this.Camera.VideoPort.ConnectTo(vidEncoder);
@@ -127,7 +128,7 @@ namespace MMALSharp
         /// <returns>The awaitable Task.</returns>
         /// <exception cref="ArgumentNullException"/>
         /// <exception cref="PiCameraError"/>
-        public async Task TakeRawPicture(ICaptureHandler handler)
+        public async Task TakeRawPicture(IOutputCaptureHandler handler)
         {
             if (this.Camera.StillPort.ConnectedReference != null)
             {
@@ -139,7 +140,7 @@ namespace MMALSharp
                 throw new ArgumentNullException(nameof(handler));
             }
 
-            this.Camera.StillPort.SetCaptureHandler(handler);
+            this.Camera.StillPort.RegisterCallbackHandler(new DefaultOutputPortCallbackHandler(this.Camera.StillPort, handler));
  
             using (var renderer = new MMALNullSinkComponent())
             {
@@ -164,16 +165,16 @@ namespace MMALSharp
         /// <param name="encodingType">The image encoding type e.g. JPEG, BMP.</param>
         /// <param name="pixelFormat">The pixel format to use with the encoder e.g. I420 (YUV420).</param>
         /// <returns>The awaitable Task.</returns>
-        public async Task TakePicture(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat)
+        public async Task TakePicture(IOutputCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat)
         {
-            using (var imgEncoder = new MMALImageEncoder(handler))
+            using (var imgEncoder = new MMALImageEncoder())
             using (var renderer = new MMALNullSinkComponent())
             {
                 this.ConfigureCameraSettings();
 
                 var portConfig = new MMALPortConfig(encodingType, pixelFormat, 90);
 
-                imgEncoder.ConfigureOutputPort(portConfig);
+                imgEncoder.ConfigureOutputPort(portConfig, handler);
 
                 // Create our component pipeline.
                 this.Camera.StillPort.ConnectTo(imgEncoder);
@@ -199,21 +200,21 @@ namespace MMALSharp
         /// <param name="cancellationToken">A cancellationToken to trigger stop capturing.</param>
         /// <param name="burstMode">When enabled, burst mode will increase the rate at which images are taken, at the expense of quality.</param>
         /// <returns>The awaitable Task.</returns>
-        public async Task TakePictureTimeout(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, CancellationToken cancellationToken, bool burstMode = false)
+        public async Task TakePictureTimeout(IOutputCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, CancellationToken cancellationToken, bool burstMode = false)
         {
             if (burstMode)
             {
                 this.Camera.StillPort.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_BURST_CAPTURE, true);
             }
 
-            using (var imgEncoder = new MMALImageEncoder(handler))
+            using (var imgEncoder = new MMALImageEncoder())
             using (var renderer = new MMALNullSinkComponent())
             {
                 this.ConfigureCameraSettings();
 
                 var portConfig = new MMALPortConfig(encodingType, pixelFormat, 90);
 
-                imgEncoder.ConfigureOutputPort(portConfig);
+                imgEncoder.ConfigureOutputPort(portConfig, handler);
 
                 // Create our component pipeline.
                 this.Camera.StillPort.ConnectTo(imgEncoder);
@@ -239,7 +240,7 @@ namespace MMALSharp
         /// <param name="timelapse">A Timelapse object which specifies the timeout and rate at which images should be taken.</param>
         /// <returns>The awaitable Task.</returns>
         /// <exception cref="ArgumentNullException"/>
-        public async Task TakePictureTimelapse(ICaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, Timelapse timelapse)
+        public async Task TakePictureTimelapse(IOutputCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, Timelapse timelapse)
         {
             int interval = 0;
 
@@ -248,14 +249,14 @@ namespace MMALSharp
                 throw new ArgumentNullException(nameof(timelapse), "Timelapse object null. This must be initialized for Timelapse mode");
             }
 
-            using (var imgEncoder = new MMALImageEncoder(handler))
+            using (var imgEncoder = new MMALImageEncoder())
             using (var renderer = new MMALNullSinkComponent())
             {
                 this.ConfigureCameraSettings();
 
                 var portConfig = new MMALPortConfig(encodingType, pixelFormat, 90);
 
-                imgEncoder.ConfigureOutputPort(portConfig);
+                imgEncoder.ConfigureOutputPort(portConfig, handler);
 
                 // Create our component pipeline.
                 this.Camera.StillPort.ConnectTo(imgEncoder);
@@ -348,9 +349,6 @@ namespace MMALSharp
             {
                 foreach (var port in component.ProcessingPorts.Values)
                 {
-                    // Apply any final processing on each component
-                    port.Handler?.PostProcess();
-                    
                     if (port.ConnectedReference == null)
                     {
                         port.DisablePort();
@@ -485,8 +483,7 @@ namespace MMALSharp
 
                 this.StartCapture(cameraPort);
                 await cameraPort.Trigger.Task.ConfigureAwait(false);
-
-                cameraPort.Handler?.PostProcess();
+                
                 this.StopCapture(cameraPort);
                 this.Camera.CleanPortPools();
             }

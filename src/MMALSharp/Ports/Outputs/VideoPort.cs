@@ -5,16 +5,18 @@
 
 using System;
 using System.Threading.Tasks;
+using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports.Inputs;
 
 namespace MMALSharp.Ports.Outputs
 {
     /// <summary>
     /// Represents a video encode/decode port
     /// </summary>
-    public unsafe class VideoPort : OutputPort
+    public unsafe class VideoPort : OutputPort, IVideoPort
     {
         /// <inheritdoc />
         public override Resolution Resolution
@@ -48,25 +50,19 @@ namespace MMALSharp.Ports.Outputs
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="VideoPort"/>. 
-        /// </summary>
-        /// <param name="ptr">The native pointer.</param>
-        /// <param name="comp">The component this port is associated with.</param>
-        /// <param name="type">The type of port.</param>
-        /// <param name="guid">Managed unique identifier for this port.</param>
-        /// <param name="handler">The capture handler for this port.</param>
-        public VideoPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid, ICaptureHandler handler)
-            : base(ptr, comp, type, guid, handler)
-        {
-        }
-
-        /// <summary>
         /// Creates a new instance of <see cref="VideoPort"/>.
         /// </summary>
         /// <param name="copyFrom">The port to copy data from.</param>
-        public VideoPort(PortBase copyFrom)
-            : base((IntPtr)copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid, copyFrom.Handler)
+        public VideoPort(IPort copyFrom)
+            : base((IntPtr)copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
         {
+        }
+
+        public override void Configure(MMALPortConfig config, IInputPort copyFrom, IOutputCaptureHandler handler)
+        {
+            base.Configure(config, copyFrom, handler);
+
+            this.CallbackHandler = new VideoOutputCallbackHandler(this, (IVideoCaptureHandler)handler);
         }
 
         /// <summary>
@@ -89,7 +85,7 @@ namespace MMALSharp.Ports.Outputs
 
             if (bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !this.Trigger.Task.IsCompleted)
             {
-                this.ManagedCallback.Callback(bufferImpl);
+                this.CallbackHandler.Callback(bufferImpl);
             }
             
             // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.

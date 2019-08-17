@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MMALSharp.Callbacks;
 using MMALSharp.Components;
 using MMALSharp.Ports.Inputs;
 using MMALSharp.Ports.Outputs;
@@ -11,6 +12,7 @@ namespace MMALSharp
 {
     public interface IConnection : IMMALObject
     {
+        IConnectionCallbackHandler CallbackHandler { get; }
         IDownstreamComponent DownstreamComponent { get; }
         IComponent UpstreamComponent { get; }
         IInputPort InputPort { get; }

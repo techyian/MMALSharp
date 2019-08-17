@@ -5,7 +5,7 @@
 
 using System;
 using System.Runtime.InteropServices;
-using MMALSharp.Callbacks.Providers;
+using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Native;
@@ -20,6 +20,8 @@ namespace MMALSharp
     /// </summary>
     public unsafe class MMALConnectionImpl : MMALObject, IConnection
     {
+        public IConnectionCallbackHandler CallbackHandler { get; }
+
         /// <summary>
         /// The pool of buffer headers in this connection.
         /// </summary>
@@ -116,6 +118,7 @@ namespace MMALSharp
 
             if (useCallback)
             {
+                this.CallbackHandler = new DefaultConnectionCallbackHandler(this);
                 this.ConfigureConnectionCallback(output, input);
             }
 
@@ -237,7 +240,7 @@ namespace MMALSharp
 
                     if (bufferImpl.Length > 0)
                     {
-                        ConnectionCallbackProvider.FindCallback(this).InputCallback(bufferImpl);
+                        this.CallbackHandler.InputCallback(bufferImpl);
                     }
 
                     this.InputPort.SendBuffer(bufferImpl);
@@ -256,7 +259,7 @@ namespace MMALSharp
 
                         if (bufferImpl.Length > 0)
                         {
-                            ConnectionCallbackProvider.FindCallback(this).OutputCallback(bufferImpl);
+                            this.CallbackHandler.OutputCallback(bufferImpl);
                         }
 
                         this.OutputPort.SendBuffer(bufferImpl);

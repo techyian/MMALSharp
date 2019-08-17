@@ -11,7 +11,7 @@ namespace MMALSharp.Handlers
     /// <summary>
     /// A capture handler which stores its data to memory.
     /// </summary>
-    public class InMemoryCaptureHandler : CaptureHandlerProcessorBase
+    public class InMemoryCaptureHandler : OutputCaptureHandlerProcessor
     {
         public List<byte> WorkingData { get; set; }
 

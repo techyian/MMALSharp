@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 
@@ -12,7 +13,7 @@ namespace MMALSharp.Ports
     /// <summary>
     /// Represents a generic MMAL port of any type.
     /// </summary>
-    public class GenericPort : PortBase
+    public class GenericPort : PortBase<ICallbackHandler>
     {
         /// <inheritdoc />
         public override Resolution Resolution

@@ -1,4 +1,4 @@
-﻿// <copyright file="ConnectionCallbackHandlerBase.cs" company="Techyian">
+﻿// <copyright file="ConnectionCallbackHandler.cs" company="Techyian">
 // Copyright (c) Ian Auty. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
@@ -10,16 +10,16 @@ namespace MMALSharp.Callbacks
     /// <summary>
     /// Base class for connection callback handlers.
     /// </summary>
-    public abstract class ConnectionCallbackHandlerBase : IConnectionCallbackHandler
+    public abstract class ConnectionCallbackHandler : IConnectionCallbackHandler
     {
         /// <inheritdoc />
         public IConnection WorkingConnection { get; }
 
         /// <summary>
-        /// Creates a new instance of <see cref="ConnectionCallbackHandlerBase"/>.
+        /// Creates a new instance of <see cref="ConnectionCallbackHandler"/>.
         /// </summary>
         /// <param name="connection">The connection.</param>
-        protected ConnectionCallbackHandlerBase(IConnection connection)
+        protected ConnectionCallbackHandler(IConnection connection)
         {
             this.WorkingConnection = connection;
         }

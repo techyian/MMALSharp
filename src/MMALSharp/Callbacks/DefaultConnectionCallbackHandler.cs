@@ -8,7 +8,7 @@ namespace MMALSharp.Callbacks
     /// <summary>
     /// Default callback handler for connections.
     /// </summary>
-    public class DefaultConnectionCallbackHandler : ConnectionCallbackHandlerBase
+    public class DefaultConnectionCallbackHandler : ConnectionCallbackHandler
     {
         /// <summary>
         /// Create a new instance of <see cref="DefaultConnectionCallbackHandler"/>.

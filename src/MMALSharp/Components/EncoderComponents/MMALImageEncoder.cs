@@ -64,7 +64,7 @@ namespace MMALSharp.Components
         /// <param name="continuousCapture">Configure component for rapid capture mode.</param>
         /// <param name="thumbnailConfig">Configures the embedded JPEG thumbnail.</param>
         /// <param name="exifTags">A collection of custom EXIF tags.</param>
-        public MMALImageEncoder(ICaptureHandler handler, bool rawBayer = false, bool useExif = true, bool continuousCapture = false, JpegThumbnail thumbnailConfig = null, params ExifTag[] exifTags)
+        public MMALImageEncoder(bool rawBayer = false, bool useExif = true, bool continuousCapture = false, JpegThumbnail thumbnailConfig = null, params ExifTag[] exifTags)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_ENCODER)
         {
             this.RawBayer = rawBayer;
@@ -77,18 +77,18 @@ namespace MMALSharp.Components
 
             if (this.ContinuousCapture)
             {
-                this.Outputs.Add(new FastStillPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
+                this.Outputs.Add(new FastStillPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid()));
             }
             else
             {
-                this.Outputs.Add(new StillPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
+                this.Outputs.Add(new StillPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid()));
             }
         }
         
         /// <inheritdoc />
-        public override IDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
+        public override IDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config, IOutputCaptureHandler handler)
         {
-            base.ConfigureOutputPort(outputPort, config);
+            base.ConfigureOutputPort(outputPort, config, handler);
 
             if (this.RawBayer)
             {
@@ -99,12 +99,7 @@ namespace MMALSharp.Components
             {
                 this.AddExifTags(this.ExifTags);
             }
-
-            if (this.ContinuousCapture)
-            {
-                this.RegisterPortCallback(new FastImageOutputCallbackHandler(this.Outputs[outputPort]));    
-            }
-
+            
             if (this.JpegThumbnailConfig != null)
             {
                 var str = new MMAL_PARAMETER_THUMBNAIL_CONFIG_T(

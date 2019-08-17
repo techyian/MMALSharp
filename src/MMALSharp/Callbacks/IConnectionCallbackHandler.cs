@@ -3,7 +3,7 @@ namespace MMALSharp.Callbacks
     /// <summary>
     /// Represents a connection callback handler.
     /// </summary>
-    public interface IConnectionCallbackHandler
+    public interface IConnectionCallbackHandler : ICallbackHandler
     {
         /// <summary>
         /// The connection this callback handler is used with.

@@ -6,17 +6,15 @@
 using System;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
-using MMALSharp.Callbacks.Providers;
 using MMALSharp.Common.Utility;
 using MMALSharp.Native;
-using static MMALSharp.MMALNativeExceptionHelper;
 
 namespace MMALSharp.Ports.Controls
 {
     /// <summary>
     /// Represents a control port.
     /// </summary>
-    public unsafe class ControlPort : PortBase, IControlPort
+    public unsafe class ControlPort : PortBase<IOutputCallbackHandler>, IControlPort
     {
         /// <inheritdoc />
         public override Resolution Resolution
@@ -40,11 +38,6 @@ namespace MMALSharp.Ports.Controls
         }
 
         /// <summary>
-        /// A callback handler for Control ports we use to do further processing on buffer headers after they've been received by the native callback delegate.
-        /// </summary>
-        public virtual ICallbackHandler ManagedCallback { get; set; }
-
-        /// <summary>
         /// Monitor lock for control port callback method.
         /// </summary>
         private static object ControlLock = new object();
@@ -56,15 +49,15 @@ namespace MMALSharp.Ports.Controls
         {
             if (!this.Enabled)
             {
-                this.ManagedCallback = PortCallbackProvider.FindCallback(this);
-
+                this.CallbackHandler = new DefaultPortCallbackHandler(this, null);
+                
                 this.NativeCallback = new MMALPort.MMAL_PORT_BH_CB_T(this.NativeControlPortCallback);
 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
                 MMALLog.Logger.Debug("Enabling control port.");
 
-                if (this.ManagedCallback == null)
+                if (this.CallbackHandler == null)
                 {
                     MMALLog.Logger.Debug("Callback null");
                     this.EnablePort(IntPtr.Zero);
@@ -133,7 +126,7 @@ namespace MMALSharp.Ports.Controls
 
                     bufferImpl.PrintProperties();
 
-                    this.ManagedCallback.Callback(bufferImpl);
+                    this.CallbackHandler.Callback(bufferImpl);
 
                     if (MMALCameraConfig.Debug)
                     {

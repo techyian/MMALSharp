@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using MMALSharp.Callbacks;
+using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using MMALSharp.Ports.Outputs;
@@ -9,20 +10,13 @@ namespace MMALSharp.Components
     public interface IDownstreamComponent : IComponent
     {
         Dictionary<int, IOutputPort> ProcessingPorts { get; }
-        void RegisterPortCallback(ICallbackHandler handler);
+      
+        IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler, bool zeroCopy = false);
 
-        void RemovePortCallback(IPort port);
+        IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IInputCaptureHandler handler);
 
-        void RegisterConnectionCallback(IConnectionCallbackHandler handler);
+        IDownstreamComponent ConfigureOutputPort(MMALPortConfig config, IOutputCaptureHandler handler);
 
-        void RemoveConnectionCallback(IPort port);
-
-        IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, bool zeroCopy = false);
-
-        IDownstreamComponent ConfigureInputPort(MMALPortConfig config);
-
-        IDownstreamComponent ConfigureOutputPort(MMALPortConfig config);
-
-        IDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config);
+        IDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config, IOutputCaptureHandler handler);
     }
 }

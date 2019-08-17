@@ -7,6 +7,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
@@ -18,8 +19,11 @@ namespace MMALSharp.Ports
     /// <summary>
     /// Base class for port objects.
     /// </summary>
-    public abstract unsafe class PortBase : MMALObject, IPort
+    public abstract unsafe class PortBase<TCallback> : MMALObject, IPort
+        where TCallback : ICallbackHandler
     {
+        public TCallback CallbackHandler { get; internal set; }
+
         /// <summary>
         /// Specifies the type of port this is.
         /// </summary>
@@ -54,12 +58,7 @@ namespace MMALSharp.Ports
         /// The MMALEncoding pixel format that this port will process data in. Helpful for retrieving encoding name/FourCC value.
         /// </summary>
         public MMALEncoding PixelFormat { get; internal set; }
-
-        /// <summary>
-        /// The handler to process the final data.
-        /// </summary>
-        public ICaptureHandler Handler { get; internal set; }
-
+        
         /// <summary>
         /// The config for this port.
         /// </summary>
@@ -272,20 +271,6 @@ namespace MMALSharp.Ports
         }
 
         /// <summary>
-        /// Creates a new managed reference to a MMAL Component Port.
-        /// </summary>
-        /// <param name="ptr">The native pointer to the component port.</param>
-        /// <param name="comp">The component this port is associated with.</param>
-        /// <param name="type">The type of port this is.</param>
-        /// <param name="guid">A managed unique identifier for this port.</param>
-        /// <param name="handler">The capture handler.</param>
-        protected PortBase(IntPtr ptr, IComponent comp, PortType type, Guid guid, ICaptureHandler handler)
-            : this(ptr, comp, type, guid)
-        {
-            this.Handler = handler;
-        }
-
-        /// <summary>
         /// Enables the specified port.
         /// </summary>
         /// <param name="callback">The function pointer MMAL will call back to.</param>
@@ -454,5 +439,6 @@ namespace MMALSharp.Ports
         {
             MMALCheck(MMALFormat.mmal_format_extradata_alloc(this.Ptr->Format, (uint)size), "Unable to alloc extradata.");
         }
+
     }
 }

@@ -67,7 +67,7 @@ namespace MMALSharp.Components.EncoderComponents
                         {
                             if (buffer.Length > 0)
                             {
-                                this.Outputs[0].ManagedCallback.Callback(buffer);
+                                this.Outputs[0].Call.Callback(buffer);
                             }
                             else
                             {

@@ -189,9 +189,6 @@ namespace MMALSharp
 
                         port.DestroyPortPool();
                     }
-
-                    // Remove any unmanaged resources held by the capture handler.
-                    port.Handler?.Dispose();
                 }
 
                 foreach (var port in this.Outputs)
@@ -202,9 +199,6 @@ namespace MMALSharp
 
                         port.DestroyPortPool();
                     }
-
-                    // Remove any unmanaged resources held by the capture handler.
-                    port.Handler?.Dispose();
                 }
 
                 this.DisableComponent();

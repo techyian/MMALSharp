@@ -18,7 +18,7 @@ namespace MMALSharp.Callbacks
     /// <summary>
     /// Represents a callback handler specifically for <see cref="MMALVideoEncoder"/> components.
     /// </summary>
-    public class VideoOutputCallbackHandler : DefaultPortCallbackHandler
+    public class VideoOutputCallbackHandler : PortCallbackHandler<IVideoPort, IVideoCaptureHandler>
     {
         /// <summary>
         /// Object containing properties used to determine when we should perform a file split.
@@ -40,14 +40,14 @@ namespace MMALSharp.Callbacks
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IOutputPort"/>.</param>
-        public VideoOutputCallbackHandler(IOutputPort port) 
-            : base(port)
+        public VideoOutputCallbackHandler(IVideoPort port, IVideoCaptureHandler handler) 
+            : base(port, handler)
         {
             var motionType = this.WorkingPort.EncodingType == MMALEncoding.H264
                 ? MotionType.MotionVector
                 : MotionType.FrameDiff;
             
-            ((IVideoCaptureHandler)this.WorkingPort.Handler).MotionType = motionType;
+            handler.MotionType = motionType;
         }
 
         /// <summary>
@@ -55,8 +55,8 @@ namespace MMALSharp.Callbacks
         /// </summary>
         /// <param name="port">The working <see cref="IOutputPort"/>.</param>
         /// <param name="split">Configure to split into multiple files.</param>
-        public VideoOutputCallbackHandler(IOutputPort port, Split split)
-            : this(port)
+        public VideoOutputCallbackHandler(IVideoPort port, Split split, IVideoCaptureHandler handler)
+            : this(port, handler)
         {
             this.Split = split;
         }
@@ -66,14 +66,14 @@ namespace MMALSharp.Callbacks
         /// </summary>
         /// <param name="port">The working <see cref="IOutputPort"/>.</param>
         /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        public VideoOutputCallbackHandler(IOutputPort port, MMALEncoding encoding)
-            : base(port, encoding)
+        public VideoOutputCallbackHandler(IVideoPort port, IVideoCaptureHandler handler, MMALEncoding encoding)
+            : base(port, handler, encoding)
         {
             var motionType = this.WorkingPort.EncodingType == MMALEncoding.H264
                 ? MotionType.MotionVector
                 : MotionType.FrameDiff;
 
-            ((IVideoCaptureHandler)this.WorkingPort.Handler).MotionType = motionType;
+            handler.MotionType = motionType;
         }
 
         /// <summary>
@@ -82,8 +82,8 @@ namespace MMALSharp.Callbacks
         /// <param name="port">The working <see cref="IOutputPort"/>.</param>
         /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
         /// <param name="split">Configure to split into multiple files.</param>
-        public VideoOutputCallbackHandler(IOutputPort port, MMALEncoding encoding, Split split)
-            : this(port, encoding)
+        public VideoOutputCallbackHandler(IVideoPort port, IVideoCaptureHandler handler, MMALEncoding encoding, Split split)
+            : this(port, handler, encoding)
         {
             this.Split = split;
         }
@@ -103,7 +103,7 @@ namespace MMALSharp.Callbacks
             
             if (this.PrepareSplit && buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))
             {
-                ((VideoStreamCaptureHandler)this.WorkingPort.Handler).Split();
+                this.CaptureHandler.Split();
                 LastSplit = DateTime.Now;
                 this.PrepareSplit = false;
             }

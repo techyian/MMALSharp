@@ -4,8 +4,6 @@
 // </copyright>
 
 using System;
-using MMALSharp.Callbacks.Providers;
-using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
@@ -25,24 +23,14 @@ namespace MMALSharp.Components
         /// Creates a new instance of <see cref="MMALSplitterComponent"/>.
         /// </summary>
         /// <param name="handlers">The capture handlers to associate with each splitter port.</param>
-        public unsafe MMALSplitterComponent(params ICaptureHandler[] handlers)
+        public unsafe MMALSplitterComponent()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER)
         {
             this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
 
-            if (handlers != null && handlers.Length > 0)
+            for (var i = 0; i < 4; i++)
             {
-                for (var i = 0; i < handlers.Length; i++)
-                {
-                    this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[i])), this, PortType.Output, Guid.NewGuid(), handlers[i]));
-                }
-            }
-            else
-            {
-                for (var i = 0; i < 4; i++)
-                {
-                    this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[i])), this, PortType.Output, Guid.NewGuid(), null));
-                }
+                this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[i])), this, PortType.Output, Guid.NewGuid()));
             }
         }
 
@@ -73,21 +61,21 @@ namespace MMALSharp.Components
         }
 
         /// <inheritdoc />
-        public override IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, bool zeroCopy = false)
+        public override IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler, bool zeroCopy = false)
         {
             config.BufferNum = Math.Max(this.Inputs[0].BufferNumRecommended, 3);
 
-            base.ConfigureInputPort(config, copyPort, zeroCopy);
+            base.ConfigureInputPort(config, copyPort, handler, zeroCopy);
 
             return this;
         }
 
         /// <inheritdoc />
-        public override IDownstreamComponent ConfigureInputPort(MMALPortConfig config)
+        public override IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IInputCaptureHandler handler)
         {
             config.BufferNum = Math.Max(this.Inputs[0].BufferNumRecommended, 3);
 
-            base.ConfigureInputPort(config);
+            base.ConfigureInputPort(config, handler);
 
             return this;
         }

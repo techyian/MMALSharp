@@ -3,12 +3,9 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using System;
 using System.Collections.Generic;
-using System.Drawing;
-using MMALSharp.Callbacks;
-using MMALSharp.Callbacks.Providers;
 using MMALSharp.Common.Utility;
+using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using MMALSharp.Ports.Outputs;
@@ -38,31 +35,6 @@ namespace MMALSharp.Components
         }
 
         /// <summary>
-        /// Registers a <see cref="ICallbackHandler"/>.
-        /// </summary>
-        /// <param name="handler">The port handler.</param>
-        public void RegisterPortCallback(ICallbackHandler handler) => PortCallbackProvider.RegisterCallback(handler);
-
-        /// <summary>
-        /// If it exists, removes a <see cref="ICallbackHandler"/> on this component's input port.
-        /// </summary>
-        /// <param name="port">The port to remove a handler on.</param>
-        public void RemovePortCallback(IPort port) => PortCallbackProvider.RemoveCallback(port);
-        
-        /// <summary>
-        /// Registers a <see cref="IConnectionCallbackHandler"/>.
-        /// </summary>
-        /// <param name="handler">The output handler.</param>
-        public void RegisterConnectionCallback(IConnectionCallbackHandler handler) => ConnectionCallbackProvider.RegisterCallback(handler);
-
-        /// <summary>
-        /// If it exists, removes a <see cref="IConnectionCallbackHandler"/> on the port specified.
-        /// </summary>
-        /// <param name="port">The port with a created connection.</param>
-        public void RemoveConnectionCallback(IPort port) =>
-            ConnectionCallbackProvider.RemoveCallback(port.ConnectedReference);
-
-        /// <summary>
         /// Configures a specific input port on a downstream component. This method will perform a shallow copy of the output
         /// port it is to be connected to.
         /// </summary>
@@ -70,9 +42,9 @@ namespace MMALSharp.Components
         /// <param name="copyPort">The output port we are copying format data from.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual unsafe IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, bool zeroCopy = false)
+        public virtual unsafe IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler, bool zeroCopy = false)
         {
-            this.Inputs[0].Configure(config, copyPort, zeroCopy);
+            this.Inputs[0].Configure(config, copyPort, handler, zeroCopy);
 
             if (this.Outputs.Count > 0 && this.Outputs[0].Ptr->Format->Type == MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_UNKNOWN)
             {
@@ -87,9 +59,9 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="config">User provided port configuration object.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual unsafe IDownstreamComponent ConfigureInputPort(MMALPortConfig config)
+        public virtual unsafe IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IInputCaptureHandler handler)
         {
-            this.Inputs[0].Configure(config);
+            this.Inputs[0].Configure(config, handler);
 
             if (this.Outputs.Count > 0 && this.Outputs[0].Ptr->Format->Type == MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_UNKNOWN)
             {
@@ -104,9 +76,9 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="config">User provided port configuration object.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual IDownstreamComponent ConfigureOutputPort(MMALPortConfig config)
+        public virtual IDownstreamComponent ConfigureOutputPort(MMALPortConfig config, IOutputCaptureHandler handler)
         {
-            return this.ConfigureOutputPort(0, config);
+            return this.ConfigureOutputPort(0, config, handler);
         }
 
         /// <summary>
@@ -115,7 +87,7 @@ namespace MMALSharp.Components
         /// <param name="outputPort">The output port number to configure.</param>
         /// <param name="config">User provided port configuration object.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual unsafe IDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config)
+        public virtual IDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config, IOutputCaptureHandler handler)
         {
             if (this.ProcessingPorts.ContainsKey(outputPort))
             {
@@ -124,7 +96,7 @@ namespace MMALSharp.Components
 
             this.ProcessingPorts.Add(outputPort, this.Outputs[outputPort]);
             
-            this.Outputs[outputPort].Configure(config, this.Inputs[0]);
+            this.Outputs[outputPort].Configure(config, this.Inputs[0], handler);
 
             return this;
         }

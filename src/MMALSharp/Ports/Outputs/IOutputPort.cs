@@ -7,16 +7,14 @@ namespace MMALSharp.Ports.Outputs
 {
     public interface IOutputPort : IPort
     {
-        ICallbackHandler ManagedCallback { get; }
-
-        void Configure(MMALPortConfig config, IInputPort copyFrom);
-
+        void Configure(MMALPortConfig config, IInputPort copyFrom, IOutputCaptureHandler handler);
+            
         IInputPort ConnectTo(IDownstreamComponent component, int inputPort = 0, bool useCallback = false);
         
         void Start();
 
         void Enable(bool sendBuffers = true);
         void ReleaseBuffer(IBuffer bufferImpl);
-        void SetCaptureHandler(ICaptureHandler handler);
+        void RegisterCallbackHandler(IOutputCallbackHandler callbackHandler);
     }
 }

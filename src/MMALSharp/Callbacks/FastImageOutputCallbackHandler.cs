@@ -4,7 +4,6 @@
 // </copyright>
 
 using System;
-using MMALSharp.Components;
 using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
@@ -15,14 +14,14 @@ namespace MMALSharp.Callbacks
     /// <summary>
     /// A callback handler specifically for rapid image capture from the camera's video port.
     /// </summary>
-    public class FastImageOutputCallbackHandler : DefaultPortCallbackHandler
+    public class FastImageOutputCallbackHandler : PortCallbackHandler<IVideoPort, IOutputCaptureHandler>
     {
         /// <summary>
         /// Creates a new instance of <see cref="FastImageOutputCallbackHandler"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IOutputPort"/>.</param>
-        public FastImageOutputCallbackHandler(IOutputPort port)
-            : base(port)
+        public FastImageOutputCallbackHandler(IVideoPort port, IOutputCaptureHandler handler)
+            : base(port, handler)
         {
         }
 
@@ -31,8 +30,8 @@ namespace MMALSharp.Callbacks
         /// </summary>
         /// <param name="port">The working <see cref="IOutputPort"/>.</param>
         /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        public FastImageOutputCallbackHandler(IOutputPort port, MMALEncoding encoding)
-            : base(port, encoding)
+        public FastImageOutputCallbackHandler(IVideoPort port, IOutputCaptureHandler handler, MMALEncoding encoding)
+            : base(port, handler, encoding)
         {
         }
 
@@ -52,12 +51,12 @@ namespace MMALSharp.Callbacks
             if (eos)
             {
                 // In rapid capture mode, provide the ability to do post-processing once we have a complete frame.
-                this.WorkingPort.Handler?.PostProcess();
+                this.CaptureHandler?.PostProcess();
             }
 
-            if (eos && this.WorkingPort.Handler?.GetType() == typeof(ImageStreamCaptureHandler))
+            if (eos && this.CaptureHandler?.GetType() == typeof(ImageStreamCaptureHandler))
             {
-                ((ImageStreamCaptureHandler)this.WorkingPort.Handler).NewFile();
+                ((ImageStreamCaptureHandler)this.CaptureHandler).NewFile();
             }
         }
     }

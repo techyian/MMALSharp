@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Threading.Tasks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
-using MMALSharp.Handlers;
 using MMALSharp.Native;
 
 namespace MMALSharp.Ports
@@ -20,8 +19,6 @@ namespace MMALSharp.Ports
         Guid Guid { get; }
         MMALEncoding EncodingType { get; }
         MMALEncoding PixelFormat { get; }
-        ICaptureHandler Handler { get; } // --not sure about this being here? What about more specific types??
-
         MMALPortConfig PortConfig { get; }
         string Name { get; }
         bool Enabled { get; }
