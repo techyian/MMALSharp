@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Demo
 {
@@ -56,7 +57,7 @@ namespace MMALSharp.Demo
             {
                 this.Cam.ConfigureCameraSettings();
                 
-                vidEncoder.ConfigureOutputPort(0, encoding, pixelFormat, 0, bitrate);
+                vidEncoder.ConfigureOutputPort(0, new MMALPortConfig(encoding, pixelFormat, 90, bitrate, null));
 
                 this.Cam.Camera.VideoPort.ConnectTo(vidEncoder);
                 this.Cam.Camera.PreviewPort.ConnectTo(renderer);
