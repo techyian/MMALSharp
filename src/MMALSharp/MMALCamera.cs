@@ -344,7 +344,7 @@ namespace MMALSharp
                 await Task.WhenAll(tasks).ConfigureAwait(false);
             }
             
-            // Disable the image encoder output port.
+            // Cleanup each connected downstream component.
             foreach (var component in handlerComponents)
             {
                 foreach (var port in component.ProcessingPorts.Values)
@@ -398,10 +398,11 @@ namespace MMALSharp
         /// Initialises the camera component ready for operation. This method can also be called if you want to change
         /// configuration settings in <see cref="MMALCameraConfig"/>.
         /// </summary>
+        /// <param name="captureHandler">Optional output capture handler for use with raw image/video capture.</param>
         /// <returns>The camera instance.</returns>
-        public MMALCamera ConfigureCameraSettings()
+        public MMALCamera ConfigureCameraSettings(IOutputCaptureHandler captureHandler = null)
         {            
-            this.Camera.Initialise();                               
+            this.Camera.Initialise(captureHandler);
             return this;
         }
 

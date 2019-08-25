@@ -24,14 +24,14 @@ namespace MMALSharp.Tests
             TestHelper.CleanDirectory("/home/pi/videos/tests");
 
             using (var ffCaptureHandler = FFmpegCaptureHandler.RawVideoToAvi("/home/pi/videos/tests", "testing1234"))
-            using (var vidEncoder = new MMALVideoEncoder(ffCaptureHandler))
+            using (var vidEncoder = new MMALVideoEncoder())
             using (var renderer = new MMALVideoRenderer())
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
                 var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, 25000000, null);
 
-                vidEncoder.ConfigureOutputPort(portConfig);
+                vidEncoder.ConfigureOutputPort(portConfig, ffCaptureHandler);
 
                 Fixture.MMALCamera.Camera.VideoPort.ConnectTo(vidEncoder);
                 Fixture.MMALCamera.Camera.PreviewPort.ConnectTo(renderer);

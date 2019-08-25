@@ -37,26 +37,15 @@ namespace MMALSharp.Components
         /// <summary>
         /// Creates a new instance of <see cref="MMALSplitterComponent"/>.
         /// </summary>
-        /// <param name="handlers">The capture handlers to associate with each splitter port.</param>
         /// <param name="outputPortType">The user defined output port type to use for each splitter output port.</param>
-        public unsafe MMALSplitterComponent(ICaptureHandler[] handlers, Type outputPortType)
+        public unsafe MMALSplitterComponent(Type outputPortType)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER)
         {
             this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
 
-            if (handlers != null && handlers.Length > 0)
+            for (var i = 0; i < 4; i++)
             {
-                for (int i = 0; i < handlers.Length; i++)
-                {
-                    this.Outputs.Add((IOutputPort)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[i])), this, PortType.Output, Guid.NewGuid(), handlers[i]));
-                }
-            }
-            else
-            {
-                for (var i = 0; i < 4; i++)
-                {
-                    this.Outputs.Add((IOutputPort)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[i])), this, PortType.Output, Guid.NewGuid(), null));
-                }
+                this.Outputs.Add((IOutputPort)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[i])), this, PortType.Output, Guid.NewGuid()));
             }
         }
 

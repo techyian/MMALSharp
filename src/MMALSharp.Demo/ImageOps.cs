@@ -75,7 +75,7 @@ namespace MMALSharp.Demo
         private async Task TakePictureManual(string extension, MMALEncoding encoding, MMALEncoding pixelFormat)
         {
             using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/", extension))
-            using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
+            using (var imgEncoder = new MMALImageEncoder())
             using (var nullSink = new MMALNullSinkComponent())
             {
                 this.Cam.ConfigureCameraSettings();
@@ -84,7 +84,7 @@ namespace MMALSharp.Demo
                 var encoderConfig = new MMALPortConfig(encoding, pixelFormat, 90);
 
                 // Create our component pipeline.         
-                imgEncoder.ConfigureOutputPort(0, encoderConfig);
+                imgEncoder.ConfigureOutputPort(0, encoderConfig, imgCaptureHandler);
                 
                 this.Cam.Camera.StillPort.ConnectTo(imgEncoder);                    
                 this.Cam.Camera.PreviewPort.ConnectTo(nullSink);
@@ -104,8 +104,8 @@ namespace MMALSharp.Demo
         private async Task ResizePicture(string extension, MMALEncoding encoding, MMALEncoding pixelFormat, int width, int height)
         {
             using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/", extension))
-            using (var resizer = new MMALResizerComponent(null))
-            using (var imgEncoder = new MMALImageEncoder(imgCaptureHandler))
+            using (var resizer = new MMALResizerComponent())
+            using (var imgEncoder = new MMALImageEncoder())
             using (var nullSink = new MMALNullSinkComponent())
             {
                 this.Cam.ConfigureCameraSettings();
@@ -116,11 +116,11 @@ namespace MMALSharp.Demo
                 var encoderConfig = new MMALPortConfig(encoding, pixelFormat, 90);
 
                 // Create our component pipeline.         
-                resizer.ConfigureInputPort(MMALCameraConfig.StillEncoding, MMALCameraConfig.StillSubFormat, this.Cam.Camera.StillPort);
-                resizer.ConfigureOutputPort(0, resizerConfig);
-                imgEncoder.ConfigureOutputPort(0, encoderConfig);
+                resizer.ConfigureInputPort(new MMALPortConfig(MMALCameraConfig.StillEncoding, MMALCameraConfig.StillSubFormat), this.Cam.Camera.StillPort, null);
+                resizer.ConfigureOutputPort(0, resizerConfig, null);
+                imgEncoder.ConfigureOutputPort(0, encoderConfig, imgCaptureHandler);
                     
-                this.Cam.Camera.StillPort.ConnectTo(resizer);                    
+                this.Cam.Camera.StillPort.ConnectTo(resizer);
                 resizer.Outputs[0].ConnectTo(imgEncoder);
                 this.Cam.Camera.PreviewPort.ConnectTo(nullSink);
                 

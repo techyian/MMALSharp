@@ -7,6 +7,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using MMALSharp.Common.Utility;
+using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using MMALSharp.Ports.Controls;
@@ -170,7 +171,7 @@ namespace MMALSharp.Components
             MMALLog.Logger.Info($"    Max Width: {this.CameraInfo.MaxWidth}. Video Height: {this.CameraInfo.MaxHeight}");
         }
         
-        public void Initialise()
+        public void Initialise(IOutputCaptureHandler captureHandler = null)
         {
             this.DisableComponent();
             
@@ -198,8 +199,8 @@ namespace MMALSharp.Components
             this.SetCameraParameters();
 
             this.InitialisePreview();
-            this.InitialiseVideo();
-            this.InitialiseStill();
+            this.InitialiseVideo(captureHandler);
+            this.InitialiseStill(captureHandler);
 
             this.EnableComponent();
 
@@ -222,14 +223,13 @@ namespace MMALSharp.Components
 
             MMALLog.Logger.Debug("Commit preview");
 
-            this.PreviewPort.Configure(portConfig, null);
-
+            this.PreviewPort.Configure(portConfig, null, null);
         }
 
         /// <summary>
         /// Initialises the camera's video port using the width, height and encoding as specified by the user.
         /// </summary>
-        private void InitialiseVideo()
+        private void InitialiseVideo(IOutputCaptureHandler handler)
         {
             int currentWidth = MMALCameraConfig.VideoResolution.Width;
             int currentHeight = MMALCameraConfig.VideoResolution.Height;
@@ -253,13 +253,13 @@ namespace MMALSharp.Components
 
             MMALLog.Logger.Debug("Commit video");
 
-            this.VideoPort.Configure(portConfig, null);
+            this.VideoPort.Configure(portConfig, null, handler);
         }
 
         /// <summary>
         /// Initialises the camera's still port using the width, height and encoding as specified by the user.
         /// </summary>
-        private void InitialiseStill()
+        private void InitialiseStill(IOutputCaptureHandler handler)
         {
             int currentWidth = MMALCameraConfig.StillResolution.Width;
             int currentHeight = MMALCameraConfig.StillResolution.Height;
@@ -319,7 +319,7 @@ namespace MMALSharp.Components
             }
             
             MMALLog.Logger.Debug("Commit still");
-            this.StillPort.Configure(portConfig, null);
+            this.StillPort.Configure(portConfig, null, handler);
         }
 
         private void SetCameraParameters()

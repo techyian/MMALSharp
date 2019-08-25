@@ -22,26 +22,24 @@ namespace MMALSharp.Components
         /// Creates a new instance of the <see cref="MMALResizerComponent"/> class that can be used to change the size
         /// and the pixel format of resulting frames. 
         /// </summary>
-        /// <param name="handler">The capture handler associated with this component.</param>
-        public unsafe MMALResizerComponent(ICaptureHandler handler)
+        public unsafe MMALResizerComponent()
             : base(MMAL_COMPONENT_DEFAULT_RESIZER)
         {
             // Default to use still image port behaviour.
             this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
-            this.Outputs.Add(new StillPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
+            this.Outputs.Add(new StillPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid()));
         }
 
         /// <summary>
         /// Creates a new instance of the <see cref="MMALResizerComponent"/> class that can be used to change the size
         /// and the pixel format of resulting frames. 
         /// </summary>
-        /// <param name="handler">The capture handler associated with this component.</param>
         /// <param name="outputPortType">The user defined output port type.</param>
-        public unsafe MMALResizerComponent(ICaptureHandler handler, Type outputPortType)
+        public unsafe MMALResizerComponent(Type outputPortType)
             : base(MMAL_COMPONENT_DEFAULT_RESIZER)
         {
             this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
-            this.Outputs.Add((IOutputPort)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid(), handler));
+            this.Outputs.Add((IOutputPort)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid()));
         }
     }
 }

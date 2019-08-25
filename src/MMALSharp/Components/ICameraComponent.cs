@@ -1,4 +1,5 @@
 ﻿
+using MMALSharp.Handlers;
 using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp.Components
@@ -10,6 +11,6 @@ namespace MMALSharp.Components
         IOutputPort StillPort { get; }
         ICameraInfoComponent CameraInfo { get; }
 
-        void Initialise();
+        void Initialise(IOutputCaptureHandler captureHandler);
     }
 }
