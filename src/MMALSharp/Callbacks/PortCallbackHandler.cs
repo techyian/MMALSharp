@@ -24,6 +24,8 @@ namespace MMALSharp.Callbacks
 
         public TCaptureHandler CaptureHandler { get; }
 
+        protected bool FoundEos { get; set; }
+
         /// <summary>
         /// Creates a new instance of <see cref="PortCallbackHandler"/>.
         /// </summary>
@@ -63,11 +65,6 @@ namespace MMALSharp.Callbacks
                       buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
 
             this.CaptureHandler?.Process(data, eos);
-
-            if (eos)
-            {
-                this.CaptureHandler?.PostProcess();
-            }
         }
     }
 }

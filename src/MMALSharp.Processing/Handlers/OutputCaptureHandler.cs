@@ -4,7 +4,7 @@ using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers
 {
-    public abstract class OutputCaptureHandlerProcessor : IOutputCaptureHandler
+    public abstract class OutputCaptureHandler : IOutputCaptureHandler
     {
         protected Action<IFrameProcessingContext> OnManipulate { get; set; }
         protected Func<IFrameProcessingContext, IFrameAnalyser> OnAnalyse { get; set; }

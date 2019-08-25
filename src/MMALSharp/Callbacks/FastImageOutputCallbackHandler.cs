@@ -38,7 +38,9 @@ namespace MMALSharp.Callbacks
         /// <inheritdoc />
         public override void Callback(IBuffer buffer)
         {
-            if (this.WorkingPort.ComponentReference.GetType() != typeof(IImageEncoder))
+            var componentRef = this.WorkingPort.ComponentReference as IImageEncoder;
+
+            if (componentRef == null)
             {
                 throw new ArgumentException($"Working port component is not of type {nameof(IImageEncoder)}");
             }

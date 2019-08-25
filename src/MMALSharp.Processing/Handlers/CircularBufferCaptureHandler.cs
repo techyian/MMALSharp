@@ -7,7 +7,7 @@ using MMALSharp.Processors.Motion;
 
 namespace MMALSharp.Handlers
 {
-    public sealed class CircularBufferCaptureHandler : OutputCaptureHandlerProcessor, IMotionCaptureHandler, IVideoCaptureHandler
+    public sealed class CircularBufferCaptureHandler : OutputCaptureHandler, IMotionCaptureHandler, IVideoCaptureHandler
     {
         private bool _isRecordingMotion;
         private int _bufferSize;

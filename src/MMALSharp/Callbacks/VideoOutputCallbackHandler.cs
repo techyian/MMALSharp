@@ -46,8 +46,11 @@ namespace MMALSharp.Callbacks
             var motionType = this.WorkingPort.EncodingType == MMALEncoding.H264
                 ? MotionType.MotionVector
                 : MotionType.FrameDiff;
-            
-            handler.MotionType = motionType;
+
+            if (handler != null)
+            {
+                handler.MotionType = motionType;
+            }
         }
 
         /// <summary>
@@ -94,7 +97,9 @@ namespace MMALSharp.Callbacks
         /// <param name="buffer">The working buffer header.</param>
         public override void Callback(IBuffer buffer)
         {
-            if (this.WorkingPort.ComponentReference.GetType() != typeof(IVideoEncoder))
+            var componentRef = this.WorkingPort.ComponentReference as IVideoEncoder;
+
+            if (componentRef == null)
             {
                 throw new ArgumentException($"Working port component is not of type {nameof(IVideoEncoder)}");
             }

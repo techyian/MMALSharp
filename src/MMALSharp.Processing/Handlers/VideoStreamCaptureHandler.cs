@@ -3,10 +3,7 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using System;
-using System.Diagnostics;
 using System.IO;
-using MMALSharp.Common;
 using MMALSharp.Processors.Motion;
 
 namespace MMALSharp.Handlers

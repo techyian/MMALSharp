@@ -14,7 +14,7 @@ namespace MMALSharp.Handlers
     /// Processes the image data to a stream.
     /// </summary>
     /// <typeparam name="T">The <see cref="Stream"/> type.</typeparam>
-    public abstract class StreamCaptureHandler<T> : OutputCaptureHandlerProcessor
+    public abstract class StreamCaptureHandler<T> : OutputCaptureHandler
         where T : Stream
     {
         /// <summary>
@@ -43,8 +43,6 @@ namespace MMALSharp.Handlers
         {
             try
             {
-                MMALLog.Logger.Info($"Successfully processed {Helpers.ConvertBytesToMegabytes(this.Processed)}.");
-                
                 if (this.CurrentStream != null && this.CurrentStream.Length > 0)
                 {
                     if (this.OnManipulate != null && this.ImageContext != null)
@@ -89,6 +87,7 @@ namespace MMALSharp.Handlers
         /// </summary>
         public override void Dispose()
         {
+            MMALLog.Logger.Info($"Successfully processed {Helpers.ConvertBytesToMegabytes(this.Processed)}.");
             CurrentStream?.Dispose();
         }
     }

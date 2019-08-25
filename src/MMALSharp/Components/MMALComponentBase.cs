@@ -106,11 +106,6 @@ namespace MMALSharp
         {
             foreach (IOutputPort port in this.Outputs)
             {
-                if (port.Enabled)
-                {
-                    throw new MMALPortConnectedException("Port already enabled prior to enabling connection.");
-                }
-
                 if (port.ConnectedReference != null)
                 {
                     // This component has an output port connected to another component.
@@ -131,11 +126,6 @@ namespace MMALSharp
         {
             foreach (IOutputPort port in this.Outputs)
             {
-                if (port.Enabled)
-                {
-                    throw new MMALPortConnectedException("Port still enabled prior to disabling connection.");
-                }
-
                 if (port.ConnectedReference != null)
                 {
                     // This component has an output port connected to another component.

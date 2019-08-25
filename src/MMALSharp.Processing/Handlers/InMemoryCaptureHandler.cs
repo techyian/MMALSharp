@@ -4,6 +4,7 @@
 // </copyright>
 
 using System.Collections.Generic;
+using MMALSharp.Common.Utility;
 using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers
@@ -11,7 +12,7 @@ namespace MMALSharp.Handlers
     /// <summary>
     /// A capture handler which stores its data to memory.
     /// </summary>
-    public class InMemoryCaptureHandler : OutputCaptureHandlerProcessor
+    public class InMemoryCaptureHandler : OutputCaptureHandler
     {
         public List<byte> WorkingData { get; set; }
 
@@ -26,7 +27,7 @@ namespace MMALSharp.Handlers
         /// <inheritdoc />
         public override void Dispose()
         {
-            // Not required.
+            MMALLog.Logger.Info($"Successfully processed {Helpers.ConvertBytesToMegabytes(this.WorkingData.Count)}.");
         }
         
         /// <inheritdoc />
