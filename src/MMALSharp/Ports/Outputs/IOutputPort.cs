@@ -9,7 +9,7 @@ namespace MMALSharp.Ports.Outputs
     {
         void Configure(MMALPortConfig config, IInputPort copyFrom, IOutputCaptureHandler handler);
             
-        IInputPort ConnectTo(IDownstreamComponent component, int inputPort = 0, bool useCallback = false);
+        void ConnectTo(IDownstreamComponent component, int inputPort = 0, bool useCallback = false);
         
         void Start();
 
