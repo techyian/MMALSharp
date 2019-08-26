@@ -6,6 +6,7 @@
 using System;
 using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
+using MMALSharp.Components;
 using MMALSharp.Handlers;
 
 namespace MMALSharp.Ports
@@ -33,7 +34,7 @@ namespace MMALSharp.Ports
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
-        public GenericPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid) 
+        public GenericPort(IntPtr ptr, IComponent comp, PortType type, Guid guid) 
             : base(ptr, comp, type, guid)
         {
         }

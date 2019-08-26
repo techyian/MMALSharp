@@ -5,6 +5,7 @@
 
 using System;
 using MMALSharp.Common.Utility;
+using MMALSharp.Components;
 using MMALSharp.Handlers;
 
 namespace MMALSharp.Ports.Outputs
@@ -40,7 +41,7 @@ namespace MMALSharp.Ports.Outputs
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
-        public StillPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid)
+        public StillPort(IntPtr ptr, IComponent comp, PortType type, Guid guid)
             : base(ptr, comp, type, guid)
         {
         }

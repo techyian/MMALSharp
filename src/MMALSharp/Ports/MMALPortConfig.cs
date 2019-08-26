@@ -73,7 +73,7 @@ namespace MMALSharp.Ports
         /// The Region of Interest requested.
         /// </summary>
         public Rectangle? Crop { get; set; }
-
+        
         /// <summary>
         /// Create a new instance of <see cref="MMALPortConfig"/> with parameters useful for image capture.
         /// </summary>

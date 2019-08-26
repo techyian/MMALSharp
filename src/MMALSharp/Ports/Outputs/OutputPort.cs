@@ -27,8 +27,11 @@ namespace MMALSharp.Ports.Outputs
             get => new Resolution(this.Width, this.Height);
             internal set
             {
-                this.Width = value.Pad().Width;
-                this.Height = value.Pad().Height;
+                if (value.Width > 0 && value.Height > 0)
+                {
+                    this.Width = value.Pad().Width;
+                    this.Height = value.Pad().Height;
+                }
             }
         }
         

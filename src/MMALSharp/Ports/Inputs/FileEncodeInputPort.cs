@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using MMALSharp.Common.Utility;
+using MMALSharp.Components;
 using MMALSharp.Native;
 
 namespace MMALSharp.Ports.Inputs
@@ -22,7 +23,7 @@ namespace MMALSharp.Ports.Inputs
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this port.</param>
-        public FileEncodeInputPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid)
+        public FileEncodeInputPort(IntPtr ptr, IComponent comp, PortType type, Guid guid)
             : base(ptr, comp, type, guid)
         {
         }

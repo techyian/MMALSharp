@@ -22,7 +22,6 @@ namespace MMALSharp.Components
         /// <summary>
         /// Creates a new instance of <see cref="MMALSplitterComponent"/>.
         /// </summary>
-        /// <param name="handlers">The capture handlers to associate with each splitter port.</param>
         public unsafe MMALSplitterComponent()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER)
         {
@@ -30,7 +29,7 @@ namespace MMALSharp.Components
 
             for (var i = 0; i < 4; i++)
             {
-                this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[i])), this, PortType.Output, Guid.NewGuid()));
+                this.Outputs.Add(new SplitterVideoPort((IntPtr)(&(*this.Ptr->Output[i])), this, PortType.Output, Guid.NewGuid()));
             }
         }
 

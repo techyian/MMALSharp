@@ -7,6 +7,7 @@ using System;
 using System.Runtime.InteropServices;
 using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
+using MMALSharp.Components;
 using MMALSharp.Native;
 
 namespace MMALSharp.Ports.Controls
@@ -32,7 +33,7 @@ namespace MMALSharp.Ports.Controls
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
-        public ControlPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid)
+        public ControlPort(IntPtr ptr, IComponent comp, PortType type, Guid guid)
             : base(ptr, comp, type, guid)
         {
         }

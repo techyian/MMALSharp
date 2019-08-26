@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using MMALSharp.Components;
 
 namespace MMALSharp.Ports.Clocks
 {
@@ -19,7 +20,7 @@ namespace MMALSharp.Ports.Clocks
         /// <param name="comp">The component this port is associated with.</param>
         /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
-        public ClockPort(IntPtr ptr, MMALComponentBase comp, PortType type, Guid guid) 
+        public ClockPort(IntPtr ptr, IComponent comp, PortType type, Guid guid) 
             : base(ptr, comp, type, guid)
         {
         }
