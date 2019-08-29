@@ -49,11 +49,11 @@ namespace MMALSharp.Components
         }
 
         /// <inheritdoc />
-        public override IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler, bool zeroCopy = false)
+        public override IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler)
         {
             config.BufferNum = Math.Max(this.Inputs[0].BufferNumRecommended, 3);
 
-            base.ConfigureInputPort(config, copyPort, handler, zeroCopy);
+            base.ConfigureInputPort(config, copyPort, handler);
 
             return this;
         }

@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
-using MMALSharp.Handlers;
 using MMALSharp.Native;
 using static MMALSharp.MMALNativeExceptionHelper;
 
@@ -201,7 +200,7 @@ namespace MMALSharp.Ports
         }
 
         /// <summary>
-        /// The working bitrate of this port.
+        /// The working aspect ratio of this port.
         /// </summary>
         public MMAL_RATIONAL_T Par
         {

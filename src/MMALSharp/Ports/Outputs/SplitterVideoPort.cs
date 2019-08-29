@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
@@ -55,8 +51,6 @@ namespace MMALSharp.Ports.Outputs
                     this.NativeEncodingSubformat = config.PixelFormat.EncodingVal;
                 }
 
-                this.Par = new MMAL_RATIONAL_T(1, 1);
-
                 MMAL_VIDEO_FORMAT_T tempVid = this.Ptr->Format->Es->Video;
 
                 try
@@ -101,11 +95,18 @@ namespace MMALSharp.Ports.Outputs
                 this.BufferNum = Math.Max(this.BufferNumMin, config.BufferNum > 0 ? config.BufferNum : this.BufferNumRecommended);
                 this.BufferSize = Math.Max(this.BufferSizeMin, config.BufferSize > 0 ? config.BufferSize : this.BufferSizeRecommended);
             }
+            
+            this.CallbackHandler = new VideoOutputCallbackHandler(this, (IVideoCaptureHandler)handler);
+        }
 
-            if (this.CallbackHandler == null)
+        internal override void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        {
+            if (MMALCameraConfig.Debug)
             {
-                this.CallbackHandler = new VideoOutputCallbackHandler(this, (IVideoCaptureHandler)handler);
+                MMALLog.Logger.Debug($"In native {nameof(SplitterVideoPort)} output callback");
             }
+
+            base.NativeOutputPortCallback(port, buffer);
         }
     }
 }

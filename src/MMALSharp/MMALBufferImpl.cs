@@ -254,7 +254,7 @@ namespace MMALSharp
             }
             else
             {
-                MMALLog.Logger.Warn("Input buffer null, could not release.");
+                MMALLog.Logger.Warn("Buffer null, could not release.");
             }
 
             this.Dispose();

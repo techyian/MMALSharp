@@ -9,7 +9,7 @@ namespace MMALSharp.Ports.Inputs
     {
         void ConnectTo(IOutputPort outputPort, IConnection connection);
         void Configure(MMALPortConfig config, IInputCaptureHandler handler);
-        void Configure(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler, bool zeroCopy = false);
+        void Configure(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler);
         void Enable();
         void ReleaseBuffer(IBuffer bufferImpl);
         void Start();

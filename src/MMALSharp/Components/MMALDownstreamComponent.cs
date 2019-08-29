@@ -42,9 +42,9 @@ namespace MMALSharp.Components
         /// <param name="copyPort">The output port we are copying format data from.</param>
         /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual unsafe IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler, bool zeroCopy = false)
+        public virtual unsafe IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler)
         {
-            this.Inputs[0].Configure(config, copyPort, handler, zeroCopy);
+            this.Inputs[0].Configure(config, copyPort, handler);
 
             if (this.Outputs.Count > 0 && this.Outputs[0].Ptr->Format->Type == MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_UNKNOWN)
             {

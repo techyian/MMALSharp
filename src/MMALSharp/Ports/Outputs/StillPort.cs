@@ -6,7 +6,7 @@
 using System;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
-using MMALSharp.Handlers;
+using MMALSharp.Native;
 
 namespace MMALSharp.Ports.Outputs
 {
@@ -53,6 +53,14 @@ namespace MMALSharp.Ports.Outputs
         public StillPort(IPort copyFrom)
             : base((IntPtr)copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
         {
+        }
+
+        internal override void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        {
+            if (MMALCameraConfig.Debug)
+            {
+                MMALLog.Logger.Debug($"In native {nameof(StillPort)} output callback");
+            }
         }
     }    
 }

@@ -45,6 +45,11 @@ namespace MMALSharp.Ports.Outputs
         /// <param name="buffer">The buffer header.</param>
         internal override void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
         {
+            if (MMALCameraConfig.Debug)
+            {
+                MMALLog.Logger.Debug($"In native {nameof(FileEncodeOutputPort)} callback");
+            }
+
             var bufferImpl = new MMALBufferImpl(buffer);
             bufferImpl.PrintProperties();
 

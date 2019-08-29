@@ -58,7 +58,6 @@ namespace MMALSharp.Components
         /// <summary>
         /// Creates a new instance of the <see cref="MMALImageEncoder"/> class with the specified handler.
         /// </summary>
-        /// <param name="handler">A handler to receive the encoded image data.</param>
         /// <param name="rawBayer">Specifies whether to include raw bayer image data.</param>
         /// <param name="useExif">Specifies whether any EXIF tags should be used.</param>
         /// <param name="continuousCapture">Configure component for rapid capture mode.</param>

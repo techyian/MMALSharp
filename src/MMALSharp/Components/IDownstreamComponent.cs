@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using MMALSharp.Callbacks;
 using MMALSharp.Handlers;
-using MMALSharp.Native;
 using MMALSharp.Ports;
 using MMALSharp.Ports.Outputs;
 
@@ -11,7 +9,7 @@ namespace MMALSharp.Components
     {
         Dictionary<int, IOutputPort> ProcessingPorts { get; }
       
-        IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler, bool zeroCopy = false);
+        IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler);
 
         IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IInputCaptureHandler handler);
 

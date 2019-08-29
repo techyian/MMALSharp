@@ -27,11 +27,8 @@ namespace MMALSharp.Ports.Outputs
             get => new Resolution(this.Width, this.Height);
             internal set
             {
-                if (value.Width > 0 && value.Height > 0)
-                {
-                    this.Width = value.Pad().Width;
-                    this.Height = value.Pad().Height;
-                }
+                this.Width = value.Pad().Width;
+                this.Height = value.Pad().Height;
             }
         }
         
@@ -98,11 +95,16 @@ namespace MMALSharp.Ports.Outputs
                     this.VideoColorSpace = MMALCameraConfig.VideoColorSpace;
                 }
 
+                if (config.Framerate > 0)
+                {
+                    this.FrameRate = new MMAL_RATIONAL_T(config.Framerate, 1);
+                }
+
                 if (config.Bitrate > 0)
                 {
                     this.Bitrate = config.Bitrate;
                 }
-
+                
                 this.EncodingType = config.EncodingType;
                 this.PixelFormat = config.PixelFormat;
 
@@ -137,10 +139,7 @@ namespace MMALSharp.Ports.Outputs
                 this.BufferSize = Math.Max(this.BufferSizeMin, config.BufferSize > 0 ? config.BufferSize : this.BufferSizeRecommended);
             }
             
-            if (this.CallbackHandler == null)
-            {
-                this.CallbackHandler = new DefaultOutputPortCallbackHandler(this, handler);
-            }
+            this.CallbackHandler = new DefaultOutputPortCallbackHandler(this, handler);
         }
 
         /// <summary>
@@ -187,7 +186,7 @@ namespace MMALSharp.Ports.Outputs
                 {
                     var newBuffer = this.BufferPool.Queue.GetBuffer();
                     
-                    if (newBuffer != null)
+                    if (newBuffer.CheckState())
                     {
                         this.SendBuffer(newBuffer);
                     }

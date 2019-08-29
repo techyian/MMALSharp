@@ -19,6 +19,25 @@ namespace MMALSharp.Ports.Outputs
     /// </summary>
     public unsafe class FastStillPort : OutputPort, IVideoPort
     {
+        /// <inheritdoc />
+        public override Resolution Resolution
+        {
+            get => new Resolution(this.Width, this.Height);
+            internal set
+            {
+                if (value.Width == 0 || value.Height == 0)
+                {
+                    this.Width = MMALCameraConfig.VideoResolution.Pad().Width;
+                    this.Height = MMALCameraConfig.VideoResolution.Pad().Height;
+                }
+                else
+                {
+                    this.Width = value.Pad().Width;
+                    this.Height = value.Pad().Height;
+                }
+            }
+        }
+
         /// <summary>
         /// Creates a new instance of <see cref="FastStillPort"/>. 
         /// </summary>
@@ -56,7 +75,7 @@ namespace MMALSharp.Ports.Outputs
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.Debug("In native output callback");
+                MMALLog.Logger.Debug($"In native {nameof(FastStillPort)} output callback");
             }
             
             var bufferImpl = new MMALBufferImpl(buffer);

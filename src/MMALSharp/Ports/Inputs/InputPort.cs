@@ -68,7 +68,6 @@ namespace MMALSharp.Ports.Inputs
             }
             else
             {
-                // Use config.
                 this.Resolution = new Resolution(0, 0);
             }
 
@@ -97,35 +96,10 @@ namespace MMALSharp.Ports.Inputs
             this.CallbackHandler = new DefaultInputPortCallbackHandler(this, handler);
         }
 
-        public void Configure(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler, bool zeroCopy = false)
+        public void Configure(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler)
         {
             copyPort?.ShallowCopy(this);
-
-            if (config.EncodingType != null)
-            {
-                this.NativeEncodingType = config.EncodingType.EncodingVal;
-            }
-
-            if (config.PixelFormat != null)
-            {
-                this.NativeEncodingSubformat = config.PixelFormat.EncodingVal;
-            }
-
-            this.Commit();
-
-            if (zeroCopy)
-            {
-                this.ZeroCopy = true;
-                this.SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
-            }
-
-            this.BufferNum = Math.Max(this.BufferNumMin, config.BufferNum > 0 ? config.BufferNum : this.BufferNumRecommended);
-            this.BufferSize = Math.Max(this.BufferSizeMin, config.BufferSize > 0 ? config.BufferSize : this.BufferSizeRecommended);
-
-            if (this.CallbackHandler == null)
-            {
-                this.CallbackHandler = new DefaultInputPortCallbackHandler(this, handler);
-            }
+            this.Configure(config, handler);
         }
 
         /// <summary>

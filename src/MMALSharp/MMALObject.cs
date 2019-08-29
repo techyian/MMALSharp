@@ -22,7 +22,7 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Removes this instance from the Objects list.
+        /// Marks this object as disposed.
         /// </summary>
         public virtual void Dispose()
         {
