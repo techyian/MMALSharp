@@ -110,22 +110,23 @@ namespace MMALSharp.Ports.Outputs
 
                 if (config.Width > 0 && config.Height > 0)
                 {
-                    this.Resolution = new Resolution(config.Width, config.Height).Pad();
-
                     if (config.Crop.HasValue)
                     {
                         this.Crop = config.Crop.Value;
                     }
                     else
                     {
-                        this.Crop = new Rectangle(0, 0, this.Resolution.Width, this.Resolution.Height);
+                        this.Crop = new Rectangle(0, 0, config.Width, config.Height);
                     }
+
+                    this.Resolution = new Resolution(config.Width, config.Height).Pad();
                 }
                 else
                 {
                     // Use config or don't set depending on port type.
                     this.Resolution = new Resolution(0, 0);
 
+                    // Certain resolution overrides set to global config Video/Still resolutions so check here if the width and height are greater than 0.
                     if (this.Resolution.Width > 0 && this.Resolution.Height > 0)
                     {
                         this.Crop = new Rectangle(0, 0, this.Resolution.Width, this.Resolution.Height);

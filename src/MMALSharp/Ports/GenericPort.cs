@@ -7,7 +7,6 @@ using System;
 using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
-using MMALSharp.Handlers;
 
 namespace MMALSharp.Ports
 {

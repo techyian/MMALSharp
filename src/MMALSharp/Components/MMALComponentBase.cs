@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Native;
@@ -144,12 +145,20 @@ namespace MMALSharp
         {
             MMALLog.Logger.Info($"Component: {this.Name}");
 
+            var sb = new StringBuilder();
+
             for (var i = 0; i < this.Inputs.Count; i++)
             {
                 if (this.Inputs[i].EncodingType != null)
                 {
-                    MMALLog.Logger.Info($"    Port {i} Input encoding: {this.Inputs[i].EncodingType.EncodingName}. Width: {this.Inputs[i].Resolution.Width}. Height: {this.Inputs[i].Resolution.Height} " +
-                                               $"Num buffers: {this.Inputs[i].BufferNum}. Buffer size: {this.Inputs[i].BufferSize}");
+                    sb.Append($"    INPUT port {i} encoding: {this.Inputs[i].NativeEncodingType.ParseEncoding().EncodingName}. \n");
+                    sb.Append($"        Width: {this.Inputs[i].Resolution.Width}. Height: {this.Inputs[i].Resolution.Height} \n");
+                    sb.Append($"        Num buffers: {this.Inputs[i].BufferNum}. Buffer size: {this.Inputs[i].BufferSize}. \n");
+                    sb.Append($"        Rec num buffers: {this.Inputs[i].BufferNumRecommended}. Rec buffer size: {this.Inputs[i].BufferSizeRecommended} \n");
+                    sb.Append($"        Resolution: {this.Inputs[i].Resolution.Width} x {this.Inputs[i].Resolution.Height} \n");
+                    sb.Append($"        Crop: {this.Inputs[i].Crop.Width} x {this.Inputs[i].Crop.Height} \n");
+
+                    MMALLog.Logger.Info(sb.ToString());
                 }
             }
 
@@ -157,8 +166,14 @@ namespace MMALSharp
             {
                 if (this.Outputs[i].EncodingType != null)
                 {
-                    MMALLog.Logger.Info($"    Port {i} Output encoding: {this.Outputs[i].EncodingType.EncodingName}. Width: {this.Outputs[i].Resolution.Width}. Height: {this.Outputs[i].Resolution.Height} " +
-                                               $"Num buffers: {this.Outputs[i].BufferNum}. Buffer size: {this.Outputs[i].BufferSize}");
+                    sb.Append($"    OUTPUT port {i} encoding: {this.Outputs[i].NativeEncodingType.ParseEncoding().EncodingName}. \n");
+                    sb.Append($"        Width: {this.Outputs[i].Resolution.Width}. Height: {this.Outputs[i].Resolution.Height} \n");
+                    sb.Append($"        Num buffers: {this.Outputs[i].BufferNum}. Buffer size: {this.Outputs[i].BufferSize}. \n");
+                    sb.Append($"        Rec num buffers: {this.Outputs[i].BufferNumRecommended}. Rec buffer size: {this.Outputs[i].BufferSizeRecommended} \n");
+                    sb.Append($"        Resolution: {this.Outputs[i].Resolution.Width} x {this.Outputs[i].Resolution.Height} \n");
+                    sb.Append($"        Crop: {this.Outputs[i].Crop.Width} x {this.Outputs[i].Crop.Height} \n");
+
+                    MMALLog.Logger.Info(sb.ToString());
                 }
             }
         }

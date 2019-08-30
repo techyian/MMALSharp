@@ -78,8 +78,6 @@ namespace MMALSharp.Ports.Outputs
                 MMALLog.Logger.Debug($"In native {nameof(VideoPort)} output callback");
             }
 
-            MMALLog.Logger.Info($"Port for component {this.ComponentReference.Name}");
-
             var bufferImpl = new MMALBufferImpl(buffer);
 
             bufferImpl.PrintProperties();

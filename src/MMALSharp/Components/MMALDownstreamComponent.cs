@@ -14,7 +14,7 @@ namespace MMALSharp.Components
 {
     /// <summary>
     /// Represents a downstream component. A downstream component is a component that can have data passed to it from further up the component
-    /// heirarchy.
+    /// hierarchy.
     /// </summary>
     public abstract class MMALDownstreamComponent : MMALComponentBase, IDownstreamComponent
     {
@@ -40,7 +40,7 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="config">User provided port configuration object.</param>
         /// <param name="copyPort">The output port we are copying format data from.</param>
-        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
+        /// <param name="handler">The input port capture handler.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual unsafe IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler)
         {
@@ -58,6 +58,7 @@ namespace MMALSharp.Components
         /// Call to configure changes on a downstream component input port.
         /// </summary>
         /// <param name="config">User provided port configuration object.</param>
+        /// <param name="handler">The input port capture handler.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual unsafe IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IInputCaptureHandler handler)
         {
@@ -70,11 +71,12 @@ namespace MMALSharp.Components
 
             return this;
         }
-        
+
         /// <summary>
         /// Call to configure changes on the first downstream component output port.
         /// </summary>
         /// <param name="config">User provided port configuration object.</param>
+        /// <param name="handler">The output port capture handler.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual IDownstreamComponent ConfigureOutputPort(MMALPortConfig config, IOutputCaptureHandler handler)
         {
@@ -86,6 +88,7 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="outputPort">The output port number to configure.</param>
         /// <param name="config">User provided port configuration object.</param>
+        /// <param name="handler">The output port capture handler.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual IDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config, IOutputCaptureHandler handler)
         {

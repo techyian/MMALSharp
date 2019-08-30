@@ -185,6 +185,7 @@ namespace MMALSharp
         {
             if (!this.Enabled)
             {
+                MMALLog.Logger.Debug($"Enabling connection between {this.OutputPort.Name} and {this.InputPort.Name}");
                 MMALCheck(MMALConnection.mmal_connection_enable(this.Ptr), "Unable to enable connection");
             }
         }
@@ -196,6 +197,7 @@ namespace MMALSharp
         {
             if (this.Enabled)
             {
+                MMALLog.Logger.Debug($"Disabling connection between {this.OutputPort.Name} and {this.InputPort.Name}");
                 MMALCheck(MMALConnection.mmal_connection_disable(this.Ptr), "Unable to disable connection");
             }
         }

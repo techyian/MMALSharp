@@ -61,6 +61,8 @@ namespace MMALSharp.Ports.Outputs
             {
                 MMALLog.Logger.Debug($"In native {nameof(StillPort)} output callback");
             }
+
+            base.NativeOutputPortCallback(port, buffer);
         }
     }    
 }
