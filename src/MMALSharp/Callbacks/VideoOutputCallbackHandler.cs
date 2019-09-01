@@ -101,13 +101,6 @@ namespace MMALSharp.Callbacks
         /// <param name="buffer">The working buffer header.</param>
         public override void Callback(IBuffer buffer)
         {
-            var componentRef = this.WorkingPort.ComponentReference as IVideoEncoder;
-
-            if (componentRef == null)
-            {
-                throw new ArgumentException($"Working port component is not of type {nameof(IVideoEncoder)}");
-            }
-            
             MMALLog.Logger.Debug("In video output callback");
             
             if (this.PrepareSplit && buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))

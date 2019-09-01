@@ -473,10 +473,9 @@ namespace MMALSharp
         {
             using (cancellationToken.Register(() => {
                 // this callback will be executed when token is cancelled
-                cameraPort.Trigger.TrySetCanceled();
+                cameraPort.Trigger.SetResult(true);
             }))
             {
-                MMALLog.Logger.Info("Calling cancel.");
                 cameraPort.DisablePort();
                 cameraPort.Start();
 

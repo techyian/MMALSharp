@@ -101,6 +101,21 @@ namespace MMALSharp
         }
 
         /// <summary>
+        /// Prints the currently configured component pipeline to the console window.
+        /// </summary>
+        /// <param name="initialComponent">The first component in your pipeline.</param>
+        public void PrintPipeline(IDownstreamComponent initialComponent)
+        {
+            MMALLog.Logger.Info("Current pipeline:");
+            MMALLog.Logger.Info(string.Empty);
+
+            foreach (var component in this.PopulateProcessingList(initialComponent))
+            {
+                component.PrintComponent();
+            }
+        }
+
+        /// <summary>
         /// Cleans up any unmanaged resources. It is intended for this method to be run when no more activity is to be done with MMAL.
         /// </summary>
         public void Cleanup()

@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using MMALSharp.Callbacks;
@@ -47,59 +48,74 @@ namespace MMALSharp.Ports.Inputs
         {
             this.ConnectedReference = connection;
         }
-
-        public virtual void Configure(MMALPortConfig config, IInputCaptureHandler handler)
-        {
-            this.PortConfig = config;
-
-            if (config.EncodingType != null)
-            {
-                this.NativeEncodingType = config.EncodingType.EncodingVal;
-            }
-
-            if (config.PixelFormat != null)
-            {
-                this.NativeEncodingSubformat = config.PixelFormat.EncodingVal;
-            }
-
-            if (config.Width > 0 && config.Height > 0)
-            {
-                this.Resolution = new Resolution(config.Width, config.Height);
-            }
-            else
-            {
-                this.Resolution = new Resolution(0, 0);
-            }
-
-            if (config.Framerate > 0)
-            {
-                this.FrameRate = new MMAL_RATIONAL_T(config.Framerate, 1);
-            }
-
-            if (config.Bitrate > 0)
-            {
-                this.Bitrate = config.Bitrate;
-            }
-
-            this.EncodingType = config.EncodingType;
-
-            this.Commit();
-
-            if (config.ZeroCopy)
-            {
-                this.ZeroCopy = true;
-                this.SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
-            }
-
-            this.BufferNum = Math.Max(this.BufferNumMin, config.BufferNum > 0 ? config.BufferNum : this.BufferNumRecommended);
-            this.BufferSize = Math.Max(this.BufferSizeMin, config.BufferSize > 0 ? config.BufferSize : this.BufferSizeRecommended);
-            this.CallbackHandler = new DefaultInputPortCallbackHandler(this, handler);
-        }
-
-        public void Configure(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler)
+        
+        public virtual void Configure(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler)
         {
             copyPort?.ShallowCopy(this);
-            this.Configure(config, handler);
+
+            if (config != null)
+            {
+                this.PortConfig = config;
+
+                if (config.EncodingType != null)
+                {
+                    this.NativeEncodingType = config.EncodingType.EncodingVal;
+                }
+
+                if (config.PixelFormat != null)
+                {
+                    this.NativeEncodingSubformat = config.PixelFormat.EncodingVal;
+                }
+
+                if (config.Width > 0 && config.Height > 0)
+                {
+                    if (config.Crop.HasValue)
+                    {
+                        this.Crop = config.Crop.Value;
+                    }
+                    else
+                    {
+                        this.Crop = new Rectangle(0, 0, config.Width, config.Height);
+                    }
+
+                    this.Resolution = new Resolution(config.Width, config.Height);
+                }
+                else
+                {
+                    // Use config or don't set depending on port type.
+                    this.Resolution = new Resolution(0, 0);
+
+                    // Certain resolution overrides set to global config Video/Still resolutions so check here if the width and height are greater than 0.
+                    if (this.Resolution.Width > 0 && this.Resolution.Height > 0)
+                    {
+                        this.Crop = new Rectangle(0, 0, this.Resolution.Width, this.Resolution.Height);
+                    }
+                }
+
+                if (config.Framerate > 0)
+                {
+                    this.FrameRate = new MMAL_RATIONAL_T(config.Framerate, 1);
+                }
+
+                if (config.Bitrate > 0)
+                {
+                    this.Bitrate = config.Bitrate;
+                }
+
+                this.EncodingType = config.EncodingType;
+
+                this.Commit();
+
+                if (config.ZeroCopy)
+                {
+                    this.ZeroCopy = true;
+                    this.SetParameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, true);
+                }
+
+                this.BufferNum = Math.Max(this.BufferNumMin, config.BufferNum > 0 ? config.BufferNum : this.BufferNumRecommended);
+                this.BufferSize = Math.Max(this.BufferSizeMin, config.BufferSize > 0 ? config.BufferSize : this.BufferSizeRecommended);
+                this.CallbackHandler = new DefaultInputPortCallbackHandler(this, handler);
+            }
         }
 
         /// <summary>
@@ -133,21 +149,7 @@ namespace MMALSharp.Ports.Inputs
                 throw new PiCameraError("Unknown error occurred whilst enabling port");
             }
         }
-
-        internal virtual unsafe void NativeInputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
-        {
-            if (MMALCameraConfig.Debug)
-            {
-                MMALLog.Logger.Debug("In native input callback");
-            }
-
-            var bufferImpl = new MMALBufferImpl(buffer);
-
-            bufferImpl.PrintProperties();
-
-            this.ReleaseBuffer(bufferImpl);
-        }
-
+        
         /// <summary>
         /// Releases an input port buffer and reads further data from user provided image data if not reached end of file.
         /// </summary>
@@ -172,31 +174,13 @@ namespace MMALSharp.Ports.Inputs
                 var result = this.CallbackHandler.CallbackWithResult(newBuffer);
                 newBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
 
-                try
+                this.SendBuffer(newBuffer);
+
+                if (result.EOF)
                 {
-                    if (result.EOF)
-                    {
-                        MMALLog.Logger.Debug("Received EOF. Releasing.");
+                    MMALLog.Logger.Debug("Received EOF. Releasing.");
 
-                        newBuffer.Release();
-                        newBuffer = null;
-
-                        Task.Run(() => { this.Trigger.SetResult(true); });
-                    }
-
-                    if (newBuffer != null)
-                    {
-                        this.SendBuffer(newBuffer);
-                    }
-                    else
-                    {
-                        MMALLog.Logger.Warn("Buffer null. Continuing.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MMALLog.Logger.Error($"Buffer handling failed. {ex.Message}");
-                    throw;
+                    Task.Run(() => { this.Trigger.SetResult(true); });
                 }
             }
         }
@@ -214,6 +198,20 @@ namespace MMALSharp.Ports.Inputs
         public void RegisterCallbackHandler(IInputCallbackHandler callbackHandler)
         {
             this.CallbackHandler = callbackHandler;
+        }
+
+        internal virtual unsafe void NativeInputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
+        {
+            if (MMALCameraConfig.Debug)
+            {
+                MMALLog.Logger.Debug("In native input callback");
+            }
+
+            var bufferImpl = new MMALBufferImpl(buffer);
+
+            bufferImpl.PrintProperties();
+
+            this.ReleaseBuffer(bufferImpl);
         }
     }
 }

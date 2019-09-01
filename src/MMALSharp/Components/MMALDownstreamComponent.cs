@@ -3,11 +3,13 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using System;
 using System.Collections.Generic;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
+using MMALSharp.Ports.Inputs;
 using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp.Components
@@ -35,6 +37,17 @@ namespace MMALSharp.Components
         }
 
         /// <summary>
+        /// Call to configure changes on a downstream component input port.
+        /// </summary>
+        /// <param name="config">User provided port configuration object.</param>
+        /// <param name="handler">The input port capture handler.</param>
+        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
+        public virtual IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IInputCaptureHandler handler)
+        {
+            return this.ConfigureInputPort(config, null, handler);
+        }
+
+        /// <summary>
         /// Configures a specific input port on a downstream component. This method will perform a shallow copy of the output
         /// port it is to be connected to.
         /// </summary>
@@ -57,19 +70,17 @@ namespace MMALSharp.Components
         /// <summary>
         /// Call to configure changes on a downstream component input port.
         /// </summary>
+        /// <typeparam name="TPort">Input port type.</typeparam>
+        /// <param name="portType">User specified input port override.</param>
         /// <param name="config">User provided port configuration object.</param>
         /// <param name="handler">The input port capture handler.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual unsafe IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IInputCaptureHandler handler)
+        public virtual unsafe IDownstreamComponent ConfigureInputPort<TPort>(MMALPortConfig config, IInputCaptureHandler handler)
+            where TPort : IInputPort
         {
-            this.Inputs[0].Configure(config, handler);
+            this.Inputs[0] = (IInputPort)Activator.CreateInstance(typeof(TPort), (IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Output, Guid.NewGuid());
 
-            if (this.Outputs.Count > 0 && this.Outputs[0].Ptr->Format->Type == MMALFormat.MMAL_ES_TYPE_T.MMAL_ES_TYPE_UNKNOWN)
-            {
-                throw new PiCameraError("Unable to determine settings for output port.");
-            }
-
-            return this;
+            return this.ConfigureInputPort(config, null, handler);
         }
 
         /// <summary>
@@ -102,6 +113,23 @@ namespace MMALSharp.Components
             this.Outputs[outputPort].Configure(config, this.Inputs[0], handler);
 
             return this;
+        }
+
+        /// <summary>
+        /// Call to configure changes on a downstream component output port.
+        /// </summary>
+        /// <typeparam name="TPort">Output port type.</typeparam>
+        /// <param name="portType">User specified output port override.</param>
+        /// <param name="outputPort">The output port number to configure.</param>
+        /// <param name="config">User provided port configuration object.</param>
+        /// <param name="handler">The output port capture handler.</param>
+        /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
+        public virtual unsafe IDownstreamComponent ConfigureOutputPort<TPort>(int outputPort, MMALPortConfig config, IOutputCaptureHandler handler)
+            where TPort : IOutputPort
+        {
+            this.Outputs[outputPort] = (IOutputPort)Activator.CreateInstance(typeof(TPort), (IntPtr)(&(*this.Ptr->Output[outputPort])), this, PortType.Output, Guid.NewGuid());
+
+            return this.ConfigureOutputPort(outputPort, config, handler);
         }
 
         /// <summary>

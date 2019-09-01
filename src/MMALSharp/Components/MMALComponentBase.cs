@@ -156,9 +156,7 @@ namespace MMALSharp
                     sb.Append($"        Num buffers: {this.Inputs[i].BufferNum}. Buffer size: {this.Inputs[i].BufferSize}. \n");
                     sb.Append($"        Rec num buffers: {this.Inputs[i].BufferNumRecommended}. Rec buffer size: {this.Inputs[i].BufferSizeRecommended} \n");
                     sb.Append($"        Resolution: {this.Inputs[i].Resolution.Width} x {this.Inputs[i].Resolution.Height} \n");
-                    sb.Append($"        Crop: {this.Inputs[i].Crop.Width} x {this.Inputs[i].Crop.Height} \n");
-
-                    MMALLog.Logger.Info(sb.ToString());
+                    sb.Append($"        Crop: {this.Inputs[i].Crop.Width} x {this.Inputs[i].Crop.Height} \n \n");
                 }
             }
 
@@ -171,11 +169,11 @@ namespace MMALSharp
                     sb.Append($"        Num buffers: {this.Outputs[i].BufferNum}. Buffer size: {this.Outputs[i].BufferSize}. \n");
                     sb.Append($"        Rec num buffers: {this.Outputs[i].BufferNumRecommended}. Rec buffer size: {this.Outputs[i].BufferSizeRecommended} \n");
                     sb.Append($"        Resolution: {this.Outputs[i].Resolution.Width} x {this.Outputs[i].Resolution.Height} \n");
-                    sb.Append($"        Crop: {this.Outputs[i].Crop.Width} x {this.Outputs[i].Crop.Height} \n");
-
-                    MMALLog.Logger.Info(sb.ToString());
+                    sb.Append($"        Crop: {this.Outputs[i].Crop.Width} x {this.Outputs[i].Crop.Height} \n \n");
                 }
             }
+
+            MMALLog.Logger.Info(sb.ToString());
         }
 
         /// <summary>

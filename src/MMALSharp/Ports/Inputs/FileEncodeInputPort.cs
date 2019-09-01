@@ -4,10 +4,8 @@
 // </copyright>
 
 using System;
-using System.Threading.Tasks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
-using MMALSharp.Native;
 
 namespace MMALSharp.Ports.Inputs
 {
@@ -16,6 +14,18 @@ namespace MMALSharp.Ports.Inputs
     /// </summary>
     public unsafe class FileEncodeInputPort : InputPort
     {
+        /// <inheritdoc />
+        public override Resolution Resolution
+        {
+            get => new Resolution(this.Width, this.Height);
+            internal set
+            {
+                // Do not pad user provided resolution.
+                this.Width = value.Width;
+                this.Height = value.Height;
+            }
+        }
+
         /// <summary>
         /// Creates a new instance of <see cref="FileEncodeInputPort"/>. 
         /// </summary>
@@ -35,34 +45,6 @@ namespace MMALSharp.Ports.Inputs
         public FileEncodeInputPort(IPort copyFrom)
             : base((IntPtr)copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
         {
-        }
-
-        internal override void NativeInputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
-        {
-            if (MMALCameraConfig.Debug)
-            {
-                MMALLog.Logger.Debug("Releasing input port buffer");
-            }
-            
-            var bufferImpl = new MMALBufferImpl(buffer);
-            bufferImpl.Release();
-
-            if (this.Enabled && this.BufferPool != null)
-            {
-                var newBuffer = this.BufferPool.Queue.GetBuffer();
-
-                if (newBuffer != null)
-                {
-                    var result = this.CallbackHandler.CallbackWithResult(newBuffer);
-
-                    if (result.EOF)
-                    {
-                        Task.Run(() => { this.Trigger.SetResult(true); });
-                    }
-
-                    this.SendBuffer(newBuffer);
-                }
-            }
         }
     }
 }

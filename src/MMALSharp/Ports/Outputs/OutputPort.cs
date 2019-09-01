@@ -119,7 +119,7 @@ namespace MMALSharp.Ports.Outputs
                         this.Crop = new Rectangle(0, 0, config.Width, config.Height);
                     }
 
-                    this.Resolution = new Resolution(config.Width, config.Height).Pad();
+                    this.Resolution = new Resolution(config.Width, config.Height);
                 }
                 else
                 {

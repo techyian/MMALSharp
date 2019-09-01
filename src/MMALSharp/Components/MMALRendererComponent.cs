@@ -272,19 +272,19 @@ namespace MMALSharp.Components
                         throw new PiCameraError("Unable to determine encoding from image size.");
                     }
                 }
-            }
 
-            if (!this.AllowedEncodings.Any(c => c.EncodingVal == this.Inputs[0].NativeEncodingType))
-            {
-                throw new PiCameraError($"Incompatible encoding type for use with Preview Render overlay {this.Inputs[0].NativeEncodingType.ParseEncoding().EncodingName}.");
-            }
+                if (!this.AllowedEncodings.Any(c => c.EncodingVal == this.Inputs[0].NativeEncodingType))
+                {
+                    throw new PiCameraError($"Incompatible encoding type for use with Preview Render overlay {this.Inputs[0].NativeEncodingType.ParseEncoding().EncodingName}.");
+                }
 
-            var portConfig = new MMALPortConfig(config.Encoding, null, width, height, 0, 0, 0, false, null, 0, 0);
-            
-            this.Inputs[0].Configure(portConfig, null);
-            
-            this.Control.Start();
-            this.Inputs[0].Start();
+                var portConfig = new MMALPortConfig(config.Encoding, null, width, height, 0, 0, 0, false, null, 0, 0);
+
+                this.Inputs[0].Configure(portConfig, null, null);
+
+                this.Control.Start();
+                this.Inputs[0].Start();
+            }
         }
 
         /// <summary>
