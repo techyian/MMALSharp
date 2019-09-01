@@ -140,14 +140,11 @@ namespace MMALSharp
                 throw new ArgumentNullException(nameof(handler));
             }
 
-            this.Camera.StillPort.RegisterCallbackHandler(new DefaultOutputPortCallbackHandler(this.Camera.StillPort, handler));
- 
             using (var renderer = new MMALNullSinkComponent())
             {
-                this.ConfigureCameraSettings();                
+                this.ConfigureCameraSettings(handler);
                 this.Camera.PreviewPort.ConnectTo(renderer);
                 
-                // Enable the image encoder output port.
                 MMALLog.Logger.Info($"Preparing to take raw picture - Resolution: {this.Camera.StillPort.Resolution.Width} x {this.Camera.StillPort.Resolution.Height}. " +
                                   $"Encoder: {MMALCameraConfig.StillEncoding.EncodingName}. Pixel Format: {MMALCameraConfig.StillSubFormat.EncodingName}.");
 
@@ -180,7 +177,6 @@ namespace MMALSharp
                 this.Camera.StillPort.ConnectTo(imgEncoder);
                 this.Camera.PreviewPort.ConnectTo(renderer);
                 
-                // Enable the image encoder output port.
                 MMALLog.Logger.Info($"Preparing to take picture. Resolution: {this.Camera.StillPort.Resolution.Width} x {this.Camera.StillPort.Resolution.Height}. " +
                                     $"Encoder: {encodingType.EncodingName}. Pixel Format: {pixelFormat.EncodingName}.");
 
@@ -398,11 +394,12 @@ namespace MMALSharp
         /// Initialises the camera component ready for operation. This method can also be called if you want to change
         /// configuration settings in <see cref="MMALCameraConfig"/>.
         /// </summary>
-        /// <param name="captureHandler">Optional output capture handler for use with raw image/video capture.</param>
+        /// <param name="stillCaptureHandler">Optional output capture handler for use with raw image capture.</param>
+        /// <param name="videoCaptureHandler">Optional output capture handler for use with raw video capture.</param>
         /// <returns>The camera instance.</returns>
-        public MMALCamera ConfigureCameraSettings(IOutputCaptureHandler captureHandler = null)
+        public MMALCamera ConfigureCameraSettings(IOutputCaptureHandler stillCaptureHandler = null, IOutputCaptureHandler videoCaptureHandler = null)
         {            
-            this.Camera.Initialise(captureHandler);
+            this.Camera.Initialise(stillCaptureHandler, videoCaptureHandler);
             return this;
         }
 
@@ -469,7 +466,7 @@ namespace MMALSharp
         /// Acts as an isolated processor specifically used when capturing raw frames from the camera component.
         /// </summary>
         /// <param name="cameraPort">The camera component port (still or video).</param>
-        /// <param name="cancellationToken">The cancellation token</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The awaitable task.</returns>
         private async Task ProcessRawAsync(IOutputPort cameraPort,
             CancellationToken cancellationToken = default(CancellationToken))
@@ -479,6 +476,7 @@ namespace MMALSharp
                 cameraPort.Trigger.TrySetCanceled();
             }))
             {
+                MMALLog.Logger.Info("Calling cancel.");
                 cameraPort.DisablePort();
                 cameraPort.Start();
 

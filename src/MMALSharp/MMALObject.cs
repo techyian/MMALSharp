@@ -3,8 +3,6 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using System;
-
 namespace MMALSharp
 {
     /// <summary>

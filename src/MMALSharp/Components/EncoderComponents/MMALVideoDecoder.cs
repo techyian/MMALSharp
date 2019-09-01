@@ -5,7 +5,6 @@
 
 using System;
 using MMALSharp.Components.EncoderComponents;
-using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
 using MMALSharp.Ports.Inputs;
@@ -21,7 +20,6 @@ namespace MMALSharp.Components
         /// <summary>
         /// Creates a new instance of <see cref="MMALVideoDecoder"/>.
         /// </summary>
-        /// <param name="handler">The capture handler.</param>
         public unsafe MMALVideoDecoder()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_DECODER)
         {

@@ -18,31 +18,40 @@ namespace MMALSharp.Callbacks
         where TPort : IPort
         where TCaptureHandler : IOutputCaptureHandler
     {
+        /// <summary>
+        /// The encoding type to restrict on.
+        /// </summary>
         public MMALEncoding EncodingType { get; }
         
+        /// <summary>
+        /// The working port.
+        /// </summary>
         public TPort WorkingPort { get; }
 
+        /// <summary>
+        /// The active capture handler.
+        /// </summary>
         public TCaptureHandler CaptureHandler { get; }
 
-        protected bool FoundEos { get; set; }
-
         /// <summary>
-        /// Creates a new instance of <see cref="PortCallbackHandler"/>.
+        /// Creates a new instance of <see cref="PortCallbackHandler{TPort,TCaptureHandler}"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IPort"/>.</param>
-        protected PortCallbackHandler(TPort port, TCaptureHandler captureHandler)
+        /// <param name="handler">The port capture handler.</param>
+        protected PortCallbackHandler(TPort port, TCaptureHandler handler)
         {
             this.WorkingPort = port;
-            this.CaptureHandler = captureHandler;
+            this.CaptureHandler = handler;
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="PortCallbackHandler"/>.
+        /// Creates a new instance of <see cref="PortCallbackHandler{TPort,TCaptureHandler}"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IPort"/>.</param>
+        /// <param name="handler">The port capture handler.</param>
         /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        protected PortCallbackHandler(TPort port, TCaptureHandler captureHandler, MMALEncoding encodingType)
-            : this(port, captureHandler)
+        protected PortCallbackHandler(TPort port, TCaptureHandler handler, MMALEncoding encodingType)
+            : this(port, handler)
         {
             this.EncodingType = encodingType;       
         }

@@ -40,6 +40,7 @@ namespace MMALSharp.Callbacks
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IOutputPort"/>.</param>
+        /// <param name="handler">The output port capture handler.</param>
         public VideoOutputCallbackHandler(IVideoPort port, IVideoCaptureHandler handler) 
             : base(port, handler)
         {
@@ -57,6 +58,7 @@ namespace MMALSharp.Callbacks
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IOutputPort"/>.</param>
+        /// <param name="handler">The output port capture handler.</param>
         /// <param name="split">Configure to split into multiple files.</param>
         public VideoOutputCallbackHandler(IVideoPort port, Split split, IVideoCaptureHandler handler)
             : this(port, handler)
@@ -68,6 +70,7 @@ namespace MMALSharp.Callbacks
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IOutputPort"/>.</param>
+        /// <param name="handler">The output port capture handler.</param>
         /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
         public VideoOutputCallbackHandler(IVideoPort port, IVideoCaptureHandler handler, MMALEncoding encoding)
             : base(port, handler, encoding)
@@ -83,6 +86,7 @@ namespace MMALSharp.Callbacks
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IOutputPort"/>.</param>
+        /// <param name="handler">The output port capture handler.</param>
         /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
         /// <param name="split">Configure to split into multiple files.</param>
         public VideoOutputCallbackHandler(IVideoPort port, IVideoCaptureHandler handler, MMALEncoding encoding, Split split)

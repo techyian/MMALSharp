@@ -1,6 +1,4 @@
-﻿using MMALSharp.Callbacks;
-
-namespace MMALSharp.Ports.Controls
+﻿namespace MMALSharp.Ports.Controls
 {
     public interface IControlPort : IPort
     {

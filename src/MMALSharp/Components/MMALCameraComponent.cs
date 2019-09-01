@@ -10,7 +10,6 @@ using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
-using MMALSharp.Ports.Controls;
 using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp.Components
@@ -171,7 +170,7 @@ namespace MMALSharp.Components
             MMALLog.Logger.Info($"    Max Width: {this.CameraInfo.MaxWidth}. Video Height: {this.CameraInfo.MaxHeight}");
         }
         
-        public void Initialise(IOutputCaptureHandler captureHandler = null)
+        public void Initialise(IOutputCaptureHandler stillCaptureHandler = null, IOutputCaptureHandler videoCaptureHandler = null)
         {
             this.DisableComponent();
             
@@ -199,8 +198,8 @@ namespace MMALSharp.Components
             this.SetCameraParameters();
 
             this.InitialisePreview();
-            this.InitialiseVideo(captureHandler);
-            this.InitialiseStill(captureHandler);
+            this.InitialiseVideo(videoCaptureHandler);
+            this.InitialiseStill(stillCaptureHandler);
 
             this.EnableComponent();
 

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Native;
-using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp
 {

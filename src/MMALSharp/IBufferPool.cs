@@ -1,6 +1,4 @@
-﻿
-using System;
-using MMALSharp.Native;
+﻿using MMALSharp.Native;
 
 namespace MMALSharp
 {

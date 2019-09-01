@@ -18,6 +18,7 @@ namespace MMALSharp.Callbacks
         /// Creates a new instance of <see cref="DefaultPortCallbackHandler"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IPort"/>.</param>
+        /// <param name="handler">The port capture handler.</param>
         public DefaultPortCallbackHandler(IPort port, IOutputCaptureHandler handler)
             : base(port, handler)
         {
@@ -27,6 +28,7 @@ namespace MMALSharp.Callbacks
         /// Creates a new instance of <see cref="DefaultPortCallbackHandler"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IPort"/>.</param>
+        /// <param name="handler">The port capture handler.</param>
         /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
         public DefaultPortCallbackHandler(IPort port, IOutputCaptureHandler handler, MMALEncoding encodingType)
             : base(port, handler, encodingType)

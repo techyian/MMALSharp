@@ -10,6 +10,7 @@ namespace MMALSharp.Callbacks
         /// Creates a new instance of <see cref="FileEncoderInputCallbackHandler"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IInputPort"/>.</param>
+        /// <param name="handler">The input port capture handler.</param>
         public FileEncoderInputCallbackHandler(IInputPort port, IInputCaptureHandler handler)
             : base(port, handler)
         {
@@ -19,6 +20,7 @@ namespace MMALSharp.Callbacks
         /// Creates a new instance of <see cref="FileEncoderInputCallbackHandler"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IInputPort"/>.</param>
+        /// <param name="handler">The input port capture handler.</param>
         /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
         public FileEncoderInputCallbackHandler(IInputPort port, IInputCaptureHandler handler, MMALEncoding encodingType)
             : base(port, handler, encodingType)

@@ -11,6 +11,6 @@ namespace MMALSharp.Components
         IOutputPort StillPort { get; }
         ICameraInfoComponent CameraInfo { get; }
 
-        void Initialise(IOutputCaptureHandler captureHandler);
+        void Initialise(IOutputCaptureHandler stillCaptureHandler = null, IOutputCaptureHandler videoCaptureHandler = null);
     }
 }

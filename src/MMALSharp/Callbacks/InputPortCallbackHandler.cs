@@ -10,33 +10,49 @@ namespace MMALSharp.Callbacks
         where TPort : IInputPort
         where TCaptureHandler : IInputCaptureHandler
     {
+        /// <summary>
+        /// The encoding type to restrict on.
+        /// </summary>
         public MMALEncoding EncodingType { get; }
 
+        /// <summary>
+        /// The working port.
+        /// </summary>
         public TPort WorkingPort { get; }
 
+        /// <summary>
+        /// The active capture handler.
+        /// </summary>
         public TCaptureHandler CaptureHandler { get; }
 
         /// <summary>
-        /// Creates a new instance of <see cref="InputPortCallbackHandler"/>.
+        /// Creates a new instance of <see cref="InputPortCallbackHandler{TPort,TCaptureHandler}"/>.
         /// </summary>
         /// <param name="port">The working <see cref="TPort"/>.</param>
-        protected InputPortCallbackHandler(TPort port, TCaptureHandler captureHandler)
+        /// <param name="handler">The input port capture handler.</param>
+        protected InputPortCallbackHandler(TPort port, TCaptureHandler handler)
         {
             this.WorkingPort = port;
-            this.CaptureHandler = captureHandler;
+            this.CaptureHandler = handler;
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="InputPortCallbackHandler"/>.
+        /// Creates a new instance of <see cref="InputPortCallbackHandler{TPort,TCaptureHandler}"/>.
         /// </summary>
         /// <param name="port">The working <see cref="TPort"/>.</param>
+        /// <param name="handler">The input port capture handler.</param>
         /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        protected InputPortCallbackHandler(TPort port, TCaptureHandler captureHandler, MMALEncoding encodingType)
-            : this(port, captureHandler)
+        protected InputPortCallbackHandler(TPort port, TCaptureHandler handler, MMALEncoding encodingType)
+            : this(port, handler)
         {
             this.EncodingType = encodingType;
         }
 
+        /// <summary>
+        /// Responsible for feeding data into the input port.
+        /// </summary>
+        /// <param name="buffer">The working buffer.</param>
+        /// <returns>A <see cref="ProcessResult"/> based on the result of the operation.</returns>
         public virtual ProcessResult CallbackWithResult(IBuffer buffer)
         {
             if (MMALCameraConfig.Debug)

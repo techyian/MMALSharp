@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Handlers;
@@ -49,7 +48,6 @@ namespace MMALSharp.Components
         /// <summary>
         /// Creates a new instance of <see cref="MMALVideoEncoder"/>.
         /// </summary>
-        /// <param name="handler">The capture handler.</param>
         public MMALVideoEncoder()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
         {

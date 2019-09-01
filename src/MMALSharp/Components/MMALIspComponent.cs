@@ -1,5 +1,4 @@
 ﻿using System;
-using MMALSharp.Handlers;
 using MMALSharp.Ports;
 using MMALSharp.Ports.Inputs;
 using MMALSharp.Ports.Outputs;
@@ -13,7 +12,6 @@ namespace MMALSharp.Components
         /// Creates a new instance of the <see cref="MMALIspComponent"/> class that can be used to change the size
         /// and the pixel format of resulting frames. 
         /// </summary>
-        /// <param name="handler">The capture handler associated with this component.</param>
         public unsafe MMALIspComponent()
             : base(MMAL_COMPONENT_ISP)
         {
@@ -26,7 +24,6 @@ namespace MMALSharp.Components
         /// Creates a new instance of the <see cref="MMALIspComponent"/> class that can be used to change the size
         /// and the pixel format of resulting frames. 
         /// </summary>
-        /// <param name="handler">The capture handler associated with this component.</param>
         /// <param name="outputPortType">The user defined output port type.</param>
         public unsafe MMALIspComponent(Type outputPortType)
             : base(MMAL_COMPONENT_ISP)
