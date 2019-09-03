@@ -421,6 +421,14 @@ namespace MMALSharp.Ports
             if (this.BufferPool != null && !this.BufferPool.IsDisposed)
             {
                 this.DisablePort();
+
+                MMALLog.Logger.Debug($"Releasing active buffers for port {this.Name}.");
+                while (this.BufferPool.Queue.QueueLength() < this.BufferPool.HeadersNum)
+                {
+                    var tempBuf = this.BufferPool.Queue.Wait();
+                    tempBuf.Release();
+                }
+
                 this.BufferPool.Dispose();
             }
         }

@@ -158,7 +158,7 @@ namespace MMALSharp.Ports.Inputs
         {
             bufferImpl.Release();
 
-            if (this.Enabled && this.BufferPool != null)
+            if (this.Enabled && this.BufferPool != null && !this.Trigger.Task.IsCompleted)
             {
                 IBuffer newBuffer;
                 while (true)

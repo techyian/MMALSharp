@@ -277,7 +277,6 @@ namespace MMALSharp
                 {
                     MMALLog.Logger.Debug("Destroying input port pool.");
                     
-                    port.DisablePort();
                     port.DestroyPortPool();
                 }
             }
@@ -288,7 +287,6 @@ namespace MMALSharp
                 {
                     MMALLog.Logger.Debug("Destroying output port pool.");
                     
-                    port.DisablePort();
                     port.DestroyPortPool();
                 }
             }

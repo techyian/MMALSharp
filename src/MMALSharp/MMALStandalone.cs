@@ -61,13 +61,7 @@ namespace MMALSharp
                     }
                 }
             }
-
-            if (handlerComponents.Count == 0)
-            {
-                initialComponent.Outputs[0].Start();
-                tasks.Add(initialComponent.Outputs[0].Trigger.Task);
-            }
-
+            
             // Get buffer from input port pool                
             var inputBuffer = initialComponent.Inputs[0].BufferPool.Queue.GetBuffer();
 
@@ -78,7 +72,7 @@ namespace MMALSharp
             
             await Task.WhenAll(tasks).ConfigureAwait(false);
 
-            // Cleanup each connected downstream component.
+            // Cleanup each downstream component.
             foreach (var component in handlerComponents)
             {
                 foreach (var port in component.ProcessingPorts.Values)
@@ -91,12 +85,6 @@ namespace MMALSharp
 
                 component.CleanPortPools();
                 component.DisableConnections();
-            }
-
-            if (handlerComponents.Count == 0)
-            {
-                initialComponent.Outputs[0].DisablePort();
-                initialComponent.CleanPortPools();
             }
         }
 
@@ -121,7 +109,7 @@ namespace MMALSharp
         public void Cleanup()
         {
             MMALLog.Logger.Debug("Destroying final components");
-
+            
             var tempList = new List<MMALDownstreamComponent>(MMALBootstrapper.DownstreamComponents);
 
             tempList.ForEach(c => c.Dispose());

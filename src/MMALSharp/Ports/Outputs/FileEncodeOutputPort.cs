@@ -61,7 +61,7 @@ namespace MMALSharp.Ports.Outputs
                 {
                     if (bufferImpl.Cmd == MMALEvents.MMAL_EVENT_FORMAT_CHANGED)
                     {
-                        this.ProcessFormatChangedEvent(bufferImpl);
+                        Task.Run(() => { this.ProcessFormatChangedEvent(bufferImpl); });
                     }
                     else
                     {
@@ -97,10 +97,12 @@ namespace MMALSharp.Ports.Outputs
             }
         }
 
-        private void ProcessFormatChangedEvent(IBuffer buffer, int outputPort = 0)
+        private void ProcessFormatChangedEvent(IBuffer buffer)
         {
             MMALLog.Logger.Info("Received MMAL_EVENT_FORMAT_CHANGED event");
 
+            this.ComponentReference.Inputs[0].Trigger.SetResult(true);
+            
             var ev = MMALEventFormat.GetEventFormat(buffer);
 
             MMALLog.Logger.Info("-- Event format changed from -- ");
@@ -110,25 +112,28 @@ namespace MMALSharp.Ports.Outputs
             this.LogFormat(ev, null);
 
             buffer.Release();
-
-            this.DisablePort();
-
-            while (this.BufferPool.Queue.QueueLength() < this.BufferPool.HeadersNum)
-            {
-                MMALLog.Logger.Debug("Queue length less than buffer pool num");
-
-                MMALLog.Logger.Debug("Getting buffer via Queue.Wait");
-                var tempBuf = this.BufferPool.Queue.Wait();
-                tempBuf.Release();
-            }
-
-            this.BufferPool.Dispose();
+            
+            this.ComponentReference.Inputs[0].DisablePort();
+            
+            this.DestroyPortPool();
+            this.ComponentReference.Inputs[0].DestroyPortPool();
 
             this.FullCopy(ev);
 
-            this.ConfigureOutputPortWithoutInit(outputPort);
+            this.ConfigureOutputPortWithoutInit();
+            
+            this.ComponentReference.Inputs[0].Start();
+            this.Enable();
 
-            this.Enable(false);
+            // Get buffer from input port pool                
+            var inputBuffer = this.ComponentReference.Inputs[0].BufferPool.Queue.GetBuffer();
+
+            if (inputBuffer.CheckState())
+            {
+                this.ComponentReference.Inputs[0].SendBuffer(inputBuffer);
+            }
+
+            MMALLog.Logger.Debug("Finished processing MMAL_EVENT_FORMAT_CHANGED event");
         }
 
         private void LogFormat(MMALEventFormat format, IPort port)
@@ -165,7 +170,7 @@ namespace MMALSharp.Ports.Outputs
             MMALLog.Logger.Info(sb.ToString());
         }
 
-        private void ConfigureOutputPortWithoutInit(int outputPort)
+        private void ConfigureOutputPortWithoutInit()
         {
             MMALLog.Logger.Info($"New buffer number {this.BufferNum}");
             MMALLog.Logger.Info($"New buffer size {this.BufferSize}");

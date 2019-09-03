@@ -71,7 +71,6 @@ namespace MMALSharp.Components
         /// Call to configure changes on a downstream component input port.
         /// </summary>
         /// <typeparam name="TPort">Input port type.</typeparam>
-        /// <param name="portType">User specified input port override.</param>
         /// <param name="config">User provided port configuration object.</param>
         /// <param name="handler">The input port capture handler.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
@@ -119,7 +118,6 @@ namespace MMALSharp.Components
         /// Call to configure changes on a downstream component output port.
         /// </summary>
         /// <typeparam name="TPort">Output port type.</typeparam>
-        /// <param name="portType">User specified output port override.</param>
         /// <param name="outputPort">The output port number to configure.</param>
         /// <param name="config">User provided port configuration object.</param>
         /// <param name="handler">The output port capture handler.</param>
@@ -137,8 +135,6 @@ namespace MMALSharp.Components
         /// </summary>
         public override void Dispose()
         {
-            MMALLog.Logger.Debug("Removing downstream component");
-
             this.ClosePipelineConnections();
 
             MMALBootstrapper.DownstreamComponents.Remove(this);
@@ -158,7 +154,7 @@ namespace MMALSharp.Components
             {
                 if (input.ConnectedReference != null)
                 {
-                    MMALLog.Logger.Debug($"Removing {input.ConnectedReference.ToString()}");
+                    MMALLog.Logger.Debug($"Removing {input.ConnectedReference}");
                     input.ConnectedReference.OutputPort.ConnectedReference?.Dispose();
                     input.ConnectedReference.Dispose();
                 }
@@ -168,7 +164,7 @@ namespace MMALSharp.Components
             {
                 if (output.ConnectedReference != null)
                 {
-                    MMALLog.Logger.Debug($"Removing {output.ConnectedReference.ToString()}");
+                    MMALLog.Logger.Debug($"Removing {output.ConnectedReference}");
                     output.ConnectedReference.Dispose();
                 }
             }
