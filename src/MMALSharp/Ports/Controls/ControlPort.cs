@@ -89,7 +89,7 @@ namespace MMALSharp.Ports.Controls
             }
             else if (buffer->Cmd == MMALEvents.MMAL_EVENT_ERROR)
             {
-                MMALLog.Logger.Info("No data received from sensor. Check all connections, including the Sunny one on the camera board");
+                MMALLog.Logger.Info("Error buffer event returned. If using camera, check all connections, including the Sunny one on the camera board.");
             }
             else
             {

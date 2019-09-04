@@ -60,8 +60,6 @@ namespace MMALSharp.Components
         {
             this.Quality = config.Quality;
             
-            config.BufferNum = Math.Max(this.Outputs[outputPort].Ptr->BufferNumRecommended, 3);
-
             if (config.EncodingType == MMALEncoding.H264)
             {
                 config.BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);

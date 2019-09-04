@@ -6,7 +6,9 @@
 using System;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
+using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports.Inputs;
 
 namespace MMALSharp.Ports.Outputs
 {
@@ -53,6 +55,16 @@ namespace MMALSharp.Ports.Outputs
         public StillPort(IPort copyFrom)
             : base((IntPtr)copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
         {
+        }
+
+        public override void Configure(MMALPortConfig config, IInputPort copyFrom, IOutputCaptureHandler handler)
+        {
+            base.Configure(config, copyFrom, handler);
+
+            if (config.EncodingType == MMALEncoding.JPEG)
+            {
+                this.SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, config.Quality);
+            }
         }
 
         internal override void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)
