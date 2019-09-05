@@ -79,11 +79,11 @@ namespace MMALSharp
             this.Clocks = new List<IPort>();
             this.Ports = new List<IPort>();
 
-            this.Control = new ControlPort((IntPtr)this.Ptr->Control, this, PortType.Control, Guid.NewGuid());
+            this.Control = new ControlPort((IntPtr)this.Ptr->Control, this, Guid.NewGuid());
             
             for (int i = 0; i < this.Ptr->ClockNum; i++)
             {
-                this.Clocks.Add(new ClockPort((IntPtr)(&(*this.Ptr->Clock[i])), this, PortType.Clock, Guid.NewGuid()));
+                this.Clocks.Add(new ClockPort((IntPtr)(&(*this.Ptr->Clock[i])), this, Guid.NewGuid()));
             }
 
             for (int i = 0; i < this.Ptr->PortNum; i++)

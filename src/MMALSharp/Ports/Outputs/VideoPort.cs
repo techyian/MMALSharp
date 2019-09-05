@@ -43,10 +43,9 @@ namespace MMALSharp.Ports.Outputs
         /// </summary>
         /// <param name="ptr">The native pointer.</param>
         /// <param name="comp">The component this port is associated with.</param>
-        /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this port.</param>
-        public VideoPort(IntPtr ptr, IComponent comp, PortType type, Guid guid)
-            : base(ptr, comp, type, guid)
+        public VideoPort(IntPtr ptr, IComponent comp, Guid guid)
+            : base(ptr, comp, guid)
         {
         }
 
@@ -55,7 +54,7 @@ namespace MMALSharp.Ports.Outputs
         /// </summary>
         /// <param name="copyFrom">The port to copy data from.</param>
         public VideoPort(IPort copyFrom)
-            : base((IntPtr)copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.PortType, copyFrom.Guid)
+            : base((IntPtr)copyFrom.Ptr, copyFrom.ComponentReference, copyFrom.Guid)
         {
         }
 

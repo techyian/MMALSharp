@@ -23,8 +23,8 @@ namespace MMALSharp.Components
         public unsafe MMALImageDecoder()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_DECODER)
         {
-            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
-            this.Outputs.Add(new StillPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid()));
+            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, Guid.NewGuid()));
+            this.Outputs.Add(new StillPort((IntPtr)(&(*this.Ptr->Output[0])), this, Guid.NewGuid()));
         }
     }
 }

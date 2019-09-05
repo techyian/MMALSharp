@@ -77,7 +77,7 @@ namespace MMALSharp.Components
         public virtual unsafe IDownstreamComponent ConfigureInputPort<TPort>(MMALPortConfig config, IInputCaptureHandler handler)
             where TPort : IInputPort
         {
-            this.Inputs[0] = (IInputPort)Activator.CreateInstance(typeof(TPort), (IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Output, Guid.NewGuid());
+            this.Inputs[0] = (IInputPort)Activator.CreateInstance(typeof(TPort), (IntPtr)(&(*this.Ptr->Input[0])), this, Guid.NewGuid());
 
             return this.ConfigureInputPort(config, null, handler);
         }
@@ -125,7 +125,7 @@ namespace MMALSharp.Components
         public virtual unsafe IDownstreamComponent ConfigureOutputPort<TPort>(int outputPort, MMALPortConfig config, IOutputCaptureHandler handler)
             where TPort : IOutputPort
         {
-            this.Outputs[outputPort] = (IOutputPort)Activator.CreateInstance(typeof(TPort), (IntPtr)(&(*this.Ptr->Output[outputPort])), this, PortType.Output, Guid.NewGuid());
+            this.Outputs[outputPort] = (IOutputPort)Activator.CreateInstance(typeof(TPort), (IntPtr)(&(*this.Ptr->Output[outputPort])), this, Guid.NewGuid());
 
             return this.ConfigureOutputPort(outputPort, config, handler);
         }

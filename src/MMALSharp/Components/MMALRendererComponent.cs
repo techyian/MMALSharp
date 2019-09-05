@@ -29,7 +29,7 @@ namespace MMALSharp.Components
         protected unsafe MMALRendererBase(string name)
             : base(name)
         {
-            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
+            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, Guid.NewGuid()));
         }
     }
 

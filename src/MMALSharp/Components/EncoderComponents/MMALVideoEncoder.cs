@@ -51,8 +51,8 @@ namespace MMALSharp.Components
         public MMALVideoEncoder()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_ENCODER)
         {
-            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
-            this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid()));
+            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, Guid.NewGuid()));
+            this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[0])), this, Guid.NewGuid()));
         }
         
         /// <inheritdoc />
@@ -70,6 +70,7 @@ namespace MMALSharp.Components
                 config.BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, 256 << 10);
             }
 
+            // Force framerate to be 0 in case it was provided by user.
             config.Framerate = 0;
             
             this.ConfigureBitrate(outputPort, config);

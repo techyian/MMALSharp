@@ -37,10 +37,9 @@ namespace MMALSharp.Ports.Inputs
         /// </summary>
         /// <param name="ptr">The native pointer.</param>
         /// <param name="comp">The component this port is associated with.</param>
-        /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
-        public InputPort(IntPtr ptr, IComponent comp, PortType type, Guid guid)
-            : base(ptr, comp, type, guid)
+        public InputPort(IntPtr ptr, IComponent comp, Guid guid)
+            : base(ptr, comp, PortType.Input, guid)
         {
         }
 
@@ -209,6 +208,17 @@ namespace MMALSharp.Ports.Inputs
 
             var bufferImpl = new MMALBufferImpl(buffer);
 
+            if (bufferImpl.CheckState())
+            {
+                if (bufferImpl.Cmd > 0)
+                {
+                    if (bufferImpl.Cmd == MMALEvents.MMAL_EVENT_FORMAT_CHANGED)
+                    {
+                        MMALLog.Logger.Info("EVENT FORMAT CHANGED");
+                    }
+                }
+            }
+            
             bufferImpl.PrintProperties();
 
             this.ReleaseBuffer(bufferImpl);

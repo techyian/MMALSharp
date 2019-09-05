@@ -71,15 +71,15 @@ namespace MMALSharp.Components
             this.ContinuousCapture = continuousCapture;
             this.JpegThumbnailConfig = thumbnailConfig;
             
-            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
+            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, Guid.NewGuid()));
 
             if (this.ContinuousCapture)
             {
-                this.Outputs.Add(new FastStillPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid()));
+                this.Outputs.Add(new FastStillPort((IntPtr)(&(*this.Ptr->Output[0])), this, Guid.NewGuid()));
             }
             else
             {
-                this.Outputs.Add(new StillPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid()));
+                this.Outputs.Add(new StillPort((IntPtr)(&(*this.Ptr->Output[0])), this, Guid.NewGuid()));
             }
         }
         

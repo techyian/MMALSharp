@@ -25,11 +25,11 @@ namespace MMALSharp.Components
         public unsafe MMALSplitterComponent()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER)
         {
-            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
+            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, Guid.NewGuid()));
 
             for (var i = 0; i < 4; i++)
             {
-                this.Outputs.Add(new SplitterVideoPort((IntPtr)(&(*this.Ptr->Output[i])), this, PortType.Output, Guid.NewGuid()));
+                this.Outputs.Add(new SplitterVideoPort((IntPtr)(&(*this.Ptr->Output[i])), this, Guid.NewGuid()));
             }
         }
 
@@ -40,11 +40,11 @@ namespace MMALSharp.Components
         public unsafe MMALSplitterComponent(Type outputPortType)
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER)
         {
-            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, PortType.Input, Guid.NewGuid()));
+            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, Guid.NewGuid()));
 
             for (var i = 0; i < 4; i++)
             {
-                this.Outputs.Add((IOutputPort)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[i])), this, PortType.Output, Guid.NewGuid()));
+                this.Outputs.Add((IOutputPort)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[i])), this, Guid.NewGuid()));
             }
         }
 

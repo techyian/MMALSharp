@@ -18,10 +18,9 @@ namespace MMALSharp.Ports.Clocks
         /// </summary>
         /// <param name="ptr">The native pointer.</param>
         /// <param name="comp">The component this port is associated with.</param>
-        /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this component.</param>
-        public ClockPort(IntPtr ptr, IComponent comp, PortType type, Guid guid) 
-            : base(ptr, comp, type, guid)
+        public ClockPort(IntPtr ptr, IComponent comp, Guid guid) 
+            : base(ptr, comp, PortType.Clock, guid)
         {
         }
     }

@@ -111,9 +111,9 @@ namespace MMALSharp.Components
         public unsafe MMALCameraComponent()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_CAMERA)
         {
-            this.Outputs.Add(new OutputPort((IntPtr)(&(*this.Ptr->Output[0])), this, PortType.Output, Guid.NewGuid()));
-            this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[1])), this, PortType.Output, Guid.NewGuid()));
-            this.Outputs.Add(new StillPort((IntPtr)(&(*this.Ptr->Output[2])), this, PortType.Output, Guid.NewGuid()));
+            this.Outputs.Add(new OutputPort((IntPtr)(&(*this.Ptr->Output[0])), this, Guid.NewGuid()));
+            this.Outputs.Add(new VideoPort((IntPtr)(&(*this.Ptr->Output[1])), this, Guid.NewGuid()));
+            this.Outputs.Add(new StillPort((IntPtr)(&(*this.Ptr->Output[2])), this, Guid.NewGuid()));
             
             if (this.CameraInfo == null)
             {
