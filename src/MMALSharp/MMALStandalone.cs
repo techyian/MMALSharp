@@ -69,8 +69,22 @@ namespace MMALSharp
             {
                 initialComponent.Inputs[0].SendBuffer(inputBuffer);
             }
-            
-            await Task.WhenAll(tasks).ConfigureAwait(false);
+
+            if (cancellationToken == CancellationToken.None)
+            {
+                await Task.WhenAll(tasks).ConfigureAwait(false);
+            }
+            else
+            {
+                await Task.WhenAny(Task.WhenAll(tasks), cancellationToken.AsTask()).ConfigureAwait(false);
+
+                foreach (var component in handlerComponents)
+                {
+                    component.ForceStopProcessing = true;
+                }
+
+                await Task.WhenAll(tasks).ConfigureAwait(false);
+            }
 
             // Cleanup each downstream component.
             foreach (var component in handlerComponents)
