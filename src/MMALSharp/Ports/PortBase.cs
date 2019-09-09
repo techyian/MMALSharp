@@ -374,24 +374,20 @@ namespace MMALSharp.Ports
         /// <summary>
         /// Attempts to send all available buffers in the queue to this port.
         /// </summary>
-        /// <param name="sendBuffers">If false, only initialise the buffer pool with headers.</param>
-        public void SendAllBuffers(bool sendBuffers = true)
+        public void SendAllBuffers()
         {
             this.InitialiseBufferPool();
             
-            if (sendBuffers)
+            var length = this.BufferPool.Queue.QueueLength();
+
+            for (int i = 0; i < length; i++)
             {
-                var length = this.BufferPool.Queue.QueueLength();
+                var buffer = this.BufferPool.Queue.GetBuffer();
 
-                for (int i = 0; i < length; i++)
-                {
-                    var buffer = this.BufferPool.Queue.GetBuffer();
-
-                    MMALLog.Logger.Debug($"Sending buffer to output port: Length {buffer.Length}");
-                    
-                    this.SendBuffer(buffer);
-                }
-            }            
+                MMALLog.Logger.Debug($"Sending buffer to output port: Length {buffer.Length}");
+                
+                this.SendBuffer(buffer);
+            }
         }
 
         /// <summary>

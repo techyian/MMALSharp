@@ -60,7 +60,7 @@ namespace MMALSharp.Ports
 
         void SendBuffer(IBuffer buffer);
 
-        void SendAllBuffers(bool sendBuffers = true);
+        void SendAllBuffers();
 
         void SendAllBuffers(IBufferPool pool);
 
