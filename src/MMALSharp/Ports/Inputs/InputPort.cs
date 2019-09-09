@@ -168,14 +168,14 @@ namespace MMALSharp.Ports.Inputs
                         break;
                     }
                 }
-
+                
                 // Populate the new input buffer with user provided image data.
                 var result = this.CallbackHandler.CallbackWithResult(newBuffer);
                 newBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
-
+              
                 this.SendBuffer(newBuffer);
 
-                if (result.EOF)
+                if (result.EOF || this.ComponentReference.ForceStopProcessing)
                 {
                     MMALLog.Logger.Debug("Received EOF. Releasing.");
 
@@ -218,7 +218,7 @@ namespace MMALSharp.Ports.Inputs
                     }
                 }
             }
-            
+
             bufferImpl.PrintProperties();
 
             this.ReleaseBuffer(bufferImpl);
