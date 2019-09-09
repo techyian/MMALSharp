@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using MMALSharp.Common.Utility;
 using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Config;
 using MMALSharp.Handlers;
@@ -120,9 +121,20 @@ namespace MMALSharp.Components
         private void AddExifTags(params ExifTag[] exifTags)
         {
             // Add the same defaults as per Raspistill.c
+            string sensorName = string.Empty;
+
+            try
+            {
+                sensorName = MMALCamera.Instance.Camera.CameraInfo.SensorName;
+            }
+            catch
+            {
+                MMALLog.Logger.Warn("Attempt to retrieve sensor name failed.");
+            }
+            
             List<ExifTag> defaultTags = new List<ExifTag>
             {
-                new ExifTag { Key = "IFD0.Model", Value = "RP_" + MMALCamera.Instance.Camera.CameraInfo.SensorName },
+                new ExifTag { Key = "IFD0.Model", Value = "RP_" + sensorName },
                 new ExifTag { Key = "IFD0.Make", Value = "RaspberryPi" },
                 new ExifTag { Key = "EXIF.DateTimeDigitized", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") },
                 new ExifTag { Key = "EXIF.DateTimeOriginal", Value = DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss") },
