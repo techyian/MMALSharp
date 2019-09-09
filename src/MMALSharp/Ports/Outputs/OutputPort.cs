@@ -205,8 +205,7 @@ namespace MMALSharp.Ports.Outputs
         /// <summary>
         /// Enables processing on an output port.
         /// </summary>
-        /// <param name="sendBuffers">Indicates whether we want to send all the buffers in the port pool or simply create the pool.</param>
-        public virtual void Enable(bool sendBuffers = true)
+        public virtual void Enable()
         {            
             if (!this.Enabled)
             {
@@ -228,7 +227,7 @@ namespace MMALSharp.Ports.Outputs
                 
                 if (this.CallbackHandler != null)
                 {
-                    this.SendAllBuffers(sendBuffers);
+                    this.SendAllBuffers();
                 }
             }
             

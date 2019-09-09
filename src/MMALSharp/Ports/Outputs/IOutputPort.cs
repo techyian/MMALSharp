@@ -13,7 +13,7 @@ namespace MMALSharp.Ports.Outputs
         
         void Start();
 
-        void Enable(bool sendBuffers = true);
+        void Enable();
         void ReleaseBuffer(IBuffer bufferImpl);
         void RegisterCallbackHandler(IOutputCallbackHandler callbackHandler);
     }
