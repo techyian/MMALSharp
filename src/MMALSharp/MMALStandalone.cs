@@ -156,9 +156,11 @@ namespace MMALSharp
                 return;
             }
 
-            if (downstream.GetType().BaseType == typeof(MMALDownstreamHandlerComponent))
+            var checkDownstream = downstream as IDownstreamHandlerComponent;
+
+            if (checkDownstream != null)
             {
-                list.Add((MMALDownstreamHandlerComponent)downstream);
+                list.Add((IDownstreamHandlerComponent)downstream);
             }
 
             foreach (var output in downstream.Outputs)
