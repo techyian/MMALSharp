@@ -29,7 +29,7 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Get a MMAL_BUFFER_HEADER_T from a queue.
+        /// Get a new buffer from this queue.
         /// </summary>
         /// <returns>A new managed buffer header object.</returns>
         public IBuffer GetBuffer()
@@ -53,6 +53,10 @@ namespace MMALSharp
             base.Dispose();
         }
 
+        /// <summary>
+        /// Returns the pointer address of this queue.
+        /// </summary>
+        /// <returns>The pointer address of this queue.</returns>
         public override string ToString()
         {
             return $"Ptr address: {((IntPtr)this.Ptr).ToString()}";
@@ -65,7 +69,7 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Get the number of MMAL_BUFFER_HEADER_T currently in a queue.
+        /// Get the number of buffer headers currently in this queue.
         /// </summary>
         /// <returns>The number of buffers currently in this queue.</returns>
         public uint QueueLength()
@@ -74,11 +78,19 @@ namespace MMALSharp
             return length;
         }
 
+        /// <summary>
+        /// Waits (blocking) for a buffer header to be available in the queue and allocates it.
+        /// </summary>
+        /// <returns>The buffer header.</returns>
         public IBuffer Wait()
         {
             return new MMALBufferImpl(MMALQueue.mmal_queue_wait(this.Ptr));
         }
 
+        /// <summary>
+        /// Puts the buffer header back into this queue.
+        /// </summary>
+        /// <param name="buffer">The buffer header.</param>
         public void Put(IBuffer buffer)
         {
             MMALQueue.mmal_queue_put(this.Ptr, buffer.Ptr);

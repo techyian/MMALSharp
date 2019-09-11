@@ -14,7 +14,6 @@ namespace MMALSharp.Components
         /// Encodes/decodes user provided image data.
         /// </summary>
         /// <param name="outputPort">The output port to begin processing on.</param>
-        /// <returns>An awaitable task.</returns>
         void Convert(int outputPort);
     }
 }

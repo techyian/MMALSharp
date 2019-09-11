@@ -20,7 +20,10 @@ using static MMALSharp.MMALNativeExceptionHelper;
 namespace MMALSharp.Components
 {
     /// <summary>
-    /// Represents an image encoder component.
+    /// A conformant image encode component, which takes raw pixels on its
+    /// input port, and encodes the image into various compressed formats on
+    /// the output port.
+    /// https://github.com/raspberrypi/firmware/blob/master/documentation/ilcomponents/image_encode.html
     /// </summary>
     public unsafe class MMALImageEncoder : MMALEncoderBase, IImageEncoder
     {

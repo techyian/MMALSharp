@@ -43,7 +43,6 @@ namespace MMALSharp.Ports.Outputs
         /// </summary>
         /// <param name="ptr">The native pointer.</param>
         /// <param name="comp">The component this port is associated with.</param>
-        /// <param name="type">The type of port.</param>
         /// <param name="guid">Managed unique identifier for this port.</param>
         public FastStillPort(IntPtr ptr, IComponent comp, Guid guid) 
             : base(ptr, comp, guid)
@@ -59,6 +58,7 @@ namespace MMALSharp.Ports.Outputs
         {
         }
 
+        /// <inheritdoc />
         public override void Configure(MMALPortConfig config, IInputPort copyFrom, IOutputCaptureHandler handler)
         {
             base.Configure(config, copyFrom, handler);

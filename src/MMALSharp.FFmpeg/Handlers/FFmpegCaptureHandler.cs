@@ -99,13 +99,31 @@ namespace MMALSharp.Handlers
             }
         }
 
+        /// <summary>
+        /// Returns whether this capture handler features the split file functionality.
+        /// </summary>
+        /// <returns>True if can split.</returns>
         public bool CanSplit() => false;
         
+        /// <summary>
+        /// Not used.
+        /// </summary>
         public void PostProcess() { }
-        
+
+        /// <summary>
+        /// Not used.
+        /// </summary>
+        /// <returns>A NotImplementedException.</returns>
+        /// <exception cref="NotImplementedException"></exception>
         public string GetDirectory()
             => throw new NotImplementedException();
-        
+
+        /// <summary>
+        /// Not used.
+        /// </summary>
+        /// <param name="allocSize">N/A.</param>
+        /// <returns>A NotImplementedException.</returns>
+        /// <exception cref="NotImplementedException"></exception>
         public ProcessResult Process(uint allocSize)
             => throw new NotImplementedException();
 
@@ -113,6 +131,7 @@ namespace MMALSharp.Handlers
         /// Writes frame data to the StandardInput stream to be processed by FFmpeg.
         /// </summary>
         /// <param name="data">The frame data to push to FFmpeg.</param>
+        /// <param name="eos">Not used.</param>
         public void Process(byte[] data, bool eos)
         {
             try
@@ -127,17 +146,26 @@ namespace MMALSharp.Handlers
                 throw;         
             }            
         }
-        
+
+        /// <summary>
+        /// Not used.
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
         public void Split()
         {
             throw new NotImplementedException();
         }
-        
+
+        /// <summary>
+        /// Returns the total number of bytes processed by this capture handler.
+        /// </summary>
+        /// <returns>The total number of bytes processed by this capture handler.</returns>
         public string TotalProcessed()
         {
             return $"{this.Processed}";
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             if (!_process.HasExited)

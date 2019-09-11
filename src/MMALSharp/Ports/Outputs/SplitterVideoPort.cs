@@ -8,6 +8,9 @@ using MMALSharp.Ports.Inputs;
 
 namespace MMALSharp.Ports.Outputs
 {
+    /// <summary>
+    /// Represents a splitter component output port.
+    /// </summary>
     public unsafe class SplitterVideoPort : VideoPort
     {
         /// <summary>

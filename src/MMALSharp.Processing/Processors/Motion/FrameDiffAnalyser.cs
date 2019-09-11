@@ -11,6 +11,9 @@ using MMALSharp.Processors.Effects;
 
 namespace MMALSharp.Processors.Motion
 {
+    /// <summary>
+    /// The <see cref="FrameDiffAnalyser"/> is used to detect changes between two image frames.
+    /// </summary>
     public class FrameDiffAnalyser : FrameAnalyser
     {
         internal Action OnDetect { get; set; }
@@ -25,8 +28,17 @@ namespace MMALSharp.Processors.Motion
         /// </summary>
         protected bool FullTestFrame { get; set; }
 
+        /// <summary>
+        /// The motion configuration object.
+        /// </summary>
         protected MotionConfig MotionConfig { get; set; }
         
+        /// <summary>
+        /// Creates a new instance of <see cref="FrameDiffAnalyser"/>.
+        /// </summary>
+        /// <param name="config">The motion configuration object.</param>
+        /// <param name="onDetect">A callback when changes are detected.</param>
+        /// <param name="imageContext">The image metadata.</param>
         public FrameDiffAnalyser(MotionConfig config, Action onDetect, IImageContext imageContext)
             : base(imageContext)
         {
@@ -35,6 +47,7 @@ namespace MMALSharp.Processors.Motion
             this.OnDetect = onDetect;
         }
 
+        /// <inheritdoc />
         public override void Apply(byte[] data, bool eos)
         {
             if (this.FullTestFrame)

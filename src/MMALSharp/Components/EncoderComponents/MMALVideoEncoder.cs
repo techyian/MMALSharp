@@ -19,7 +19,12 @@ using static MMALSharp.MMALNativeExceptionHelper;
 namespace MMALSharp.Components
 {
     /// <summary>
-    /// Represents a video encoder component
+    /// This component accepts raw video frames and compresses them, emitting
+    /// encoded video.It can accept YUV420 packed planar format, providing
+    /// the slice height is the same as the frame height so a single buffer is
+    /// a full frame.To gain efficiency it also accepts a proprietary image
+    /// format from the camera component.
+    /// https://github.com/raspberrypi/firmware/blob/master/documentation/ilcomponents/video_encode.html
     /// </summary>
     public unsafe class MMALVideoEncoder : MMALEncoderBase, IVideoEncoder
     {

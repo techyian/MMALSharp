@@ -4,12 +4,27 @@ using MMALSharp.Processors;
 
 namespace MMALSharp.Handlers
 {
+    /// <summary>
+    /// Represents an OutputCaptureHandler which is responsible for storing frames processed by a component.
+    /// </summary>
     public abstract class OutputCaptureHandler : IOutputCaptureHandler
     {
+        /// <summary>
+        /// A callback for use with the Image Processing API.
+        /// </summary>
         protected Action<IFrameProcessingContext> OnManipulate { get; set; }
+
+        /// <summary>
+        /// A callback for use with the Image Analysis API.
+        /// </summary>
         protected Func<IFrameProcessingContext, IFrameAnalyser> OnAnalyse { get; set; }
+
+        /// <summary>
+        /// An ImageContext providing metadata for image data.
+        /// </summary>
         protected IImageContext ImageContext { get; set; }
-        
+
+        /// <inheritdoc />
         public abstract void Dispose();
 
         /// <inheritdoc />

@@ -18,62 +18,62 @@ namespace MMALSharp
         public MMAL_ES_FORMAT_T* Ptr { get; }
 
         /// <summary>
-        /// The FourCC code of the component.
+        /// The FourCC code.
         /// </summary>
         public string FourCC => MMALEncodingHelpers.ParseEncoding(this.Format.Encoding).EncodingName;
         
         /// <summary>
-        /// The working bitrate of the component.
+        /// The working bitrate.
         /// </summary>
         public int Bitrate => this.Format.Bitrate;
         
         /// <summary>
-        /// The changed width value.
+        /// The width value.
         /// </summary>
         public int Width => this.Format.Es->Video.Width;
         
         /// <summary>
-        /// The changed height value.
+        /// The height value.
         /// </summary>
         public int Height => this.Format.Es->Video.Height;
         
         /// <summary>
-        /// The changed CropX value.
+        /// The CropX value.
         /// </summary>
         public int CropX => this.Format.Es->Video.Crop.X;
         
         /// <summary>
-        /// The changed CropY value.
+        /// The CropY value.
         /// </summary>
         public int CropY => this.Format.Es->Video.Crop.Y;
         
         /// <summary>
-        /// The changed crop width value.
+        /// The crop width value.
         /// </summary>
         public int CropWidth => this.Format.Es->Video.Crop.Width;
         
         /// <summary>
-        /// The changed crop height value.
+        /// The crop height value.
         /// </summary>
         public int CropHeight => this.Format.Es->Video.Crop.Height;
         
         /// <summary>
-        /// The changed pixel aspect ratio numerator value.
+        /// The pixel aspect ratio numerator value.
         /// </summary>
         public int ParNum => this.Format.Es->Video.Par.Num;
 
         /// <summary>
-        /// The changed pixel aspect ratio denominator value.
+        /// The pixel aspect ratio denominator value.
         /// </summary>
         public int ParDen => this.Format.Es->Video.Par.Den;
         
         /// <summary>
-        /// The changed framerate numerator value.
+        /// The framerate numerator value.
         /// </summary>
         public int FramerateNum => this.Format.Es->Video.FrameRate.Num;
         
         /// <summary>
-        /// The changed framerate denominator value.
+        /// The framerate denominator value.
         /// </summary>
         public int FramerateDen => this.Format.Es->Video.FrameRate.Den;
         

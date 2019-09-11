@@ -13,8 +13,14 @@ namespace MMALSharp.Handlers
     /// </summary>
     public class VideoStreamCaptureHandler : FileStreamCaptureHandler, IMotionVectorCaptureHandler, IVideoCaptureHandler
     {
+        /// <summary>
+        /// The motion type associated with this VideoCaptureHandler
+        /// </summary>
         public MotionType MotionType { get; set; }
 
+        /// <summary>
+        /// The data store for motion vectors.
+        /// </summary>
         protected FileStream MotionVectorStore { get; set; }
 
         /// <summary>
@@ -37,6 +43,7 @@ namespace MMALSharp.Handlers
         /// </summary>
         public void Split() => this.NewFile();
 
+        /// <inheritdoc />
         public override void Process(byte[] data, bool eos)
         {
             base.Process(data, eos);
@@ -47,6 +54,10 @@ namespace MMALSharp.Handlers
             }
         }
 
+        /// <summary>
+        /// Used to set the current working motion vector store.
+        /// </summary>
+        /// <param name="stream">The <see cref="FileStream"/> to write to.</param>
         public void InitialiseMotionStore(FileStream stream)
         {
             this.MotionVectorStore = stream;

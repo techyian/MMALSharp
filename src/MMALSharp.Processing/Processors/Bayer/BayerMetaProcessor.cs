@@ -9,16 +9,30 @@ using MMALSharp.Common;
 
 namespace MMALSharp.Processors
 {
+    /// <summary>
+    /// The BayerMetaProcessor is used to strip Bayer metadata from a JPEG image frame via the Image Processing API.
+    /// </summary>
     public class BayerMetaProcessor : IFrameProcessor
     {
         /// <summary>
         /// The camera version being used.
         /// </summary>
         public CameraVersion CameraVersion { get; }
-        
+
+        /// <summary>
+        /// The length of the metadata for the OmniVision OV5647.
+        /// </summary>
         public const int BayerMetaLengthV1 = 6404096;
+
+        /// <summary>
+        /// The length of the metadata for the Sony IMX219.
+        /// </summary>
         public const int BayerMetaLengthV2 = 10270208;
         
+        /// <summary>
+        /// Initialises a new instance of <see cref="BayerMetaProcessor"/>.
+        /// </summary>
+        /// <param name="camVersion">The camera version you're using.</param>
         public BayerMetaProcessor(CameraVersion camVersion)
         {
             this.CameraVersion = camVersion;

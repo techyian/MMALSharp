@@ -20,6 +20,9 @@ namespace MMALSharp
     /// </summary>
     public unsafe class MMALConnectionImpl : MMALObject, IConnection
     {
+        /// <summary>
+        /// The connection callback handler.
+        /// </summary>
         public IConnectionCallbackHandler CallbackHandler { get; }
 
         /// <summary>

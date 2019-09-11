@@ -18,9 +18,13 @@ namespace MMALSharp.Ports
     /// <summary>
     /// Base class for port objects.
     /// </summary>
+    /// <typeparam name="TCallback">The callback handler type.</typeparam>
     public abstract unsafe class PortBase<TCallback> : MMALObject, IPort
         where TCallback : ICallbackHandler
     {
+        /// <summary>
+        /// The callback handler associated with this port.
+        /// </summary>
         public TCallback CallbackHandler { get; internal set; }
 
         /// <summary>
@@ -44,7 +48,7 @@ namespace MMALSharp.Ports
         public IBufferPool BufferPool { get; internal set; }
 
         /// <summary>
-        /// Managed name given to this object (user defined).
+        /// User defined identifier given to this object.
         /// </summary>
         public Guid Guid { get; }
 
@@ -273,6 +277,7 @@ namespace MMALSharp.Ports
         /// Enables the specified port.
         /// </summary>
         /// <param name="callback">The function pointer MMAL will call back to.</param>
+        /// <exception cref="MMALException"/>
         public void EnablePort(IntPtr callback)
         {
             MMALLog.Logger.Debug("Enabling port.");
@@ -348,6 +353,7 @@ namespace MMALSharp.Ports
         /// Ask a port to release all the buffer headers it currently has. This is an asynchronous operation and the
         /// flush call will return before all the buffer headers are returned to the client.
         /// </summary>
+        /// <exception cref="MMALException"/>
         public void Flush()
         {            
             MMALLog.Logger.Debug("Flushing port buffers");
@@ -358,6 +364,7 @@ namespace MMALSharp.Ports
         /// Send a buffer header to a port.
         /// </summary>
         /// <param name="buffer">A managed buffer object.</param>
+        /// <exception cref="MMALException"/>
         public void SendBuffer(IBuffer buffer)
         {
             if (this.Enabled)
@@ -438,6 +445,11 @@ namespace MMALSharp.Ports
             this.BufferPool = new MMALPoolImpl(this);
         }
 
+        /// <summary>
+        /// Attempts to allocate the native extradata store with the given size.
+        /// </summary>
+        /// <param name="size">The size to allocate.</param>
+        /// <exception cref="MMALException"/>
         public void ExtraDataAlloc(int size)
         {
             MMALCheck(MMALFormat.mmal_format_extradata_alloc(this.Ptr->Format, (uint)size), "Unable to alloc extradata.");

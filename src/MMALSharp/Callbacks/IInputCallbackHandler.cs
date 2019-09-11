@@ -2,6 +2,9 @@
 
 namespace MMALSharp.Callbacks
 {
+    /// <summary>
+    /// Represents a callback handler linked to an Input port.
+    /// </summary>
     public interface IInputCallbackHandler : ICallbackHandler
     {
         /// <summary>

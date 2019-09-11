@@ -5,7 +5,9 @@
 
 namespace MMALSharp.Callbacks
 {
-    
+    /// <summary>
+    /// Represents a callback handler.
+    /// </summary>
     public interface ICallbackHandler
     {
     }

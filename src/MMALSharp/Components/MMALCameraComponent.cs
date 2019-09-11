@@ -169,7 +169,12 @@ namespace MMALSharp.Components
             MMALLog.Logger.Info($"    Video Width: {this.VideoPort.Resolution.Width}. Video Height: {this.VideoPort.Resolution.Height}");
             MMALLog.Logger.Info($"    Max Width: {this.CameraInfo.MaxWidth}. Video Height: {this.CameraInfo.MaxHeight}");
         }
-        
+
+        /// <summary>
+        /// Call to initialise the camera component.
+        /// </summary>
+        /// <param name="stillCaptureHandler">A capture handler when capturing raw image frames from the camera's still port (no encoder attached).</param>
+        /// <param name="videoCaptureHandler">A capture handler when capturing raw video from the camera's video port (no encoder attached).</param>
         public void Initialise(IOutputCaptureHandler stillCaptureHandler = null, IOutputCaptureHandler videoCaptureHandler = null)
         {
             this.DisableComponent();
@@ -228,6 +233,7 @@ namespace MMALSharp.Components
         /// <summary>
         /// Initialises the camera's video port using the width, height and encoding as specified by the user.
         /// </summary>
+        /// <param name="handler">The capture handler to associate with this port.</param>
         private void InitialiseVideo(IOutputCaptureHandler handler)
         {
             int currentWidth = MMALCameraConfig.VideoResolution.Width;
@@ -258,6 +264,7 @@ namespace MMALSharp.Components
         /// <summary>
         /// Initialises the camera's still port using the width, height and encoding as specified by the user.
         /// </summary>
+        /// <param name="handler">The capture handler to associate with the still port.</param>
         private void InitialiseStill(IOutputCaptureHandler handler)
         {
             int currentWidth = MMALCameraConfig.StillResolution.Width;

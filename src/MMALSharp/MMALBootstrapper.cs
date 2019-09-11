@@ -3,6 +3,9 @@ using MMALSharp.Components;
 
 namespace MMALSharp
 {
+    /// <summary>
+    /// Used as a common class to store downstream component references between standalone mode and camera connected mode.
+    /// </summary>
     public static class MMALBootstrapper
     {
         /// <summary>

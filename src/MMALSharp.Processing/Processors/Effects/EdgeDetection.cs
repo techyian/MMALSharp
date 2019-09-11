@@ -7,10 +7,24 @@ using MMALSharp.Common;
 
 namespace MMALSharp.Processors.Effects
 {
+    /// <summary>
+    /// Represents the strength of the Edge Detection algorithm.
+    /// </summary>
     public enum EDStrength
     {
+        /// <summary>
+        /// Low strength.
+        /// </summary>
         Low,
+
+        /// <summary>
+        /// Medium strength.
+        /// </summary>
         Medium,
+
+        /// <summary>
+        /// High strength.
+        /// </summary>
         High
     }
     
@@ -19,6 +33,9 @@ namespace MMALSharp.Processors.Effects
     /// </summary>
     public class EdgeDetection : ConvolutionBase, IFrameProcessor
     {
+        /// <summary>
+        /// A kernel used to apply a low strength edge detection convolution to an image.
+        /// </summary>
         public static double[,] LowStrengthKernel = new double[KernelWidth, KernelHeight]
         {
             { -1, 0, 1 },
@@ -26,6 +43,9 @@ namespace MMALSharp.Processors.Effects
             { 1, 0, -1 }
         };
 
+        /// <summary>
+        /// A kernel used to apply a medium strength edge detection convolution to an image.
+        /// </summary>
         public static double[,] MediumStrengthKernel = new double[KernelWidth, KernelHeight]
         {
             { 0, 1, 0 },
@@ -33,6 +53,9 @@ namespace MMALSharp.Processors.Effects
             { 0, 1, 0 }
         };
 
+        /// <summary>
+        /// A kernel used to apply a high strength edge detection convolution to an image.
+        /// </summary>
         public static double[,] HighStrengthKernel = new double[KernelWidth, KernelHeight]
         {
             { -1, -1, -1 },
@@ -40,9 +63,19 @@ namespace MMALSharp.Processors.Effects
             { -1, -1, -1 }
         };
 
+        /// <summary>
+        /// The working kernel.
+        /// </summary>
         public double[,] Kernel { get; }
 
+        /// <summary>
+        /// The kernel's width.
+        /// </summary>
         public const int KernelWidth = 3;
+
+        /// <summary>
+        /// The kernel's height.
+        /// </summary>
         public const int KernelHeight = 3;
         
         /// <summary>

@@ -7,6 +7,9 @@ using System.Drawing;
 
 namespace MMALSharp.Config
 {
+    /// <summary>
+    /// Used to indicate how text should be justified when using annotation.
+    /// </summary>
     public enum JustifyText
     {
         /// <summary>

@@ -8,6 +8,9 @@ using MMALSharp.Common.Utility;
 
 namespace MMALSharp.Common
 {
+    /// <summary>
+    /// Represents a context to hold metadata for image frames.
+    /// </summary>
     public class ImageContext : IImageContext
     {
         /// <summary>

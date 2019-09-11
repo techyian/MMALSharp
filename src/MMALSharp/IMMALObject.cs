@@ -2,6 +2,9 @@
 
 namespace MMALSharp
 {
+    /// <summary>
+    /// Represents a MMAL object.
+    /// </summary>
     public interface IMMALObject : IDisposable
     {
         /// <summary>

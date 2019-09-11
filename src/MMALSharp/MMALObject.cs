@@ -10,6 +10,9 @@ namespace MMALSharp
     /// </summary>
     public abstract class MMALObject : IMMALObject
     {
+        /// <summary>
+        /// Returns whether this MMAL object has been disposed of.
+        /// </summary>
         public bool IsDisposed { get; internal set; }
 
         /// <summary>

@@ -1,8 +1,13 @@
 ﻿namespace MMALSharp.Ports.Controls
 {
+    /// <summary>
+    /// Represents a control port.
+    /// </summary>
     public interface IControlPort : IPort
     {
-        void Enable();
+        /// <summary>
+        /// Starts the control port.
+        /// </summary>
         void Start();
     }
 }

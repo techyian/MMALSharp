@@ -6,6 +6,11 @@ using MMALSharp.Ports.Inputs;
 
 namespace MMALSharp.Callbacks
 {
+    /// <summary>
+    /// Represents an input port callback handler.
+    /// </summary>
+    /// <typeparam name="TPort">The input port type linked to this callback handler.</typeparam>
+    /// <typeparam name="TCaptureHandler">The capture handler type linked to this callback handler.</typeparam>
     public abstract class InputPortCallbackHandler<TPort, TCaptureHandler> : IInputCallbackHandler
         where TPort : IInputPort
         where TCaptureHandler : IInputCaptureHandler
@@ -28,7 +33,7 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="InputPortCallbackHandler{TPort,TCaptureHandler}"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="TPort"/>.</param>
+        /// <param name="port">The working port.</param>
         /// <param name="handler">The input port capture handler.</param>
         protected InputPortCallbackHandler(TPort port, TCaptureHandler handler)
         {
@@ -39,7 +44,7 @@ namespace MMALSharp.Callbacks
         /// <summary>
         /// Creates a new instance of <see cref="InputPortCallbackHandler{TPort,TCaptureHandler}"/>.
         /// </summary>
-        /// <param name="port">The working <see cref="TPort"/>.</param>
+        /// <param name="port">The working port.</param>
         /// <param name="handler">The input port capture handler.</param>
         /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
         protected InputPortCallbackHandler(TPort port, TCaptureHandler handler, MMALEncoding encodingType)

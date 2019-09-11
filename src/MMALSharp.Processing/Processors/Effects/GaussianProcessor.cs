@@ -7,9 +7,19 @@ using MMALSharp.Common;
 
 namespace MMALSharp.Processors.Effects
 {
+    /// <summary>
+    /// Represents the matrix to use when applying a Gaussian blur convolution to an image frame.
+    /// </summary>
     public enum GaussianMatrix
     {
+        /// <summary>
+        /// Use a 3x3 matrix.
+        /// </summary>
         Matrix3x3,
+
+        /// <summary>
+        /// Use a 5x5 matrix.
+        /// </summary>
         Matrix5x5,
     }
 

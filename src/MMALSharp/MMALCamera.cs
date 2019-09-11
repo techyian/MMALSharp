@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using MMALSharp.Callbacks;
 using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
@@ -433,6 +432,12 @@ namespace MMALSharp
         public MMALOverlayRenderer AddOverlay(MMALVideoRenderer parent, PreviewOverlayConfiguration config, byte[] source)
             => new MMALOverlayRenderer(parent, config, source);
 
+        /// <summary>
+        /// Call to process inline motion vectors to the stream passed in.
+        /// </summary>
+        /// <param name="handler">The motion vector capture handler.</param>
+        /// <param name="stream">The stream to write to.</param>
+        /// <returns>The camera instance.</returns>
         public MMALCamera StoreMotionVectors(IMotionVectorCaptureHandler handler, FileStream stream)
         {
             MMALCameraConfig.InlineMotionVectors = true;
@@ -440,6 +445,14 @@ namespace MMALSharp
             return this;
         }
 
+        /// <summary>
+        /// Call to enable motion detection.
+        /// </summary>
+        /// <param name="handler">The motion capture handler.</param>
+        /// <param name="config">The motion configuration object.</param>
+        /// <param name="onDetect">The callback when motion is detected.</param>
+        /// <param name="imageContext">The image metadata.</param>
+        /// <returns>The camera instance.</returns>
         public MMALCamera WithMotionDetection(IMotionCaptureHandler handler, MotionConfig config, Action onDetect, IImageContext imageContext)
         {
             MMALCameraConfig.InlineMotionVectors = true;

@@ -43,6 +43,12 @@ namespace MMALSharp.Ports.Outputs
         {
         }
 
+        /// <summary>
+        /// Call to configure an output port.
+        /// </summary>
+        /// <param name="config">The port configuration object.</param>
+        /// <param name="copyFrom">The port to copy from.</param>
+        /// <param name="handler">The capture handler to assign to this port.</param>
         public virtual void Configure(MMALPortConfig config, IInputPort copyFrom, IOutputCaptureHandler handler)
         {
             if (config != null)
@@ -197,6 +203,10 @@ namespace MMALSharp.Ports.Outputs
             }
         }
 
+        /// <summary>
+        /// Call to register a new callback handler with this port.
+        /// </summary>
+        /// <param name="callbackHandler">The output callback handler.</param>
         public void RegisterCallbackHandler(IOutputCallbackHandler callbackHandler)
         {
             this.CallbackHandler = callbackHandler;

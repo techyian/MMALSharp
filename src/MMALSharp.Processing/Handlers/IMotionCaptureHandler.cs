@@ -9,8 +9,17 @@ using MMALSharp.Common;
 
 namespace MMALSharp.Handlers
 {
+    /// <summary>
+    /// Represents a capture handler which can detect motion.
+    /// </summary>
     public interface IMotionCaptureHandler
     {
+        /// <summary>
+        /// Call to enable motion detection.
+        /// </summary>
+        /// <param name="config">The motion configuration.</param>
+        /// <param name="onDetect">A callback for when motion is detected.</param>
+        /// <param name="imageContext">The image metadata.</param>
         void DetectMotion(MotionConfig config, Action onDetect, IImageContext imageContext);
     }
 }

@@ -1,11 +1,22 @@
 ﻿using System;
-using MMALSharp.Ports;
 using MMALSharp.Ports.Inputs;
 using MMALSharp.Ports.Outputs;
 using static MMALSharp.Native.MMALParameters;
 
 namespace MMALSharp.Components
 {
+    /// <summary>
+    /// This component wraps the ISP (Image Sensor Processor) hardware block to
+    /// offer hardware accelerated format conversion and resizing.
+    /// It has one input port taking Bayer, YUV or RGB images in numerous different formats.
+    /// It has two output ports:
+    /// Port 361 supports various RGB and YUV formats.
+    /// Port 362 is off the low res resizer which can only downscale.Due to this
+    /// port 362 must be at a lower resolution to port 361. If set to a higher resolution
+    /// then the port will effectively be disabled and no ouput produced.It also doesn't have
+    /// the colour conversion block, and so only supports YUV formats.
+    /// https://github.com/raspberrypi/firmware/blob/master/documentation/ilcomponents/isp.html 
+    /// </summary>
     public class MMALIspComponent : MMALDownstreamHandlerComponent
     {
         /// <summary>

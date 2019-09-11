@@ -7,12 +7,18 @@ using MMALSharp.Processors.Motion;
 
 namespace MMALSharp.Handlers
 {
+    /// <summary>
+    /// Represents a capture handler working as a circular buffer.
+    /// </summary>
     public sealed class CircularBufferCaptureHandler : OutputCaptureHandler, IMotionCaptureHandler, IVideoCaptureHandler
     {
         private bool _isRecordingMotion;
         private int _bufferSize;
         private int _currentIndex;
 
+        /// <summary>
+        /// The motion detection type.
+        /// </summary>
         public MotionType MotionType { get; set; }
         
         private byte[] Buffer { get; }
@@ -27,16 +33,23 @@ namespace MMALSharp.Handlers
 
         private MotionConfig Config { get; set; }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="CircularBufferCaptureHandler"/>.
+        /// </summary>
+        /// <param name="bufferSize">The buffer's size.</param>
         public CircularBufferCaptureHandler(int bufferSize)
         {
+            _bufferSize = bufferSize;
             this.Buffer = new byte[bufferSize];
         }
 
+        /// <inheritdoc />
         public void Split()
         {
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc />
         public override void Process(byte[] data, bool eos)
         {
             if (!_isRecordingMotion)
@@ -56,6 +69,12 @@ namespace MMALSharp.Handlers
             }
         }
 
+        /// <summary>
+        /// Call to enable motion detection.
+        /// </summary>
+        /// <param name="config">The motion configuration.</param>
+        /// <param name="onDetect">A callback for when motion is detected.</param>
+        /// <param name="imageContext">The frame metadata.</param>
         public void DetectMotion(MotionConfig config, Action onDetect, IImageContext imageContext)
         {
             this.Config = config;
@@ -71,6 +90,11 @@ namespace MMALSharp.Handlers
             }
         }
 
+        /// <summary>
+        /// Call to start recording to a new file in the specified directory.
+        /// </summary>
+        /// <param name="directory">The directory to store in.</param>
+        /// <param name="extension">The file extension.</param>
         public void StartRecording(string directory, string extension)
         {
             _isRecordingMotion = true;
@@ -80,6 +104,7 @@ namespace MMALSharp.Handlers
             this.MotionRecording.Write(this.Buffer, 0, this.Buffer.Length);
         }
 
+        /// <inheritdoc />
         public override void Dispose()
         {
             if (this.ShouldDetectMotion)
@@ -88,6 +113,7 @@ namespace MMALSharp.Handlers
             }
         }
 
+        /// <inheritdoc />
         public override string TotalProcessed()
         {
             throw new NotImplementedException();

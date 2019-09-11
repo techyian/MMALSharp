@@ -59,6 +59,9 @@ namespace MMALSharp
         /// </summary>
         public bool Enabled => this.Ptr->IsEnabled == 1;
 
+        /// <summary>
+        /// Flag to force processing to stop on this component.
+        /// </summary>
         public bool ForceStopProcessing { get; set; }
         
         /// <summary>

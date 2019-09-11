@@ -3,6 +3,9 @@ using MMALSharp.Common.Utility;
 
 namespace MMALSharp.Handlers
 {
+    /// <summary>
+    /// Represents an InputCaptureHandler which is responsible for feeding data from a stream.
+    /// </summary>
     public class InputCaptureHandler : IInputCaptureHandler
     {
         /// <summary>
@@ -42,11 +45,13 @@ namespace MMALSharp.Handlers
             return new ProcessResult { Success = true, BufferFeed = buffer, DataLength = read };
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             this.CurrentStream?.Dispose();
         }
 
+        /// <inheritdoc />
         public string TotalProcessed()
         {
             return $"{Helpers.ConvertBytesToMegabytes(this.Processed)}";

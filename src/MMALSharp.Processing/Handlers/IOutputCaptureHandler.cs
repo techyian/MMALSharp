@@ -1,6 +1,9 @@
 ﻿
 namespace MMALSharp.Handlers
 {
+    /// <summary>
+    /// Represents a capture handler attached to an Output port.
+    /// </summary>
     public interface IOutputCaptureHandler : ICaptureHandler
     {
         /// <summary>

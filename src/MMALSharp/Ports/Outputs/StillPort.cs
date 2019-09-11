@@ -56,6 +56,7 @@ namespace MMALSharp.Ports.Outputs
         {
         }
 
+        /// <inheritdoc />
         public override void Configure(MMALPortConfig config, IInputPort copyFrom, IOutputCaptureHandler handler)
         {
             base.Configure(config, copyFrom, handler);

@@ -14,6 +14,8 @@ namespace MMALSharp.Callbacks
     /// <summary>
     /// The base class for Output port callback handlers.
     /// </summary>
+    /// <typeparam name="TPort">The port type.</typeparam>
+    /// <typeparam name="TCaptureHandler">The capture handler type.</typeparam>
     public abstract class PortCallbackHandler<TPort, TCaptureHandler> : IOutputCallbackHandler
         where TPort : IPort
         where TCaptureHandler : IOutputCaptureHandler

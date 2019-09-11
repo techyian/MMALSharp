@@ -14,6 +14,9 @@ namespace MMALSharp.Handlers
     /// </summary>
     public class InMemoryCaptureHandler : OutputCaptureHandler
     {
+        /// <summary>
+        /// The working data store.
+        /// </summary>
         public List<byte> WorkingData { get; set; }
 
         /// <summary>

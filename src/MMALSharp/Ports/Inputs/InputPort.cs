@@ -43,11 +43,23 @@ namespace MMALSharp.Ports.Inputs
         {
         }
 
+        /// <summary>
+        /// Call to connect this input port to an output port. This method
+        /// simply assigns the <see cref="IConnection"/> to the ConnectedReference property. 
+        /// </summary>
+        /// <param name="outputPort">The connected output port.</param>
+        /// <param name="connection">The connection object.</param>
         public void ConnectTo(IOutputPort outputPort, IConnection connection)
         {
             this.ConnectedReference = connection;
         }
         
+        /// <summary>
+        /// Call to configure an input port.
+        /// </summary>
+        /// <param name="config">The port configuration object.</param>
+        /// <param name="copyPort">The port to copy from.</param>
+        /// <param name="handler">The capture handler to assign to this port.</param>
         public virtual void Configure(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler)
         {
             copyPort?.ShallowCopy(this);
@@ -194,6 +206,10 @@ namespace MMALSharp.Ports.Inputs
             this.Enable();
         }
 
+        /// <summary>
+        /// Registers a new input callback handler with this port.
+        /// </summary>
+        /// <param name="callbackHandler">The callback handler.</param>
         public void RegisterCallbackHandler(IInputCallbackHandler callbackHandler)
         {
             this.CallbackHandler = callbackHandler;
