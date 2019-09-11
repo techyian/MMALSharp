@@ -14,7 +14,7 @@
     <PackageLicenseUrl>https://github.com/techyian/MMALSharp/blob/dev/LICENSE.txt</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/techyian/MMALSharp</RepositoryUrl>
-    <VersionPrefix>0.5.1</VersionPrefix>
+    <VersionPrefix>0.6.0</VersionPrefix>
     <CodeAnalysisRuleSet>..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
