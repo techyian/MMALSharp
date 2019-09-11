@@ -102,7 +102,7 @@ namespace MMALSharp
             {
                 this.ConfigureCameraSettings();
 
-                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, MMALVideoEncoder.MaxBitrateLevel4, null);
+                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, MMALVideoEncoder.MaxBitrateLevel4, null, split);
 
                 vidEncoder.ConfigureOutputPort(portConfig, handler);
 

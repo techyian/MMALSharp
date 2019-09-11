@@ -6,7 +6,6 @@
 using System;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
-using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Config;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
