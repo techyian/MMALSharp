@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="CircularBufferCaptureHandler.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using System.Diagnostics;
 using System.IO;
 using MMALSharp.Common;

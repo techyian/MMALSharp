@@ -155,31 +155,7 @@ namespace MMALSharp
             this.Destroy();
             base.Dispose();
         }
-
-        /// <summary>
-        /// Facility to create a connection between two port objects.
-        /// </summary>
-        /// <param name="output">The output port of the connection.</param>
-        /// <param name="input">The input port of the connection.</param>
-        /// <param name="inputComponent">The managed instance of the component we are connecting to.</param>
-        /// <param name="useCallback">When set to true, enable the connection callback delegate (adversely affects performance).</param>
-        /// <returns>A new managed connection object.</returns>
-        internal static MMALConnectionImpl CreateConnection(IOutputPort output, IInputPort input, IDownstreamComponent inputComponent, bool useCallback)
-        {
-            IntPtr ptr = IntPtr.Zero;
-
-            if (useCallback)
-            {
-                MMALCheck(MMALConnection.mmal_connection_create(&ptr, output.Ptr, input.Ptr, MMALConnection.MMAL_CONNECTION_FLAG_ALLOCATION_ON_INPUT), "Unable to create connection");
-            }
-            else
-            {
-                MMALCheck(MMALConnection.mmal_connection_create(&ptr, output.Ptr, input.Ptr, MMALConnection.MMAL_CONNECTION_FLAG_TUNNELLING | MMALConnection.MMAL_CONNECTION_FLAG_ALLOCATION_ON_INPUT), "Unable to create connection");
-            }
-
-            return new MMALConnectionImpl((MMAL_CONNECTION_T*)ptr, output, input, inputComponent, output.ComponentReference, useCallback);
-        }
-
+        
         /// <summary>
         /// Enable a connection. The format of the two ports must have been committed before calling this function, although note that on creation, 
         /// the connection automatically copies and commits the output port's format to the input port.
@@ -217,6 +193,30 @@ namespace MMALSharp
             this.DownstreamComponent.CleanPortPools();
             
             MMALCheck(MMALConnection.mmal_connection_destroy(this.Ptr), "Unable to destroy connection");
+        }
+
+        /// <summary>
+        /// Facility to create a connection between two port objects.
+        /// </summary>
+        /// <param name="output">The output port of the connection.</param>
+        /// <param name="input">The input port of the connection.</param>
+        /// <param name="inputComponent">The managed instance of the component we are connecting to.</param>
+        /// <param name="useCallback">When set to true, enable the connection callback delegate (adversely affects performance).</param>
+        /// <returns>A new managed connection object.</returns>
+        internal static MMALConnectionImpl CreateConnection(IOutputPort output, IInputPort input, IDownstreamComponent inputComponent, bool useCallback)
+        {
+            IntPtr ptr = IntPtr.Zero;
+
+            if (useCallback)
+            {
+                MMALCheck(MMALConnection.mmal_connection_create(&ptr, output.Ptr, input.Ptr, MMALConnection.MMAL_CONNECTION_FLAG_ALLOCATION_ON_INPUT), "Unable to create connection");
+            }
+            else
+            {
+                MMALCheck(MMALConnection.mmal_connection_create(&ptr, output.Ptr, input.Ptr, MMALConnection.MMAL_CONNECTION_FLAG_TUNNELLING | MMALConnection.MMAL_CONNECTION_FLAG_ALLOCATION_ON_INPUT), "Unable to create connection");
+            }
+
+            return new MMALConnectionImpl((MMAL_CONNECTION_T*)ptr, output, input, inputComponent, output.ComponentReference, useCallback);
         }
 
         /// <summary>

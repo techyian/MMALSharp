@@ -1,4 +1,9 @@
-﻿using MMALSharp.Native;
+﻿// <copyright file="IBufferPool.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using MMALSharp.Native;
 
 namespace MMALSharp
 {

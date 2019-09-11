@@ -74,7 +74,17 @@ namespace MMALSharp.Ports
         /// </summary>
         public bool ZeroCopy { get; set; }
 
+        /// <summary>
+        /// Asynchronous trigger which is set when processing has completed on this port.
+        /// </summary>
+        public TaskCompletionSource<bool> Trigger { get; internal set; }
+
         #region Native properties
+
+        /// <summary>
+        /// Native pointer that represents this port.
+        /// </summary>
+        public MMAL_PORT_T* Ptr { get; }
 
         /// <summary>
         /// Native name of port.
@@ -225,22 +235,12 @@ namespace MMALSharp.Ports
         }
 
         #endregion
-
-        /// <summary>
-        /// Asynchronous trigger which is set when processing has completed on this port.
-        /// </summary>
-        public TaskCompletionSource<bool> Trigger { get; internal set; }
-
+        
         /// <summary>
         /// Native pointer that represents the component this port is associated with.
         /// </summary>
         internal MMAL_COMPONENT_T* Comp { get; }
-
-        /// <summary>
-        /// Native pointer that represents this port.
-        /// </summary>
-        public MMAL_PORT_T* Ptr { get; }
-
+        
         /// <summary>
         /// Native pointer to the native callback function.
         /// </summary>
@@ -454,6 +454,5 @@ namespace MMALSharp.Ports
         {
             MMALCheck(MMALFormat.mmal_format_extradata_alloc(this.Ptr->Format, (uint)size), "Unable to alloc extradata.");
         }
-
     }
 }

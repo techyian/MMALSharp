@@ -25,7 +25,6 @@ namespace MMALSharp.Tests
 
                 // list.AddRange(TestData.TgaEncoderData);
                 // list.AddRange(TestData.PpmEncoderData);
-
                 return list;
             }
         }

@@ -9,9 +9,6 @@ namespace MMALSharp
     /// </summary>
     public unsafe class MMALEventFormat : IBufferEvent
     {
-        // Dereferenced struct.
-        private MMAL_ES_FORMAT_T Format { get; }
-
         /// <summary>
         /// Native pointer that represents this event format.
         /// </summary>
@@ -76,7 +73,10 @@ namespace MMALSharp
         /// The framerate denominator value.
         /// </summary>
         public int FramerateDen => this.Format.Es->Video.FrameRate.Den;
-        
+
+        // De-referenced struct.
+        private MMAL_ES_FORMAT_T Format { get; }
+
         /// <summary>
         /// Creates a new instance of <see cref="MMALEventFormat"/>.
         /// </summary>

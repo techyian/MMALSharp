@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="MMALIspComponent.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using MMALSharp.Ports.Inputs;
 using MMALSharp.Ports.Outputs;
 using static MMALSharp.Native.MMALParameters;

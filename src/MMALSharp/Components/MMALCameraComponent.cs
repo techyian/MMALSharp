@@ -196,7 +196,7 @@ namespace MMALSharp.Components
 
             MMALLog.Logger.Debug("Camera config set");
 
-            this.Control.Enable();
+            this.Control.Start();
 
             MMALLog.Logger.Debug("Configuring camera parameters.");
 

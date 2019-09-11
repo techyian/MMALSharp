@@ -484,7 +484,8 @@ namespace MMALSharp
         private async Task ProcessRawAsync(IOutputPort cameraPort,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            using (cancellationToken.Register(() => {
+            using (cancellationToken.Register(() => 
+            {
                 // this callback will be executed when token is cancelled
                 cameraPort.Trigger.SetResult(true);
             }))

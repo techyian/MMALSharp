@@ -1,4 +1,4 @@
-﻿// <copyright file="ImageFileDecodeOutputPort.cs" company="Techyian">
+﻿// <copyright file="FileEncodeOutputPort.cs" company="Techyian">
 // Copyright (c) Ian Auty. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>

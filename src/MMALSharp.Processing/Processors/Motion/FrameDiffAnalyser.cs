@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="FrameDiffAnalyser.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -53,6 +58,7 @@ namespace MMALSharp.Processors.Motion
             if (this.FullTestFrame)
             {
                 MMALLog.Logger.Info("Have full test frame");
+                
                 // If we have a full test frame stored then we can start storing subsequent frame data to check.
                 base.Apply(data, eos);
             }

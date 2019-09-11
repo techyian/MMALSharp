@@ -114,6 +114,7 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MMAL_BUFFER_HEADER_T
     {
+#pragma warning disable SA1202
         private MMAL_BUFFER_HEADER_T* next;
         private IntPtr priv;
         private uint cmd;
@@ -163,4 +164,5 @@ namespace MMALSharp.Native
             this.userData = userData;
         }
     }
+#pragma warning restore SA1202
 }

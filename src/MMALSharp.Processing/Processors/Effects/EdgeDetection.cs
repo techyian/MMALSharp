@@ -34,6 +34,16 @@ namespace MMALSharp.Processors.Effects
     public class EdgeDetection : ConvolutionBase, IFrameProcessor
     {
         /// <summary>
+        /// The kernel's width.
+        /// </summary>
+        public const int KernelWidth = 3;
+
+        /// <summary>
+        /// The kernel's height.
+        /// </summary>
+        public const int KernelHeight = 3;
+
+        /// <summary>
         /// A kernel used to apply a low strength edge detection convolution to an image.
         /// </summary>
         public static double[,] LowStrengthKernel = new double[KernelWidth, KernelHeight]
@@ -67,16 +77,6 @@ namespace MMALSharp.Processors.Effects
         /// The working kernel.
         /// </summary>
         public double[,] Kernel { get; }
-
-        /// <summary>
-        /// The kernel's width.
-        /// </summary>
-        public const int KernelWidth = 3;
-
-        /// <summary>
-        /// The kernel's height.
-        /// </summary>
-        public const int KernelHeight = 3;
         
         /// <summary>
         /// Creates a new instance of <see cref="EdgeDetection"/> processor used to apply Edge detection convolution.
