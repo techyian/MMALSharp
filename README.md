@@ -1,4 +1,4 @@
-# MMALSharp - C#/.NET API for the Raspberry Pi camera 
+# MMALSharp - C# wrapper to Broadcom's MMAL and API to the Raspberry Pi camera 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/r3o4bqxektnulw7l?svg=true)](https://ci.appveyor.com/project/techyian/mmalsharp) 
 [![Join the chat at https://gitter.im/MMALSharp/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/MMALSharp/Lobby?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
@@ -6,7 +6,7 @@
 **If you like this project, please support it by giving it a star!** 
 ![GitHub stars](https://img.shields.io/github/stars/techyian/MMALSharp.svg?style=popout)
 
-MMALSharp is an unofficial C# API for the Raspberry Pi camera. Under the hood, MMALSharp makes use of the native MMAL interface designed by Broadcom.
+MMALSharp is a C# wrapper around the MMAL library designed by Broadcom. It exposes many elements of MMAL and in addition provides an easy to use, asynchronous API to the Raspberry Pi Camera Module.
 
 MMALSharp supports the following runtimes:
 
@@ -21,6 +21,15 @@ MMALSharp NuGet package:
 ```
 PM> Install-Package MMALSharp
 ```
+
+MMALSharp.FFmpeg NuGet package:
+[![NuGet version](https://badge.fury.io/nu/MMALSharp.FFmpeg.svg)](https://badge.fury.io/nu/MMALSharp.FFmpeg)
+
+```
+PM> Install-Package MMALSharp.FFmpeg
+```
+
+Pre-release builds can be found on [MyGet](https://www.myget.org/feed/Packages/mmalsharp):
 
 ## Basic Examples
 
@@ -82,11 +91,6 @@ Copyright (c) 2016-2019 Ian Auty
 
 Raspberry Pi is a trademark of the Raspberry Pi Foundation
 
-## Special thanks
+## Contributors
 
-Dave Jones [@waveform80](https://github.com/waveform80) - your Python header conversions have saved me numerous hours so far. 
-Thank you very much.
-
-### Contributors
-
-**Daniel Lerch** [@daniel-lerch](https://github.com/daniel-lerch)
+I want to say a big thank you to those of you who have helped develop MMALSharp over the years, your contributions are most appreciated. In addition, I'd like to say thanks to Dave Jones [@waveform80](https://github.com/waveform80) for your work on picamera which gave me the inspiration to start this project.
