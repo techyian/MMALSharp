@@ -155,7 +155,6 @@ namespace MMALSharp.Components
                 if (input.ConnectedReference != null)
                 {
                     MMALLog.Logger.Debug($"Removing {input.ConnectedReference}");
-                    input.ConnectedReference.OutputPort.ConnectedReference?.Dispose();
                     input.ConnectedReference.Dispose();
                 }
             }

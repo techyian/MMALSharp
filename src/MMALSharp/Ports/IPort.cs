@@ -260,5 +260,10 @@ namespace MMALSharp.Ports
         /// <param name="size">The size to allocate.</param>
         /// <exception cref="MMALException"/>
         void ExtraDataAlloc(int size);
+
+        /// <summary>
+        /// To be called once connection has been disposed of.
+        /// </summary>
+        void CloseConnection();
     }
 }

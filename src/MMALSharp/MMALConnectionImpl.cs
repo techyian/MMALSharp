@@ -152,6 +152,8 @@ namespace MMALSharp
         public override void Dispose()
         {
             MMALLog.Logger.Debug("Disposing connection.");
+            this.OutputPort?.CloseConnection();
+            this.InputPort?.CloseConnection();
             this.Destroy();
             base.Dispose();
         }

@@ -446,6 +446,14 @@ namespace MMALSharp.Ports
         }
 
         /// <summary>
+        /// To be called once connection has been disposed of.
+        /// </summary>
+        public void CloseConnection()
+        {
+            this.ConnectedReference = null;
+        }
+
+        /// <summary>
         /// Attempts to allocate the native extradata store with the given size.
         /// </summary>
         /// <param name="size">The size to allocate.</param>
