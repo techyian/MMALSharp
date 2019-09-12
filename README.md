@@ -29,7 +29,7 @@ MMALSharp.FFmpeg NuGet package:
 PM> Install-Package MMALSharp.FFmpeg
 ```
 
-Pre-release builds can be found on [MyGet](https://www.myget.org/feed/Packages/mmalsharp):
+Pre-release builds can be found on [MyGet](https://www.myget.org/gallery/mmalsharp):
 
 ## Basic Examples
 
