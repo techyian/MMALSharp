@@ -28,17 +28,5 @@ namespace MMALSharp.Components
             this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, Guid.NewGuid()));
             this.Outputs.Add(new StillPort((IntPtr)(&(*this.Ptr->Output[0])), this, Guid.NewGuid()));
         }
-
-        /// <summary>
-        /// Creates a new instance of the <see cref="MMALResizerComponent"/> class that can be used to change the size
-        /// and the pixel format of resulting frames. 
-        /// </summary>
-        /// <param name="outputPortType">The user defined output port type.</param>
-        public unsafe MMALResizerComponent(Type outputPortType)
-            : base(MMAL_COMPONENT_DEFAULT_RESIZER)
-        {
-            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, Guid.NewGuid()));
-            this.Outputs.Add((IOutputPort)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[0])), this, Guid.NewGuid()));
-        }
     }
 }

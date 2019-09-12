@@ -33,21 +33,6 @@ namespace MMALSharp.Components
             }
         }
 
-        /// <summary>
-        /// Creates a new instance of <see cref="MMALSplitterComponent"/>.
-        /// </summary>
-        /// <param name="outputPortType">The user defined output port type to use for each splitter output port.</param>
-        public unsafe MMALSplitterComponent(Type outputPortType)
-            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER)
-        {
-            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, Guid.NewGuid()));
-
-            for (var i = 0; i < 4; i++)
-            {
-                this.Outputs.Add((IOutputPort)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[i])), this, Guid.NewGuid()));
-            }
-        }
-
         /// <inheritdoc />
         public override IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler)
         {
