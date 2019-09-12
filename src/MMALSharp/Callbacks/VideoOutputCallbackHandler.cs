@@ -78,7 +78,10 @@ namespace MMALSharp.Callbacks
                 ? MotionType.MotionVector
                 : MotionType.FrameDiff;
 
-            handler.MotionType = motionType;
+            if (handler != null)
+            {
+                handler.MotionType = motionType;
+            }
         }
 
         /// <summary>
