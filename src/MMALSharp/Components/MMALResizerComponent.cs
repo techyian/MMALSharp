@@ -4,7 +4,6 @@
 // </copyright>
 
 using System;
-using MMALSharp.Ports;
 using MMALSharp.Ports.Inputs;
 using MMALSharp.Ports.Outputs;
 using static MMALSharp.Native.MMALParameters;
