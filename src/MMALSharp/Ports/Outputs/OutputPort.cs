@@ -170,7 +170,9 @@ namespace MMALSharp.Ports.Outputs
         public virtual void ReleaseBuffer(IBuffer bufferImpl)
         {
             bufferImpl.Release();
-            
+
+            IBuffer newBuffer = null;
+
             try
             {
                 if (!this.Enabled)
@@ -185,7 +187,7 @@ namespace MMALSharp.Ports.Outputs
 
                 if (this.Enabled && this.BufferPool != null)
                 {
-                    var newBuffer = this.BufferPool.Queue.GetBuffer();
+                    newBuffer = this.BufferPool.Queue.GetBuffer();
                     
                     if (newBuffer.CheckState())
                     {
@@ -199,6 +201,11 @@ namespace MMALSharp.Ports.Outputs
             }
             catch (Exception e)
             {
+                if (newBuffer != null && newBuffer.CheckState())
+                {
+                    newBuffer.Release();
+                }
+
                 MMALLog.Logger.Warn($"Unable to send buffer header. {e.Message}");
             }
         }
