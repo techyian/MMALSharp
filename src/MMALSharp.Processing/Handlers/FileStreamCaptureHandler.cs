@@ -13,7 +13,7 @@ namespace MMALSharp.Handlers
     /// <summary>
     /// Processes image data to a <see cref="FileStream"/>.
     /// </summary>
-    public class FileStreamCaptureHandler : StreamCaptureHandler<FileStream>
+    public class FileStreamCaptureHandler : StreamCaptureHandler<FileStream>, IFileStreamCaptureHandler
     {
         private readonly bool _customFilename;
         private int _increment;

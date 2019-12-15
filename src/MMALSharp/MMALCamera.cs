@@ -195,7 +195,7 @@ namespace MMALSharp
         /// <param name="cancellationToken">A cancellationToken to trigger stop capturing.</param>
         /// <param name="burstMode">When enabled, burst mode will increase the rate at which images are taken, at the expense of quality.</param>
         /// <returns>The awaitable Task.</returns>
-        public async Task TakePictureTimeout(IOutputCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, CancellationToken cancellationToken, bool burstMode = false)
+        public async Task TakePictureTimeout(IFileStreamCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, CancellationToken cancellationToken, bool burstMode = false)
         {
             if (burstMode)
             {
@@ -221,6 +221,8 @@ namespace MMALSharp
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     await this.ProcessAsync(this.Camera.StillPort).ConfigureAwait(false);
+
+                    handler.NewFile();
                 }
             }
         }
@@ -235,7 +237,7 @@ namespace MMALSharp
         /// <param name="timelapse">A Timelapse object which specifies the timeout and rate at which images should be taken.</param>
         /// <returns>The awaitable Task.</returns>
         /// <exception cref="ArgumentNullException"/>
-        public async Task TakePictureTimelapse(IOutputCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, Timelapse timelapse)
+        public async Task TakePictureTimelapse(IFileStreamCaptureHandler handler, MMALEncoding encodingType, MMALEncoding pixelFormat, Timelapse timelapse)
         {
             int interval = 0;
 
@@ -277,10 +279,12 @@ namespace MMALSharp
 
                     await Task.Delay(interval).ConfigureAwait(false);
 
-                    MMALLog.Logger.Info($"Preparing to take picture. Resolution: {imgEncoder.Outputs[0].Resolution.Width} x {imgEncoder.Outputs[0].Resolution.Height}. " +
+                    MMALLog.Logger.Info($"Preparing to take picture. Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}. " +
                                         $"Encoder: {encodingType.EncodingName}. Pixel Format: {pixelFormat.EncodingName}.");
 
                     await this.ProcessAsync(this.Camera.StillPort).ConfigureAwait(false);
+
+                    handler.NewFile();
                 }
             }
         }
@@ -338,7 +342,9 @@ namespace MMALSharp
 
                 await Task.WhenAll(tasks).ConfigureAwait(false);
             }
-            
+
+            this.StopCapture(cameraPort);
+
             // Cleanup each connected downstream component.
             foreach (var component in handlerComponents)
             {
@@ -352,9 +358,7 @@ namespace MMALSharp
                 
                 component.CleanPortPools();
                 component.DisableConnections();
-            }
-
-            this.StopCapture(cameraPort);
+            }                        
         }
         
         /// <summary>
