@@ -3,7 +3,7 @@
   <PropertyGroup>    
 	<Description>Image Processing library for MMALSharp.</Description>
     <AssemblyTitle>MMALSharp.Processing</AssemblyTitle>
-    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <AssemblyName>MMALSharp.Processing</AssemblyName>
     <PackageId>MMALSharp.Processing</PackageId>	
     <RootNamespace>MMALSharp</RootNamespace>
