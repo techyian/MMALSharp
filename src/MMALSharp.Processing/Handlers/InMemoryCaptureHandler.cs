@@ -4,6 +4,7 @@
 // </copyright>
 
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Processors;
 
@@ -30,7 +31,7 @@ namespace MMALSharp.Handlers
         /// <inheritdoc />
         public override void Dispose()
         {
-            MMALLog.Logger.Info($"Successfully processed {Helpers.ConvertBytesToMegabytes(this.WorkingData.Count)}.");
+            MMALLog.Logger.LogInformation($"Successfully processed {Helpers.ConvertBytesToMegabytes(this.WorkingData.Count)}.");
         }
         
         /// <inheritdoc />

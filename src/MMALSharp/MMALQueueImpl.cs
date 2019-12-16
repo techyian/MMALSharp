@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 
@@ -38,7 +39,7 @@ namespace MMALSharp
 
             if (!this.CheckState())
             {
-                MMALLog.Logger.Warn("Buffer retrieved null.");
+                MMALLog.Logger.LogWarning("Buffer retrieved null.");
                 return null;
             }
 
@@ -48,7 +49,7 @@ namespace MMALSharp
         /// <inheritdoc />
         public override void Dispose()
         {
-            MMALLog.Logger.Debug("Disposing queue.");
+            MMALLog.Logger.LogDebug("Disposing queue.");
             this.Destroy();
             base.Dispose();
         }

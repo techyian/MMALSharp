@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
@@ -71,7 +72,7 @@ namespace MMALSharp.Ports.Outputs
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.Debug($"In native {nameof(StillPort)} output callback");
+                MMALLog.Logger.LogDebug($"In native {nameof(StillPort)} output callback");
             }
 
             base.NativeOutputPortCallback(port, buffer);

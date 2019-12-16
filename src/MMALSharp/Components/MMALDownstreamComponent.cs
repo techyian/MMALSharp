@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
@@ -139,7 +140,7 @@ namespace MMALSharp.Components
 
             MMALBootstrapper.DownstreamComponents.Remove(this);
 
-            MMALLog.Logger.Debug($"Remaining components in pipeline: {MMALBootstrapper.DownstreamComponents.Count}");
+            MMALLog.Logger.LogDebug($"Remaining components in pipeline: {MMALBootstrapper.DownstreamComponents.Count}");
 
             base.Dispose();
         }
@@ -154,7 +155,7 @@ namespace MMALSharp.Components
             {
                 if (input.ConnectedReference != null)
                 {
-                    MMALLog.Logger.Debug($"Removing {input.ConnectedReference}");
+                    MMALLog.Logger.LogDebug($"Removing {input.ConnectedReference}");
                     input.ConnectedReference.Dispose();
                 }
             }
@@ -163,7 +164,7 @@ namespace MMALSharp.Components
             {
                 if (output.ConnectedReference != null)
                 {
-                    MMALLog.Logger.Debug($"Removing {output.ConnectedReference}");
+                    MMALLog.Logger.LogDebug($"Removing {output.ConnectedReference}");
                     output.ConnectedReference.Dispose();
                 }
             }

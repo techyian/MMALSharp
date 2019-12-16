@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Config;
 using MMALSharp.Native;
@@ -51,7 +52,7 @@ namespace MMALSharp.Components
         /// <inheritdoc />
         public override void PrintComponent()
         {
-            MMALLog.Logger.Info($"Component: Null sink renderer");
+            MMALLog.Logger.LogInformation($"Component: Null sink renderer");
         }
     }
 
@@ -172,7 +173,7 @@ namespace MMALSharp.Components
         /// <inheritdoc />
         public override void PrintComponent()
         {
-            MMALLog.Logger.Info($"Component: Video renderer");
+            MMALLog.Logger.LogInformation($"Component: Video renderer");
         }
 
         /// <inheritdoc />
@@ -182,7 +183,7 @@ namespace MMALSharp.Components
             {
                 Overlays.ForEach(c => c.Dispose());
             }
-            
+
             base.Dispose();
         }
     }
@@ -235,13 +236,11 @@ namespace MMALSharp.Components
             this.OverlayConfiguration = config;
             parent.Overlays.Add(this);
             
-            this.Inputs[0] = new OverlayPort(this.Inputs[0]);
-
-            var width = 0;
-            var height = 0;
-            
             if (config != null)
             {
+                var width = 0;
+                var height = 0;
+
                 if (config.Resolution.Width > 0 && config.Resolution.Height > 0)
                 {
                     width = config.Resolution.Width;
@@ -280,7 +279,7 @@ namespace MMALSharp.Components
 
                 var portConfig = new MMALPortConfig(config.Encoding, null, width, height, 0, 0, 0, false, null, 0, 0);
 
-                this.Inputs[0].Configure(portConfig, null, null);
+                this.ConfigureInputPort(portConfig, null);
 
                 this.Control.Start();
                 this.Inputs[0].Start();
@@ -305,7 +304,7 @@ namespace MMALSharp.Components
 
             if (buffer == null)
             {
-                MMALLog.Logger.Warn("Received null buffer when updating overlay.");
+                MMALLog.Logger.LogWarning("Received null buffer when updating overlay.");
                 return;
             }
             

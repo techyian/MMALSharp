@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Handlers;
@@ -132,7 +133,7 @@ namespace MMALSharp.Components
             {
                 if (this.Outputs[outputPort].Bitrate > MaxBitrateMJPEG)
                 {
-                    MMALLog.Logger.Warn("Bitrate too high: Reducing to 25MBit/s");
+                    MMALLog.Logger.LogWarning("Bitrate too high: Reducing to 25MBit/s");
                     config.Bitrate = MaxBitrateMJPEG;
                 }
             }

@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Config;
 using MMALSharp.Native;
@@ -35,7 +36,7 @@ namespace MMALSharp
                 throw new PiCameraError($"Could not find parameter {key}");
             }
 
-            MMALLog.Logger.Debug($"Getting parameter {t.ParamName}");
+            MMALLog.Logger.LogDebug($"Getting parameter {t.ParamName}");
 
             try
             {
@@ -71,7 +72,7 @@ namespace MMALSharp
             }
             catch
             {
-                MMALLog.Logger.Warn($"Unable to get port parameter {t.ParamName}");
+                MMALLog.Logger.LogWarning($"Unable to get port parameter {t.ParamName}");
                 throw;
             }
         }
@@ -152,7 +153,7 @@ namespace MMALSharp
                 throw new PiCameraError($"Could not find parameter {key}");
             }
 
-            MMALLog.Logger.Debug($"Setting parameter {t.ParamName}");
+            MMALLog.Logger.LogDebug($"Setting parameter {t.ParamName}");
 
             try
             {
@@ -186,7 +187,7 @@ namespace MMALSharp
             }
             catch
             {
-                MMALLog.Logger.Warn($"Unable to set port parameter {t.ParamName}");
+                MMALLog.Logger.LogWarning($"Unable to set port parameter {t.ParamName}");
                 throw;
             }
         }

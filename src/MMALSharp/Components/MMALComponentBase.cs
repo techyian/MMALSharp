@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Native;
@@ -146,7 +147,7 @@ namespace MMALSharp
         /// </summary>
         public virtual void PrintComponent()
         {
-            MMALLog.Logger.Info($"Component: {this.Name}");
+            MMALLog.Logger.LogInformation($"Component: {this.Name}");
 
             var sb = new StringBuilder();
 
@@ -176,7 +177,7 @@ namespace MMALSharp
                 }
             }
 
-            MMALLog.Logger.Info(sb.ToString());
+            MMALLog.Logger.LogInformation(sb.ToString());
         }
 
         /// <summary>
@@ -186,14 +187,14 @@ namespace MMALSharp
         {
             if (this.CheckState())
             {
-                MMALLog.Logger.Debug($"Disposing component {this.Name}.");
+                MMALLog.Logger.LogDebug($"Disposing component {this.Name}.");
 
                 // See if any pools need disposing before destroying component.
                 foreach (var port in this.Inputs)
                 {
                     if (port.BufferPool != null)
                     {
-                        MMALLog.Logger.Debug("Destroying port pool");
+                        MMALLog.Logger.LogDebug("Destroying port pool");
 
                         port.DestroyPortPool();
                     }
@@ -203,7 +204,7 @@ namespace MMALSharp
                 {
                     if (port.BufferPool != null)
                     {
-                        MMALLog.Logger.Debug("Destroying port pool");
+                        MMALLog.Logger.LogDebug("Destroying port pool");
 
                         port.DestroyPortPool();
                     }
@@ -212,7 +213,7 @@ namespace MMALSharp
                 this.DisableComponent();
                 this.DestroyComponent();
 
-                MMALLog.Logger.Debug("Completed disposal...");
+                MMALLog.Logger.LogDebug("Completed disposal...");
 
                 base.Dispose();
             }
@@ -278,7 +279,7 @@ namespace MMALSharp
             {
                 if (port.BufferPool != null)
                 {
-                    MMALLog.Logger.Debug("Destroying input port pool.");
+                    MMALLog.Logger.LogDebug("Destroying input port pool.");
                     
                     port.DestroyPortPool();
                 }
@@ -288,7 +289,7 @@ namespace MMALSharp
             {
                 if (port.BufferPool != null)
                 {
-                    MMALLog.Logger.Debug("Destroying output port pool.");
+                    MMALLog.Logger.LogDebug("Destroying output port pool.");
                     
                     port.DestroyPortPool();
                 }

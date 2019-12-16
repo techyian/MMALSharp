@@ -5,6 +5,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
@@ -139,7 +140,7 @@ namespace MMALSharp
         /// <param name="buffer">The working buffer header.</param>
         public virtual void ManagedConnectionCallback(IBuffer buffer)
         {
-            MMALLog.Logger.Debug("Inside Managed connection callback");
+            MMALLog.Logger.LogDebug("Inside Managed connection callback");
         }
 
         /// <inheritdoc />
@@ -151,7 +152,7 @@ namespace MMALSharp
         /// <inheritdoc />
         public override void Dispose()
         {
-            MMALLog.Logger.Debug("Disposing connection.");
+            MMALLog.Logger.LogDebug("Disposing connection.");
             this.OutputPort?.CloseConnection();
             this.InputPort?.CloseConnection();
             this.Destroy();
@@ -166,7 +167,7 @@ namespace MMALSharp
         {
             if (!this.Enabled)
             {
-                MMALLog.Logger.Debug($"Enabling connection between {this.OutputPort.Name} and {this.InputPort.Name}");
+                MMALLog.Logger.LogDebug($"Enabling connection between {this.OutputPort.Name} and {this.InputPort.Name}");
                 MMALCheck(MMALConnection.mmal_connection_enable(this.Ptr), "Unable to enable connection");
             }
         }
@@ -178,7 +179,7 @@ namespace MMALSharp
         {
             if (this.Enabled)
             {
-                MMALLog.Logger.Debug($"Disabling connection between {this.OutputPort.Name} and {this.InputPort.Name}");
+                MMALLog.Logger.LogDebug($"Disabling connection between {this.OutputPort.Name} and {this.InputPort.Name}");
                 MMALCheck(MMALConnection.mmal_connection_disable(this.Ptr), "Unable to disable connection");
             }
         }
@@ -232,7 +233,7 @@ namespace MMALSharp
             {
                 if (MMALCameraConfig.Debug)
                 {
-                    MMALLog.Logger.Debug("Inside native connection callback");
+                    MMALLog.Logger.LogDebug("Inside native connection callback");
                 }
                 
                 var queue = new MMALQueueImpl(connection->Queue);
@@ -273,7 +274,7 @@ namespace MMALSharp
                     }
                     else
                     {
-                        MMALLog.Logger.Debug("Buffer could not be obtained by connection callback");
+                        MMALLog.Logger.LogDebug("Buffer could not be obtained by connection callback");
                     }
                 }
             }

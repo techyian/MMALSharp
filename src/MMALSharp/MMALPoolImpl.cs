@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 using MMALSharp.Ports;
@@ -37,7 +38,7 @@ namespace MMALSharp
         /// <param name="port">The port.</param>
         public MMALPoolImpl(IPort port)
         {            
-            MMALLog.Logger.Debug($"Creating buffer pool with {port.BufferNum} buffers of size {port.BufferSize}");
+            MMALLog.Logger.LogDebug($"Creating buffer pool with {port.BufferNum} buffers of size {port.BufferSize}");
 
             this.Ptr = MMALUtil.mmal_port_pool_create(port.Ptr, port.BufferNum, port.BufferSize);
             this.Queue = new MMALQueueImpl((*this.Ptr).Queue);
@@ -49,7 +50,7 @@ namespace MMALSharp
         /// <param name="ptr">The <see cref="MMAL_POOL_T"/> pointer.</param>
         public MMALPoolImpl(MMAL_POOL_T* ptr)
         {
-            MMALLog.Logger.Debug($"Creating buffer pool from existing instance.");
+            MMALLog.Logger.LogDebug($"Creating buffer pool from existing instance.");
 
             this.Ptr = ptr;
             this.Queue = new MMALQueueImpl((*this.Ptr).Queue);
@@ -74,7 +75,7 @@ namespace MMALSharp
         /// <inheritdoc />
         public override void Dispose()
         {
-            MMALLog.Logger.Debug("Disposing buffer pool.");
+            MMALLog.Logger.LogDebug("Disposing buffer pool.");
             this.Destroy();
             base.Dispose();
         }

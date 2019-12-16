@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
@@ -67,7 +68,7 @@ namespace MMALSharp.Ports.Outputs
                 catch
                 {
                     // If commit fails using new settings, attempt to reset using old temp MMAL_VIDEO_FORMAT_T.
-                    MMALLog.Logger.Warn("Commit of output port failed. Attempting to reset values.");
+                    MMALLog.Logger.LogWarning("Commit of output port failed. Attempting to reset values.");
                     this.Ptr->Format->Es->Video = tempVid;
                     this.Commit();
                 }
@@ -105,7 +106,7 @@ namespace MMALSharp.Ports.Outputs
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.Debug($"In native {nameof(SplitterVideoPort)} output callback");
+                MMALLog.Logger.LogDebug($"In native {nameof(SplitterVideoPort)} output callback");
             }
 
             base.NativeOutputPortCallback(port, buffer);

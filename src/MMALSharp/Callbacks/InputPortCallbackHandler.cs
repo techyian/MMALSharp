@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
@@ -67,7 +68,7 @@ namespace MMALSharp.Callbacks
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.Debug($"In managed {this.WorkingPort.PortType.GetPortType()} callback");
+                MMALLog.Logger.LogDebug($"In managed {this.WorkingPort.PortType.GetPortType()} callback");
             }
 
             if (this.EncodingType != null && this.WorkingPort.EncodingType != this.EncodingType)
@@ -75,7 +76,7 @@ namespace MMALSharp.Callbacks
                 throw new ArgumentException("Port Encoding Type not supported for this handler.");
             }
 
-            MMALLog.Logger.Info($"Feeding: {Helpers.ConvertBytesToMegabytes(buffer.AllocSize)}. Total processed: {this.CaptureHandler?.TotalProcessed()}.");
+            MMALLog.Logger.LogInformation($"Feeding: {Helpers.ConvertBytesToMegabytes(buffer.AllocSize)}. Total processed: {this.CaptureHandler?.TotalProcessed()}.");
 
             return this.CaptureHandler?.Process(buffer.AllocSize);
         }

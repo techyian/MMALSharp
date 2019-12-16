@@ -5,6 +5,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 using static MMALSharp.MMALNativeExceptionHelper;
@@ -84,7 +85,7 @@ namespace MMALSharp.Components
                 catch
                 {
                     // Something went wrong, continue with OV5647 defaults.
-                    MMALLog.Logger.Warn("Could not determine firmware version. Continuing with OV5647 defaults");
+                    MMALLog.Logger.LogWarning("Could not determine firmware version. Continuing with OV5647 defaults");
                 }
                 finally
                 {
@@ -98,7 +99,7 @@ namespace MMALSharp.Components
         /// </summary>
         public override void PrintComponent()
         {
-            MMALLog.Logger.Info($"Component: Camera info");
+            MMALLog.Logger.LogInformation($"Component: Camera info");
         }
     }
 }

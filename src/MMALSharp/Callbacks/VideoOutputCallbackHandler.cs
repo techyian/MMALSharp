@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Config;
@@ -103,7 +104,7 @@ namespace MMALSharp.Callbacks
         /// <param name="buffer">The working buffer header.</param>
         public override void Callback(IBuffer buffer)
         {
-            MMALLog.Logger.Debug("In video output callback");
+            MMALLog.Logger.LogDebug("In video output callback");
             
             if (this.PrepareSplit && buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))
             {

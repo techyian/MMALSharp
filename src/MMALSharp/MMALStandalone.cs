@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Native;
@@ -28,8 +29,6 @@ namespace MMALSharp
         private MMALStandalone()
         {
             BcmHost.bcm_host_init();
-
-            MMALLog.ConfigureLogger();
         }
 
         /// <summary>
@@ -113,8 +112,8 @@ namespace MMALSharp
         /// <param name="initialComponent">The first component in your pipeline.</param>
         public void PrintPipeline(IDownstreamComponent initialComponent)
         {
-            MMALLog.Logger.Info("Current pipeline:");
-            MMALLog.Logger.Info(string.Empty);
+            MMALLog.Logger.LogInformation("Current pipeline:");
+            MMALLog.Logger.LogInformation(string.Empty);
 
             foreach (var component in this.PopulateProcessingList(initialComponent))
             {
@@ -127,7 +126,7 @@ namespace MMALSharp
         /// </summary>
         public void Cleanup()
         {
-            MMALLog.Logger.Debug("Destroying final components");
+            MMALLog.Logger.LogDebug("Destroying final components");
             
             var tempList = new List<MMALDownstreamComponent>(MMALBootstrapper.DownstreamComponents);
 

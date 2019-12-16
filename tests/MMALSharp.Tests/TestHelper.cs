@@ -1,4 +1,5 @@
 using System.IO;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Config;
@@ -57,9 +58,9 @@ namespace MMALSharp.Tests
             }
         }
         
-        public static void BeginTest(string name) => MMALLog.Logger.Info($"Running test: {name}.");
+        public static void BeginTest(string name) => MMALLog.Logger.LogInformation($"Running test: {name}.");
         
         public static void BeginTest(string name, string encodingType, string pixelFormat)
-            => MMALLog.Logger.Info($"Running test: {name}. Encoding type: {encodingType}. Pixel format: {pixelFormat}.");
+            => MMALLog.Logger.LogInformation($"Running test: {name}. Encoding type: {encodingType}. Pixel format: {pixelFormat}.");
     }
 }

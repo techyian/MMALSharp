@@ -6,7 +6,6 @@
 using System;
 using System.Diagnostics;
 using System.Text;
-using MMALSharp.Common.Utility;
 
 namespace MMALSharp.Handlers
 {
@@ -65,38 +64,30 @@ namespace MMALSharp.Handlers
 
             _process = new Process();
             _process.StartInfo = processStartInfo;
-            
-            try
-            {
-                Console.InputEncoding = Encoding.ASCII;
+                        
+            Console.InputEncoding = Encoding.ASCII;
                 
-                _process.EnableRaisingEvents = true;
-                _process.OutputDataReceived += (object sendingProcess, DataReceivedEventArgs e) =>
-                {
-                    if (e.Data != null)
-                    {                        
-                        Console.WriteLine(e.Data);                       
-                    }
-                };
-
-                _process.ErrorDataReceived += (object sendingProcess, DataReceivedEventArgs e) =>
-                {
-                    if (e.Data != null)
-                    {
-                        Console.WriteLine(e.Data);
-                    }
-                };
-                
-                _process.Start();
-
-                _process.BeginOutputReadLine();
-                _process.BeginErrorReadLine();                                
-            }
-            catch (Exception e)
+            _process.EnableRaisingEvents = true;
+            _process.OutputDataReceived += (object sendingProcess, DataReceivedEventArgs e) =>
             {
-                MMALLog.Logger.Fatal(e.Message);
-                throw;
-            }
+                if (e.Data != null)
+                {                        
+                    Console.WriteLine(e.Data);                       
+                }
+            };
+
+            _process.ErrorDataReceived += (object sendingProcess, DataReceivedEventArgs e) =>
+            {
+                if (e.Data != null)
+                {
+                    Console.WriteLine(e.Data);
+                }
+            };
+                
+            _process.Start();
+
+            _process.BeginOutputReadLine();
+            _process.BeginErrorReadLine();            
         }
 
         /// <summary>

@@ -6,6 +6,7 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
@@ -165,9 +166,9 @@ namespace MMALSharp.Components
         public override void PrintComponent()
         {
             base.PrintComponent();
-            MMALLog.Logger.Info($"    Still Width: {this.StillPort.Resolution.Width}. Video Height: {this.StillPort.Resolution.Height}");
-            MMALLog.Logger.Info($"    Video Width: {this.VideoPort.Resolution.Width}. Video Height: {this.VideoPort.Resolution.Height}");
-            MMALLog.Logger.Info($"    Max Width: {this.CameraInfo.MaxWidth}. Video Height: {this.CameraInfo.MaxHeight}");
+            MMALLog.Logger.LogInformation($"    Still Width: {this.StillPort.Resolution.Width}. Video Height: {this.StillPort.Resolution.Height}");
+            MMALLog.Logger.LogInformation($"    Video Width: {this.VideoPort.Resolution.Width}. Video Height: {this.VideoPort.Resolution.Height}");
+            MMALLog.Logger.LogInformation($"    Max Width: {this.CameraInfo.MaxWidth}. Video Height: {this.CameraInfo.MaxHeight}");
         }
 
         /// <summary>
@@ -194,11 +195,11 @@ namespace MMALSharp.Components
                         
             this.SetCameraConfig(camConfig);
 
-            MMALLog.Logger.Debug("Camera config set");
+            MMALLog.Logger.LogDebug("Camera config set");
 
             this.Control.Start();
 
-            MMALLog.Logger.Debug("Configuring camera parameters.");
+            MMALLog.Logger.LogDebug("Configuring camera parameters.");
 
             this.SetCameraParameters();
 
@@ -208,7 +209,7 @@ namespace MMALSharp.Components
 
             this.EnableComponent();
 
-            MMALLog.Logger.Debug("Camera component configured.");
+            MMALLog.Logger.LogDebug("Camera component configured.");
         }
 
         private void SetSensorDefaults()
@@ -225,7 +226,7 @@ namespace MMALSharp.Components
                 MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height,
                 MMALCameraConfig.VideoFramerate.Num, 0, 0, false, null, 0, 0);
 
-            MMALLog.Logger.Debug("Commit preview");
+            MMALLog.Logger.LogDebug("Commit preview");
 
             this.PreviewPort.Configure(portConfig, null, null);
         }
@@ -256,7 +257,7 @@ namespace MMALSharp.Components
                 Math.Max(this.VideoPort.BufferSizeRecommended, this.VideoPort.BufferSizeMin),
                 new Rectangle(0, 0, currentWidth, currentHeight));
 
-            MMALLog.Logger.Debug("Commit video");
+            MMALLog.Logger.LogDebug("Commit video");
 
             this.VideoPort.Configure(portConfig, null, handler);
         }
@@ -288,7 +289,7 @@ namespace MMALSharp.Components
                 MMALCameraConfig.StillEncoding == MMALEncoding.RGB24 ||
                 MMALCameraConfig.StillEncoding == MMALEncoding.RGB16)
             {
-                MMALLog.Logger.Warn("Encoding set to RGB. Setting width padding to multiple of 16.");
+                MMALLog.Logger.LogWarning("Encoding set to RGB. Setting width padding to multiple of 16.");
 
                 var resolution = MMALCameraConfig.StillResolution.Pad(16, 16);
                 var encoding = MMALCameraConfig.StillEncoding;
@@ -297,13 +298,13 @@ namespace MMALSharp.Components
                 {
                     if (!this.StillPort.RgbOrderFixed())
                     {
-                        MMALLog.Logger.Warn("Using old firmware. Setting encoding to BGR24");
+                        MMALLog.Logger.LogWarning("Using old firmware. Setting encoding to BGR24");
                         encoding = MMALEncoding.BGR24;
                     }
                 }
                 catch
                 {
-                    MMALLog.Logger.Warn("Using old firmware. Setting encoding to BGR24");
+                    MMALLog.Logger.LogWarning("Using old firmware. Setting encoding to BGR24");
                     encoding = MMALEncoding.BGR24;
                 }
 
@@ -324,7 +325,7 @@ namespace MMALSharp.Components
                     new Rectangle(0, 0, currentWidth, currentHeight));
             }
             
-            MMALLog.Logger.Debug("Commit still");
+            MMALLog.Logger.LogDebug("Commit still");
             this.StillPort.Configure(portConfig, null, handler);
         }
 

@@ -7,6 +7,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
@@ -280,7 +281,7 @@ namespace MMALSharp.Ports
         /// <exception cref="MMALException"/>
         public void EnablePort(IntPtr callback)
         {
-            MMALLog.Logger.Debug("Enabling port.");
+            MMALLog.Logger.LogDebug("Enabling port.");
             MMALCheck(MMALPort.mmal_port_enable(this.Ptr, callback), "Unable to enable port.");
         }
 
@@ -294,7 +295,7 @@ namespace MMALSharp.Ports
         {
             if (this.Enabled)
             {
-                MMALLog.Logger.Debug($"Disabling port {this.Name}");
+                MMALLog.Logger.LogDebug($"Disabling port {this.Name}");
                 MMALCheck(MMALPort.mmal_port_disable(this.Ptr), "Unable to disable port.");
             }
         }
@@ -305,7 +306,7 @@ namespace MMALSharp.Ports
         /// <exception cref="MMALException"/>
         public void Commit()
         {
-            MMALLog.Logger.Debug("Committing port format changes");
+            MMALLog.Logger.LogDebug("Committing port format changes");
             MMALCheck(MMALPort.mmal_port_format_commit(this.Ptr), "Unable to commit port changes.");
         }
 
@@ -315,7 +316,7 @@ namespace MMALSharp.Ports
         /// <param name="destination">The destination port we're copying to.</param>
         public void ShallowCopy(IPort destination)
         {
-            MMALLog.Logger.Debug("Shallow copy port format");
+            MMALLog.Logger.LogDebug("Shallow copy port format");
             MMALFormat.mmal_format_copy(destination.Ptr->Format, this.Ptr->Format);
         }
 
@@ -325,7 +326,7 @@ namespace MMALSharp.Ports
         /// <param name="eventFormatSource">The source event format we're copying from.</param>
         public void ShallowCopy(IBufferEvent eventFormatSource)
         {
-            MMALLog.Logger.Debug("Shallow copy event format");
+            MMALLog.Logger.LogDebug("Shallow copy event format");
             MMALFormat.mmal_format_copy(this.Ptr->Format, eventFormatSource.Ptr);
         }
 
@@ -335,7 +336,7 @@ namespace MMALSharp.Ports
         /// <param name="destination">The destination port we're copying to.</param>
         public void FullCopy(IPort destination)
         {
-            MMALLog.Logger.Debug("Full copy port format");
+            MMALLog.Logger.LogDebug("Full copy port format");
             MMALFormat.mmal_format_full_copy(destination.Ptr->Format, this.Ptr->Format);
         }
 
@@ -345,7 +346,7 @@ namespace MMALSharp.Ports
         /// <param name="eventFormatSource">The source event format we're copying from.</param>
         public void FullCopy(IBufferEvent eventFormatSource)
         {
-            MMALLog.Logger.Debug("Full copy event format");
+            MMALLog.Logger.LogDebug("Full copy event format");
             MMALFormat.mmal_format_full_copy(this.Ptr->Format, eventFormatSource.Ptr);
         }
 
@@ -356,7 +357,7 @@ namespace MMALSharp.Ports
         /// <exception cref="MMALException"/>
         public void Flush()
         {            
-            MMALLog.Logger.Debug("Flushing port buffers");
+            MMALLog.Logger.LogDebug("Flushing port buffers");
             MMALCheck(MMALPort.mmal_port_flush(this.Ptr), "Unable to flush port.");
         }
 
@@ -371,7 +372,7 @@ namespace MMALSharp.Ports
             {
                 if (MMALCameraConfig.Debug)
                 {
-                    MMALLog.Logger.Debug("Sending buffer");
+                    MMALLog.Logger.LogDebug("Sending buffer");
                 }
 
                 MMALCheck(MMALPort.mmal_port_send_buffer(this.Ptr, buffer.Ptr), "Unable to send buffer header.");
@@ -391,7 +392,7 @@ namespace MMALSharp.Ports
             {
                 var buffer = this.BufferPool.Queue.GetBuffer();
 
-                MMALLog.Logger.Debug($"Sending buffer to output port: Length {buffer.Length}");
+                MMALLog.Logger.LogDebug($"Sending buffer to output port: Length {buffer.Length}");
                 
                 this.SendBuffer(buffer);
             }
@@ -409,7 +410,7 @@ namespace MMALSharp.Ports
             {
                 var buffer = pool.Queue.GetBuffer();
 
-                MMALLog.Logger.Debug($"Sending buffer to output port: Length {buffer.Length}");
+                MMALLog.Logger.LogDebug($"Sending buffer to output port: Length {buffer.Length}");
 
                 this.SendBuffer(buffer);
             }
@@ -425,7 +426,7 @@ namespace MMALSharp.Ports
             {
                 this.DisablePort();
 
-                MMALLog.Logger.Debug($"Releasing active buffers for port {this.Name}.");
+                MMALLog.Logger.LogDebug($"Releasing active buffers for port {this.Name}.");
                 while (this.BufferPool.Queue.QueueLength() < this.BufferPool.HeadersNum)
                 {
                     var tempBuf = this.BufferPool.Queue.Wait();
@@ -441,7 +442,7 @@ namespace MMALSharp.Ports
         /// </summary>
         public void InitialiseBufferPool()
         {
-            MMALLog.Logger.Debug($"Initialising buffer pool.");
+            MMALLog.Logger.LogDebug($"Initialising buffer pool.");
             this.BufferPool = new MMALPoolImpl(this);
         }
 

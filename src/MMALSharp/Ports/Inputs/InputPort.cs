@@ -7,6 +7,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
@@ -140,11 +141,11 @@ namespace MMALSharp.Ports.Inputs
 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
-                MMALLog.Logger.Debug("Enabling input port.");
+                MMALLog.Logger.LogDebug("Enabling input port.");
 
                 if (this.CallbackHandler == null)
                 {
-                    MMALLog.Logger.Warn("Callback null");
+                    MMALLog.Logger.LogWarning("Callback null");
                     this.EnablePort(IntPtr.Zero);
                 }
                 else
@@ -189,7 +190,7 @@ namespace MMALSharp.Ports.Inputs
 
                 if (result.EOF || this.ComponentReference.ForceStopProcessing)
                 {
-                    MMALLog.Logger.Debug("Received EOF. Releasing.");
+                    MMALLog.Logger.LogDebug("Received EOF. Releasing.");
 
                     Task.Run(() => { this.Trigger.SetResult(true); });
                 }
@@ -201,7 +202,7 @@ namespace MMALSharp.Ports.Inputs
         /// </summary>
         public void Start()
         {
-            MMALLog.Logger.Debug($"Starting input port {this.Name}");
+            MMALLog.Logger.LogDebug($"Starting input port {this.Name}");
             this.Trigger = new TaskCompletionSource<bool>();
             this.Enable();
         }
@@ -219,7 +220,7 @@ namespace MMALSharp.Ports.Inputs
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.Debug("In native input callback");
+                MMALLog.Logger.LogDebug("In native input callback");
             }
 
             var bufferImpl = new MMALBufferImpl(buffer);
@@ -230,7 +231,7 @@ namespace MMALSharp.Ports.Inputs
                 {
                     if (bufferImpl.Cmd == MMALEvents.MMAL_EVENT_FORMAT_CHANGED)
                     {
-                        MMALLog.Logger.Info("EVENT FORMAT CHANGED");
+                        MMALLog.Logger.LogInformation("EVENT FORMAT CHANGED");
                     }
                 }
             }

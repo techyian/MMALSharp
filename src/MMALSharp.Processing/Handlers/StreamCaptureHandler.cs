@@ -5,6 +5,7 @@
 
 using System;
 using System.IO;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Processors;
 
@@ -72,7 +73,7 @@ namespace MMALSharp.Handlers
             }
             catch(Exception e)
             {
-                MMALLog.Logger.Warn($"Something went wrong while processing stream: {e.InnerException?.Message}. {e.StackTrace}");
+                MMALLog.Logger.LogWarning($"Something went wrong while processing stream: {e.InnerException?.Message}. {e.StackTrace}");
             }
         }
         
@@ -87,7 +88,7 @@ namespace MMALSharp.Handlers
         /// </summary>
         public override void Dispose()
         {
-            MMALLog.Logger.Info($"Successfully processed {Helpers.ConvertBytesToMegabytes(this.Processed)}.");
+            MMALLog.Logger.LogInformation($"Successfully processed {Helpers.ConvertBytesToMegabytes(this.Processed)}.");
             CurrentStream?.Dispose();
         }
     }

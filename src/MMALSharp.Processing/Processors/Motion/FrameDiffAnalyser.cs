@@ -10,6 +10,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using MMALSharp.Processors.Effects;
@@ -57,7 +58,7 @@ namespace MMALSharp.Processors.Motion
         {
             if (this.FullTestFrame)
             {
-                MMALLog.Logger.Info("Have full test frame");
+                MMALLog.Logger.LogInformation("Have full test frame");
                 
                 // If we have a full test frame stored then we can start storing subsequent frame data to check.
                 base.Apply(data, eos);
@@ -69,7 +70,7 @@ namespace MMALSharp.Processors.Motion
                 if (eos)
                 {
                     this.FullTestFrame = true;
-                    MMALLog.Logger.Info("EOS reached for test frame. Applying edge detection.");
+                    MMALLog.Logger.LogInformation("EOS reached for test frame. Applying edge detection.");
 
                     // We want to apply Edge Detection to the test frame to make it easier to detect changes.
                     var edgeDetection = new EdgeDetection(this.MotionConfig.Sensitivity);
@@ -80,7 +81,7 @@ namespace MMALSharp.Processors.Motion
 
             if (this.FullFrame)
             {
-                MMALLog.Logger.Info("Have full frame, checking for changes.");
+                MMALLog.Logger.LogInformation("Have full frame, checking for changes.");
 
                 // TODO: Check for changes.
                 this.CheckForChanges(this.OnDetect);
@@ -94,11 +95,11 @@ namespace MMALSharp.Processors.Motion
             edgeDetection.ApplyConvolution(EdgeDetection.MediumStrengthKernel, 3, 3, this.ImageContext);
             var diff = this.Analyse();
 
-            MMALLog.Logger.Info($"Diff size: {diff}");
+            MMALLog.Logger.LogInformation($"Diff size: {diff}");
 
             if (diff >= this.MotionConfig.Threshold)
             {
-                MMALLog.Logger.Info("Motion detected!");
+                MMALLog.Logger.LogInformation("Motion detected!");
                 onDetect();
             }
         }

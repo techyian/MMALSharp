@@ -7,6 +7,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Callbacks;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
@@ -78,7 +79,7 @@ namespace MMALSharp.Ports.Outputs
                 catch
                 {
                     // If commit fails using new settings, attempt to reset using old temp MMAL_VIDEO_FORMAT_T.
-                    MMALLog.Logger.Warn("Commit of output port failed. Attempting to reset values.");
+                    MMALLog.Logger.LogWarning("Commit of output port failed. Attempting to reset values.");
                     this.Ptr->Format->Es->Video = tempVid;
                     this.Commit();
                 }
@@ -153,7 +154,7 @@ namespace MMALSharp.Ports.Outputs
         {
             if (this.ConnectedReference != null)
             {
-                MMALLog.Logger.Warn("A connection has already been established on this port");
+                MMALLog.Logger.LogWarning("A connection has already been established on this port");
                 return;
             }
 
@@ -177,12 +178,12 @@ namespace MMALSharp.Ports.Outputs
             {
                 if (!this.Enabled)
                 {
-                    MMALLog.Logger.Warn("Port not enabled.");
+                    MMALLog.Logger.LogWarning("Port not enabled.");
                 }
 
                 if (this.BufferPool == null)
                 {
-                    MMALLog.Logger.Warn("Buffer pool null.");
+                    MMALLog.Logger.LogWarning("Buffer pool null.");
                 }
 
                 if (this.Enabled && this.BufferPool != null)
@@ -195,7 +196,7 @@ namespace MMALSharp.Ports.Outputs
                     }
                     else
                     {
-                        MMALLog.Logger.Warn("Buffer null. Continuing.");
+                        MMALLog.Logger.LogWarning("Buffer null. Continuing.");
                     }
                 }
             }
@@ -206,7 +207,7 @@ namespace MMALSharp.Ports.Outputs
                     newBuffer.Release();
                 }
 
-                MMALLog.Logger.Warn($"Unable to send buffer header. {e.Message}");
+                MMALLog.Logger.LogWarning($"Unable to send buffer header. {e.Message}");
             }
         }
 
@@ -233,7 +234,7 @@ namespace MMALSharp.Ports.Outputs
                 
                 if (this.CallbackHandler == null)
                 {
-                    MMALLog.Logger.Warn("Callback null");
+                    MMALLog.Logger.LogWarning("Callback null");
 
                     this.EnablePort(IntPtr.Zero);
                 }
@@ -259,7 +260,7 @@ namespace MMALSharp.Ports.Outputs
         /// </summary>
         public void Start()
         {
-            MMALLog.Logger.Debug($"Starting output port {this.Name}");
+            MMALLog.Logger.LogDebug($"Starting output port {this.Name}");
             this.Trigger = new TaskCompletionSource<bool>();
             this.Enable();
         }
@@ -273,7 +274,7 @@ namespace MMALSharp.Ports.Outputs
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.Debug("In native output callback");
+                MMALLog.Logger.LogDebug("In native output callback");
             }
             
             var bufferImpl = new MMALBufferImpl(buffer);
@@ -297,7 +298,7 @@ namespace MMALSharp.Ports.Outputs
             // If this buffer signals the end of data stream, allow waiting thread to continue.
             if (eos || failed)
             {
-                MMALLog.Logger.Debug($"{this.ComponentReference.Name} {this.Name} End of stream. Signaling completion...");
+                MMALLog.Logger.LogDebug($"{this.ComponentReference.Name} {this.Name} End of stream. Signaling completion...");
                 
                 Task.Run(() => { this.Trigger.SetResult(true); });
             }

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Native;
 using static MMALSharp.MMALNativeExceptionHelper;
@@ -96,7 +97,7 @@ namespace MMALSharp
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.Debug(this.ToString());
+                MMALLog.Logger.LogDebug(this.ToString());
             }
         }
 
@@ -107,22 +108,22 @@ namespace MMALSharp
         {
             if (this.Cmd == MMALEvents.MMAL_EVENT_EOS)
             {
-                MMALLog.Logger.Debug("Buffer event: MMAL_EVENT_EOS");
+                MMALLog.Logger.LogDebug("Buffer event: MMAL_EVENT_EOS");
             }
 
             if (this.Cmd == MMALEvents.MMAL_EVENT_ERROR)
             {
-                MMALLog.Logger.Debug("Buffer event: MMAL_EVENT_ERROR");
+                MMALLog.Logger.LogDebug("Buffer event: MMAL_EVENT_ERROR");
             }
 
             if (this.Cmd == MMALEvents.MMAL_EVENT_FORMAT_CHANGED)
             {
-                MMALLog.Logger.Debug("Buffer event: MMAL_EVENT_FORMAT_CHANGED");
+                MMALLog.Logger.LogDebug("Buffer event: MMAL_EVENT_FORMAT_CHANGED");
             }
 
             if (this.Cmd == MMALEvents.MMAL_EVENT_PARAMETER_CHANGED)
             {
-                MMALLog.Logger.Debug("Buffer event: MMAL_EVENT_PARAMETER_CHANGED");
+                MMALLog.Logger.LogDebug("Buffer event: MMAL_EVENT_PARAMETER_CHANGED");
             }
         }
 
@@ -177,7 +178,7 @@ namespace MMALSharp
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.Debug("Getting data from buffer");
+                MMALLog.Logger.LogDebug("Getting data from buffer");
             }
 
             MMALCheck(MMALBuffer.mmal_buffer_header_mem_lock(this.Ptr), "Unable to lock buffer header.");
@@ -195,7 +196,7 @@ namespace MMALSharp
             {
                 // If something goes wrong, unlock the header.
                 MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
-                MMALLog.Logger.Warn("Unable to handle data. Returning null.");
+                MMALLog.Logger.LogWarning("Unable to handle data. Returning null.");
                 return null;
             }
         }
@@ -210,7 +211,7 @@ namespace MMALSharp
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.Debug($"Reading {length} bytes into buffer");
+                MMALLog.Logger.LogDebug($"Reading {length} bytes into buffer");
             }
             
             this.Ptr->length = (uint)length;                        
@@ -247,14 +248,14 @@ namespace MMALSharp
             {
                 if (MMALCameraConfig.Debug)
                 {
-                    MMALLog.Logger.Debug("Releasing buffer.");
+                    MMALLog.Logger.LogDebug("Releasing buffer.");
                 }
                 
                 MMALBuffer.mmal_buffer_header_release(this.Ptr);
             }
             else
             {
-                MMALLog.Logger.Warn("Buffer null, could not release.");
+                MMALLog.Logger.LogWarning("Buffer null, could not release.");
             }
 
             this.Dispose();

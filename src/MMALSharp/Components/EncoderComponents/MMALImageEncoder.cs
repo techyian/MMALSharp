@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Config;
@@ -132,7 +133,7 @@ namespace MMALSharp.Components
             }
             catch
             {
-                MMALLog.Logger.Warn("Attempt to retrieve sensor name failed.");
+                MMALLog.Logger.LogWarning("Attempt to retrieve sensor name failed.");
             }
             
             List<ExifTag> defaultTags = new List<ExifTag>

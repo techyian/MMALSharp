@@ -3,6 +3,7 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 
 namespace MMALSharp.Callbacks
@@ -32,7 +33,7 @@ namespace MMALSharp.Callbacks
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.Debug("Inside Managed input port connection callback");
+                MMALLog.Logger.LogDebug("Inside Managed input port connection callback");
             }
         }
 
@@ -41,7 +42,7 @@ namespace MMALSharp.Callbacks
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.Debug("Inside Managed output port connection callback");
+                MMALLog.Logger.LogDebug("Inside Managed output port connection callback");
             }
         }
     }

@@ -4,6 +4,7 @@
 // </copyright>
 
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 
@@ -48,7 +49,7 @@ namespace MMALSharp.Processors
         {
             if (this.FullFrame)
             {
-                MMALLog.Logger.Info("Clearing frame");
+                MMALLog.Logger.LogInformation("Clearing frame");
                 this.WorkingData.Clear();
                 this.FullFrame = false;
             }
