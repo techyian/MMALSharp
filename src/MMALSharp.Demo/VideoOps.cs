@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
+using MMALSharp.Ports;
 
 namespace MMALSharp.Demo
 {
@@ -49,14 +50,16 @@ namespace MMALSharp.Demo
         }
         
         private async Task TakeVideoManual(string extension, MMALEncoding encoding, MMALEncoding pixelFormat, int bitrate, int seconds)
-        {
+        {            
             using (var vidCaptureHandler = new VideoStreamCaptureHandler($"/home/pi/videos/", extension))
-            using (var vidEncoder = new MMALVideoEncoder(vidCaptureHandler))
+            using (var vidEncoder = new MMALVideoEncoder())
             using (var renderer = new MMALVideoRenderer())
             {
                 this.Cam.ConfigureCameraSettings();
+
+                var portConfig = new MMALPortConfig(encoding, pixelFormat, 0, bitrate, null);
                 
-                vidEncoder.ConfigureOutputPort(0, encoding, pixelFormat, 0, bitrate);
+                vidEncoder.ConfigureOutputPort(portConfig, vidCaptureHandler);
 
                 this.Cam.Camera.VideoPort.ConnectTo(vidEncoder);
                 this.Cam.Camera.PreviewPort.ConnectTo(renderer);
@@ -65,8 +68,7 @@ namespace MMALSharp.Demo
                 await Task.Delay(2000);
             
                 var cts = new CancellationTokenSource(TimeSpan.FromSeconds(seconds));
-
-                // Take video for 3 minutes.
+                                
                 await this.Cam.ProcessAsync(this.Cam.Camera.VideoPort, cts.Token);
             }
         }
