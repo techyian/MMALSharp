@@ -6,12 +6,8 @@
 **If you like this project, please support it by giving it a star!** 
 ![GitHub stars](https://img.shields.io/github/stars/techyian/MMALSharp.svg?style=popout)
 
-MMALSharp is a C# wrapper around the MMAL library designed by Broadcom. It exposes many elements of MMAL and in addition provides an easy to use, asynchronous API to the Raspberry Pi Camera Module.
+MMALSharp is a C# wrapper around the MMAL library designed by Broadcom. It exposes many elements of MMAL and in addition provides an easy to use, asynchronous API to the Raspberry Pi Camera Module. The library targets .NET Standard 2.0 and is compatible with Mono 5.4/.NET Core 2.0 or greater [runtimes](https://docs.microsoft.com/en-us/dotnet/standard/net-standard).
 
-MMALSharp supports the following runtimes:
-
-1. Mono 4.x 
-2. .NET Standard 2.0
 
 ## Installation
 
@@ -80,7 +76,7 @@ public void TakeVideo()
 
 ## Documentation
 
-For full installation instructions for Mono 4.x and .NET Core, including configuration and examples - please visit the [Wiki](https://github.com/techyian/MMALSharp/wiki) site.
+For full installation instructions for Mono and .NET Core, including configuration and examples - please visit the [Wiki](https://github.com/techyian/MMALSharp/wiki).
 
 
 ## License
