@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="RawCaptureTests.cs" company="Techyian">
+// Copyright (c) Ian Auty. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MMALSharp.Components;
@@ -12,6 +17,11 @@ namespace MMALSharp.Tests
 {
     public class RawCaptureTests : TestBase
     {
+        public RawCaptureTests(MMALFixture fixture)
+            : base(fixture)
+        {
+        }
+
         [Fact]
         public async Task RecordVideoDirectlyFromResizer()
         {

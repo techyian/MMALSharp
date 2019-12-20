@@ -14,6 +14,11 @@ namespace MMALSharp.Tests
 {
     public class ConfigurationTests : TestBase
     {
+        public ConfigurationTests(MMALFixture fixture)
+            : base(fixture)
+        {
+        }
+
         [Theory]
         [InlineData(MMALSensorMode.Mode0)]
         [InlineData(MMALSensorMode.Mode2)]

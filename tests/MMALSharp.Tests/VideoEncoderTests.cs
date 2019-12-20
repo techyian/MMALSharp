@@ -17,6 +17,11 @@ namespace MMALSharp.Tests
 {
     public class VideoEncoderTests : TestBase
     {
+        public VideoEncoderTests(MMALFixture fixture)
+           : base(fixture)
+        {
+        }
+
         #region Configuration tests
 
         [Theory]

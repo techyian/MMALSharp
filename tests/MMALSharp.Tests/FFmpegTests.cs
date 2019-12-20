@@ -16,6 +16,11 @@ namespace MMALSharp.Tests
 {
     public class FFmpegTests : TestBase
     {
+        public FFmpegTests(MMALFixture fixture)
+            : base(fixture)
+        {
+        }
+
         [Fact]
         public async Task RawVideoConvert()
         {

@@ -25,6 +25,11 @@ namespace MMALSharp.Tests
 {
     public class ImageEncoderTests : TestBase
     {
+        public ImageEncoderTests(MMALFixture fixture)
+            : base(fixture)
+        {
+        }
+
         [Theory]
         [MemberData(nameof(ImageData.Data), MemberType = typeof(ImageData))]
         public async Task TakePicture(string extension, MMALEncoding encodingType, MMALEncoding pixelFormat)
