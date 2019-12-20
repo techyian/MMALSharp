@@ -26,8 +26,6 @@ namespace MMALSharp.Tests
             set => _fixture = value;
         }
 
-        public StandaloneTests() { }
-
         public StandaloneTests(MMALStandaloneFixture fixture)
         {
             Fixture = fixture;
