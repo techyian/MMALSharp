@@ -2,7 +2,7 @@
   <PropertyGroup>
 	<Description>FFmpeg support library for MMALSharp.</Description>
     <AssemblyTitle>MMALSharp.FFmpeg</AssemblyTitle>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>MMALSharp.FFmpeg</AssemblyName>
     <PackageId>MMALSharp.FFmpeg</PackageId>	
     <RootNamespace>MMALSharp</RootNamespace>
