@@ -340,8 +340,8 @@ namespace MMALSharp.Native
         public const int MMAL_PARAMETER_CAMERA_INFO_MAX_STR_LEN = 16;
 
         public const int MMAL_CAMERA_ANNOTATE_MAX_TEXT_LEN = 32;
-        public const int MMAL_CAMERA_ANNOTATE_MAX_TEXT_LEN_V2 = 256;
-        public const int MMAL_CAMERA_ANNOTATE_MAX_TEXT_LEN_V3 = 256;
+        public const int MMAL_CAMERA_ANNOTATE_MAX_TEXT_LEN_V2 = 128;
+        public const int MMAL_CAMERA_ANNOTATE_MAX_TEXT_LEN_V3 = 128;
     }
 
     public enum MMAL_PARAM_EXPOSUREMODE_T
@@ -1516,7 +1516,7 @@ namespace MMALSharp.Native
         private int _customTextColor;
         private byte _customTextY, _customTextU, _customTextV, _textSize;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MMALParametersCamera.MMAL_CAMERA_ANNOTATE_MAX_TEXT_LEN_V3)]
         private byte[] _text;
 
         public int Enable => _enable;
@@ -1581,7 +1581,7 @@ namespace MMALSharp.Native
         private int _customTextColor;
         private byte _customTextY, _customTextU, _customTextV, _textSize;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MMALParametersCamera.MMAL_CAMERA_ANNOTATE_MAX_TEXT_LEN_V3)]
         private byte[] _text;
 
         private int _justify, _xOffset, _yOffset;

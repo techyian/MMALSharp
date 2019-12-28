@@ -310,18 +310,24 @@ namespace MMALSharp
                     customBackgroundV = yuv.Item3;
                 }
 
-                string t = sb.ToString() + char.MinValue;
+                // .NET Core has an issue with marshalling arrays "ByValArray". The array being passed MUST equal the size
+                // specified in the "SizeConst" field or you will receive an exception. Mono does not have this restriction
+                // and is quite happy to pass an array of a lower size if asked. In order to get around this, I am creating
+                // an array equaling "SizeConst" and copying the contents of the annotation text into it, minus the EOL character.
+                var text = sb.ToString() + char.MinValue;                                
+                var arr = new byte[MMALParametersCamera.MMAL_CAMERA_ANNOTATE_MAX_TEXT_LEN_V3];
+                var bytes = Encoding.ASCII.GetBytes(text);
 
-                var text = Encoding.ASCII.GetBytes(t);
+                Array.Copy(bytes, arr, bytes.Length);
 
                 var strV4 = new MMAL_PARAMETER_CAMERA_ANNOTATE_V4_T(
-                    new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_ANNOTATE, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V4_T>() + t.Length),
+                    new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_ANNOTATE, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V4_T>() + (arr.Length - 1)),
                                                                                                     1, showShutter, showAnalogGain, showLens,
                                                                                                     showCaf, showMotion, showFrame, enableTextBackground,
                                                                                                     customBackgroundColor, customBackgroundY, customBackgroundU, customBackgroundV, 0, customTextColor,
-                                                                                                    customTextY, customTextU, customTextV, textSize, text, (int)justify, xOffset, yOffset);
+                                                                                                    customTextY, customTextU, customTextV, textSize, arr, (int)justify, xOffset, yOffset);
 
-                var ptrV4 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V4_T>());
+                var ptrV4 = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V4_T>() + (arr.Length - 1));
                 Marshal.StructureToPtr(strV4, ptrV4, false);
 
                 try
@@ -337,13 +343,13 @@ namespace MMALSharp
                     MMALLog.Logger.LogWarning("Unable to set V4 annotation structure. Trying V3. Please update firmware to latest version.");
 
                     var str = new MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T(
-                        new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_ANNOTATE, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>() + t.Length),
+                        new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_ANNOTATE, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>() + (arr.Length - 1)),
                         1, showShutter, showAnalogGain, showLens,
                         showCaf, showMotion, showFrame, enableTextBackground,
                         customBackgroundColor, customBackgroundY, customBackgroundU, customBackgroundV, 0, customTextColor,
-                        customTextY, customTextU, customTextV, textSize, text);
+                        customTextY, customTextU, customTextV, textSize, arr);
 
-                    var ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>());
+                    var ptr = Marshal.AllocHGlobal(Marshal.SizeOf<MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T>() + (arr.Length - 1));
                     Marshal.StructureToPtr(str, ptr, false);
 
                     try
