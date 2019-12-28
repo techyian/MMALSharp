@@ -45,8 +45,6 @@ namespace MMALSharp.Common.Utility
         private static void ConfigureLogger(ILoggerFactory factory)
         {
             factory
-                .AddDebug()
-                .AddConsole()
                 .AddNLog()
                 .AddSerilog();
         }        
