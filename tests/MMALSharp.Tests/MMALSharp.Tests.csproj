@@ -1,21 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <AssemblyTitle>MMALSharp.Tests</AssemblyTitle>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <IsPackable>false</IsPackable>
     <AssemblyName>MMALSharp.Tests</AssemblyName>
     <PackageId>MMALSharp.Tests</PackageId>
-    <RootNamespace>MMALSharp.Tests</RootNamespace>
-	  <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies> 
+    <RootNamespace>MMALSharp.Tests</RootNamespace>	
   </PropertyGroup>
   <PropertyGroup>
     <CodeAnalysisRuleSet>..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>   
   <ItemGroup>
-    <Folder Include="Properties\" />
-    <Folder Include="Properties\" />
+    <Folder Include="Properties\" />    
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
