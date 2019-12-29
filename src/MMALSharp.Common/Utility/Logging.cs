@@ -24,7 +24,7 @@ namespace MMALSharp.Common.Utility
         /// <summary>
         /// Responsible for instantiating a new Logger Factory.
         /// </summary>
-        private static ILoggerFactory LoggerFactory
+        public static ILoggerFactory LoggerFactory
         {
             get
             {
