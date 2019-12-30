@@ -52,12 +52,6 @@ namespace MMALSharp.Callbacks
             var eos = buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) ||
                       buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
 
-            if (eos)
-            {
-                // In rapid capture mode, provide the ability to do post-processing once we have a complete frame.
-                this.CaptureHandler?.PostProcess();
-            }
-
             if (eos && this.CaptureHandler?.GetType() == typeof(ImageStreamCaptureHandler))
             {
                 ((ImageStreamCaptureHandler)this.CaptureHandler).NewFile();

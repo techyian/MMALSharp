@@ -77,6 +77,12 @@ namespace MMALSharp.Callbacks
                       buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
 
             this.CaptureHandler?.Process(data, eos);
+
+            if (eos)
+            {
+                // Once we have a full frame, perform any post processing as required.
+                this.CaptureHandler?.PostProcess();
+            }
         }
     }
 }
