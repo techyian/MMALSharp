@@ -12,7 +12,7 @@ namespace MMALSharp.Handlers
     /// <summary>
     /// Experimental FFmpeg specific capture handler.
     /// </summary>
-    public class FFmpegCaptureHandler : IOutputCaptureHandler
+    public class FFmpegCaptureHandler : IOutputCaptureHandler, IVideoCaptureHandler
     {
         private Process _process;
         
@@ -20,7 +20,7 @@ namespace MMALSharp.Handlers
         /// The total size of data that has been processed by this capture handler.
         /// </summary>
         protected int Processed { get; set; }
-        
+                
         /// <summary>
         /// Streams video from the standard output stream via FFmpeg to an RTMP server.
         /// </summary>

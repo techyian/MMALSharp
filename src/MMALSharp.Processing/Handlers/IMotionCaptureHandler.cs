@@ -15,6 +15,11 @@ namespace MMALSharp.Handlers
     public interface IMotionCaptureHandler
     {
         /// <summary>
+        /// The motion type associated with this MotionCaptureHandler.
+        /// </summary>
+        MotionType MotionType { get; set; }
+
+        /// <summary>
         /// Call to enable motion detection.
         /// </summary>
         /// <param name="config">The motion configuration.</param>

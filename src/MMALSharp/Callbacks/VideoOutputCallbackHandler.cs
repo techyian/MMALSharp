@@ -48,9 +48,10 @@ namespace MMALSharp.Callbacks
                 ? MotionType.MotionVector
                 : MotionType.FrameDiff;
 
-            if (handler != null)
+            if (handler != null && handler is IMotionCaptureHandler)
             {
-                handler.MotionType = motionType;
+                var motionHandler = handler as IMotionCaptureHandler;
+                motionHandler.MotionType = motionType;
             }
         }
 
@@ -79,9 +80,10 @@ namespace MMALSharp.Callbacks
                 ? MotionType.MotionVector
                 : MotionType.FrameDiff;
 
-            if (handler != null)
+            if (handler != null && handler is IMotionCaptureHandler)
             {
-                handler.MotionType = motionType;
+                var motionHandler = handler as IMotionCaptureHandler;
+                motionHandler.MotionType = motionType;
             }
         }
 
