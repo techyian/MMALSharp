@@ -23,11 +23,6 @@ namespace MMALSharp.Handlers
         /// </summary>
         public T CurrentStream { get; protected set; }
         
-        /// <summary>
-        /// The total size of data that has been processed by this capture handler.
-        /// </summary>
-        protected int Processed { get; set; }
-
         /// <inheritdoc />
         public override void Process(byte[] data, bool eos)
         {
