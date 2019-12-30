@@ -20,7 +20,10 @@ namespace MMALSharp.Handlers
         private bool _isRecordingMotion;
         private int _bufferSize;
                 
-        private CircularBuffer<byte> Buffer { get; }
+        /// <summary>
+        /// The circular buffer object responsible for storing image data.
+        /// </summary>
+        public CircularBuffer<byte> Buffer { get; }
 
         private bool ShouldDetectMotion { get; set; }
 

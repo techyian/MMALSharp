@@ -346,5 +346,43 @@ namespace MMALSharp.Tests
                 Fixture.CheckAndAssertFilepath(vidCaptureHandler.GetFilepath());
             }
         }
+
+        [Theory]
+        [MemberData(nameof(VideoData.H264Data), MemberType = typeof(VideoData))]
+        public async Task TakeVideoWithCircularBuffer(string extension, MMALEncoding encodingType, MMALEncoding pixelFormat)
+        {
+            TestHelper.BeginTest("TakeVideoWithCircularBuffer", encodingType.EncodingName, pixelFormat.EncodingName);
+            TestHelper.SetConfigurationDefaults();
+            TestHelper.CleanDirectory("/home/pi/videos/tests");
+            
+            using (var circularBufferHandler = new CircularBufferCaptureHandler(4096, "/home/pi/videos/tests", extension))            
+            using (var preview = new MMALVideoRenderer())
+            using (var vidEncoder = new MMALVideoEncoder())
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+
+                var portConfig = new MMALPortConfig(encodingType, pixelFormat, 10, 25000000, null, storeMotionVectors: true);
+
+                vidEncoder.ConfigureOutputPort(portConfig, circularBufferHandler);
+
+                // Create our component pipeline.         
+                Fixture.MMALCamera.Camera.VideoPort
+                    .ConnectTo(vidEncoder);
+                Fixture.MMALCamera.Camera.PreviewPort
+                    .ConnectTo(preview);
+
+                // Camera warm up time
+                await Task.Delay(2000);
+
+                CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+
+                // Record video for 10 seconds
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.VideoPort, cts.Token);
+
+                // Check that the circular buffer has stored some data during the recording operation.
+                Assert.True(circularBufferHandler.Buffer.Size > 0);
+            }
+        }
+
     }
 }
