@@ -11,7 +11,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MMALSharp.Common;
@@ -445,56 +444,6 @@ namespace MMALSharp.Tests
             }
         }
 
-        [Fact]
-        public async Task StripBayerData()
-        {
-            TestHelper.BeginTest("Image - StripBayerData");
-            TestHelper.SetConfigurationDefaults();
-            TestHelper.CleanDirectory("/home/pi/images/tests");
-
-            string filepath = string.Empty;
-            
-            using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "raw"))
-            using (var preview = new MMALNullSinkComponent())
-            using (var imgEncoder = new MMALImageEncoder(true))
-            {
-                Fixture.MMALCamera.ConfigureCameraSettings();
-
-                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, 90);
-
-                imgEncoder.ConfigureOutputPort(portConfig, imgCaptureHandler);
-
-                // Create our component pipeline.         
-                Fixture.MMALCamera.Camera.StillPort
-                    .ConnectTo(imgEncoder);
-                Fixture.MMALCamera.Camera.PreviewPort
-                    .ConnectTo(preview);
-
-                imgCaptureHandler.Manipulate(context =>
-                {
-                    context.StripBayerMetadata(CameraVersion.OV5647);
-                }, new ImageContext(MMALCameraConfig.StillResolution, PixelFormat.Format24bppRgb, false, ImageFormat.Jpeg));
-                
-                // Camera warm up time
-                await Task.Delay(2000);
-                
-                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
-
-                filepath = imgCaptureHandler.GetFilepath();
-            }
-            
-            byte[] meta = new byte[4];
-
-            var array = File.ReadAllBytes(filepath);
-
-            // Uncomment depending on which version of the camera you're using.
-
-            // Array.Copy(array, array.Length - BayerMetaProcessor.BayerMetaLengthV1, meta, 0, 4);
-            Array.Copy(array, array.Length - BayerMetaProcessor.BayerMetaLengthV2, meta, 0, 4);
-
-            Assert.True(Encoding.ASCII.GetString(meta) == "BRCM");
-        }
-        
         [Fact]
         public async Task JpegThumbnail()
         {
