@@ -13,19 +13,76 @@ namespace MMALSharp.Native
 
     public enum MMALBufferProperties
     {
+        /// <summary>
+        /// Signals that the current payload is the end of the stream of data
+        /// </summary>
         MMAL_BUFFER_HEADER_FLAG_EOS = 1 << 0,
+
+        /// <summary>
+        /// Signals that the start of the current payload starts a frame
+        /// </summary>
         MMAL_BUFFER_HEADER_FLAG_FRAME_START = 1 << 1,
+
+        /// <summary>
+        /// Signals that the end of the current payload ends a frame
+        /// </summary>
         MMAL_BUFFER_HEADER_FLAG_FRAME_END = 1 << 2,
+
+        /// <summary>
+        /// Signals that the current payload contains only complete frames (1 or more)
+        /// </summary>
         MMAL_BUFFER_HEADER_FLAG_FRAME = MMAL_BUFFER_HEADER_FLAG_FRAME_START | MMAL_BUFFER_HEADER_FLAG_FRAME_END,
+
+        /// <summary>
+        /// Signals that the current payload is a keyframe (i.e. self decodable)
+        /// </summary>
         MMAL_BUFFER_HEADER_FLAG_KEYFRAME = 1 << 3,
+        
+        /// <summary>
+        /// Signals a discontinuity in the stream of data (e.g. after a seek). Can be used for instance by a decoder to reset its state
+        /// </summary>
         MMAL_BUFFER_HEADER_FLAG_DISCONTINUITY = 1 << 4,
+        
+        /// <summary>
+        /// Signals a buffer containing some kind of config data for the component (e.g. codec config data)
+        /// </summary>
         MMAL_BUFFER_HEADER_FLAG_CONFIG = 1 << 5,
+
+        /// <summary>
+        /// Signals an encrypted payload
+        /// </summary>
         MMAL_BUFFER_HEADER_FLAG_ENCRYPTED = 1 << 6,
+
+        /// <summary>
+        /// Signals a buffer containing side information (e.g. Motion vectors).
+        /// </summary>
         MMAL_BUFFER_HEADER_FLAG_CODECSIDEINFO = 1 << 7,
+
+        /// <summary>
+        /// Signals a buffer which is the snapshot/postview image from a stills capture
+        /// </summary>
         MMAL_BUFFER_HEADER_FLAGS_SNAPSHOT = 1 << 8,
+
+        /// <summary>
+        /// Signals a buffer which contains data known to be corrupted
+        /// </summary>
         MMAL_BUFFER_HEADER_FLAG_CORRUPTED = 1 << 9,
+
+        /// <summary>
+        /// Signals that a buffer failed to be transmitted
+        /// </summary>
         MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED = 1 << 10,
+
+        /// <summary>
+        /// Signals the output buffer won't be used, just update reference frames
+        /// </summary>
         MMAL_BUFFER_HEADER_FLAG_DECODEONLY = 1 << 11,
+
+        /// <summary>
+        /// Signals that the end of the current payload ends a NAL
+        /// </summary>
+        MMAL_BUFFER_HEADER_FLAG_NAL = 1 << 12,
+        
         MMAL_BUFFER_HEADER_FLAG_UNKNOWN = 9998,
         MMAL_BUFFER_HEADER_FLAG_COMPLETEFRAME = 9999,
     }

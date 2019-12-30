@@ -343,6 +343,11 @@ namespace MMALSharp
             {
                 this.Properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
             }
+
+            if (((int)this.Flags & (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_NAL) == (int)MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_NAL)
+            {
+                this.Properties.Add(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_NAL);
+            }
         }
     }
 }

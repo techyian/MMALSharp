@@ -99,7 +99,7 @@ namespace MMALSharp.Ports.Outputs
                 this.BufferSize = Math.Max(this.BufferSizeMin, config.BufferSize > 0 ? config.BufferSize : this.BufferSizeRecommended);
             }
             
-            this.CallbackHandler = new VideoOutputCallbackHandler(this, (IVideoCaptureHandler)handler);
+            this.CallbackHandler = new VideoOutputCallbackHandler(this, (IVideoCaptureHandler)handler, null);
         }
 
         internal override void NativeOutputPortCallback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer)

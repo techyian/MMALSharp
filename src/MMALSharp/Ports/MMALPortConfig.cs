@@ -81,6 +81,11 @@ namespace MMALSharp.Ports
         public Split Split { get; set; }
 
         /// <summary>
+        /// Indicates whether motion vector data should be stored to a separate output stream. Only applies to Video recording.
+        /// </summary>
+        public bool StoreMotionVectors { get; set; }
+
+        /// <summary>
         /// Create a new instance of <see cref="MMALPortConfig"/> with parameters useful for image capture.
         /// </summary>
         /// <param name="encodingType">The encoding type.</param>
@@ -102,7 +107,8 @@ namespace MMALSharp.Ports
         /// <param name="bitrate">The output bitrate.</param>
         /// <param name="timeout">Video record timeout. This is useful if you have multiple video recording streams which you want to stop at different times.</param>
         /// <param name="split">Video split configuration object.</param>
-        public MMALPortConfig(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate, DateTime? timeout, Split split = null)
+        /// <param name="storeMotionVectors">Indicates whether to store motion vectors. Applies to H.264 video encoding.</param>
+        public MMALPortConfig(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate, DateTime? timeout, Split split = null, bool storeMotionVectors = false)
         {
             this.EncodingType = encodingType;
             this.PixelFormat = pixelFormat;
@@ -110,6 +116,7 @@ namespace MMALSharp.Ports
             this.Bitrate = bitrate;
             this.Timeout = timeout;
             this.Split = split;
+            this.StoreMotionVectors = storeMotionVectors;
         }
 
         /// <summary>
@@ -127,8 +134,10 @@ namespace MMALSharp.Ports
         /// <param name="bufferNum">Requested number of buffer headers.</param>
         /// <param name="bufferSize">Requested size of buffer headers.</param>
         /// <param name="crop">The Region of Interest requested.</param>
+        /// <param name="storeMotionVectors">Indicates whether to store motion vectors. Applies to H.264 video encoding.</param>
         public MMALPortConfig(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, int framerate,
-                                int quality, int bitrate, bool zeroCopy, DateTime? timeout, int bufferNum = 0, int bufferSize = 0, Rectangle? crop = null)
+                                int quality, int bitrate, bool zeroCopy, DateTime? timeout, int bufferNum = 0, int bufferSize = 0, Rectangle? crop = null,
+                                bool storeMotionVectors = false)
         {
             this.EncodingType = encodingType;
             this.PixelFormat = pixelFormat;
@@ -142,6 +151,7 @@ namespace MMALSharp.Ports
             this.BufferNum = bufferNum;
             this.BufferSize = bufferSize;
             this.Crop = crop;
+            this.StoreMotionVectors = storeMotionVectors;
         }
     }
 }
