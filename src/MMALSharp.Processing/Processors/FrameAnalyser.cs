@@ -49,7 +49,7 @@ namespace MMALSharp.Processors
         {
             if (this.FullFrame)
             {
-                MMALLog.Logger.LogInformation("Clearing frame");
+                MMALLog.Logger.LogDebug("Clearing frame");
                 this.WorkingData.Clear();
                 this.FullFrame = false;
             }
