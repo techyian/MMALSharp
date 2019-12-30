@@ -66,7 +66,7 @@ namespace MMALSharp.Tests
 
                 CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
 
-                // Record video for 20 seconds
+                // Record video for 15 seconds
                 await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.VideoPort, cts.Token);
 
                 Fixture.CheckAndAssertFilepath(vidCaptureHandler.GetFilepath());
@@ -301,6 +301,49 @@ namespace MMALSharp.Tests
                 Assert.True(vidEncoder2.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT601.EncodingVal);
                 Assert.True(vidEncoder3.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT601.EncodingVal);
                 Assert.True(vidEncoder4.Outputs[0].VideoColorSpace.EncodingVal == MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT601.EncodingVal);
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(VideoData.Data), MemberType = typeof(VideoData))]
+        public async Task TakeVideoAndStoreMotionVectors(string extension, MMALEncoding encodingType, MMALEncoding pixelFormat)
+        {
+            TestHelper.BeginTest("TakeVideoAndStoreMotionVectors", encodingType.EncodingName, pixelFormat.EncodingName);
+            TestHelper.SetConfigurationDefaults();
+            TestHelper.CleanDirectory("/home/pi/videos/tests");
+
+            // Ensure inline motion vectors are enabled.
+            MMALCameraConfig.InlineMotionVectors = true;
+
+            using (var motionVectorStore = File.Create("/home/pi/videos/tests/motion.dat"))
+            using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests", extension))
+            using (var preview = new MMALVideoRenderer())
+            using (var vidEncoder = new MMALVideoEncoder())
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+
+                var portConfig = new MMALPortConfig(encodingType, pixelFormat, 10, 25000000, null, storeMotionVectors: true);
+
+                vidEncoder.ConfigureOutputPort(portConfig, vidCaptureHandler);
+
+                // Initialise the motion vector stream.
+                vidCaptureHandler.InitialiseMotionStore(motionVectorStore);
+
+                // Create our component pipeline.         
+                Fixture.MMALCamera.Camera.VideoPort
+                    .ConnectTo(vidEncoder);
+                Fixture.MMALCamera.Camera.PreviewPort
+                    .ConnectTo(preview);
+
+                // Camera warm up time
+                await Task.Delay(2000);
+
+                CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+
+                // Record video for 10 seconds
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.VideoPort, cts.Token);
+
+                Fixture.CheckAndAssertFilepath(vidCaptureHandler.GetFilepath());
             }
         }
     }

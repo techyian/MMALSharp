@@ -39,6 +39,7 @@ namespace MMALSharp.Tests
             MMALCameraConfig.StillEncoding = MMALEncoding.OPAQUE;
             MMALCameraConfig.StillSubFormat = MMALEncoding.I420;
             MMALCameraConfig.VideoColorSpace = MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT709;
+            MMALCameraConfig.InlineMotionVectors = false;
         }
 
         public static void CleanDirectory(string directory)
