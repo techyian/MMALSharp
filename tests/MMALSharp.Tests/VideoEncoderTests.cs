@@ -305,7 +305,7 @@ namespace MMALSharp.Tests
         }
 
         [Theory]
-        [MemberData(nameof(VideoData.Data), MemberType = typeof(VideoData))]
+        [MemberData(nameof(VideoData.H264Data), MemberType = typeof(VideoData))]
         public async Task TakeVideoAndStoreMotionVectors(string extension, MMALEncoding encodingType, MMALEncoding pixelFormat)
         {
             TestHelper.BeginTest("TakeVideoAndStoreMotionVectors", encodingType.EncodingName, pixelFormat.EncodingName);
