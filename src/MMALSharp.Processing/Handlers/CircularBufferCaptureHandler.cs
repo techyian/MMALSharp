@@ -24,14 +24,12 @@ namespace MMALSharp.Handlers
 
         private bool ShouldDetectMotion { get; set; }
 
-        private FileStream MotionRecording { get; set; }
-
         private Stopwatch RecordingElapsed { get; set; }
 
         private IFrameAnalyser Analyser { get; set; }
 
         private MotionConfig Config { get; set; }
-
+                
         /// <summary>
         /// Creates a new instance of the <see cref="CircularBufferCaptureHandler"/> class with the specified Circular buffer capacity and directory/extension of the working file.
         /// </summary>
@@ -71,7 +69,7 @@ namespace MMALSharp.Handlers
             }
             else
             {
-                this.MotionRecording.Write(data, 0, data.Length);
+                this.CurrentStream.Write(data, 0, data.Length);
                 this.Processed += data.Length;
             }
 
@@ -103,18 +101,15 @@ namespace MMALSharp.Handlers
         }
 
         /// <summary>
-        /// Call to start recording to a new file in the specified directory.
-        /// </summary>
-        /// <param name="directory">The directory to store in.</param>
-        /// <param name="extension">The file extension.</param>
-        public void StartRecording(string directory, string extension)
+        /// Call to start recording.
+        /// </summary>        
+        public void StartRecording()
         {
-            _isRecordingMotion = true;
-            this.MotionRecording = File.Create(this.ProvideFilename(directory, extension));
+            _isRecordingMotion = true;            
             this.RecordingElapsed = new Stopwatch();
             this.RecordingElapsed.Start();
             
-            this.MotionRecording.Write(this.Buffer.ToArray(), 0, this.Buffer.Size);
+            this.CurrentStream.Write(this.Buffer.ToArray(), 0, this.Buffer.Size);
             this.Processed += this.Buffer.Size;
         }
 
@@ -123,7 +118,7 @@ namespace MMALSharp.Handlers
         {
             if (this.ShouldDetectMotion)
             {
-                this.MotionRecording?.Dispose();
+                this.CurrentStream?.Dispose();
             }
         }
 
