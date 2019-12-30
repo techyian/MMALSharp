@@ -31,10 +31,26 @@ Pre-release builds can be found on [MyGet](https://www.myget.org/gallery/mmalsha
 
 For v0.6, MMALSharp now uses `Microsoft.Extensions.Logging.Abstractions` to provide package agnostic logging. If you want to enable logging, you must provide the `ILoggerFactory` 
 instance your client application is using. For .NET Core applications, this will typically be done during dependency injection configuration. For more information, please
-see [here](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-3.1). The `ILoggerFactory` instance should be set before carrying out any MMALSharp
-specific operations.
+see [here](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-3.1). 
 
-`MMALLog.LoggerFactory = myLoggerFactory;`
+Below is an example on how to configure NLog in a .NET Core 3.0+ console app. Note: the `ILoggerFactory` instance should be set before carrying out any MMALSharp specific operations:
+
+```
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+
+	builder                
+	.ClearProviders()
+	.SetMinimumLevel(LogLevel.Trace)                
+	.AddNLog("NLog.config");
+});
+
+MMALLog.LoggerFactory = loggerFactory;
+
+```
+
+Also see [here](https://github.com/NLog/NLog/wiki/Getting-started-with-.NET-Core-2---Console-application) for full NLog integration instructions.
+
 
 ## Basic Examples
 
