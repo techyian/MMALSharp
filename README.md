@@ -27,6 +27,15 @@ PM> Install-Package MMALSharp.FFmpeg
 
 Pre-release builds can be found on [MyGet](https://www.myget.org/gallery/mmalsharp):
 
+## Logging configuration
+
+For v0.6, MMALSharp now uses `Microsoft.Extensions.Logging.Abstractions` to provide package agnostic logging. If you want to enable logging, you must provide the `ILoggerFactory` 
+instance your client application is using. For .NET Core applications, this will typically be done during dependency injection configuration. For more information, please
+see [here](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-3.1). The `ILoggerFactory` instance should be set before carrying out any MMALSharp
+specific operations.
+
+`MMALLog.LoggerFactory = myLoggerFactory;`
+
 ## Basic Examples
 
 Take a JPEG image using YUV420 encoding:

@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -434,20 +433,7 @@ namespace MMALSharp
         /// <returns>The created <see cref="MMALOverlayRenderer"/> object.</returns>
         public MMALOverlayRenderer AddOverlay(MMALVideoRenderer parent, PreviewOverlayConfiguration config, byte[] source)
             => new MMALOverlayRenderer(parent, config, source);
-
-        /// <summary>
-        /// Call to process inline motion vectors to the stream passed in.
-        /// </summary>
-        /// <param name="handler">The motion vector capture handler.</param>
-        /// <param name="stream">The stream to write to.</param>
-        /// <returns>The camera instance.</returns>
-        public MMALCamera StoreMotionVectors(IMotionVectorCaptureHandler handler, FileStream stream)
-        {
-            MMALCameraConfig.InlineMotionVectors = true;
-            handler.InitialiseMotionStore(stream);
-            return this;
-        }
-
+        
         /// <summary>
         /// Call to enable motion detection.
         /// </summary>

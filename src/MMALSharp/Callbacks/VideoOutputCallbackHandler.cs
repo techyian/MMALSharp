@@ -37,11 +37,23 @@ namespace MMALSharp.Callbacks
         private bool PrepareSplit { get; set; }
 
         /// <summary>
+        /// Property to indicate whether we should store motion vectors when processing image frames. 
+        /// Motion vector data will be present when the buffer header equals "MMAL_BUFFER_HEADER_FLAG_CODECSIDEINFO".
+        /// </summary>
+        private bool StoreMotionVectors { get; }
+
+        /// <summary>
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IOutputPort"/>.</param>
         /// <param name="handler">The output port capture handler.</param>
-        public VideoOutputCallbackHandler(IVideoPort port, IVideoCaptureHandler handler) 
+        /// <param name="split">Configure to split into multiple files.</param>
+        /// <param name="storeMotionVectors">Indicates whether we should store motion vectors.</param>
+        public VideoOutputCallbackHandler(
+            IVideoPort port, 
+            IVideoCaptureHandler handler, 
+            Split split, 
+            bool storeMotionVectors = false) 
             : base(port, handler)
         {
             var motionType = this.WorkingPort.EncodingType == MMALEncoding.H264
@@ -53,27 +65,25 @@ namespace MMALSharp.Callbacks
                 var motionHandler = handler as IMotionCaptureHandler;
                 motionHandler.MotionType = motionType;
             }
-        }
 
-        /// <summary>
-        /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
-        /// </summary>
-        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
-        /// <param name="handler">The output port capture handler.</param>
-        /// <param name="split">Configure to split into multiple files.</param>
-        public VideoOutputCallbackHandler(IVideoPort port, Split split, IVideoCaptureHandler handler)
-            : this(port, handler)
-        {
             this.Split = split;
+            this.StoreMotionVectors = storeMotionVectors;
         }
-
+        
         /// <summary>
         /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
         /// </summary>
         /// <param name="port">The working <see cref="IOutputPort"/>.</param>
         /// <param name="handler">The output port capture handler.</param>
         /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        public VideoOutputCallbackHandler(IVideoPort port, IVideoCaptureHandler handler, MMALEncoding encoding)
+        /// <param name="split">Configure to split into multiple files.</param>
+        /// <param name="storeMotionVectors">Indicates whether we should store motion vectors.</param>
+        public VideoOutputCallbackHandler(
+            IVideoPort port, 
+            IVideoCaptureHandler handler, 
+            MMALEncoding encoding,
+            Split split,
+            bool storeMotionVectors = false)
             : base(port, handler, encoding)
         {
             var motionType = this.WorkingPort.EncodingType == MMALEncoding.H264
@@ -85,19 +95,9 @@ namespace MMALSharp.Callbacks
                 var motionHandler = handler as IMotionCaptureHandler;
                 motionHandler.MotionType = motionType;
             }
-        }
 
-        /// <summary>
-        /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
-        /// </summary>
-        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
-        /// <param name="handler">The output port capture handler.</param>
-        /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        /// <param name="split">Configure to split into multiple files.</param>
-        public VideoOutputCallbackHandler(IVideoPort port, IVideoCaptureHandler handler, MMALEncoding encoding, Split split)
-            : this(port, handler, encoding)
-        {
             this.Split = split;
+            this.StoreMotionVectors = storeMotionVectors;
         }
 
         /// <summary>
@@ -129,8 +129,22 @@ namespace MMALSharp.Callbacks
                     this.WorkingPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_REQUEST_I_FRAME, true);
                 }
             }
-            
-            base.Callback(buffer);
+
+            if (this.StoreMotionVectors && buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CODECSIDEINFO))
+            {
+                // This is data containing Motion vectors. Check if the capture handler supports storing motion vectors.
+                if (this.CaptureHandler is IMotionVectorCaptureHandler)
+                {
+                    var handler = this.CaptureHandler as IMotionVectorCaptureHandler;
+                    handler.ProcessMotionVectors(buffer.GetBufferData());
+                }
+            }
+            else
+            {
+                // If user has requested to store motion vectors separately, do not store the motion vector data in the same file
+                // as image frame data.
+                base.Callback(buffer);
+            }
         }
 
         private DateTime CalculateSplit()

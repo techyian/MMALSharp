@@ -21,7 +21,7 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// The data store for motion vectors.
         /// </summary>
-        protected FileStream MotionVectorStore { get; set; }
+        protected Stream MotionVectorStore { get; set; }
 
         /// <summary>
         /// Creates a new instance of the <see cref="VideoStreamCaptureHandler"/> class with the specified directory and filename extension.
@@ -42,25 +42,33 @@ namespace MMALSharp.Handlers
         /// Splits the current file by closing the current stream and opening a new one.
         /// </summary>
         public void Split() => this.NewFile();
-
-        /// <inheritdoc />
-        public override void Process(byte[] data, bool eos)
-        {
-            base.Process(data, eos);
-
-            if (this.MotionType == MotionType.MotionVector && this.MotionVectorStore != null)
-            {
-                // TODO: Process inline motion vector to FileStream.
-            }
-        }
-
+        
         /// <summary>
         /// Used to set the current working motion vector store.
         /// </summary>
         /// <param name="stream">The <see cref="FileStream"/> to write to.</param>
-        public void InitialiseMotionStore(FileStream stream)
+        public void InitialiseMotionStore(Stream stream)
         {
             this.MotionVectorStore = stream;
+        }
+
+        /// <summary>
+        /// Responsible for storing the motion vector data to an output stream.
+        /// </summary>
+        /// <param name="data">The byte array containing the motion vector data.</param>
+        public void ProcessMotionVectors(byte[] data)
+        {
+            if (this.MotionVectorStore != null)
+            {
+                if (this.MotionVectorStore.CanWrite)
+                {
+                    this.MotionVectorStore.Write(data, 0, data.Length);
+                }
+                else
+                {
+                    throw new IOException("Stream not writable.");
+                }                    
+            }
         }
     }
 }

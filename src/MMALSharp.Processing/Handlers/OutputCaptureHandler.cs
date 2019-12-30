@@ -34,7 +34,12 @@ namespace MMALSharp.Handlers
 
         /// <inheritdoc />
         public abstract string TotalProcessed();
-        
+
+        /// <summary>
+        /// The total amount of data that has been processed by this capture handler.
+        /// </summary>
+        protected int Processed { get; set; }
+
         /// <summary>
         /// Processes the data passed into this method to this class' Stream instance.
         /// </summary>

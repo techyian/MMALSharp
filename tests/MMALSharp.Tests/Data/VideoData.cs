@@ -9,6 +9,30 @@ namespace MMALSharp.Tests
 {
     public class VideoData
     {
+        public static IEnumerable<object[]> H264Data
+        {
+            get
+            {
+                var list = new List<object[]>();
+
+                list.AddRange(TestBase.H264EncoderData);
+
+                return list;
+            }
+        }
+
+        public static IEnumerable<object[]> MJPEGData
+        {
+            get
+            {
+                var list = new List<object[]>();
+
+                list.AddRange(TestBase.MjpegEncoderData);
+
+                return list;
+            }
+        }
+
         public static IEnumerable<object[]> Data
         {
             get

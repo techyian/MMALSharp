@@ -15,57 +15,65 @@ namespace MMALSharp.Handlers
     /// <summary>
     /// Represents a capture handler working as a circular buffer.
     /// </summary>
-    public sealed class CircularBufferCaptureHandler : OutputCaptureHandler, IMotionCaptureHandler, IVideoCaptureHandler
+    public sealed class CircularBufferCaptureHandler : VideoStreamCaptureHandler, IMotionCaptureHandler
     {
         private bool _isRecordingMotion;
         private int _bufferSize;
-        private int _currentIndex;
-
+                
         /// <summary>
-        /// The motion detection type.
+        /// The circular buffer object responsible for storing image data.
         /// </summary>
-        public MotionType MotionType { get; set; }
-        
-        private byte[] Buffer { get; }
+        public CircularBuffer<byte> Buffer { get; }
 
         private bool ShouldDetectMotion { get; set; }
-
-        private FileStream MotionRecording { get; set; }
 
         private Stopwatch RecordingElapsed { get; set; }
 
         private IFrameAnalyser Analyser { get; set; }
 
         private MotionConfig Config { get; set; }
-
+                
         /// <summary>
-        /// Creates a new instance of <see cref="CircularBufferCaptureHandler"/>.
+        /// Creates a new instance of the <see cref="CircularBufferCaptureHandler"/> class with the specified Circular buffer capacity and directory/extension of the working file.
         /// </summary>
         /// <param name="bufferSize">The buffer's size.</param>
-        public CircularBufferCaptureHandler(int bufferSize)
+        /// <param name="directory">The directory to save captured videos.</param>
+        /// <param name="extension">The filename extension for saving files.</param>
+        public CircularBufferCaptureHandler(int bufferSize, string directory, string extension)
+            : base(directory, extension) 
         {
             _bufferSize = bufferSize;
-            this.Buffer = new byte[bufferSize];
+            this.Buffer = new CircularBuffer<byte>(bufferSize);
         }
 
-        /// <inheritdoc />
-        public void Split()
+        /// <summary>
+        /// Creates a new instance of the <see cref="CircularBufferCaptureHandler"/> class with the specified Circular buffer capacity and working file path.
+        /// </summary>
+        /// <param name="bufferSize">The buffer's size.</param>
+        /// <param name="fullPath">The absolute full path to save captured data to.</param>
+        public CircularBufferCaptureHandler(int bufferSize, string fullPath)
+            : base(fullPath) 
         {
-            throw new NotImplementedException();
+            _bufferSize = bufferSize;
+            this.Buffer = new CircularBuffer<byte>(bufferSize);
         }
-
+       
         /// <inheritdoc />
         public override void Process(byte[] data, bool eos)
         {
             if (!_isRecordingMotion)
             {
-                var length = (data.Length + _currentIndex > _bufferSize) ? _bufferSize - _currentIndex : data.Length;
-                Array.Copy(data, 0, this.Buffer, length, _currentIndex);
+                for (var i = 0; i < data.Length; i++)
+                {
+                    this.Buffer.PushBack(data[i]);
+                }
+
                 this.CheckRecordingProgress();
             }
             else
             {
-                this.MotionRecording.Write(data, 0, data.Length);
+                this.CurrentStream.Write(data, 0, data.Length);
+                this.Processed += data.Length;
             }
 
             if (this.ShouldDetectMotion && !_isRecordingMotion)
@@ -96,17 +104,16 @@ namespace MMALSharp.Handlers
         }
 
         /// <summary>
-        /// Call to start recording to a new file in the specified directory.
-        /// </summary>
-        /// <param name="directory">The directory to store in.</param>
-        /// <param name="extension">The file extension.</param>
-        public void StartRecording(string directory, string extension)
+        /// Call to start recording.
+        /// </summary>        
+        public void StartRecording()
         {
-            _isRecordingMotion = true;
-            this.MotionRecording = File.Create(this.ProvideFilename(directory, extension));
+            _isRecordingMotion = true;            
             this.RecordingElapsed = new Stopwatch();
             this.RecordingElapsed.Start();
-            this.MotionRecording.Write(this.Buffer, 0, this.Buffer.Length);
+            
+            this.CurrentStream.Write(this.Buffer.ToArray(), 0, this.Buffer.Size);
+            this.Processed += this.Buffer.Size;
         }
 
         /// <inheritdoc />
@@ -114,14 +121,14 @@ namespace MMALSharp.Handlers
         {
             if (this.ShouldDetectMotion)
             {
-                this.MotionRecording?.Dispose();
+                this.CurrentStream?.Dispose();
             }
         }
 
         /// <inheritdoc />
         public override string TotalProcessed()
         {
-            throw new NotImplementedException();
+            return $"{this.Processed}";
         }
 
         private void CheckRecordingProgress()
