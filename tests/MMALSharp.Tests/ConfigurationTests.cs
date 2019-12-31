@@ -312,5 +312,43 @@ namespace MMALSharp.Tests
             Fixture.MMALCamera.ConfigureCameraSettings();
             Assert.True(Fixture.MMALCamera.Camera.GetStatsPass() == statsPass);
         }
+
+        [Theory]
+        [InlineData(1500000)]
+        [InlineData(6500000)]        
+        [MMALTestsAttribute]
+        public void SetThenGetFramerateRange(int shutterSpeed)
+        {
+            MMALCameraConfig.ShutterSpeed = shutterSpeed;
+
+            Fixture.MMALCamera.ConfigureCameraSettings();
+
+            var previewRange = Fixture.MMALCamera.Camera.PreviewPort.GetFramerateRange();
+            var videoRange = Fixture.MMALCamera.Camera.VideoPort.GetFramerateRange();
+            var stillRange = Fixture.MMALCamera.Camera.StillPort.GetFramerateRange();
+
+            if (shutterSpeed > 6000000)
+            {
+                Assert.True(Math.Round(((double)previewRange.FpsLow.Num / previewRange.FpsLow.Den) * 1000) == 50);
+                Assert.True(Math.Round(((double)previewRange.FpsHigh.Num / previewRange.FpsHigh.Den) * 1000) == 166);
+
+                Assert.True(Math.Round(((double)videoRange.FpsLow.Num / videoRange.FpsLow.Den) * 1000) == 50);
+                Assert.True(Math.Round(((double)videoRange.FpsHigh.Num / videoRange.FpsHigh.Den) * 1000) == 166);
+
+                Assert.True(Math.Round(((double)stillRange.FpsLow.Num / stillRange.FpsLow.Den) * 1000) == 50);
+                Assert.True(Math.Round(((double)stillRange.FpsHigh.Num / stillRange.FpsHigh.Den) * 1000) == 166);
+            }
+            else if (shutterSpeed > 1000000)
+            {
+                Assert.True(Math.Round(((double)previewRange.FpsLow.Num / previewRange.FpsLow.Den) * 1000) == 166);
+                Assert.True(Math.Round(((double)previewRange.FpsHigh.Num / previewRange.FpsHigh.Den) * 1000) == 999);
+
+                Assert.True(Math.Round(((double)videoRange.FpsLow.Num / videoRange.FpsLow.Den) * 1000) == 167);
+                Assert.True(Math.Round(((double)videoRange.FpsHigh.Num / videoRange.FpsHigh.Den) * 1000) == 999);
+
+                Assert.True(Math.Round(((double)stillRange.FpsLow.Num / stillRange.FpsLow.Den) * 1000) == 167);
+                Assert.True(Math.Round(((double)stillRange.FpsHigh.Num / stillRange.FpsHigh.Den) * 1000) == 999);
+            }            
+        }
     }
 }
