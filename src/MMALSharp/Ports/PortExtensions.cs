@@ -16,6 +16,7 @@ using static MMALSharp.Native.MMALParametersCamera;
 
 namespace MMALSharp
 {
+#pragma warning disable SA1202 // Public methods before Internal
     /// <summary>
     /// Provides extension methods to obtain and change the configuration of a port.
     /// </summary>
@@ -253,5 +254,33 @@ namespace MMALSharp
 
             return newFirmware == 1;
         }
+
+        /// <summary>
+        /// Retrieves the currently configured framerate range for a given port.
+        /// </summary>
+        /// <param name="port">The port.</param>
+        /// <returns>A <see cref="MMAL_PARAMETER_FPS_RANGE_T"/> structure containing the configured framerate range.</returns>
+        public static unsafe MMAL_PARAMETER_FPS_RANGE_T GetFramerateRange(this IPort port)
+        {
+            var str = new MMAL_PARAMETER_FPS_RANGE_T(
+                    new MMAL_PARAMETER_HEADER_T(
+                        MMALParametersCamera.MMAL_PARAMETER_FPS_RANGE,
+                        Marshal.SizeOf<MMAL_PARAMETER_FPS_RANGE_T>()), default(MMAL_RATIONAL_T), default(MMAL_RATIONAL_T));
+
+            MMALCheck(MMALPort.mmal_port_parameter_get(port.Ptr, &str.Hdr), "Unable to get framerate range for port.");
+
+            return str;
+        }
+
+        internal static unsafe void SetFramerateRange(this IPort port, MMAL_RATIONAL_T fpsLow, MMAL_RATIONAL_T fpsHigh)
+        {
+            var str = new MMAL_PARAMETER_FPS_RANGE_T(
+                    new MMAL_PARAMETER_HEADER_T(
+                        MMALParametersCamera.MMAL_PARAMETER_FPS_RANGE,
+                        Marshal.SizeOf<MMAL_PARAMETER_FPS_RANGE_T>()), fpsLow, fpsHigh);
+
+            MMALCheck(MMALPort.mmal_port_parameter_set(port.Ptr, &str.Hdr), "Unable to set framerate range for port.");
+        }
     }
 }
+#pragma warning restore SA1202 // Public methods before Internal

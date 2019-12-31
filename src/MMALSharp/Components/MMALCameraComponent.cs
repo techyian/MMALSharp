@@ -216,7 +216,7 @@ namespace MMALSharp.Components
         {
             this.CameraInfo = new MMALCameraInfoComponent();
         }
-        
+                
         /// <summary>
         /// Initialises the camera's preview component using the user defined width/height for the video port.
         /// </summary>
@@ -229,6 +229,16 @@ namespace MMALSharp.Components
             MMALLog.Logger.LogDebug("Commit preview");
 
             this.PreviewPort.Configure(portConfig, null, null);
+
+            // Use Raspistill values.
+            if (MMALCameraConfig.ShutterSpeed > 6000000)
+            {
+                this.PreviewPort.SetFramerateRange(new MMAL_RATIONAL_T(50, 1000), new MMAL_RATIONAL_T(166, 1000));
+            }
+            else if (MMALCameraConfig.ShutterSpeed > 1000000)
+            {
+                this.PreviewPort.SetFramerateRange(new MMAL_RATIONAL_T(166, 1000), new MMAL_RATIONAL_T(999, 1000));
+            }
         }
 
         /// <summary>
@@ -260,6 +270,16 @@ namespace MMALSharp.Components
             MMALLog.Logger.LogDebug("Commit video");
 
             this.VideoPort.Configure(portConfig, null, handler);
+
+            // Use Raspistill values.
+            if (MMALCameraConfig.ShutterSpeed > 6000000)
+            {
+                this.VideoPort.SetFramerateRange(new MMAL_RATIONAL_T(50, 1000), new MMAL_RATIONAL_T(166, 1000));
+            }
+            else if (MMALCameraConfig.ShutterSpeed > 1000000)
+            {
+                this.VideoPort.SetFramerateRange(new MMAL_RATIONAL_T(167, 1000), new MMAL_RATIONAL_T(999, 1000));
+            }
         }
 
         /// <summary>
@@ -327,6 +347,16 @@ namespace MMALSharp.Components
             
             MMALLog.Logger.LogDebug("Commit still");
             this.StillPort.Configure(portConfig, null, handler);
+
+            // Use Raspistill values.
+            if (MMALCameraConfig.ShutterSpeed > 6000000)
+            {
+                this.StillPort.SetFramerateRange(new MMAL_RATIONAL_T(50, 1000), new MMAL_RATIONAL_T(166, 1000));
+            }
+            else if (MMALCameraConfig.ShutterSpeed > 1000000)
+            {
+                this.StillPort.SetFramerateRange(new MMAL_RATIONAL_T(167, 1000), new MMAL_RATIONAL_T(999, 1000));
+            }
         }
 
         private void SetCameraParameters()
