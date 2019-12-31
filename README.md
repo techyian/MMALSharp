@@ -35,7 +35,7 @@ see [here](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?vi
 
 Below is an example on how to configure NLog in a .NET Core 3.0+ console app. Note: the `ILoggerFactory` instance should be set before carrying out any MMALSharp specific operations:
 
-```
+```csharp
 var loggerFactory = LoggerFactory.Create(builder =>
 {
 
@@ -46,7 +46,6 @@ var loggerFactory = LoggerFactory.Create(builder =>
 });
 
 MMALLog.LoggerFactory = loggerFactory;
-
 ```
 
 Also see [here](https://github.com/NLog/NLog/wiki/Getting-started-with-.NET-Core-2---Console-application) for full NLog integration instructions.
