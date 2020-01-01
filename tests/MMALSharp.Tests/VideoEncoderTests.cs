@@ -8,6 +8,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using MMALSharp.Components;
+using MMALSharp.Config;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
@@ -87,8 +88,14 @@ namespace MMALSharp.Tests
             using (var vidEncoder = new MMALVideoEncoder())
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
+                                
+                var split = new Split
+                {
+                    Mode = TimelapseMode.Second,
+                    Value = 15
+                };
 
-                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, 25000000, null);
+                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, 25000000, null, split);
 
                 vidEncoder.ConfigureOutputPort(portConfig, vidCaptureHandler);
 

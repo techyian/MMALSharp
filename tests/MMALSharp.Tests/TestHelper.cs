@@ -40,6 +40,8 @@ namespace MMALSharp.Tests
             MMALCameraConfig.StillSubFormat = MMALEncoding.I420;
             MMALCameraConfig.VideoColorSpace = MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT709;
             MMALCameraConfig.InlineMotionVectors = false;
+            MMALCameraConfig.StillResolution = Resolution.As03MPixel;
+            MMALCameraConfig.VideoResolution = Resolution.As03MPixel;
         }
 
         public static void CleanDirectory(string directory)
