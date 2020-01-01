@@ -4,6 +4,7 @@ using MMALSharp.Components;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
+using MMALSharp.Ports.Outputs;
 using Xunit;
 
 namespace MMALSharp.Tests
@@ -73,12 +74,13 @@ namespace MMALSharp.Tests
             using (var outputCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/", "raw"))
             using (var imgDecoder = new MMALImageDecoder())
             {
-                var inputConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.RGB24, 2560, 1920, 0, 0, 0, true, null);
-                var outputConfig = new MMALPortConfig(MMALEncoding.I420, null, 2560, 1920, 0, 0, 0, true, null);
+                // We do not pass the resolution to the input port. Doing so will cause a MMAL exception.
+                var inputConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.RGB24, 0, 0, 0, 0, 0, true, null);
+                var outputConfig = new MMALPortConfig(MMALEncoding.I420, null, 640, 480, 0, 0, 0, true, null);
 
                 // Create our component pipeline.
                 imgDecoder.ConfigureInputPort(inputConfig, inputCaptureHandler)
-                    .ConfigureOutputPort(outputConfig, outputCaptureHandler);
+                    .ConfigureOutputPort<FileEncodeOutputPort>(0, outputConfig, outputCaptureHandler);
 
                 await Fixture.MMALStandalone.ProcessAsync(imgDecoder);
                 
@@ -93,8 +95,8 @@ namespace MMALSharp.Tests
             using (var outputCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/", "bmp"))
             using (var imgEncoder = new MMALImageEncoder())
             {
-                var inputConfig = new MMALPortConfig(MMALEncoding.I420, null, 2560, 1920, 0, 0, 0, true, null);
-                var outputConfig = new MMALPortConfig(MMALEncoding.BMP, MMALEncoding.I420, 2560, 1920, 0, 0, 0, true, null);
+                var inputConfig = new MMALPortConfig(MMALEncoding.I420, null, 640, 480, 0, 0, 0, true, null);
+                var outputConfig = new MMALPortConfig(MMALEncoding.BMP, MMALEncoding.I420, 640, 480, 0, 0, 0, true, null);
 
                 imgEncoder.ConfigureInputPort(inputConfig, inputCaptureHandler)
                     .ConfigureOutputPort(outputConfig, outputCaptureHandler);
