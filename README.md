@@ -107,7 +107,7 @@ For full installation instructions for Mono and .NET Core, including configurati
 
 MIT license 
 
-Copyright (c) 2016-2019 Ian Auty
+Copyright (c) 2016-2020 Ian Auty
 
 Raspberry Pi is a trademark of the Raspberry Pi Foundation
 
