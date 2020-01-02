@@ -40,7 +40,10 @@ namespace MMALSharp.Handlers
             this.WorkingData.AddRange(data);
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Allows us to do any further processing once the capture method has completed. Note: It is the user's responsibility to 
+        /// clear the WorkingData list after processing is complete.
+        /// </summary>
         public override void PostProcess()
         {
             if (this.OnManipulate != null && this.ImageContext != null)
