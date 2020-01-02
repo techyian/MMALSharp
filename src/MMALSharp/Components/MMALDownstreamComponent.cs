@@ -41,7 +41,9 @@ namespace MMALSharp.Components
         /// Call to configure changes on a downstream component input port.
         /// </summary>
         /// <param name="config">User provided port configuration object.</param>
-        /// <param name="handler">The input port capture handler.</param>
+        /// <param name="handler">The input port capture handler. This will be non-null if this port's component is the 1st component in the 
+        /// pipeline and you are feeding data to it directly from a <see cref="IInputCaptureHandler"/>. If this port is connected to by another component then leave this parameter null.
+        /// </param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IInputCaptureHandler handler)
         {
@@ -54,7 +56,9 @@ namespace MMALSharp.Components
         /// </summary>
         /// <param name="config">User provided port configuration object.</param>
         /// <param name="copyPort">The output port we are copying format data from.</param>
-        /// <param name="handler">The input port capture handler.</param>
+        /// <param name="handler">The input port capture handler. This will be non-null if this port's component is the 1st component in the 
+        /// pipeline and you are feeding data to it directly from a <see cref="IInputCaptureHandler"/>. If this port is connected to by another component then leave this parameter null.
+        /// </param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
         public virtual unsafe IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler)
         {
