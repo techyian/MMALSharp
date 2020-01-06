@@ -381,6 +381,7 @@ namespace MMALSharp.Components
             this.SetDRC(MMALCameraConfig.DrcLevel);
             this.SetFlips(MMALCameraConfig.Flips);
             this.SetZoom(MMALCameraConfig.ROI);
+            this.SetBurstMode(MMALCameraConfig.StillBurstMode);
         }
     }
 }

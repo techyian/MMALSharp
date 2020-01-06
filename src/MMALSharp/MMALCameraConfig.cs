@@ -268,5 +268,11 @@ namespace MMALSharp
         /// The frame rate to use for Still captures.
         /// </summary>
         public static MMAL_RATIONAL_T StillFramerate { get; set; } = new MMAL_RATIONAL_T(0, 1);
+
+        /// <summary>
+        /// Indicates whether the camera's still port should feature Burst Mode, i.e. MMAL_PARAMETER_CAMERA_BURST_CAPTURE.
+        /// When enabled, burst mode will increase the rate at which images are taken, at the expense of quality.
+        /// </summary>
+        public static bool StillBurstMode { get; set; }
     }
 }

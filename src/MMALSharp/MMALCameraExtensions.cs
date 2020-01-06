@@ -1027,6 +1027,21 @@ namespace MMALSharp
         {
             camera.Control.SetParameter(MMAL_PARAMETER_CAPTURE_STATS_PASS, statsPass);
         }
+
+        /// <summary>
+        /// Gets whether the camera's still port has burst mode enabled.
+        /// </summary>
+        /// <param name="camera">The camera component.</param>
+        /// <returns>True if burst mode is enabled.</returns>
+        public static bool GetBurstMode(this MMALCameraComponent camera)
+        {
+            return camera.StillPort.GetParameter(MMAL_PARAMETER_CAMERA_BURST_CAPTURE);
+        }
+
+        internal static void SetBurstMode(this MMALCameraComponent camera, bool burstMode)
+        {
+            camera.StillPort.SetParameter(MMAL_PARAMETER_CAMERA_BURST_CAPTURE, burstMode);
+        }
     }
 }
 #pragma warning restore SA1202 // Public methods before Internal

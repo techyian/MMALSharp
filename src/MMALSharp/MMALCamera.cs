@@ -197,7 +197,7 @@ namespace MMALSharp
         {
             if (burstMode)
             {
-                this.Camera.StillPort.SetParameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_BURST_CAPTURE, true);
+                MMALCameraConfig.StillBurstMode = true;                
             }
 
             using (var imgEncoder = new MMALImageEncoder())
