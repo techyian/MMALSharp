@@ -15,11 +15,13 @@ namespace MMALSharp.Handlers
     /// </summary>
     public class InMemoryCaptureHandler : OutputCaptureHandler
     {
+        private int _totalProcessed;
+
         /// <summary>
         /// The working data store.
         /// </summary>
         public List<byte> WorkingData { get; set; }
-
+               
         /// <summary>
         /// Creates a new instance of <see cref="InMemoryCaptureHandler"/>.
         /// </summary>
@@ -31,13 +33,14 @@ namespace MMALSharp.Handlers
         /// <inheritdoc />
         public override void Dispose()
         {
-            MMALLog.Logger.LogInformation($"Successfully processed {Helpers.ConvertBytesToMegabytes(this.WorkingData.Count)}.");
+            MMALLog.Logger.LogInformation($"Successfully processed {Helpers.ConvertBytesToMegabytes(_totalProcessed)}.");
         }
         
         /// <inheritdoc />
         public override void Process(byte[] data, bool eos)
         {
             this.WorkingData.AddRange(data);
+            _totalProcessed += data.Length;
         }
 
         /// <summary>
@@ -57,7 +60,7 @@ namespace MMALSharp.Handlers
         /// <inheritdoc />
         public override string TotalProcessed()
         {
-            return $"{this.WorkingData.Count}";
+            return $"{_totalProcessed}";
         }
     }
 }
