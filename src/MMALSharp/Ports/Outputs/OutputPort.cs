@@ -176,16 +176,19 @@ namespace MMALSharp.Ports.Outputs
 
             try
             {
-                if (!this.Enabled)
+                if (MMALCameraConfig.Debug)
                 {
-                    MMALLog.Logger.LogWarning("Port not enabled.");
-                }
+                    if (!this.Enabled)
+                    {
+                        MMALLog.Logger.LogDebug("Port not enabled.");
+                    }
 
-                if (this.BufferPool == null)
-                {
-                    MMALLog.Logger.LogWarning("Buffer pool null.");
+                    if (this.BufferPool == null)
+                    {
+                        MMALLog.Logger.LogDebug("Buffer pool null.");
+                    }
                 }
-
+                
                 if (this.Enabled && this.BufferPool != null)
                 {
                     newBuffer = this.BufferPool.Queue.GetBuffer();
