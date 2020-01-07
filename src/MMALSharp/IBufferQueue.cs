@@ -36,6 +36,13 @@ namespace MMALSharp
         IBuffer Wait();
 
         /// <summary>
+        /// Waits (blocking) for a buffer header to be available in the queue and allocates it. This is the same as a wait, except that it will abort in case of timeout.
+        /// </summary>
+        /// <param name="waitms">Number of milliseconds to wait before aborting.</param>
+        /// <returns>The buffer header.</returns>
+        IBuffer TimedWait(int waitms);
+
+        /// <summary>
         /// Puts the buffer header back into this queue.
         /// </summary>
         /// <param name="buffer">The buffer header.</param>

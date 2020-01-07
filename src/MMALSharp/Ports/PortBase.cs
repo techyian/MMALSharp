@@ -429,11 +429,23 @@ namespace MMALSharp.Ports
                 MMALLog.Logger.LogDebug($"Releasing active buffers for port {this.Name}.");
                 while (this.BufferPool.Queue.QueueLength() < this.BufferPool.HeadersNum)
                 {
-                    var tempBuf = this.BufferPool.Queue.Wait();
-                    tempBuf.Release();
+                    var tempBuf = this.BufferPool.Queue.TimedWait(1000);
+
+                    if (tempBuf != null)
+                    {
+                        tempBuf.Release();
+                    }
+                    else
+                    {
+                        MMALLog.Logger.LogWarning("Attempted to release buffer but retrieved null.");
+                    }
                 }
 
                 this.BufferPool.Dispose();
+            }
+            else
+            {
+                MMALLog.Logger.LogDebug("Buffer pool already null or disposed of.");
             }
         }
 

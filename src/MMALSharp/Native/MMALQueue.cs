@@ -30,6 +30,10 @@ namespace MMALSharp.Native
         [DllImport("libmmal.so", EntryPoint = "mmal_queue_wait", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe MMAL_BUFFER_HEADER_T* mmal_queue_wait(MMAL_QUEUE_T* ptr);
 
+        // MMAL_QUEUE_T*
+        [DllImport("libmmal.so", EntryPoint = "mmal_queue_timedwait", CallingConvention = CallingConvention.Cdecl)]
+        public static extern unsafe MMAL_BUFFER_HEADER_T* mmal_queue_timedwait(MMAL_QUEUE_T* ptr, int waitms);
+        
         [DllImport("libmmal.so", EntryPoint = "mmal_queue_length", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe uint mmal_queue_length(MMAL_QUEUE_T* ptr);
 
