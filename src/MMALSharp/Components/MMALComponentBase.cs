@@ -133,6 +133,8 @@ namespace MMALSharp
             {
                 if (port.ConnectedReference != null)
                 {
+                    MMALLog.Logger.LogDebug($"Disabling connection between {this.Name} and {port.ConnectedReference.DownstreamComponent.Name}");
+
                     // This component has an output port connected to another component.
                     port.ConnectedReference.DownstreamComponent.DisableConnections();
 
