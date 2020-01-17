@@ -3,7 +3,7 @@
 $projectFile = "src\MMALSharp\MMALSharp.csproj"
 $sonarQubeId = "MMALSharp"
 $github = "techyian/MMALSharp"
-$baseBranch = "master"
+$baseBranch = "dev"
 $framework = "netstandard2.0"
 
 
