@@ -18,6 +18,7 @@
 	<VersionPrefix>0.6.0</VersionPrefix>
 	<CodeAnalysisRuleSet>..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>	
 	<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+	<ProjectGuid>{dabc9991-56ad-4235-ba86-63def12c261a}</ProjectGuid> <!--Project guid for Sonar-->
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
