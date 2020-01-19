@@ -1702,21 +1702,21 @@ namespace MMALSharp.Native
         private MMAL_CAMERA_RX_CONFIG_ENCODE encode;
         private MMAL_CAMERA_RX_CONFIG_UNPACK unpack;
         private MMAL_CAMERA_RX_CONFIG_PACK pack;
-        private uint dataLanes, encodeBlockLength, embeddedDataLines, imageId;
+        private int dataLanes, encodeBlockLength, embeddedDataLines, imageId;
 
         public MMAL_CAMERA_RX_CONFIG_DECODE Decode => decode;
         public MMAL_CAMERA_RX_CONFIG_ENCODE Encode => encode;
         public MMAL_CAMERA_RX_CONFIG_UNPACK Unpack => unpack;
         public MMAL_CAMERA_RX_CONFIG_PACK Pack => pack;
-        public uint DataLanes => dataLanes;
-        public uint EncodeBlockLength => encodeBlockLength;
-        public uint EmbeddedDataLanes => embeddedDataLines;
-        public uint ImageId => imageId;
+        public int DataLanes => dataLanes;
+        public int EncodeBlockLength => encodeBlockLength;
+        public int EmbeddedDataLanes => embeddedDataLines;
+        public int ImageId => imageId;
 
         public MMAL_PARAMETER_CAMERA_RX_CONFIG_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_CAMERA_RX_CONFIG_DECODE decode,
                                                  MMAL_CAMERA_RX_CONFIG_ENCODE encode, MMAL_CAMERA_RX_CONFIG_UNPACK unpack,
                                                  MMAL_CAMERA_RX_CONFIG_PACK pack,
-                                                 uint dataLanes, uint encodeBlockLength, uint embeddedDataLines, uint imageId)
+                                                 int dataLanes, int encodeBlockLength, int embeddedDataLines, int imageId)
         {
             this.Hdr = hdr;
             this.decode = decode;
@@ -1734,20 +1734,20 @@ namespace MMALSharp.Native
     public struct MMAL_PARAMETER_CAMERA_RX_TIMING_T
     {
         public MMAL_PARAMETER_HEADER_T Hdr;
-        private uint timing1, timing2, timing3, timing4, timing5, term1, term2, cpiTiming1, cpiTiming2;
+        private int timing1, timing2, timing3, timing4, timing5, term1, term2, cpiTiming1, cpiTiming2;
 
-        public uint Timing1 => timing1;
-        public uint Timing2 => timing2;
-        public uint Timing3 => timing3;
-        public uint Timing4 => timing4;
-        public uint Timing5 => timing5;
-        public uint Term1 => term1;
-        public uint Term2 => term2;
-        public uint CpiTiming1 => cpiTiming1;
-        public uint CpiTiming2 => cpiTiming2;
+        public int Timing1 => timing1;
+        public int Timing2 => timing2;
+        public int Timing3 => timing3;
+        public int Timing4 => timing4;
+        public int Timing5 => timing5;
+        public int Term1 => term1;
+        public int Term2 => term2;
+        public int CpiTiming1 => cpiTiming1;
+        public int CpiTiming2 => cpiTiming2;
 
-        public MMAL_PARAMETER_CAMERA_RX_TIMING_T(MMAL_PARAMETER_HEADER_T hdr, uint timing1, uint timing2, uint timing3, uint timing4,
-                                                 uint timing5, uint term1, uint term2, uint cpiTiming1, uint cpiTiming2)
+        public MMAL_PARAMETER_CAMERA_RX_TIMING_T(MMAL_PARAMETER_HEADER_T hdr, int timing1, int timing2, int timing3, int timing4,
+                                                 int timing5, int term1, int term2, int cpiTiming1, int cpiTiming2)
         {
             this.Hdr = hdr;
             this.timing1 = timing1;
@@ -2475,11 +2475,11 @@ namespace MMALSharp.Native
         public const string MMAL_COMPONENT_DEFAULT_CLOCK = "vc.clock";
         public const string MMAL_COMPONENT_DEFAULT_CAMERA_INFO = "vc.camera_info";
 
-        // @waveform80 The following two components aren't in the MMAL headers, but do exist
+        // @waveform80 The following components aren't in the MMAL headers, but do exist
         public const string MMAL_COMPONENT_DEFAULT_NULL_SINK = "vc.null_sink";
         public const string MMAL_COMPONENT_DEFAULT_RESIZER = "vc.ril.resize";
-
         public const string MMAL_COMPONENT_ISP = "vc.ril.isp";
+        public const string MMAL_COMPONENT_RAWCAM = "vc.ril.rawcam";                
     }
 
     [StructLayout(LayoutKind.Sequential)]
