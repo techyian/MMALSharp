@@ -66,7 +66,7 @@ namespace MMALSharp.Ports
         /// <summary>
         /// The config for this port.
         /// </summary>
-        public MMALPortConfig PortConfig { get; internal set; }
+        public IMMALPortConfig PortConfig { get; internal set; }
 
         /// <summary>
         /// Indicates whether ZeroCopy mode should be enabled on this port. When enabled, data is not copied to the ARM processor and is handled directly by the GPU. Useful when
@@ -372,10 +372,15 @@ namespace MMALSharp.Ports
             {
                 if (MMALCameraConfig.Debug)
                 {
-                    MMALLog.Logger.LogDebug("Sending buffer");
+                    MMALLog.Logger.LogDebug("Sending buffer start.");
                 }
 
                 MMALCheck(MMALPort.mmal_port_send_buffer(this.Ptr, buffer.Ptr), "Unable to send buffer header.");
+
+                if (MMALCameraConfig.Debug)
+                {
+                    MMALLog.Logger.LogDebug("Sending buffer complete.");
+                }
             }
         }
 

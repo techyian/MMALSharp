@@ -21,7 +21,7 @@ namespace MMALSharp.Ports.Outputs
         /// <param name="config">The port configuration object.</param>
         /// <param name="copyFrom">The port to copy from.</param>
         /// <param name="handler">The capture handler to assign to this port.</param>
-        void Configure(MMALPortConfig config, IInputPort copyFrom, IOutputCaptureHandler handler);
+        void Configure(IMMALPortConfig config, IInputPort copyFrom, IOutputCaptureHandler handler);
 
         /// <summary>
         /// Connects two components together by their input and output ports.

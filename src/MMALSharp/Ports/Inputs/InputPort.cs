@@ -61,7 +61,7 @@ namespace MMALSharp.Ports.Inputs
         /// <param name="config">The port configuration object.</param>
         /// <param name="copyPort">The port to copy from.</param>
         /// <param name="handler">The capture handler to assign to this port.</param>
-        public virtual void Configure(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler)
+        public virtual void Configure(IMMALPortConfig config, IPort copyPort, IInputCaptureHandler handler)
         {
             copyPort?.ShallowCopy(this);
 
@@ -184,7 +184,11 @@ namespace MMALSharp.Ports.Inputs
                 
                 // Populate the new input buffer with user provided image data.
                 var result = this.CallbackHandler.CallbackWithResult(newBuffer);
-                newBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
+
+                if (result.Success)
+                {
+                    newBuffer.ReadIntoBuffer(result.BufferFeed, result.DataLength, result.EOF);
+                }
               
                 this.SendBuffer(newBuffer);
 

@@ -34,9 +34,13 @@ namespace MMALSharp.Components
         }
 
         /// <inheritdoc />
-        public override IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler)
+        public override IDownstreamComponent ConfigureInputPort(IMMALPortConfig config, IPort copyPort, IInputCaptureHandler handler)
         {
-            config.BufferNum = Math.Max(this.Inputs[0].BufferNumRecommended, 3);
+            var bufferNum = Math.Max(this.Inputs[0].BufferNumRecommended, 3);
+
+            config = new MMALPortConfig(config.EncodingType, config.PixelFormat, config.Width, config.Height, config.Framerate,
+                                        config.Quality, config.Bitrate, config.ZeroCopy, config.Timeout, bufferNum, config.BufferSize, config.Crop,
+                                        config.StoreMotionVectors);
 
             base.ConfigureInputPort(config, copyPort, handler);
 
@@ -44,9 +48,13 @@ namespace MMALSharp.Components
         }
 
         /// <inheritdoc />
-        public override IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IInputCaptureHandler handler)
+        public override IDownstreamComponent ConfigureInputPort(IMMALPortConfig config, IInputCaptureHandler handler)
         {
-            config.BufferNum = Math.Max(this.Inputs[0].BufferNumRecommended, 3);
+            var bufferNum = Math.Max(this.Inputs[0].BufferNumRecommended, 3);
+
+            config = new MMALPortConfig(config.EncodingType, config.PixelFormat, config.Width, config.Height, config.Framerate,
+                                        config.Quality, config.Bitrate, config.ZeroCopy, config.Timeout, bufferNum, config.BufferSize, config.Crop,
+                                        config.StoreMotionVectors);
 
             base.ConfigureInputPort(config, handler);
 
