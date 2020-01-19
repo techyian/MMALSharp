@@ -28,7 +28,7 @@ namespace MMALSharp.Ports.Inputs
         /// <param name="config">The port configuration object.</param>
         /// <param name="copyPort">The port to copy from.</param>
         /// <param name="handler">The capture handler to assign to this port.</param>
-        void Configure(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler);
+        void Configure(IMMALPortConfig config, IPort copyPort, IInputCaptureHandler handler);
 
         /// <summary>
         /// Enables processing on an input port.

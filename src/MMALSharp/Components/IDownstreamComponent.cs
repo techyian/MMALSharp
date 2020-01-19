@@ -28,7 +28,7 @@ namespace MMALSharp.Components
         /// <param name="copyPort">The port to copy from.</param>
         /// <param name="handler">The capture handler to use with this port.</param>
         /// <returns>This component.</returns>
-        IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IPort copyPort, IInputCaptureHandler handler);
+        IDownstreamComponent ConfigureInputPort(IMMALPortConfig config, IPort copyPort, IInputCaptureHandler handler);
 
         /// <summary>
         /// Call to configure changes on a downstream component input port.
@@ -38,7 +38,7 @@ namespace MMALSharp.Components
         /// pipeline and you are feeding data to it directly from a <see cref="IInputCaptureHandler"/>. If this port is connected to by another component then leave this parameter null.
         /// </param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        IDownstreamComponent ConfigureInputPort(MMALPortConfig config, IInputCaptureHandler handler);
+        IDownstreamComponent ConfigureInputPort(IMMALPortConfig config, IInputCaptureHandler handler);
 
         /// <summary>
         /// Configures the input port. In addition, it will create a new instance of the port
@@ -50,7 +50,7 @@ namespace MMALSharp.Components
         /// pipeline and you are feeding data to it directly from a <see cref="IInputCaptureHandler"/>. If this port is connected to by another component then leave this parameter null.
         /// </param>
         /// <returns>This component.</returns>
-        IDownstreamComponent ConfigureInputPort<TPort>(MMALPortConfig config, IInputCaptureHandler handler) 
+        IDownstreamComponent ConfigureInputPort<TPort>(IMMALPortConfig config, IInputCaptureHandler handler) 
             where TPort : IInputPort;
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace MMALSharp.Components
         /// <param name="config">The port configuration object.</param>
         /// <param name="handler">The output port capture handler.</param>
         /// <returns>This component.</returns>
-        IDownstreamComponent ConfigureOutputPort(MMALPortConfig config, IOutputCaptureHandler handler);
+        IDownstreamComponent ConfigureOutputPort(IMMALPortConfig config, IOutputCaptureHandler handler);
 
         /// <summary>
         /// Configures the output port.
@@ -68,7 +68,7 @@ namespace MMALSharp.Components
         /// <param name="config">The port configuration object.</param>
         /// <param name="handler">The capture handler to use with this port.</param>
         /// <returns>This component.</returns>
-        IDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config, IOutputCaptureHandler handler);
+        IDownstreamComponent ConfigureOutputPort(int outputPort, IMMALPortConfig config, IOutputCaptureHandler handler);
 
         /// <summary>
         /// Configures the output port. In addition, it will create a new instance of the port
@@ -79,7 +79,7 @@ namespace MMALSharp.Components
         /// <param name="config">The port configuration object.</param>
         /// <param name="handler">The capture handler to use with this port.</param>
         /// <returns>This component.</returns>
-        IDownstreamComponent ConfigureOutputPort<TPort>(int outputPort, MMALPortConfig config, IOutputCaptureHandler handler)
+        IDownstreamComponent ConfigureOutputPort<TPort>(int outputPort, IMMALPortConfig config, IOutputCaptureHandler handler)
             where TPort : IOutputPort;
     }
 }

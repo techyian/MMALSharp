@@ -60,7 +60,7 @@ namespace MMALSharp.Ports
         /// <summary>
         /// The config for this port.
         /// </summary>
-        MMALPortConfig PortConfig { get; }
+        IMMALPortConfig PortConfig { get; }
 
         /// <summary>
         /// Native name of port.

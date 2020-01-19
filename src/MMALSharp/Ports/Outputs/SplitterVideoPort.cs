@@ -40,7 +40,7 @@ namespace MMALSharp.Ports.Outputs
         }
 
         /// <inheritdoc />
-        public override void Configure(MMALPortConfig config, IInputPort copyFrom, IOutputCaptureHandler handler)
+        public override void Configure(IMMALPortConfig config, IInputPort copyFrom, IOutputCaptureHandler handler)
         {
             // The splitter component should not have its resolution set on the output port so override method accordingly.
             if (config != null)

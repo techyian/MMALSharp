@@ -62,24 +62,29 @@ namespace MMALSharp.Components
         }
         
         /// <inheritdoc />
-        public override IDownstreamComponent ConfigureOutputPort(int outputPort, MMALPortConfig config, IOutputCaptureHandler handler)
+        public override IDownstreamComponent ConfigureOutputPort(int outputPort, IMMALPortConfig config, IOutputCaptureHandler handler)
         {
             this.Quality = config.Quality;
+
+            var bufferSize = 0;
+            var framerate = 0;
             
             if (config.EncodingType == MMALEncoding.H264)
             {
-                config.BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
+                bufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, this.Outputs[outputPort].Ptr->BufferSizeMin);
             }
             else
             {
                 // Follow raspivid logic.
-                config.BufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, 256 << 10);
+                bufferSize = Math.Max(this.Outputs[outputPort].Ptr->BufferSizeRecommended, 256 << 10);
             }
+                                                
+            var bitrate = this.GetValidBitrate(outputPort, config);
 
             // Force framerate to be 0 in case it was provided by user.
-            config.Framerate = 0;
-            
-            this.ConfigureBitrate(outputPort, config);
+            config = new MMALPortConfig(config.EncodingType, config.PixelFormat, config.Width, config.Height, framerate,
+                                        config.Quality, bitrate, config.ZeroCopy, config.Timeout, config.BufferNum, bufferSize, config.Crop,
+                                        config.StoreMotionVectors);
 
             base.ConfigureOutputPort(outputPort, config, handler);
 
@@ -103,8 +108,10 @@ namespace MMALSharp.Components
             return this;
         }
 
-        private void ConfigureBitrate(int outputPort, MMALPortConfig config)
+        private int GetValidBitrate(int outputPort, IMMALPortConfig config)
         {
+            var bitrate = config.Bitrate;
+
             if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264)
             {
                 List<VideoLevel> levelList = null;
@@ -134,9 +141,11 @@ namespace MMALSharp.Components
                 if (this.Outputs[outputPort].Bitrate > MaxBitrateMJPEG)
                 {
                     MMALLog.Logger.LogWarning("Bitrate too high: Reducing to 25MBit/s");
-                    config.Bitrate = MaxBitrateMJPEG;
+                    bitrate = MaxBitrateMJPEG;
                 }
             }
+
+            return bitrate;
         }
 
         private void ConfigureRateControl(int outputPort)

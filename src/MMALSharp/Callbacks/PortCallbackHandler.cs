@@ -76,6 +76,8 @@ namespace MMALSharp.Callbacks
             var eos = buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) ||
                       buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
 
+            MMALLog.Logger.LogDebug("Attempting to process data.");
+
             this.CaptureHandler?.Process(data, eos);
 
             if (eos)
