@@ -36,8 +36,7 @@ namespace MMALSharp.Components
         public unsafe MMALRawcamComponent()
             : base(MMAL_COMPONENT_RAWCAM)
         {
-            // Default to use still image port behaviour.
-            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, Guid.NewGuid()));
+            // Default to use still image port behaviour.            
             this.Outputs.Add(new StillPort((IntPtr)(&(*this.Ptr->Output[0])), this, Guid.NewGuid()));
         }
 
@@ -47,20 +46,19 @@ namespace MMALSharp.Components
         /// <param name="outputPortType">The user defined output port type.</param>
         public unsafe MMALRawcamComponent(Type outputPortType)
             : base(MMAL_COMPONENT_RAWCAM)
-        {
-            this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, Guid.NewGuid()));
+        {            
             this.Outputs.Add((IOutputPort)Activator.CreateInstance(outputPortType, (IntPtr)(&(*this.Ptr->Output[0])), this, Guid.NewGuid()));
         }
-
+        
         /// <inheritdoc />
-        public override IDownstreamComponent ConfigureOutputPort(int outputPort, IMMALPortConfig config, IOutputCaptureHandler handler)
-        {            
+        public override IDownstreamComponent ConfigureOutputPort(int outputPort, IMMALPortConfig config, IOutputCaptureHandler handler, IInputPort copyFrom = null)
+        {
             if (config is MMALRawcamPortConfig)
             {
                 var rawcamConfig = config as MMALRawcamPortConfig;
 
                 this.ConfigureCameraInterface(rawcamConfig.CameraInterface);
-                this.ConfigureCameraClockingMode(rawcamConfig.ClockingMode);
+                // this.ConfigureCameraClockingMode(rawcamConfig.ClockingMode);
                 this.ConfigureCameraRxConfig(rawcamConfig.RxConfig);
                 this.ConfigureTimingRegisters(rawcamConfig.TimingConfig);
             }
@@ -68,8 +66,8 @@ namespace MMALSharp.Components
             {
                 MMALLog.Logger.LogWarning($"Rawcam component should be given port configuration of type {nameof(MMALRawcamPortConfig)}. Defaults will be used.");
             }
-                        
-            return base.ConfigureOutputPort(outputPort, config, handler);
+
+            return base.ConfigureOutputPort(outputPort, config, handler, copyFrom);
         }
 
         private unsafe void ConfigureCameraInterface(MMAL_CAMERA_INTERFACE_T cameraInterface)
@@ -83,7 +81,7 @@ namespace MMALSharp.Components
             try
             {
                 MMALCheck(
-                    MMALPort.mmal_port_parameter_set(this.Inputs[0].Ptr, (MMAL_PARAMETER_HEADER_T*)ptr),
+                    MMALPort.mmal_port_parameter_set(this.Outputs[0].Ptr, (MMAL_PARAMETER_HEADER_T*)ptr),
                     "Unable to set camera interface type.");
             }
             finally
@@ -103,7 +101,7 @@ namespace MMALSharp.Components
             try
             {
                 MMALCheck(
-                    MMALPort.mmal_port_parameter_set(this.Inputs[0].Ptr, (MMAL_PARAMETER_HEADER_T*)ptr),
+                    MMALPort.mmal_port_parameter_set(this.Outputs[0].Ptr, (MMAL_PARAMETER_HEADER_T*)ptr),
                     "Unable to set camera clocking mode.");
             }
             finally
@@ -124,7 +122,7 @@ namespace MMALSharp.Components
             try
             {
                 MMALCheck(
-                    MMALPort.mmal_port_parameter_set(this.Inputs[0].Ptr, (MMAL_PARAMETER_HEADER_T*)ptr),
+                    MMALPort.mmal_port_parameter_set(this.Outputs[0].Ptr, (MMAL_PARAMETER_HEADER_T*)ptr),
                     "Unable to set camera peripheral config.");
             }
             finally
@@ -146,7 +144,7 @@ namespace MMALSharp.Components
             try
             {
                 MMALCheck(
-                    MMALPort.mmal_port_parameter_set(this.Inputs[0].Ptr, (MMAL_PARAMETER_HEADER_T*)ptr),
+                    MMALPort.mmal_port_parameter_set(this.Outputs[0].Ptr, (MMAL_PARAMETER_HEADER_T*)ptr),
                     "Unable to set camera timing registers.");
             }
             finally

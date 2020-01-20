@@ -104,8 +104,9 @@ namespace MMALSharp.Components
         /// <param name="outputPort">The output port number to configure.</param>
         /// <param name="config">User provided port configuration object.</param>
         /// <param name="handler">The output port capture handler.</param>
+        /// <param name="copyFrom">Optional port to copy format from.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual IDownstreamComponent ConfigureOutputPort(int outputPort, IMMALPortConfig config, IOutputCaptureHandler handler)
+        public virtual IDownstreamComponent ConfigureOutputPort(int outputPort, IMMALPortConfig config, IOutputCaptureHandler handler, IInputPort copyFrom = null)
         {
             if (this.ProcessingPorts.ContainsKey(outputPort))
             {
@@ -114,7 +115,14 @@ namespace MMALSharp.Components
 
             this.ProcessingPorts.Add(outputPort, this.Outputs[outputPort]);
             
-            this.Outputs[outputPort].Configure(config, this.Inputs[0], handler);
+            if (copyFrom != null)
+            {
+                this.Outputs[outputPort].Configure(config, copyFrom, handler);
+            }
+            else
+            {
+                this.Outputs[outputPort].Configure(config, this.Inputs[0], handler);
+            }
 
             return this;
         }

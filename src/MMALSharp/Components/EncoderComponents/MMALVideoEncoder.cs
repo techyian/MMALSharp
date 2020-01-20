@@ -62,7 +62,7 @@ namespace MMALSharp.Components
         }
         
         /// <inheritdoc />
-        public override IDownstreamComponent ConfigureOutputPort(int outputPort, IMMALPortConfig config, IOutputCaptureHandler handler)
+        public override IDownstreamComponent ConfigureOutputPort(int outputPort, IMMALPortConfig config, IOutputCaptureHandler handler, IInputPort copyFrom = null)
         {
             this.Quality = config.Quality;
 
@@ -86,7 +86,7 @@ namespace MMALSharp.Components
                                         config.Quality, bitrate, config.ZeroCopy, config.Timeout, config.BufferNum, bufferSize, config.Crop,
                                         config.StoreMotionVectors);
 
-            base.ConfigureOutputPort(outputPort, config, handler);
+            base.ConfigureOutputPort(outputPort, config, handler, copyFrom);
 
             if (this.Outputs[outputPort].EncodingType == MMALEncoding.H264)
             {

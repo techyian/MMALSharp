@@ -67,8 +67,9 @@ namespace MMALSharp.Components
         /// <param name="outputPort">The output port number.</param>
         /// <param name="config">The port configuration object.</param>
         /// <param name="handler">The capture handler to use with this port.</param>
+        /// <param name="copyFrom">Optional port to copy format from.</param>
         /// <returns>This component.</returns>
-        IDownstreamComponent ConfigureOutputPort(int outputPort, IMMALPortConfig config, IOutputCaptureHandler handler);
+        IDownstreamComponent ConfigureOutputPort(int outputPort, IMMALPortConfig config, IOutputCaptureHandler handler, IInputPort copyFrom = null);
 
         /// <summary>
         /// Configures the output port. In addition, it will create a new instance of the port

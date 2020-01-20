@@ -46,19 +46,5 @@ namespace MMALSharp.Components
 
             return this;
         }
-
-        /// <inheritdoc />
-        public override IDownstreamComponent ConfigureInputPort(IMMALPortConfig config, IInputCaptureHandler handler)
-        {
-            var bufferNum = Math.Max(this.Inputs[0].BufferNumRecommended, 3);
-
-            config = new MMALPortConfig(config.EncodingType, config.PixelFormat, config.Width, config.Height, config.Framerate,
-                                        config.Quality, config.Bitrate, config.ZeroCopy, config.Timeout, bufferNum, config.BufferSize, config.Crop,
-                                        config.StoreMotionVectors);
-
-            base.ConfigureInputPort(config, handler);
-
-            return this;
-        }
     }
 }
