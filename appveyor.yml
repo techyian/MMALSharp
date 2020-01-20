@@ -36,6 +36,9 @@
     - dotnet pack .\src\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj -c %CONFIGURATION% --version-suffix %APPVEYOR_BUILD_NUMBER%
     - dotnet pack .\src\MMALSharp.Processing\MMALSharp.Processing.csproj -c %CONFIGURATION% --version-suffix %APPVEYOR_BUILD_NUMBER%
     
+    test_script:
+        - ps: .\run-sonar.ps1
+    
     deploy:
     # MyGet Deployment for builds & releases
      - provider: NuGet
@@ -85,6 +88,9 @@
     - dotnet pack .\src\MMALSharp.Common\MMALSharp.Common.csproj -c %CONFIGURATION%
     - dotnet pack .\src\MMALSharp.FFmpeg\MMALSharp.FFmpeg.csproj -c %CONFIGURATION%
     - dotnet pack .\src\MMALSharp.Processing\MMALSharp.Processing.csproj -c %CONFIGURATION%
+
+    test_script:
+        - ps: .\run-sonar.ps1
 
     deploy:
     # NuGet deployment

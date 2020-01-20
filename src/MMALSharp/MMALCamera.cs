@@ -81,13 +81,45 @@ namespace MMALSharp
         }
 
         /// <summary>
+        /// Self-contained method for recording raw video frames directly from the camera's video port.
+        /// Uses the encoding and pixel format as set in <see cref="MMALCameraConfig.VideoEncoding"/> and <see cref="MMALCameraConfig.VideoSubformat"/>.
+        /// </summary>
+        /// <param name="handler">The video capture handler to apply to the encoder.</param>
+        /// <param name="cancellationToken">A cancellationToken to signal when to stop video capture.</param>        
+        /// <returns>The awaitable Task.</returns>
+        public async Task TakeRawVideo(IVideoCaptureHandler handler, CancellationToken cancellationToken)
+        {            
+            using (var splitter = new MMALSplitterComponent())
+            using (var renderer = new MMALVideoRenderer())
+            {
+                this.ConfigureCameraSettings();
+
+                var splitterOutputConfig = new MMALPortConfig(MMALCameraConfig.VideoEncoding, MMALCameraConfig.VideoSubformat, 0);
+
+                // Force port type to SplitterVideoPort to prevent resolution from being set against splitter component.
+                splitter.ConfigureOutputPort<SplitterVideoPort>(0, splitterOutputConfig, handler);
+
+                // Create our component pipeline.
+                this.Camera.VideoPort.ConnectTo(splitter);
+                this.Camera.PreviewPort.ConnectTo(renderer);
+
+                MMALLog.Logger.LogInformation($"Preparing to take raw video. Resolution: {this.Camera.VideoPort.Resolution.Width} x {this.Camera.VideoPort.Resolution.Height}. " +
+                                    $"Encoder: {MMALCameraConfig.VideoEncoding.EncodingName}. Pixel Format: {MMALCameraConfig.VideoSubformat.EncodingName}.");
+
+                // Camera warm up time
+                await Task.Delay(2000).ConfigureAwait(false);
+                await this.ProcessAsync(this.Camera.VideoPort, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
         /// Self-contained method for recording H.264 video for a specified amount of time. Records at 30fps, 25Mb/s at the highest quality.
         /// </summary>
         /// <param name="handler">The video capture handler to apply to the encoder.</param>
         /// <param name="cancellationToken">A cancellationToken to signal when to stop video capture.</param>
         /// <param name="split">Used for Segmented video mode.</param>
         /// <returns>The awaitable Task.</returns>
-        public async Task TakeVideo(IOutputCaptureHandler handler, CancellationToken cancellationToken, Split split = null)
+        public async Task TakeVideo(IVideoCaptureHandler handler, CancellationToken cancellationToken, Split split = null)
         {
             if (split != null && !MMALCameraConfig.InlineHeaders)
             {
@@ -116,7 +148,7 @@ namespace MMALSharp
                 await this.ProcessAsync(this.Camera.VideoPort, cancellationToken).ConfigureAwait(false);
             }
         }
-        
+
         /// <summary>
         /// Self-contained method to capture raw image data directly from the Camera component - this method does not use an Image encoder.
         /// Note: We cannot use the OPAQUE encoding format with this helper method, the capture will not fail, but will not produce valid data. For reference, RaspiStillYUV uses YUV420.

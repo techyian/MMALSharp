@@ -18,7 +18,10 @@ namespace MMALSharp.Handlers
         /// </summary>
         public Stream CurrentStream { get; }
 
-        private int Processed { get; set; }
+        /// <summary>
+        /// The total amount of data processed by this <see cref="InputCaptureHandler"/>.
+        /// </summary>
+        public int Processed { get; protected set; }
 
         /// <summary>
         /// Creates a new instance of the <see cref="InputCaptureHandler"/> class with the specified input stream, output directory and output filename extension.
@@ -42,7 +45,7 @@ namespace MMALSharp.Handlers
 
             this.Processed += read;
 
-            if (read < allocSize)
+            if (read == 0)
             {
                 return new ProcessResult { Success = true, BufferFeed = buffer, EOF = true, DataLength = read };
             }
