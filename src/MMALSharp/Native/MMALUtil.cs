@@ -3,6 +3,7 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using System;
 using System.Runtime.InteropServices;
 
 namespace MMALSharp.Native
@@ -145,6 +146,7 @@ namespace MMALSharp.Native
         
         [DllImport("libmmal.so", EntryPoint = "mmal_4cc_to_string", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe string mmal_4cc_to_string([MarshalAs(UnmanagedType.LPTStr)] string buffer, ushort len, uint fourcc);
+        
 #pragma warning restore IDE1006 // Naming Styles
     }
 
