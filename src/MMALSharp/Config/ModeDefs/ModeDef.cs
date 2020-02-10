@@ -12,8 +12,8 @@ namespace MMALSharp.Config
         public int Encoding { get; set; }
         public BayerOrder Order { get; set; }
         public int NativeBitDepth { get; set; }
-        public int ImageId { get; set; }
-        public int DataLanes { get; set; }
+        public byte ImageId { get; set; }
+        public byte DataLanes { get; set; }
         public int MinVts { get; set; }
         public int LineTimeNs { get; set; }
         public int[] Timing { get; set; }

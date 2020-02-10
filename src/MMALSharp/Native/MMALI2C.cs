@@ -7,33 +7,33 @@ namespace MMALSharp.Native
 #pragma warning disable SA1132 // Each field should be declared on its own line
     public class MMALI2C
     {
-        [DllImport("libc.so.6", EntryPoint = "open", SetLastError = true, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int Open(string fileName, int mode);
+        [DllImport("libc.so.6", EntryPoint = "open", SetLastError = true)]
+        internal static extern int Open(string fileName, int mode);
 
-        [DllImport("libc.so.6", EntryPoint = "ioctl", SetLastError = true, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int Ioctl(int fd, int request, IntPtr data);
+        [DllImport("libc.so.6", EntryPoint = "ioctl", SetLastError = true)]
+        internal static extern int Ioctl(int fd, int request, IntPtr data);
 
-        [DllImport("libc.so.6", EntryPoint = "read", SetLastError = true, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int Read(int handle, IntPtr data, int length);
+        [DllImport("libc.so.6", EntryPoint = "read", SetLastError = true)]
+        internal static extern int Read(int handle, IntPtr data, int length);
 
-        [DllImport("libc.so.6", EntryPoint = "write", SetLastError = true, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int Write(int handle, IntPtr data, int length);
+        [DllImport("libc.so.6", EntryPoint = "write", SetLastError = true)]
+        internal static extern int Write(int handle, IntPtr data, int length);
 
-        [DllImport("libc.so.6", EntryPoint = "close", SetLastError = true, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int Close(int handle);
+        [DllImport("libc.so.6", EntryPoint = "close", SetLastError = true)]
+        internal static extern int Close(int handle);
 
         [StructLayout(LayoutKind.Sequential)]
         public struct I2CMsg
         {
-            private int _addr, _flags, _len;
+            private ushort _addr, _flags, _len;
             private IntPtr _buf;
-
-            public int Addr => _addr;
-            public int Flags => _flags;
-            public int Len => _len;
+          
+            public ushort Addr => _addr;
+            public ushort Flags => _flags;
+            public ushort Len => _len;
             public IntPtr Buf => _buf;
 
-            public I2CMsg(int addr, int flags, int len, IntPtr buf)
+            public I2CMsg(byte addr, ushort flags, ushort len, IntPtr buf)
             {
                 _addr = addr;
                 _flags = flags;

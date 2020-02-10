@@ -19,9 +19,10 @@ namespace MMALSharp
         private const int OPEN_READ_WRITE = 2;
 
         private const int I2C_M_RD = 0x0001;
+        private const int I2C_SLAVE = 0x0703;
         private const int I2C_SLAVE_FORCE = 0x0706;
-        private const int I2C_RDWR = 0x0707;
-
+        private const int I2C_RDWR = 0x0707;        
+        
         /// <summary>
         /// Gets the singleton instance of the MMAL Raw Camera. Call to initialise the camera for first use.
         /// </summary>
@@ -54,6 +55,8 @@ namespace MMALSharp
 
         private ModeDef ModeDef { get; set; }
 
+        private int Mode { get; set; }
+
         private string I2CDeviceName { get; set; }
 
         private MMALRawcam()
@@ -68,16 +71,14 @@ namespace MMALSharp
         /// </summary>
         /// <param name="rawcamComponent">The <see cref="MMALRawcamComponent"/> component reference.</param>
         /// <param name="ispComponent">The <see cref="MMALIspComponent"/> component reference.</param>
-        /// <param name="sensorDef">The sensor definition config object.</param>
-        /// <param name="modeDef">The mode definition config object.</param>
+        /// <param name="mode">The selected sensor mode.</param>
         /// <param name="i2cDeviceName">The I2C device name.</param>
-        public void ConfigureRawcamPipeline(MMALRawcamComponent rawcamComponent, MMALIspComponent ispComponent, SensorDef sensorDef, ModeDef modeDef, string i2cDeviceName)
+        public void ConfigureRawcamPipeline(MMALRawcamComponent rawcamComponent, MMALIspComponent ispComponent, int mode, string i2cDeviceName)
         {
             this.RawcamComponent = rawcamComponent;
             this.IspComponent = ispComponent;
-            this.SensorDef = sensorDef;
-            this.ModeDef = modeDef;
             this.I2CDeviceName = i2cDeviceName;
+            this.Mode = mode;
         }
 
         /// <summary>
@@ -90,7 +91,7 @@ namespace MMALSharp
         {
             var tasks = new List<Task>();
 
-            MMALLog.Logger.LogInformation("Attemping to enable rawcam components...");
+            MMALLog.Logger.LogInformation("Attempting to enable rawcam components...");
 
             var sensor = this.ProbeSensor(this.I2CDeviceName);
 
@@ -109,15 +110,15 @@ namespace MMALSharp
             tasks.Add(this.IspComponent.Outputs[0].Trigger.Task);
             tasks.Add(this.RawcamComponent.Outputs[0].Trigger.Task);
 
-            MMALLog.Logger.LogDebug("Attemping to start rawcam streaming...");
+            MMALLog.Logger.LogDebug("Attempting to start rawcam streaming...");
 
-            await this.StartCapture(this.SensorDef, this.ModeDef, this.I2CDeviceName);
+            await this.StartCapture(sensor, sensor.Modes[this.Mode], this.I2CDeviceName);
 
             if (cancellationToken == CancellationToken.None)
             {
                 await Task.WhenAll(tasks).ConfigureAwait(false);
 
-                await this.StopCapture(this.SensorDef, this.I2CDeviceName);
+                await this.StopCapture(sensor, this.I2CDeviceName);
             }
             else
             {
@@ -126,7 +127,7 @@ namespace MMALSharp
                 this.IspComponent.ForceStopProcessing = true;
                 this.RawcamComponent.ForceStopProcessing = true;
 
-                await this.StopCapture(this.SensorDef, this.I2CDeviceName);
+                await this.StopCapture(sensor, this.I2CDeviceName);
 
                 await Task.WhenAll(tasks).ConfigureAwait(false);
             }
@@ -179,10 +180,18 @@ namespace MMALSharp
                     throw new MMALIOException("Couldn't open I2C device.");
                 }
 
-                if (MMALI2C.Ioctl(fd, I2C_SLAVE_FORCE, (IntPtr)sensorDef.I2CAddr) < 0)
+                var addrArr = new byte[1] { sensorDef.I2CAddr };
+                var ptr = Marshal.AllocHGlobal(addrArr.Length);
+
+                Marshal.Copy(addrArr, 0, ptr, addrArr.Length);
+
+                if (MMALI2C.Ioctl(fd, I2C_SLAVE_FORCE, ptr) < 0)
                 {
+                    Marshal.FreeHGlobal(ptr);
                     throw new MMALIOException("Failed to set I2C address.");
                 }
+
+                Marshal.FreeHGlobal(ptr);
 
                 await this.SendRegs(fd, sensorDef, modeDef.Regs);
                 MMALI2C.Close(fd);
@@ -205,10 +214,18 @@ namespace MMALSharp
                     throw new MMALIOException("Couldn't open I2C device.");
                 }
 
-                if (MMALI2C.Ioctl(fd, I2C_SLAVE_FORCE, (IntPtr)sensorDef.I2CAddr) < 0)
+                var addrArr = new byte[1] { sensorDef.I2CAddr };
+                var ptr = Marshal.AllocHGlobal(addrArr.Length);
+
+                Marshal.Copy(addrArr, 0, ptr, addrArr.Length);
+
+                if (MMALI2C.Ioctl(fd, I2C_SLAVE_FORCE, ptr) < 0)
                 {
+                    Marshal.FreeHGlobal(ptr);
                     throw new MMALIOException("Failed to set I2C address.");
                 }
+
+                Marshal.FreeHGlobal(ptr);
 
                 await this.SendRegs(fd, sensorDef, sensorDef.StopReg);
                 MMALI2C.Close(fd);
@@ -224,102 +241,116 @@ namespace MMALSharp
         {
             var fd = MMALI2C.Open(i2cDeviceName, OPEN_READ_WRITE);
 
+            var err = Marshal.GetLastWin32Error();
+
             if (fd == 0)
             {
                 throw new MMALIOException("Couldn't open I2C device.");
             }
 
+            MMALLog.Logger.LogInformation($"I2C Device Name: {i2cDeviceName} | Fd err: {err}");
+            
             foreach (var sensorDef in SensorDefs)
             {
-                MMALLog.Logger.LogDebug($"Probing sensor {sensorDef.Name} on addr {sensorDef.I2CAddr}");
+                MMALLog.Logger.LogInformation($"Probing sensor {sensorDef.Name} on addr {sensorDef.I2CAddr}");
 
                 if (sensorDef.I2CIdentLength <= 2)
                 {
-                    var rd = this.I2CRead(fd, sensorDef.I2CAddr, sensorDef.I2CIdentReg, sensorDef.I2CIdentLength, sensorDef.I2CAddressing);
-
-                    if (rd != null && rd[0] == sensorDef.I2CIdentValue)
+                    var rd = this.I2CRead(fd, sensorDef.I2CAddr, sensorDef.I2CIdentReg, sensorDef.I2CIdentLength, sensorDef.I2CAddressing, sensorDef.I2CIdentValue);
+                    
+                    if (rd != null)
                     {
+                        var i2cIdentValueReturned = BitConverter.ToUInt16(rd, 0);
+
+                        if (i2cIdentValueReturned != sensorDef.I2CIdentValue)
+                        {
+                            MMALLog.Logger.LogInformation($"Sensor probe successful but returned incorrect I2CIdentValue.");
+                            return null;
+                        }
+
                         MMALLog.Logger.LogInformation($"Found sensor {sensorDef.Name} at address {sensorDef.I2CAddr}.");
 
                         return sensorDef;
                     }
-                    else
-                    {
-                        MMALLog.Logger.LogInformation($"Unable to probe sensor {sensorDef.Name} at address {sensorDef.I2CAddr}.");
-                    }
+                    
+                    MMALLog.Logger.LogInformation($"Unable to probe sensor {sensorDef.Name} at address {sensorDef.I2CAddr}.");                    
                 }
             }
 
             return null;
         }
 
-        private unsafe byte[] I2CRead(int fd, int i2cAddr, int reg, int n, int addressing)
+        private byte[] I2CRead(int fd, byte i2cAddr, int reg, ushort n, int addressing, ushort i2cIdentValue)
         {
-            int len = 0;
+            MMALLog.Logger.LogInformation($"I2C Addr: {i2cAddr} | Reg: {reg} | Addressing: {addressing} | Fd: {fd}");
 
-            Console.WriteLine($"I2C Addr: {i2cAddr}");
-            Console.WriteLine($"Reg: {reg}");
-            Console.WriteLine($"N: {n}");
-            Console.WriteLine($"Addressing: {addressing}");
-
+            var len = addressing == 1 ? 1 : 2;
             var buf = new byte[2] { (byte)(reg >> 8), (byte)(reg & 0xff) };
-
-            Console.WriteLine($"Buffer value 1 {reg >> 8}. Buffer value 2 {reg & 0xff}");
-
-            var ptr1 = Marshal.AllocHGlobal(2);
-            var ptr2 = Marshal.AllocHGlobal(n);
-
-            Marshal.Copy(buf, 0, ptr1, 2);
-            
-            if (addressing == 1)
-            {
-                len = 1;
-            }
-            else
-            {
-                len = n;
-            }
-            
-            var msg1 = new I2CMsg(i2cAddr, 0, 2, ptr1);
-            var msg2 = new I2CMsg(i2cAddr, I2C_M_RD, len, ptr2);
-
-            var msgArr = new I2CMsg[2] { msg1, msg2 };
             var err = 0;
             var win32Err = 0;
-                           
-            fixed (I2CMsg* pArray = msgArr)
-            {                    
-                IntPtr msgs = new IntPtr((void*)pArray);
 
-                var msgSet = new I2CRdwrIoctlData(msgs, 2);
+            var ptr1 = Marshal.AllocHGlobal(len);
+            var ptr2 = Marshal.AllocHGlobal(n);
 
-                var msgSetPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(I2CRdwrIoctlData)));
-                Marshal.StructureToPtr(msgSet, msgSetPtr, true);
+            Marshal.Copy(buf, 0, ptr1, buf.Length);
 
-                Console.WriteLine($"Fd: {fd}");
+            var msg1 = new I2CMsg(i2cAddr, 0, (ushort)len, ptr1);
+            var msg2 = new I2CMsg(i2cAddr, I2C_M_RD, n, ptr2);
 
-                err = MMALI2C.Ioctl(fd, I2C_RDWR, msgSetPtr);
+            var msgPtr1 = Marshal.AllocHGlobal(Marshal.SizeOf<I2CMsg>() + len);
+            var msgPtr2 = Marshal.AllocHGlobal(Marshal.SizeOf<I2CMsg>() + n);
 
-                win32Err = Marshal.GetLastWin32Error();
+            Marshal.StructureToPtr(msg1, msgPtr1, false);
+            Marshal.StructureToPtr(msg2, msgPtr2, false);
 
-                Marshal.FreeHGlobal(msgSetPtr);
-            }
+            var msgSet1 = new I2CRdwrIoctlData(msgPtr1, 1);
+            var msgSet2 = new I2CRdwrIoctlData(msgPtr2, 1);
+
+            var msgSetPtr1 = Marshal.AllocHGlobal(Marshal.SizeOf<I2CRdwrIoctlData>() + len);
+            var msgSetPtr2 = Marshal.AllocHGlobal(Marshal.SizeOf<I2CRdwrIoctlData>() + n);
+
+            Marshal.StructureToPtr(msgSet1, msgSetPtr1, false);
+            Marshal.StructureToPtr(msgSet2, msgSetPtr2, false);
+
+            err = MMALI2C.Ioctl(fd, I2C_RDWR, msgSetPtr1);
+
+            win32Err = Marshal.GetLastWin32Error();
+            Console.WriteLine($"Read I2C err value: {err} | win32Err: {win32Err}");
+            
+            err = MMALI2C.Ioctl(fd, I2C_RDWR, msgSetPtr2);
+
+            win32Err = Marshal.GetLastWin32Error();
+            Console.WriteLine($"Write I2C err value: {err} | win32Err: {win32Err}");
 
             var arr = new byte[n];
 
             Marshal.Copy(ptr2, arr, 0, n);
 
+            Marshal.DestroyStructure(msgSetPtr1, typeof(I2CRdwrIoctlData));
+            Marshal.FreeHGlobal(msgSetPtr1);
+
+            Marshal.DestroyStructure(msgSetPtr2, typeof(I2CRdwrIoctlData));
+            Marshal.FreeHGlobal(msgSetPtr2);
+
+            Marshal.DestroyStructure(msgPtr1, typeof(I2CMsg));
+            Marshal.FreeHGlobal(msgPtr1);
+
+            Marshal.DestroyStructure(msgPtr2, typeof(I2CMsg));
+            Marshal.FreeHGlobal(msgPtr2);
+            
             Marshal.FreeHGlobal(ptr1);
             Marshal.FreeHGlobal(ptr2);
 
-            Console.WriteLine($"Return value: {err}");
-
-            if (err != 2)
+            if (err != 1)
             {
-                MMALLog.Logger.LogWarning($"Unable to read from I2C. Error {win32Err}.");
+                MMALLog.Logger.LogWarning($"Unable to probe sensor on address {i2cAddr}.");
                 return null;
             }
 
+            var i2cIdentValueReturned = BitConverter.ToUInt16(arr, 0);
+
+            MMALLog.Logger.LogInformation($"Probe successful on address {i2cAddr}. Sensor I2C Ident Value: {i2cIdentValue}. I2C Ident Value Returned: {i2cIdentValueReturned}.");
+            
             return arr;
         }
 
@@ -343,7 +374,7 @@ namespace MMALSharp
                 {
                     // Sleep...?
                     MMALLog.Logger.LogDebug($"Delaying for {sensorRegs[i].Data}ms.");
-                    await Task.Delay(sensorRegs[i].Data);
+                    await Task.Delay(sensorRegs[i].Data).ConfigureAwait(false);
                 }
                 else
                 {
