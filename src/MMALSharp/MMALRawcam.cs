@@ -21,8 +21,16 @@ namespace MMALSharp
         private const int I2C_M_RD = 0x0001;
         private const int I2C_SLAVE = 0x0703;
         private const int I2C_SLAVE_FORCE = 0x0706;
-        private const int I2C_RDWR = 0x0707;        
-        
+        private const int I2C_RDWR = 0x0707;
+
+        private MMALRawcamComponent _rawcamComponent;
+        private MMALIspComponent _ispComponent;
+        private SensorDef _sensorDef;
+        private ModeDef _modeDef;
+        private int _mode;
+        private string _i2cDeviceName;
+        private int _activeFileDescriptor;
+
         /// <summary>
         /// Gets the singleton instance of the MMAL Raw Camera. Call to initialise the camera for first use.
         /// </summary>
@@ -35,30 +43,12 @@ namespace MMALSharp
 
         private static readonly Lazy<MMALRawcam> Lazy = new Lazy<MMALRawcam>(() => new MMALRawcam());
 
-        private static List<SensorDef> SensorDefs 
-        { 
-            get 
-            {
-                return new List<SensorDef>
-                {
-                    Ov5647SensorDefs.Ov5647SensorDef,
-                    Imx219SensorDefs.Imx219SensorDef
-                };
-            } 
-        }
-
-        private MMALRawcamComponent RawcamComponent { get; set; }
-
-        private MMALIspComponent IspComponent { get; set; }
-
-        private SensorDef SensorDef { get; set; }
-
-        private ModeDef ModeDef { get; set; }
-
-        private int Mode { get; set; }
-
-        private string I2CDeviceName { get; set; }
-
+        private static List<SensorDef> SensorDefs => new List<SensorDef>
+        {
+            Ov5647SensorDefs.Ov5647SensorDef,
+            Imx219SensorDefs.Imx219SensorDef
+        };
+        
         private MMALRawcam()
         {
             BcmHost.bcm_host_init();
@@ -75,10 +65,10 @@ namespace MMALSharp
         /// <param name="i2cDeviceName">The I2C device name.</param>
         public void ConfigureRawcamPipeline(MMALRawcamComponent rawcamComponent, MMALIspComponent ispComponent, int mode, string i2cDeviceName)
         {
-            this.RawcamComponent = rawcamComponent;
-            this.IspComponent = ispComponent;
-            this.I2CDeviceName = i2cDeviceName;
-            this.Mode = mode;
+            _rawcamComponent = rawcamComponent;
+            _ispComponent = ispComponent;
+            _i2cDeviceName = i2cDeviceName;
+            _mode = mode;
         }
 
         /// <summary>
@@ -93,46 +83,46 @@ namespace MMALSharp
 
             MMALLog.Logger.LogInformation("Attempting to enable rawcam components...");
 
-            var sensor = this.ProbeSensor(this.I2CDeviceName);
+            var sensor = this.ProbeSensor(_i2cDeviceName);
 
             if (sensor == null)
             {
-                throw new MMALIOException($"Could not probe sensor {this.I2CDeviceName}");
+                throw new MMALIOException($"Could not probe sensor {_i2cDeviceName}");
             }
+            
+            _ispComponent.EnableComponent();
+            _rawcamComponent.EnableComponent();
 
-            this.IspComponent.EnableComponent();
-            this.RawcamComponent.EnableComponent();
+            _ispComponent.Inputs[0].Start();
+            _ispComponent.Outputs[0].Start();
+            _rawcamComponent.Outputs[0].Start();
 
-            this.IspComponent.Inputs[0].Start();
-            this.IspComponent.Outputs[0].Start();
-            this.RawcamComponent.Outputs[0].Start();
-
-            tasks.Add(this.IspComponent.Outputs[0].Trigger.Task);
-            tasks.Add(this.RawcamComponent.Outputs[0].Trigger.Task);
+            tasks.Add(_ispComponent.Outputs[0].Trigger.Task);
+            tasks.Add(_rawcamComponent.Outputs[0].Trigger.Task);
 
             MMALLog.Logger.LogDebug("Attempting to start rawcam streaming...");
 
-            await this.StartCapture(sensor, sensor.Modes[this.Mode], this.I2CDeviceName);
+            await this.StartCapture(sensor, sensor.Modes[_mode], _i2cDeviceName);
 
             if (cancellationToken == CancellationToken.None)
             {
                 await Task.WhenAll(tasks).ConfigureAwait(false);
 
-                await this.StopCapture(sensor, this.I2CDeviceName);
+                await this.StopCapture(sensor, _i2cDeviceName);
             }
             else
             {
                 await Task.WhenAny(Task.WhenAll(tasks), cancellationToken.AsTask()).ConfigureAwait(false);
 
-                this.IspComponent.ForceStopProcessing = true;
-                this.RawcamComponent.ForceStopProcessing = true;
+                _ispComponent.ForceStopProcessing = true;
+                _rawcamComponent.ForceStopProcessing = true;
 
-                await this.StopCapture(sensor, this.I2CDeviceName);
+                await this.StopCapture(sensor, _i2cDeviceName);
 
                 await Task.WhenAll(tasks).ConfigureAwait(false);
             }
 
-            foreach (var port in this.IspComponent.ProcessingPorts.Values)
+            foreach (var port in _ispComponent.ProcessingPorts.Values)
             {
                 if (port.ConnectedReference == null)
                 {
@@ -140,10 +130,10 @@ namespace MMALSharp
                 }
             }
 
-            this.IspComponent.CleanPortPools();
-            this.IspComponent.DisableConnections();
+            _ispComponent.CleanPortPools();
+            _ispComponent.DisableConnections();
 
-            foreach (var port in this.RawcamComponent.ProcessingPorts.Values)
+            foreach (var port in _rawcamComponent.ProcessingPorts.Values)
             {
                 if (port.ConnectedReference == null)
                 {
@@ -151,8 +141,8 @@ namespace MMALSharp
                 }
             }
 
-            this.RawcamComponent.CleanPortPools();
-            this.RawcamComponent.DisableConnections();
+            _rawcamComponent.CleanPortPools();
+            _rawcamComponent.DisableConnections();
         }
 
         /// <summary>
@@ -173,28 +163,14 @@ namespace MMALSharp
         {
             try
             {
-                var fd = MMALI2C.Open(i2cDeviceName, OPEN_READ_WRITE);
-
-                if (fd == 0)
+                if (MMALI2C.IoctlByte(_activeFileDescriptor, I2C_SLAVE_FORCE, sensorDef.I2CAddr) < 0)
                 {
-                    throw new MMALIOException("Couldn't open I2C device.");
+                    var lastError = Marshal.GetLastWin32Error();
+                    throw new MMALIOException($"Failed to set I2C address. Win32Err {lastError}. Fd {_activeFileDescriptor}. I2CAddr {sensorDef.I2CAddr}.");
                 }
 
-                var addrArr = new byte[1] { sensorDef.I2CAddr };
-                var ptr = Marshal.AllocHGlobal(addrArr.Length);
+                await this.SendRegs(_activeFileDescriptor, sensorDef, modeDef.Regs);
 
-                Marshal.Copy(addrArr, 0, ptr, addrArr.Length);
-
-                if (MMALI2C.Ioctl(fd, I2C_SLAVE_FORCE, ptr) < 0)
-                {
-                    Marshal.FreeHGlobal(ptr);
-                    throw new MMALIOException("Failed to set I2C address.");
-                }
-
-                Marshal.FreeHGlobal(ptr);
-
-                await this.SendRegs(fd, sensorDef, modeDef.Regs);
-                MMALI2C.Close(fd);
                 MMALLog.Logger.LogInformation("Now streaming...");
             }
             catch (Exception e)
@@ -207,28 +183,16 @@ namespace MMALSharp
         {
             try
             {
-                var fd = MMALI2C.Open(i2cDeviceName, OPEN_READ_WRITE);
-
-                if (fd == 0)
+                if (MMALI2C.IoctlByte(_activeFileDescriptor, I2C_SLAVE_FORCE, sensorDef.I2CAddr) < 0)
                 {
-                    throw new MMALIOException("Couldn't open I2C device.");
+                    var lastError = Marshal.GetLastWin32Error();
+                    throw new MMALIOException($"Failed to set I2C address. Win32Err {lastError}. Fd {_activeFileDescriptor}. I2CAddr {sensorDef.I2CAddr}.");
                 }
 
-                var addrArr = new byte[1] { sensorDef.I2CAddr };
-                var ptr = Marshal.AllocHGlobal(addrArr.Length);
+                await this.SendRegs(_activeFileDescriptor, sensorDef, sensorDef.StopReg);
 
-                Marshal.Copy(addrArr, 0, ptr, addrArr.Length);
+                MMALI2C.Close(_activeFileDescriptor);
 
-                if (MMALI2C.Ioctl(fd, I2C_SLAVE_FORCE, ptr) < 0)
-                {
-                    Marshal.FreeHGlobal(ptr);
-                    throw new MMALIOException("Failed to set I2C address.");
-                }
-
-                Marshal.FreeHGlobal(ptr);
-
-                await this.SendRegs(fd, sensorDef, sensorDef.StopReg);
-                MMALI2C.Close(fd);
                 MMALLog.Logger.LogInformation("Stop streaming...");
             }
             catch (Exception e)
@@ -247,6 +211,8 @@ namespace MMALSharp
             {
                 throw new MMALIOException("Couldn't open I2C device.");
             }
+
+            _activeFileDescriptor = fd;
 
             MMALLog.Logger.LogInformation($"I2C Device Name: {i2cDeviceName} | Fd err: {err}");
             
@@ -361,6 +327,7 @@ namespace MMALSharp
                 if (sensorRegs[i].Reg == 0xFFFF)
                 {
                     var ptr = Marshal.AllocHGlobal(Marshal.SizeOf(sensorRegs[i].Data));
+                    Marshal.WriteInt32(ptr, sensorRegs[i].Data);
 
                     if (MMALI2C.Ioctl(fd, I2C_SLAVE_FORCE, ptr) < 0)
                     {
@@ -369,6 +336,8 @@ namespace MMALSharp
                     }
 
                     Marshal.FreeHGlobal(ptr);
+
+                    MMALLog.Logger.LogInformation($"Successfully called Ioctl on file descriptor {fd}.");
                 }
                 else if (sensorRegs[i].Reg == 0xFFFE)
                 {
@@ -413,6 +382,8 @@ namespace MMALSharp
 
                             throw new MMALIOException($"Failed to write register index {i} ({sensorRegs[i].Reg} val {sensorRegs[i].Data}). Msg length: {msg.Length}. Written: {write}. Errno: {errno}");
                         }
+
+                        MMALLog.Logger.LogInformation($"Wrote {msg.Length} bytes to file descriptor {fd}.");
                     }
                     else
                     {
@@ -452,6 +423,8 @@ namespace MMALSharp
                             
                             throw new MMALIOException($"Failed to write register index {i}. Msg length: {msg.Length}. Written: {write}. Errno: {errno}");
                         }
+                        
+                        MMALLog.Logger.LogInformation($"Wrote {msg.Length} bytes to file descriptor {fd}.");
                     }
                 }
             }

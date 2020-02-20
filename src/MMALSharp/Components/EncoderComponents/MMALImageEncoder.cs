@@ -196,6 +196,7 @@ namespace MMALSharp.Components
             }
             finally
             {
+                Marshal.DestroyStructure(ptr, typeof(MMAL_PARAMETER_EXIF_T));
                 Marshal.FreeHGlobal(ptr);
             }
         }

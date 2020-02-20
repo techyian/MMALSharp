@@ -86,6 +86,7 @@ namespace MMALSharp.Components
             }
             finally
             {
+                Marshal.DestroyStructure(ptr, typeof(MMAL_PARAMETER_CAMERA_INTERFACE_T));
                 Marshal.FreeHGlobal(ptr);
             }
         }
@@ -106,6 +107,7 @@ namespace MMALSharp.Components
             }
             finally
             {
+                Marshal.DestroyStructure(ptr, typeof(MMAL_PARAMETER_CAMERA_CLOCKING_MODE_T));
                 Marshal.FreeHGlobal(ptr);
             }
         }
@@ -127,6 +129,7 @@ namespace MMALSharp.Components
             }
             finally
             {
+                Marshal.DestroyStructure(ptr, typeof(MMAL_PARAMETER_CAMERA_RX_CONFIG_T));
                 Marshal.FreeHGlobal(ptr);
             }
         }
@@ -149,6 +152,7 @@ namespace MMALSharp.Components
             }
             finally
             {
+                Marshal.DestroyStructure(ptr, typeof(MMAL_PARAMETER_CAMERA_RX_TIMING_T));
                 Marshal.FreeHGlobal(ptr);
             }
         }

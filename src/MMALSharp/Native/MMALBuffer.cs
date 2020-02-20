@@ -175,11 +175,10 @@ namespace MMALSharp.Native
         private MMAL_BUFFER_HEADER_T* next;
         private IntPtr priv;
         private uint cmd;
-        public byte* data;
+        public IntPtr data;
         public uint allocSize, length, offset, flags;
         public long pts, dts;
-        
-        private IntPtr type, userData;
+        public IntPtr type, userData;
 
         public MMAL_BUFFER_HEADER_T* Next => this.next;
 
@@ -187,7 +186,7 @@ namespace MMALSharp.Native
 
         public uint Cmd => this.cmd;
 
-        public byte* Data => this.data;
+        public IntPtr Data => this.data;
 
         public uint AllocSize => this.allocSize;
 
@@ -205,7 +204,7 @@ namespace MMALSharp.Native
 
         public IntPtr UserData => this.userData;
 
-        public MMAL_BUFFER_HEADER_T(MMAL_BUFFER_HEADER_T* next, IntPtr priv, uint cmd, byte* data, uint allocSize, uint length, uint offset, uint flags, long pts, long dts, IntPtr type, IntPtr userData)
+        public MMAL_BUFFER_HEADER_T(MMAL_BUFFER_HEADER_T* next, IntPtr priv, uint cmd, IntPtr data, uint allocSize, uint length, uint offset, uint flags, long pts, long dts, IntPtr type, IntPtr userData)
         {
             this.next = next;
             this.priv = priv;

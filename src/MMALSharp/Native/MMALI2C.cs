@@ -13,6 +13,9 @@ namespace MMALSharp.Native
         [DllImport("libc.so.6", EntryPoint = "ioctl", SetLastError = true)]
         internal static extern int Ioctl(int fd, int request, IntPtr data);
 
+        [DllImport("libc.so.6", EntryPoint = "ioctl", SetLastError = true)]
+        internal static extern int IoctlByte(int fd, int request, byte data);
+
         [DllImport("libc.so.6", EntryPoint = "read", SetLastError = true)]
         internal static extern int Read(int handle, IntPtr data, int length);
 

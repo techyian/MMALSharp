@@ -22,7 +22,7 @@ namespace MMALSharp
         /// <summary>
         /// Pointer to the data associated with this buffer header.
         /// </summary>
-        public byte* Data => this.Ptr->data;
+        public IntPtr Data => this.Ptr->data;
 
         /// <summary>
         /// Defines what the buffer header contains. This is a FourCC with 0 as a special value meaning stream data.
@@ -185,7 +185,7 @@ namespace MMALSharp
 
             try
             {
-                var ps = this.Ptr->data + this.Offset;
+                var ps = (byte*)this.Ptr->data + this.Offset;
                 var buffer = new byte[(int)this.Ptr->Length];
                 Marshal.Copy((IntPtr)ps, buffer, 0, buffer.Length);
                 MMALBuffer.mmal_buffer_header_mem_unlock(this.Ptr);
@@ -224,6 +224,24 @@ namespace MMALSharp
             }
 
             Marshal.Copy(source, 0, (IntPtr)this.Ptr->data, length);
+        }
+
+        /// <summary>
+        /// Primes the buffer for use via vcsm.
+        /// </summary>
+        /// <param name="handle">The vcsm opaque handle.</param>
+        /// <param name="bufferSize">The buffer size.</param>
+        /// <param name="userData">The memory handle.</param>
+        public void ReadIntoBufferVcsm(IntPtr handle, int bufferSize, IntPtr userData)
+        {
+            if (MMALCameraConfig.Debug)
+            {
+                MMALLog.Logger.LogDebug($"Priming buffer to handle {bufferSize} bytes.");
+            }
+
+            this.Ptr->data = handle;
+            this.Ptr->length = (uint)bufferSize;
+            this.Ptr->userData = userData;
         }
 
         /// <summary>

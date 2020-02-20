@@ -134,13 +134,14 @@ namespace MMALSharp.Components
         /// <param name="outputPort">The output port number to configure.</param>
         /// <param name="config">User provided port configuration object.</param>
         /// <param name="handler">The output port capture handler.</param>
+        /// <param name="copyFrom">Optional port to copy format from.</param>
         /// <returns>This <see cref="MMALDownstreamComponent"/>.</returns>
-        public virtual unsafe IDownstreamComponent ConfigureOutputPort<TPort>(int outputPort, IMMALPortConfig config, IOutputCaptureHandler handler)
+        public virtual unsafe IDownstreamComponent ConfigureOutputPort<TPort>(int outputPort, IMMALPortConfig config, IOutputCaptureHandler handler, IInputPort copyFrom = null)
             where TPort : IOutputPort
         {
             this.Outputs[outputPort] = (IOutputPort)Activator.CreateInstance(typeof(TPort), (IntPtr)(&(*this.Ptr->Output[outputPort])), this, Guid.NewGuid());
 
-            return this.ConfigureOutputPort(outputPort, config, handler);
+            return this.ConfigureOutputPort(outputPort, config, handler, copyFrom);
         }
 
         /// <summary>

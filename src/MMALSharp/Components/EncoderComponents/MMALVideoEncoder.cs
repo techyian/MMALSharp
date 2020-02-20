@@ -206,6 +206,7 @@ namespace MMALSharp.Components
             }
             finally
             {
+                Marshal.DestroyStructure(ptr, typeof(MMAL_PARAMETER_VIDEO_PROFILE_T));
                 Marshal.FreeHGlobal(ptr);
             }
         }

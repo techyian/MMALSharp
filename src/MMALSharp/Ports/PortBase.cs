@@ -385,6 +385,40 @@ namespace MMALSharp.Ports
         }
 
         /// <summary>
+        /// Send a buffer header to a port manually via vcsm. This method does not use MMAL Core functionality.
+        /// </summary>
+        /// <param name="buffer">A managed buffer object.</param>
+        /// <exception cref="MMALException"/>
+        public void SendBufferManual(IBuffer buffer)
+        {
+            if (this.Enabled)
+            {
+                if (MMALCameraConfig.Debug)
+                {
+                    MMALLog.Logger.LogDebug("Sending manual buffer start.");
+                }
+
+                var vcsmHandle = MMALUtil.vcsm_malloc_cache(buffer.Length, MMALUtil.VCSM_CACHE_TYPE_T.VCSM_CACHE_TYPE_VC, "mmal_vc_port buffer");
+                var vcHandle = MMALUtil.vcsm_vc_hdl_from_hdl(vcsmHandle);
+                var ptr = MMALUtil.vcsm_lock(vcsmHandle);
+
+                if (ptr != IntPtr.Zero)
+                {
+                    buffer.ReadIntoBufferVcsm(vcHandle, (int)buffer.Length, ptr);
+                }
+                else
+                {
+
+                }
+
+                if (MMALCameraConfig.Debug)
+                {
+                    MMALLog.Logger.LogDebug("Sending manual buffer complete.");
+                }
+            }
+        }
+
+        /// <summary>
         /// Attempts to send all available buffers in the queue to this port.
         /// </summary>
         public void SendAllBuffers()
@@ -399,6 +433,22 @@ namespace MMALSharp.Ports
 
                 MMALLog.Logger.LogDebug($"Sending buffer to output port: Length {buffer.Length}");
                 
+                this.SendBuffer(buffer);
+            }
+        }
+
+        public void SendAllBuffersManual()
+        {
+            this.InitialiseBufferPool();
+
+            var length = this.BufferPool.Queue.QueueLength();
+
+            for (int i = 0; i < length; i++)
+            {
+                var buffer = this.BufferPool.Queue.GetBuffer();
+
+                MMALLog.Logger.LogDebug($"Sending buffer to output port: Length {buffer.Length}");
+
                 this.SendBuffer(buffer);
             }
         }

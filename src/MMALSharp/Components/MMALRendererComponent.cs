@@ -165,6 +165,7 @@ namespace MMALSharp.Components
                 }
                 finally
                 {
+                    Marshal.DestroyStructure(ptr, typeof(MMAL_DISPLAYREGION_T));
                     Marshal.FreeHGlobal(ptr);
                 }
             }

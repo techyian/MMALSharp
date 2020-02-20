@@ -3,6 +3,7 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using System;
 using System.Collections.Generic;
 using MMALSharp.Native;
 
@@ -98,6 +99,14 @@ namespace MMALSharp
         /// <param name="length">The length of the data being written.</param>
         /// <param name="eof">Signal that we've reached the end of the input file.</param>
         void ReadIntoBuffer(byte[] source, int length, bool eof);
+
+        /// <summary>
+        /// Primes the buffer for use via vcsm.
+        /// </summary>
+        /// <param name="handle">The vcsm opaque handle.</param>
+        /// <param name="bufferSize">The buffer size.</param>
+        /// <param name="userData">The memory handle.</param>
+        void ReadIntoBufferVcsm(IntPtr handle, int bufferSize, IntPtr userData);
 
         /// <summary>
         /// Acquire a buffer header. Acquiring a buffer header increases a reference counter on it and makes 

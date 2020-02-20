@@ -50,6 +50,29 @@ namespace MMALSharp.Native
             MMAL_STATUS_MAX = 0x7FFFFFFF
         }
 
+        public enum VCSM_CACHE_TYPE_T
+        {
+            /// <summary>
+            /// No caching applies.
+            /// </summary>
+            VCSM_CACHE_TYPE_NONE = 0,
+
+            /// <summary>
+            /// Allocation is cached on host (user space).
+            /// </summary>
+            VCSM_CACHE_TYPE_HOST,
+
+            /// <summary>
+            /// Allocation is cached on videocore.
+            /// </summary>
+            VCSM_CACHE_TYPE_VC,
+
+            /// <summary>
+            /// Allocation is cached on both host and videocore.
+            /// </summary>
+            VCSM_CACHE_TYPE_HOST_AND_VC
+        }
+
 #pragma warning disable IDE1006 // Naming Styles
         [DllImport("libmmal.so", EntryPoint = "mmal_port_parameter_set_boolean", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe MMAL_STATUS_T mmal_port_parameter_set_boolean(MMAL_PORT_T* port, uint id, int value);
@@ -145,8 +168,23 @@ namespace MMALSharp.Native
         public static extern unsafe MMAL_PORT_T mmal_util_get_port(MMAL_COMPONENT_T* comp, MMALPort.MMAL_PORT_TYPE_T pType, uint index);
         
         [DllImport("libmmal.so", EntryPoint = "mmal_4cc_to_string", CallingConvention = CallingConvention.Cdecl)]
-        public static extern unsafe string mmal_4cc_to_string([MarshalAs(UnmanagedType.LPTStr)] string buffer, ushort len, uint fourcc);
-        
+        public static extern string mmal_4cc_to_string([MarshalAs(UnmanagedType.LPStr)] string buffer, ushort len, uint fourcc);
+
+        [DllImport("libvcsm.so", EntryPoint = "vcsm_malloc_cache", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint vcsm_malloc_cache(uint size, VCSM_CACHE_TYPE_T cache, [MarshalAs(UnmanagedType.LPStr)] string name);
+
+        [DllImport("libvcsm.so", EntryPoint = "vcsm_vc_hdl_from_hdl", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint vcsm_vc_hdl_from_hdl(uint handle);
+
+        [DllImport("libvcsm.so", EntryPoint = "vcsm_lock", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr vcsm_lock(uint handle);
+
+        [DllImport("libvcsm.so", EntryPoint = "vcsm_unlock_hdl", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint vcsm_unlock_hdl(uint handle);
+
+        [DllImport("libvcsm.so", EntryPoint = "vcsm_free", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void vcsm_free(uint handle);
+
 #pragma warning restore IDE1006 // Naming Styles
     }
 

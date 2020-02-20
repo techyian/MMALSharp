@@ -337,7 +337,9 @@ namespace MMALSharp
                 }
                 catch
                 {
+                    Marshal.DestroyStructure(ptrV4, typeof(MMAL_PARAMETER_CAMERA_ANNOTATE_V4_T));
                     Marshal.FreeHGlobal(ptrV4);
+
                     ptrV4 = IntPtr.Zero;
                     
                     MMALLog.Logger.LogWarning("Unable to set V4 annotation structure. Trying V3. Please update firmware to latest version.");
@@ -358,6 +360,7 @@ namespace MMALSharp
                     }
                     finally
                     {
+                        Marshal.DestroyStructure(ptr, typeof(MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T));
                         Marshal.FreeHGlobal(ptr);
                     }
                 }
@@ -394,6 +397,7 @@ namespace MMALSharp
             }
             finally
             {
+                Marshal.DestroyStructure(ptr, typeof(MMAL_PARAMETER_CAMERA_ANNOTATE_V3_T));
                 Marshal.FreeHGlobal(ptr);
             }
         }
