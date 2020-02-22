@@ -1,3 +1,4 @@
+using MMALSharp.Common;
 using MMALSharp.Native;
 
 namespace MMALSharp.Tests

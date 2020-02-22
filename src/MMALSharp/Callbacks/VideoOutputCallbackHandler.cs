@@ -5,6 +5,7 @@
 
 using System;
 using Microsoft.Extensions.Logging;
+using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Config;
@@ -18,7 +19,7 @@ namespace MMALSharp.Callbacks
     /// <summary>
     /// Represents a callback handler specifically for <see cref="MMALVideoEncoder"/> components.
     /// </summary>
-    public class VideoOutputCallbackHandler : PortCallbackHandler<IVideoPort, IVideoCaptureHandler>
+    public class VideoOutputCallbackHandler : PortCallbackHandler<IVideoPort, IVideoCaptureHandler>, IVideoOutputCallbackHandler
     {
         /// <summary>
         /// Object containing properties used to determine when we should perform a file split.
@@ -71,36 +72,6 @@ namespace MMALSharp.Callbacks
         }
         
         /// <summary>
-        /// Creates a new instance of <see cref="VideoOutputCallbackHandler"/>.
-        /// </summary>
-        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
-        /// <param name="handler">The output port capture handler.</param>
-        /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        /// <param name="split">Configure to split into multiple files.</param>
-        /// <param name="storeMotionVectors">Indicates whether we should store motion vectors.</param>
-        public VideoOutputCallbackHandler(
-            IVideoPort port, 
-            IVideoCaptureHandler handler, 
-            MMALEncoding encoding,
-            Split split,
-            bool storeMotionVectors = false)
-            : base(port, handler, encoding)
-        {
-            var motionType = this.WorkingPort.EncodingType == MMALEncoding.H264
-                ? MotionType.MotionVector
-                : MotionType.FrameDiff;
-
-            if (handler != null && handler is IMotionCaptureHandler)
-            {
-                var motionHandler = handler as IMotionCaptureHandler;
-                motionHandler.MotionType = motionType;
-            }
-
-            this.Split = split;
-            this.StoreMotionVectors = storeMotionVectors;
-        }
-
-        /// <summary>
         /// The callback function to carry out.
         /// </summary>
         /// <param name="buffer">The working buffer header.</param>
@@ -145,6 +116,14 @@ namespace MMALSharp.Callbacks
                 // as image frame data.
                 base.Callback(buffer);
             }
+        }
+
+        /// <summary>
+        /// Prepares the callback handler to process an IFrame. Relevant to H.264 encoding only.
+        /// </summary>
+        public void ForcePrepareSplit()
+        {
+            this.PrepareSplit = true;
         }
 
         private DateTime CalculateSplit()

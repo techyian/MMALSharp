@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
+using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Handlers;

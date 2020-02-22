@@ -7,6 +7,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
+using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;

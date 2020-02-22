@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Drawing.Imaging;
 using MMALSharp.Common;
 using MMALSharp.Processors;
 
@@ -27,7 +28,12 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// An ImageContext providing metadata for image data.
         /// </summary>
-        protected IImageContext ImageContext { get; set; }
+        protected ImageContext ImageContext { get; set; }
+        
+        /// <summary>
+        /// The image format to save manipulated files in.
+        /// </summary>
+        protected ImageFormat StoreFormat { get; set; }
 
         /// <inheritdoc />
         public abstract void Dispose();
@@ -41,12 +47,12 @@ namespace MMALSharp.Handlers
         protected int Processed { get; set; }
 
         /// <summary>
-        /// Processes the data passed into this method to this class' Stream instance.
+        /// Used to process the image data from an output port.
         /// </summary>
-        /// <param name="data">The image data.</param>
-        /// <param name="eos">Is end of stream.</param>
-        public virtual void Process(byte[] data, bool eos)
+        /// <param name="context">Contains the data and metadata for an image frame.</param>
+        public virtual void Process(ImageContext context)
         {
+            this.ImageContext = context;
         }
 
         /// <summary>
@@ -60,11 +66,11 @@ namespace MMALSharp.Handlers
         /// Allows manipulating of the image frame.
         /// </summary>
         /// <param name="context">A delegate to the manipulation you wish to carry out.</param>
-        /// <param name="imageContext">Metadata for the image frame.</param>
-        public void Manipulate(Action<IFrameProcessingContext> context, IImageContext imageContext)
+        /// <param name="storeFormat">The image format to save manipulated files in..</param>
+        public void Manipulate(Action<IFrameProcessingContext> context, ImageFormat storeFormat)
         {
             this.OnManipulate = context;
-            this.ImageContext = imageContext;
+            this.StoreFormat = storeFormat;
         }
     }
 }

@@ -5,6 +5,7 @@
 
 using System;
 using Microsoft.Extensions.Logging;
+using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
@@ -21,11 +22,6 @@ namespace MMALSharp.Callbacks
         where TPort : IPort
         where TCaptureHandler : IOutputCaptureHandler
     {
-        /// <summary>
-        /// The encoding type to restrict on.
-        /// </summary>
-        public MMALEncoding EncodingType { get; }
-        
         /// <summary>
         /// The working port.
         /// </summary>
@@ -46,18 +42,6 @@ namespace MMALSharp.Callbacks
             this.WorkingPort = port;
             this.CaptureHandler = handler;
         }
-
-        /// <summary>
-        /// Creates a new instance of <see cref="PortCallbackHandler{TPort,TCaptureHandler}"/>.
-        /// </summary>
-        /// <param name="port">The working <see cref="IPort"/>.</param>
-        /// <param name="handler">The port capture handler.</param>
-        /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        protected PortCallbackHandler(TPort port, TCaptureHandler handler, MMALEncoding encodingType)
-            : this(port, handler)
-        {
-            this.EncodingType = encodingType;       
-        }
         
         /// <inheritdoc />
         public virtual void Callback(IBuffer buffer)
@@ -67,18 +51,22 @@ namespace MMALSharp.Callbacks
                 MMALLog.Logger.LogDebug($"In managed {this.WorkingPort.PortType.GetPortType()} callback");
             }
             
-            if (this.EncodingType != null && this.WorkingPort.EncodingType != this.EncodingType)
-            {
-                throw new ArgumentException("Port Encoding Type not supported for this handler.");
-            }
-
             var data = buffer.GetBufferData();
-            var eos = buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) ||
-                      buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
+            var eos = buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) || buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
+            var containsIFrame = buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG);
 
             MMALLog.Logger.LogDebug("Attempting to process data.");
 
-            this.CaptureHandler?.Process(data, eos);
+            this.CaptureHandler?.Process(new ImageContext
+            {
+                Data = data,
+                Eos = eos,
+                IFrame = containsIFrame,
+                Resolution = this.WorkingPort.Resolution,
+                Encoding = this.WorkingPort.EncodingType,
+                PixelFormat = this.WorkingPort.PixelFormat,
+                Raw = this.WorkingPort.EncodingType.EncType == MMALEncoding.EncodingType.PixelFormat
+            });
 
             if (eos)
             {

@@ -26,17 +26,6 @@ namespace MMALSharp.Callbacks
         {
         }
 
-        /// <summary>
-        /// Creates a new instance of <see cref="FastImageOutputCallbackHandler"/>.
-        /// </summary>
-        /// <param name="port">The working <see cref="IOutputPort"/>.</param>
-        /// <param name="handler">The output port capture handler.</param>
-        /// <param name="encoding">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        public FastImageOutputCallbackHandler(IVideoPort port, IOutputCaptureHandler handler, MMALEncoding encoding)
-            : base(port, handler, encoding)
-        {
-        }
-
         /// <inheritdoc />
         public override void Callback(IBuffer buffer)
         {

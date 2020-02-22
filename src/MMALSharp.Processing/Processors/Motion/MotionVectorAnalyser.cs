@@ -18,14 +18,12 @@ namespace MMALSharp.Processors.Motion
         /// <summary>
         /// Creates a new instance of <see cref="MotionVectorAnalyser"/>.
         /// </summary>
-        /// <param name="imageContext">The image metadata.</param>
-        public MotionVectorAnalyser(IImageContext imageContext) 
-            : base(imageContext)
+        public MotionVectorAnalyser()
         {
         }
 
         /// <inheritdoc />
-        public override void Apply(byte[] data, bool eos)
+        public override void Apply(ImageContext context)
         {
         }
     }

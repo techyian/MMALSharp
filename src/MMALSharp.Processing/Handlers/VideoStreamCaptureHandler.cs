@@ -41,7 +41,7 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// Splits the current file by closing the current stream and opening a new one.
         /// </summary>
-        public void Split() => this.NewFile();
+        public virtual void Split() => this.NewFile();
         
         /// <summary>
         /// Used to set the current working motion vector store.

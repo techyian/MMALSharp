@@ -5,6 +5,7 @@
 
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using MMALSharp.Processors;
 
@@ -37,10 +38,10 @@ namespace MMALSharp.Handlers
         }
         
         /// <inheritdoc />
-        public override void Process(byte[] data, bool eos)
+        public override void Process(ImageContext context)
         {
-            this.WorkingData.AddRange(data);
-            _totalProcessed += data.Length;
+            this.WorkingData.AddRange(context.Data);
+            _totalProcessed += context.Data.Length;
         }
 
         /// <summary>

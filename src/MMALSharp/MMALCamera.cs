@@ -472,12 +472,11 @@ namespace MMALSharp
         /// <param name="handler">The motion capture handler.</param>
         /// <param name="config">The motion configuration object.</param>
         /// <param name="onDetect">The callback when motion is detected.</param>
-        /// <param name="imageContext">The image metadata.</param>
         /// <returns>The camera instance.</returns>
-        public MMALCamera WithMotionDetection(IMotionCaptureHandler handler, MotionConfig config, Action onDetect, IImageContext imageContext)
+        public MMALCamera WithMotionDetection(IMotionCaptureHandler handler, MotionConfig config, Action onDetect)
         {
             MMALCameraConfig.InlineMotionVectors = true;
-            handler.DetectMotion(config, onDetect, imageContext);
+            handler.DetectMotion(config, onDetect);
             return this;
         }
 

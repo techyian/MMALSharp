@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using Microsoft.Extensions.Logging;
+using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using MMALSharp.Processors;
 
@@ -24,12 +25,12 @@ namespace MMALSharp.Handlers
         public T CurrentStream { get; protected set; }
         
         /// <inheritdoc />
-        public override void Process(byte[] data, bool eos)
+        public override void Process(ImageContext context)
         {
-            this.Processed += data.Length;
+            this.Processed += context.Data.Length;
                         
             if (this.CurrentStream.CanWrite)
-                this.CurrentStream.Write(data, 0, data.Length);
+                this.CurrentStream.Write(context.Data, 0, context.Data.Length);
             else
                 throw new IOException("Stream not writable.");
         }
@@ -53,6 +54,7 @@ namespace MMALSharp.Handlers
                             arr = ms.ToArray();
 
                             this.ImageContext.Data = arr;
+                            this.ImageContext.StoreFormat = this.StoreFormat;
                             
                             this.OnManipulate(new FrameProcessingContext(this.ImageContext));
                         }

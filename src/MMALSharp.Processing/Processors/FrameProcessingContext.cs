@@ -12,13 +12,13 @@ namespace MMALSharp.Processors
     /// </summary>
     public class FrameProcessingContext : IFrameProcessingContext
     {
-        private IImageContext _context;
+        private ImageContext _context;
 
         /// <summary>
         /// Creates a new instance of <see cref="FrameProcessingContext"/>.
         /// </summary>
         /// <param name="context">Metadata for the image frame.</param>
-        public FrameProcessingContext(IImageContext context)
+        public FrameProcessingContext(ImageContext context)
         {
             _context = context;
         }

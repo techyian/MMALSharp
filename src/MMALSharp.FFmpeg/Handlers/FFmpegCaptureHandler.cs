@@ -6,6 +6,7 @@
 using System;
 using System.Diagnostics;
 using System.Text;
+using MMALSharp.Common;
 
 namespace MMALSharp.Handlers
 {
@@ -121,15 +122,14 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// Writes frame data to the StandardInput stream to be processed by FFmpeg.
         /// </summary>
-        /// <param name="data">The frame data to push to FFmpeg.</param>
-        /// <param name="eos">Not used.</param>
-        public void Process(byte[] data, bool eos)
+        /// <param name="context">Contains the data and metadata for an image frame.</param>
+        public void Process(ImageContext context)
         {
             try
             {
-                _process.StandardInput.BaseStream.Write(data, 0, data.Length);
+                _process.StandardInput.BaseStream.Write(context.Data, 0, context.Data.Length);
                 _process.StandardInput.BaseStream.Flush();
-                this.Processed += data.Length;
+                this.Processed += context.Data.Length;
             }
             catch
             {

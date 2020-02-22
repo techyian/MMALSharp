@@ -25,7 +25,7 @@ namespace MMALSharp.Processors.Effects
         /// <param name="kernelWidth">The kernel's width.</param>
         /// <param name="kernelHeight">The kernel's height.</param>
         /// <param name="context">An image context providing additional metadata on the data passed in.</param>
-        public void ApplyConvolution(double[,] kernel, int kernelWidth, int kernelHeight, IImageContext context)
+        public void ApplyConvolution(double[,] kernel, int kernelWidth, int kernelHeight, ImageContext context)
         {
             BitmapData bmpData = null;
             IntPtr pNative = IntPtr.Zero;
@@ -104,17 +104,44 @@ namespace MMALSharp.Processors.Effects
             context.Data = store;
         }
 
-        private Bitmap LoadBitmap(IImageContext imageContext, MemoryStream stream)
+        private Bitmap LoadBitmap(ImageContext imageContext, MemoryStream stream)
         {
             if (imageContext.Raw)
             {
-                return new Bitmap(imageContext.Resolution.Width, imageContext.Resolution.Height, imageContext.PixelFormat);
+                PixelFormat format = default;
+
+                if (imageContext.PixelFormat == MMALEncoding.RGB16)
+                {
+                    format = PixelFormat.Format16bppRgb565;
+                }
+
+                if (imageContext.PixelFormat == MMALEncoding.RGB24)
+                {
+                    format = PixelFormat.Format24bppRgb;
+                }
+
+                if (imageContext.PixelFormat == MMALEncoding.RGB32)
+                {
+                    format = PixelFormat.Format32bppRgb;
+                }
+
+                if (imageContext.PixelFormat == MMALEncoding.RGBA)
+                {
+                    format = PixelFormat.Format32bppArgb;
+                }
+
+                if (format == default)
+                {
+                    throw new Exception("Unsupported pixel format for Bitmap");
+                }
+
+                return new Bitmap(imageContext.Resolution.Width, imageContext.Resolution.Height, format);
             }
 
             return new Bitmap(stream);
         }
 
-        private void InitBitmapData(IImageContext imageContext, BitmapData bmpData)
+        private void InitBitmapData(ImageContext imageContext, BitmapData bmpData)
         {
             var pNative = bmpData.Scan0;
             Marshal.Copy(imageContext.Data, 0, pNative, imageContext.Data.Length);

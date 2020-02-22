@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
+using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using MMALSharp.Config;
 using MMALSharp.Native;
@@ -241,12 +242,12 @@ namespace MMALSharp
 
             foreach (int enc in encodings)
             {
-                if (enc == MMALUtil.MMAL_FOURCC("BGR3"))
+                if (enc == Helpers.FourCCFromString("BGR3"))
                 {
                     break;
                 }
 
-                if (enc == MMALUtil.MMAL_FOURCC("RGB3"))
+                if (enc == Helpers.FourCCFromString("RGB3"))
                 {
                     newFirmware = 1;
                 }

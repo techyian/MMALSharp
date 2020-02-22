@@ -1,6 +1,7 @@
 ﻿using MMALSharp.Native;
 using System;
 using System.Runtime.InteropServices;
+using MMALSharp.Common;
 
 namespace MMALSharp
 {

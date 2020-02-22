@@ -4,6 +4,7 @@
 // </copyright>
 
 using System.Runtime.InteropServices;
+using MMALSharp.Common.Utility;
 
 namespace MMALSharp.Native
 {
@@ -12,10 +13,10 @@ namespace MMALSharp.Native
 
     public static class MMALEvents
     {
-        public static int MMAL_EVENT_ERROR = MMALUtil.MMAL_FOURCC("ERRO");
-        public static int MMAL_EVENT_EOS = MMALUtil.MMAL_FOURCC("EEOS");
-        public static int MMAL_EVENT_FORMAT_CHANGED = MMALUtil.MMAL_FOURCC("EFCH");
-        public static int MMAL_EVENT_PARAMETER_CHANGED = MMALUtil.MMAL_FOURCC("EPCH");
+        public static int MMAL_EVENT_ERROR = Helpers.FourCCFromString("ERRO");
+        public static int MMAL_EVENT_EOS = Helpers.FourCCFromString("EEOS");
+        public static int MMAL_EVENT_FORMAT_CHANGED = Helpers.FourCCFromString("EFCH");
+        public static int MMAL_EVENT_PARAMETER_CHANGED = Helpers.FourCCFromString("EPCH");
 
 #pragma warning disable IDE1006 // Naming Styles
         [DllImport("libmmal.so", EntryPoint = "mmal_event_format_changed_get", CallingConvention = CallingConvention.Cdecl)]

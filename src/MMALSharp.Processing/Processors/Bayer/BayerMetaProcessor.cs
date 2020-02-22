@@ -39,7 +39,7 @@ namespace MMALSharp.Processors
         }
 
         /// <inheritdoc />
-        public void Apply(IImageContext context)
+        public void Apply(ImageContext context)
         {
             byte[] array = null;
             

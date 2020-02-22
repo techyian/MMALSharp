@@ -64,7 +64,7 @@ namespace MMALSharp.Ports.Outputs
         {
             base.Configure(config, copyFrom, handler);
 
-            this.CallbackHandler = new VideoOutputCallbackHandler(this, (IVideoCaptureHandler)handler, null, config.Split, config.StoreMotionVectors);
+            this.CallbackHandler = new VideoOutputCallbackHandler(this, (IVideoCaptureHandler)handler, config.Split, config.StoreMotionVectors);
         }
 
         /// <summary>

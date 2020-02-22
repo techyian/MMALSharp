@@ -38,15 +38,18 @@ namespace MMALSharp.Processors.Motion
         /// The motion configuration object.
         /// </summary>
         protected MotionConfig MotionConfig { get; set; }
-        
+
+        /// <summary>
+        /// The image metadata.
+        /// </summary>
+        protected ImageContext ImageContext { get; set; }
+
         /// <summary>
         /// Creates a new instance of <see cref="FrameDiffAnalyser"/>.
         /// </summary>
         /// <param name="config">The motion configuration object.</param>
         /// <param name="onDetect">A callback when changes are detected.</param>
-        /// <param name="imageContext">The image metadata.</param>
-        public FrameDiffAnalyser(MotionConfig config, Action onDetect, IImageContext imageContext)
-            : base(imageContext)
+        public FrameDiffAnalyser(MotionConfig config, Action onDetect)
         {
             this.TestFrame = new List<byte>();
             this.MotionConfig = config;
@@ -54,20 +57,22 @@ namespace MMALSharp.Processors.Motion
         }
 
         /// <inheritdoc />
-        public override void Apply(byte[] data, bool eos)
+        public override void Apply(ImageContext context)
         {
+            this.ImageContext = context;
+
             if (this.FullTestFrame)
             {
                 MMALLog.Logger.LogDebug("Have full test frame");
                 
                 // If we have a full test frame stored then we can start storing subsequent frame data to check.
-                base.Apply(data, eos);
+                base.Apply(context);
             }
             else
             {
-                this.TestFrame.AddRange(data);
+                this.TestFrame.AddRange(context.Data);
 
-                if (eos)
+                if (context.Eos)
                 {
                     this.FullTestFrame = true;
                     MMALLog.Logger.LogDebug("EOS reached for test frame. Applying edge detection.");
@@ -108,7 +113,34 @@ namespace MMALSharp.Processors.Motion
         {
             if (this.ImageContext.Raw)
             {
-                return new Bitmap(this.ImageContext.Resolution.Width, this.ImageContext.Resolution.Height, this.ImageContext.PixelFormat);
+                PixelFormat format = default;
+
+                if (this.ImageContext.PixelFormat == MMALEncoding.RGB16)
+                {
+                    format = PixelFormat.Format16bppRgb565;
+                }
+
+                if (this.ImageContext.PixelFormat == MMALEncoding.RGB24)
+                {
+                    format = PixelFormat.Format24bppRgb;
+                }
+
+                if (this.ImageContext.PixelFormat == MMALEncoding.RGB32)
+                {
+                    format = PixelFormat.Format32bppRgb;
+                }
+
+                if (this.ImageContext.PixelFormat == MMALEncoding.RGBA)
+                {
+                    format = PixelFormat.Format32bppArgb;
+                }
+
+                if (format == default)
+                {
+                    throw new Exception("Unsupported pixel format for Bitmap");
+                }
+
+                return new Bitmap(this.ImageContext.Resolution.Width, this.ImageContext.Resolution.Height, format);
             }
             
             return new Bitmap(stream);

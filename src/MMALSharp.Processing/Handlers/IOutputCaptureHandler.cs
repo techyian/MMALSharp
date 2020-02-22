@@ -3,6 +3,8 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using MMALSharp.Common;
+
 namespace MMALSharp.Handlers
 {
     /// <summary>
@@ -11,11 +13,10 @@ namespace MMALSharp.Handlers
     public interface IOutputCaptureHandler : ICaptureHandler
     {
         /// <summary>
-        /// Used to process the byte array containing our image data from an output port.
+        /// Used to process the image data from an output port.
         /// </summary>
-        /// <param name="data">A byte array containing image data.</param>
-        /// <param name="eos">Is end of stream.</param>
-        void Process(byte[] data, bool eos);
+        /// <param name="context">Contains the data and metadata for an image frame.</param>
+        void Process(ImageContext context);
 
         /// <summary>
         /// Used for any further processing once we have completed capture.

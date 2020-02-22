@@ -19,15 +19,6 @@ namespace MMALSharp.Native
         /// </summary>
         public static long MMAL_TIME_UNKNOWN => 1 << 63;
 
-        public static int MMAL_FOURCC(string s)
-        {
-            int a1 = s[0];
-            int b1 = s[1];
-            int c1 = s[2];
-            int d1 = s[3];
-            return a1 | (b1 << 8) | (c1 << 16) | (d1 << 24);
-        }
-
         public enum MMAL_STATUS_T
         {
             MMAL_SUCCESS,

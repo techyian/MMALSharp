@@ -24,7 +24,6 @@ namespace MMALSharp.Handlers
         /// </summary>
         /// <param name="config">The motion configuration.</param>
         /// <param name="onDetect">A callback for when motion is detected.</param>
-        /// <param name="imageContext">The image metadata.</param>
-        void DetectMotion(MotionConfig config, Action onDetect, IImageContext imageContext);
+        void DetectMotion(MotionConfig config, Action onDetect);
     }
 }

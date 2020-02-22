@@ -17,22 +17,18 @@ namespace MMALSharp.Handlers
     /// </summary>
     public sealed class CircularBufferCaptureHandler : VideoStreamCaptureHandler, IMotionCaptureHandler
     {
-        private bool _isRecordingMotion;
+        private bool _recordToFileStream;
         private int _bufferSize;
+        private bool _shouldDetectMotion;
+        private Stopwatch _recordingElapsed;
+        private IFrameAnalyser _analyser;
+        private MotionConfig _config;
                 
         /// <summary>
         /// The circular buffer object responsible for storing image data.
         /// </summary>
         public CircularBuffer<byte> Buffer { get; }
-
-        private bool ShouldDetectMotion { get; set; }
-
-        private Stopwatch RecordingElapsed { get; set; }
-
-        private IFrameAnalyser Analyser { get; set; }
-
-        private MotionConfig Config { get; set; }
-                
+        
         /// <summary>
         /// Creates a new instance of the <see cref="CircularBufferCaptureHandler"/> class with the specified Circular buffer capacity and directory/extension of the working file.
         /// </summary>
@@ -59,26 +55,38 @@ namespace MMALSharp.Handlers
         }
        
         /// <inheritdoc />
-        public override void Process(byte[] data, bool eos)
+        public override void Process(ImageContext context)
         {
-            if (!_isRecordingMotion)
+            if (!_recordToFileStream)
             {
-                for (var i = 0; i < data.Length; i++)
+                for (var i = 0; i < context.Data.Length; i++)
                 {
-                    this.Buffer.PushBack(data[i]);
+                    this.Buffer.PushBack(context.Data[i]);
                 }
 
                 this.CheckRecordingProgress();
             }
             else
             {
-                this.CurrentStream.Write(data, 0, data.Length);
-                this.Processed += data.Length;
+                this.CurrentStream.Write(context.Data, 0, context.Data.Length);
+                this.Processed += context.Data.Length;
             }
 
-            if (this.ShouldDetectMotion && !_isRecordingMotion)
+            if (_shouldDetectMotion && !_recordToFileStream)
             {
-                this.Analyser.Apply(data, eos);
+                _analyser.Apply(context);
+            }
+        }
+
+        public override void Split()
+        {
+            if (this.ImageContext.Encoding == MMALEncoding.H264)
+            {
+
+            }
+            else
+            {
+                base.Split();
             }
         }
 
@@ -87,15 +95,14 @@ namespace MMALSharp.Handlers
         /// </summary>
         /// <param name="config">The motion configuration.</param>
         /// <param name="onDetect">A callback for when motion is detected.</param>
-        /// <param name="imageContext">The frame metadata.</param>
-        public void DetectMotion(MotionConfig config, Action onDetect, IImageContext imageContext)
+        public void DetectMotion(MotionConfig config, Action onDetect)
         {
-            this.Config = config;
-            this.ShouldDetectMotion = true;
+            _config = config;
+            _shouldDetectMotion = true;
 
             if (this.MotionType == MotionType.FrameDiff)
             {
-                this.Analyser = new FrameDiffAnalyser(config, onDetect, imageContext);
+                _analyser = new FrameDiffAnalyser(config, onDetect);
             }
             else
             {
@@ -104,22 +111,33 @@ namespace MMALSharp.Handlers
         }
 
         /// <summary>
-        /// Call to start recording.
+        /// Call to start recording to FileStream.
         /// </summary>        
         public void StartRecording()
         {
-            _isRecordingMotion = true;            
-            this.RecordingElapsed = new Stopwatch();
-            this.RecordingElapsed.Start();
+            _recordToFileStream = true;            
+            _recordingElapsed = new Stopwatch();
+            _recordingElapsed.Start();
             
+            // Write what's currently in the Circular buffer to the FileStream.
             this.CurrentStream.Write(this.Buffer.ToArray(), 0, this.Buffer.Size);
             this.Processed += this.Buffer.Size;
+        }
+
+        /// <summary>
+        /// Call to stop recording to FileStream.
+        /// </summary>
+        public void StopRecording()
+        {
+            _recordToFileStream = false;
+            _recordingElapsed?.Stop();
+            _recordingElapsed?.Reset();
         }
 
         /// <inheritdoc />
         public override void Dispose()
         {
-            if (this.ShouldDetectMotion)
+            if (_shouldDetectMotion)
             {
                 this.CurrentStream?.Dispose();
             }
@@ -133,13 +151,13 @@ namespace MMALSharp.Handlers
 
         private void CheckRecordingProgress()
         {
-            if (this.RecordingElapsed != null)
+            if (_recordingElapsed != null && _config != null)
             {
-                if (this.RecordingElapsed.Elapsed >= this.Config.RecordDuration.TimeOfDay)
+                if (_recordingElapsed.Elapsed >= _config.RecordDuration.TimeOfDay)
                 {
-                    _isRecordingMotion = false;
-                    this.RecordingElapsed.Stop();
-                    this.RecordingElapsed.Reset();
+                    _recordToFileStream = false;
+                    _recordingElapsed.Stop();
+                    _recordingElapsed.Reset();
                 }
             }
         }

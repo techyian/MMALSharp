@@ -7,8 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using MMALSharp.Common.Utility;
 
-namespace MMALSharp.Native
+namespace MMALSharp.Common
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
@@ -193,7 +194,7 @@ namespace MMALSharp.Native
             
         private MMALEncoding(string s, EncodingType type)
         {
-            this.EncodingVal = MMALUtil.MMAL_FOURCC(s);
+            this.EncodingVal = Helpers.FourCCFromString(s);
             this.EncodingName = s;
             this.EncType = type;
         }

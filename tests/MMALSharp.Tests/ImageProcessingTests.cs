@@ -53,7 +53,7 @@ namespace MMALSharp.Tests
                 imgCaptureHandler.Manipulate(context =>
                 {
                     context.Apply(new SharpenProcessor());
-                }, new ImageContext(MMALCameraConfig.StillResolution));
+                }, ImageFormat.Jpeg);
 
                 // Camera warm up time
                 await Task.Delay(2000);
@@ -91,7 +91,7 @@ namespace MMALSharp.Tests
                 imgCaptureHandler.Manipulate(context =>
                 {
                     context.Apply(new EdgeDetection(EDStrength.High));
-                }, new ImageContext(MMALCameraConfig.StillResolution));
+                }, ImageFormat.Jpeg);
 
                 // Camera warm up time
                 await Task.Delay(2000);
@@ -129,7 +129,7 @@ namespace MMALSharp.Tests
                 imgCaptureHandler.Manipulate(context =>
                 {
                     context.Apply(new GaussianProcessor(GaussianMatrix.Matrix3x3));
-                }, new ImageContext(MMALCameraConfig.StillResolution));
+                }, ImageFormat.Jpeg);
 
                 // Camera warm up time
                 await Task.Delay(2000);
@@ -168,7 +168,7 @@ namespace MMALSharp.Tests
                 imgCaptureHandler.Manipulate(context =>
                 {
                     context.StripBayerMetadata(CameraVersion.OV5647);
-                }, new ImageContext(MMALCameraConfig.StillResolution, PixelFormat.Format24bppRgb, false, ImageFormat.Jpeg));
+                }, ImageFormat.Jpeg);
 
                 // Camera warm up time
                 await Task.Delay(2000);

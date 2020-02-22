@@ -3,11 +3,9 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using System;
 using Microsoft.Extensions.Logging;
 using MMALSharp.Common.Utility;
 using MMALSharp.Handlers;
-using MMALSharp.Native;
 using MMALSharp.Ports.Inputs;
 
 namespace MMALSharp.Callbacks
@@ -21,11 +19,6 @@ namespace MMALSharp.Callbacks
         where TPort : IInputPort
         where TCaptureHandler : IInputCaptureHandler
     {
-        /// <summary>
-        /// The encoding type to restrict on.
-        /// </summary>
-        public MMALEncoding EncodingType { get; }
-
         /// <summary>
         /// The working port.
         /// </summary>
@@ -46,19 +39,7 @@ namespace MMALSharp.Callbacks
             this.WorkingPort = port;
             this.CaptureHandler = handler;
         }
-
-        /// <summary>
-        /// Creates a new instance of <see cref="InputPortCallbackHandler{TPort,TCaptureHandler}"/>.
-        /// </summary>
-        /// <param name="port">The working port.</param>
-        /// <param name="handler">The input port capture handler.</param>
-        /// <param name="encodingType">The <see cref="MMALEncoding"/> type to restrict on.</param>
-        protected InputPortCallbackHandler(TPort port, TCaptureHandler handler, MMALEncoding encodingType)
-            : this(port, handler)
-        {
-            this.EncodingType = encodingType;
-        }
-
+        
         /// <summary>
         /// Responsible for feeding data into the input port.
         /// </summary>
@@ -70,12 +51,7 @@ namespace MMALSharp.Callbacks
             {
                 MMALLog.Logger.LogDebug($"In managed {this.WorkingPort.PortType.GetPortType()} callback");
             }
-
-            if (this.EncodingType != null && this.WorkingPort.EncodingType != this.EncodingType)
-            {
-                throw new ArgumentException("Port Encoding Type not supported for this handler.");
-            }
-
+            
             MMALLog.Logger.LogInformation($"Feeding: {Helpers.ConvertBytesToMegabytes(buffer.AllocSize)}. Total processed: {this.CaptureHandler?.TotalProcessed()}.");
 
             return this.CaptureHandler?.Process(buffer.AllocSize);

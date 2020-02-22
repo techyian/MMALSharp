@@ -24,28 +24,20 @@ namespace MMALSharp.Processors
         /// True if the working data store contains a full frame.
         /// </summary>
         protected bool FullFrame { get; set; }
-
-        /// <summary>
-        /// The image metadata.
-        /// </summary>
-        protected IImageContext ImageContext { get; set; }
-
+        
         /// <summary>
         /// Creates a new instance of <see cref="FrameAnalyser"/>.
         /// </summary>
-        /// <param name="imageContext">The image metadata.</param>
-        protected FrameAnalyser(IImageContext imageContext)
+        protected FrameAnalyser()
         {
             this.WorkingData = new List<byte>();
-            this.ImageContext = imageContext;
         }
 
         /// <summary>
         /// Applies an operation.
         /// </summary>
-        /// <param name="data">The new image frame data.</param>
-        /// <param name="eos">Marks end of stream.</param>
-        public virtual void Apply(byte[] data, bool eos)
+        /// <param name="context">Contains the data and metadata for an image frame.</param>
+        public virtual void Apply(ImageContext context)
         {
             if (this.FullFrame)
             {
@@ -54,9 +46,9 @@ namespace MMALSharp.Processors
                 this.FullFrame = false;
             }
 
-            this.WorkingData.AddRange(data);
+            this.WorkingData.AddRange(context.Data);
 
-            if (eos)
+            if (context.Eos)
             {
                 this.FullFrame = true;
             }

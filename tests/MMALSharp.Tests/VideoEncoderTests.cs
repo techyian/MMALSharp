@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using MMALSharp.Common;
 using MMALSharp.Components;
 using MMALSharp.Config;
 using MMALSharp.Handlers;

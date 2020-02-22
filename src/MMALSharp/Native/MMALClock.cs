@@ -4,6 +4,7 @@
 // </copyright>
 
 using System.Runtime.InteropServices;
+using MMALSharp.Common.Utility;
 
 namespace MMALSharp.Native
 {
@@ -12,17 +13,17 @@ namespace MMALSharp.Native
 
     public static class MMALClock
     {
-        public static int MMAL_CLOCK_EVENT_MAGIC = MMALUtil.MMAL_FOURCC("CKLM");
-        public static int MMAL_CLOCK_EVENT_REFERENCE = MMALUtil.MMAL_FOURCC("CREF");
-        public static int MMAL_CLOCK_EVENT_ACTIVE = MMALUtil.MMAL_FOURCC("CACT");
-        public static int MMAL_CLOCK_EVENT_SCALE = MMALUtil.MMAL_FOURCC("CSCA");
-        public static int MMAL_CLOCK_EVENT_TIME = MMALUtil.MMAL_FOURCC("CTIM");
-        public static int MMAL_CLOCK_EVENT_UPDATE_THRESHOLD = MMALUtil.MMAL_FOURCC("CUTH");
-        public static int MMAL_CLOCK_EVENT_DISCONT_THRESHOLD = MMALUtil.MMAL_FOURCC("CDTH");
-        public static int MMAL_CLOCK_EVENT_REQUEST_THRESHOLD = MMALUtil.MMAL_FOURCC("CRTH");
-        public static int MMAL_CLOCK_EVENT_INPUT_BUFFER_INFO = MMALUtil.MMAL_FOURCC("CIBI");
-        public static int MMAL_CLOCK_EVENT_OUTPUT_BUFFER_INFO = MMALUtil.MMAL_FOURCC("COBI");
-        public static int MMAL_CLOCK_EVENT_LATENCY = MMALUtil.MMAL_FOURCC("CLAT");
+        public static int MMAL_CLOCK_EVENT_MAGIC = Helpers.FourCCFromString("CKLM");
+        public static int MMAL_CLOCK_EVENT_REFERENCE = Helpers.FourCCFromString("CREF");
+        public static int MMAL_CLOCK_EVENT_ACTIVE = Helpers.FourCCFromString("CACT");
+        public static int MMAL_CLOCK_EVENT_SCALE = Helpers.FourCCFromString("CSCA");
+        public static int MMAL_CLOCK_EVENT_TIME = Helpers.FourCCFromString("CTIM");
+        public static int MMAL_CLOCK_EVENT_UPDATE_THRESHOLD = Helpers.FourCCFromString("CUTH");
+        public static int MMAL_CLOCK_EVENT_DISCONT_THRESHOLD = Helpers.FourCCFromString("CDTH");
+        public static int MMAL_CLOCK_EVENT_REQUEST_THRESHOLD = Helpers.FourCCFromString("CRTH");
+        public static int MMAL_CLOCK_EVENT_INPUT_BUFFER_INFO = Helpers.FourCCFromString("CIBI");
+        public static int MMAL_CLOCK_EVENT_OUTPUT_BUFFER_INFO = Helpers.FourCCFromString("COBI");
+        public static int MMAL_CLOCK_EVENT_LATENCY = Helpers.FourCCFromString("CLAT");
         public static int MMAL_CLOCK_EVENT_INVALID = 0;                
     }
 

@@ -2,6 +2,7 @@
 using MMALSharp.Native;
 using System;
 using System.Drawing;
+using MMALSharp.Common;
 
 namespace MMALSharp.Ports
 {
