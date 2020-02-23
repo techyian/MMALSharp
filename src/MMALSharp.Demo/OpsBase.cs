@@ -1,4 +1,5 @@
 ﻿using System;
+using MMALSharp.Common;
 using MMALSharp.Native;
 
 namespace MMALSharp.Demo

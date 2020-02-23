@@ -6,7 +6,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common;
+using MMALSharp.Common.Utility;
 using MMALSharp.Processors;
 using MMALSharp.Processors.Motion;
 
@@ -20,6 +22,7 @@ namespace MMALSharp.Handlers
         private bool _recordToFileStream;
         private int _bufferSize;
         private bool _shouldDetectMotion;
+        private bool _receivedIFrame;
         private Stopwatch _recordingElapsed;
         private IFrameAnalyser _analyser;
         private MotionConfig _config;
@@ -57,6 +60,8 @@ namespace MMALSharp.Handlers
         /// <inheritdoc />
         public override void Process(ImageContext context)
         {
+            this.ImageContext = context;
+
             if (!_recordToFileStream)
             {
                 for (var i = 0; i < context.Data.Length; i++)
@@ -68,25 +73,30 @@ namespace MMALSharp.Handlers
             }
             else
             {
-                this.CurrentStream.Write(context.Data, 0, context.Data.Length);
-                this.Processed += context.Data.Length;
+                if (this.ImageContext.Encoding == MMALEncoding.H264)
+                {
+                    if (this.ImageContext.IFrame)
+                    {
+                        _receivedIFrame = true;
+                    }
+
+                    if (_recordToFileStream && _receivedIFrame)
+                    {
+                        // We need to have received an IFrame for the recording to be valid.
+                        this.CurrentStream.Write(context.Data, 0, context.Data.Length);
+                        this.Processed += context.Data.Length;
+                    }
+                }
+                else
+                {
+                    this.CurrentStream.Write(context.Data, 0, context.Data.Length);
+                    this.Processed += context.Data.Length;
+                }
             }
 
             if (_shouldDetectMotion && !_recordToFileStream)
             {
                 _analyser.Apply(context);
-            }
-        }
-
-        public override void Split()
-        {
-            if (this.ImageContext.Encoding == MMALEncoding.H264)
-            {
-
-            }
-            else
-            {
-                base.Split();
             }
         }
 
@@ -115,13 +125,18 @@ namespace MMALSharp.Handlers
         /// </summary>        
         public void StartRecording()
         {
+            MMALLog.Logger.LogInformation("Start recording.");
+
             _recordToFileStream = true;            
             _recordingElapsed = new Stopwatch();
             _recordingElapsed.Start();
             
-            // Write what's currently in the Circular buffer to the FileStream.
-            this.CurrentStream.Write(this.Buffer.ToArray(), 0, this.Buffer.Size);
-            this.Processed += this.Buffer.Size;
+            if (this.ImageContext.Encoding != MMALEncoding.H264)
+            {
+                // Write what's currently in the Circular buffer to the FileStream.
+                this.CurrentStream.Write(this.Buffer.ToArray(), 0, this.Buffer.Size);
+                this.Processed += this.Buffer.Size;
+            }
         }
 
         /// <summary>
@@ -129,7 +144,10 @@ namespace MMALSharp.Handlers
         /// </summary>
         public void StopRecording()
         {
+            MMALLog.Logger.LogInformation("Stop recording.");
+
             _recordToFileStream = false;
+            _receivedIFrame = false;
             _recordingElapsed?.Stop();
             _recordingElapsed?.Reset();
         }
@@ -155,9 +173,7 @@ namespace MMALSharp.Handlers
             {
                 if (_recordingElapsed.Elapsed >= _config.RecordDuration.TimeOfDay)
                 {
-                    _recordToFileStream = false;
-                    _recordingElapsed.Stop();
-                    _recordingElapsed.Reset();
+                    this.StopRecording();
                 }
             }
         }

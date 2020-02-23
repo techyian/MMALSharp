@@ -84,7 +84,7 @@ namespace MMALSharp.Components
 
             // Force framerate to be 0 in case it was provided by user.
             config = new MMALPortConfig(config.EncodingType, config.PixelFormat, config.Width, config.Height, framerate,
-                                        config.Quality, bitrate, config.ZeroCopy, config.Timeout, config.BufferNum, bufferSize, config.Crop,
+                                        config.Quality, bitrate, config.ZeroCopy, config.Timeout, config.Split, config.BufferNum, bufferSize, config.Crop,
                                         config.StoreMotionVectors);
 
             base.ConfigureOutputPort(outputPort, config, handler);
@@ -107,6 +107,20 @@ namespace MMALSharp.Components
             this.ConfigureImmutableInput(outputPort);
 
             return this;
+        }
+
+        /// <summary>
+        /// Request a new IFrame to be generated from the video encoder. Only applies to H.264 encoding. 
+        /// </summary>
+        public void RequestIFrame()
+        {
+            if (this.Outputs[0].EncodingType != MMALEncoding.H264)
+            {
+                MMALLog.Logger.LogWarning("Output port encoding type not set to H.264. This method has no effect.");
+                return;
+            }
+
+            this.Outputs[0].SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_REQUEST_I_FRAME, true);
         }
 
         private int GetValidBitrate(int outputPort, IMMALPortConfig config)

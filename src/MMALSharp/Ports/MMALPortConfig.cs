@@ -154,5 +154,42 @@ namespace MMALSharp.Ports
             this.Crop = crop;
             this.StoreMotionVectors = storeMotionVectors;
         }
+
+        /// <summary>
+        /// Create a new instance of <see cref="MMALPortConfig"/>.
+        /// </summary>
+        /// <param name="encodingType">The encoding type.</param>
+        /// <param name="pixelFormat">The pixel format.</param>
+        /// <param name="width">The output width.</param>
+        /// <param name="height">The output height.</param>
+        /// <param name="framerate">The output framerate.</param>
+        /// <param name="quality">The output quality.</param>
+        /// <param name="bitrate">The output bitrate.</param>
+        /// <param name="zeroCopy">Specify zero copy.</param>
+        /// <param name="timeout">Video record timeout.</param>
+        /// <param name="split">Video split configuration object.</param>
+        /// <param name="bufferNum">Requested number of buffer headers.</param>
+        /// <param name="bufferSize">Requested size of buffer headers.</param>
+        /// <param name="crop">The Region of Interest requested.</param>
+        /// <param name="storeMotionVectors">Indicates whether to store motion vectors. Applies to H.264 video encoding.</param>
+        public MMALPortConfig(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, int framerate,
+            int quality, int bitrate, bool zeroCopy, DateTime? timeout, Split split, int bufferNum, int bufferSize, Rectangle? crop,
+            bool storeMotionVectors)
+        {
+            this.EncodingType = encodingType;
+            this.PixelFormat = pixelFormat;
+            this.Width = width;
+            this.Height = height;
+            this.Framerate = framerate;
+            this.Quality = quality;
+            this.Bitrate = bitrate;
+            this.ZeroCopy = zeroCopy;
+            this.Timeout = timeout;
+            this.Split = split;
+            this.BufferNum = bufferNum;
+            this.BufferSize = bufferSize;
+            this.Crop = crop;
+            this.StoreMotionVectors = storeMotionVectors;
+        }
     }
 }

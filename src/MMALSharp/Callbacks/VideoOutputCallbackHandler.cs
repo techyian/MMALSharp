@@ -89,6 +89,8 @@ namespace MMALSharp.Callbacks
             // Ensure that if we need to split then this is done before processing the buffer data.
             if (this.Split != null)
             {
+                MMALLog.Logger.LogInformation("Split not null.");
+
                 if (!this.LastSplit.HasValue)
                 {
                     LastSplit = DateTime.Now;
@@ -96,6 +98,7 @@ namespace MMALSharp.Callbacks
 
                 if (DateTime.Now.CompareTo(this.CalculateSplit()) > 0)
                 {
+                    MMALLog.Logger.LogInformation("Preparing to split.");
                     this.PrepareSplit = true;
                     this.WorkingPort.SetParameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_REQUEST_I_FRAME, true);
                 }
@@ -116,14 +119,6 @@ namespace MMALSharp.Callbacks
                 // as image frame data.
                 base.Callback(buffer);
             }
-        }
-
-        /// <summary>
-        /// Prepares the callback handler to process an IFrame. Relevant to H.264 encoding only.
-        /// </summary>
-        public void ForcePrepareSplit()
-        {
-            this.PrepareSplit = true;
         }
 
         private DateTime CalculateSplit()

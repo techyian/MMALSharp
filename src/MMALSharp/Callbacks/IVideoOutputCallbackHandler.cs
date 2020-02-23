@@ -10,9 +10,5 @@ namespace MMALSharp.Callbacks
     /// </summary>
     public interface IVideoOutputCallbackHandler
     {
-        /// <summary>
-        /// Prepares the callback handler to process an IFrame. Relevant to H.264 encoding only.
-        /// </summary>
-        void ForcePrepareSplit();
     }
 }
