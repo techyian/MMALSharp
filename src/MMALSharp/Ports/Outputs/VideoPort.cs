@@ -63,9 +63,7 @@ namespace MMALSharp.Ports.Outputs
         public override void Configure(IMMALPortConfig config, IInputPort copyFrom, IOutputCaptureHandler handler)
         {
             base.Configure(config, copyFrom, handler);
-
-            MMALLog.Logger.LogInformation($"I AM HERE. Split null {config.Split == null}");
-
+            
             this.CallbackHandler = new VideoOutputCallbackHandler(this, (IVideoCaptureHandler)handler, config.Split, config.StoreMotionVectors);
         }
 

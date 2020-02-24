@@ -12,6 +12,7 @@ namespace MMALSharp.Tests
 {
     public class MMALFixture : IDisposable
     {
+        public MMALStandalone MMALStandalone = MMALStandalone.Instance;
         public MMALCamera MMALCamera = MMALCamera.Instance;
 
         public MMALFixture()
@@ -47,7 +48,11 @@ namespace MMALSharp.Tests
             }
         }
 
-        public void Dispose() => this.MMALCamera.Cleanup();
+        public void Dispose()
+        {
+            this.MMALCamera.Cleanup();
+            this.MMALStandalone.Cleanup();
+        }
     }
 
     [CollectionDefinition("MMALCollection")]

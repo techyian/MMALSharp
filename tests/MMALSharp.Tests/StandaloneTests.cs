@@ -5,14 +5,13 @@ using System.Threading.Tasks;
 using MMALSharp.Common;
 using MMALSharp.Components;
 using MMALSharp.Handlers;
-using MMALSharp.Native;
 using MMALSharp.Ports;
 using MMALSharp.Ports.Outputs;
 using Xunit;
 
 namespace MMALSharp.Tests
 {
-    [Collection("MMALStandaloneCollection")]
+    [Collection("MMALCollection")]
     public class StandaloneTests
     {
         /*
@@ -21,14 +20,14 @@ namespace MMALSharp.Tests
          *      no requirement for the camera to be connected.
          */
 
-        private static MMALStandaloneFixture _fixture;
-        public static MMALStandaloneFixture Fixture
+        private static MMALFixture _fixture;
+        public static MMALFixture Fixture
         {
             get
             {
                 if (_fixture == null)
                 {
-                    _fixture = new MMALStandaloneFixture();
+                    _fixture = new MMALFixture();
                 }
 
                 return _fixture;
@@ -36,7 +35,7 @@ namespace MMALSharp.Tests
             set => _fixture = value;
         }
 
-        public StandaloneTests(MMALStandaloneFixture fixture)
+        public StandaloneTests(MMALFixture fixture)
         {
             Fixture = fixture;
         }
@@ -108,7 +107,7 @@ namespace MMALSharp.Tests
                 var outputConfig = new MMALPortConfig(MMALEncoding.BMP, MMALEncoding.I420, 640, 480, 0, 0, 0, true, null);
 
                 imgEncoder.ConfigureInputPort(inputConfig, inputCaptureHandler)
-                    .ConfigureOutputPort(outputConfig, outputCaptureHandler);
+                    .ConfigureOutputPort<FileEncodeOutputPort>(0, outputConfig, outputCaptureHandler);
 
                 await Fixture.MMALStandalone.ProcessAsync(imgEncoder);
                 
@@ -191,7 +190,7 @@ namespace MMALSharp.Tests
                 var outputConfig = new MMALPortConfig(MMALEncoding.MJPEG, MMALEncoding.I420, 640, 480, 25, 0, 0, true, null);
 
                 vidEncoder.ConfigureInputPort(inputConfig, inputCaptureHandler)
-                    .ConfigureOutputPort(outputConfig, outputCaptureHandler);
+                    .ConfigureOutputPort<FileEncodeOutputPort>(0, outputConfig, outputCaptureHandler);
 
                 await Fixture.MMALStandalone.ProcessAsync(vidEncoder);
 
