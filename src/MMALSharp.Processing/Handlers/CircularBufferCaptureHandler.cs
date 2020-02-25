@@ -60,8 +60,6 @@ namespace MMALSharp.Handlers
         /// <inheritdoc />
         public override void Process(ImageContext context)
         {
-            this.ImageContext = context;
-
             if (!_recordToFileStream)
             {
                 for (var i = 0; i < context.Data.Length; i++)
@@ -73,9 +71,9 @@ namespace MMALSharp.Handlers
             }
             else
             {
-                if (this.ImageContext.Encoding == MMALEncoding.H264)
+                if (context.Encoding == MMALEncoding.H264)
                 {
-                    if (this.ImageContext.IFrame)
+                    if (context.IFrame)
                     {
                         _receivedIFrame = true;
                     }
@@ -98,6 +96,8 @@ namespace MMALSharp.Handlers
             {
                 _analyser.Apply(context);
             }
+
+            base.Process(context);
         }
 
         /// <summary>

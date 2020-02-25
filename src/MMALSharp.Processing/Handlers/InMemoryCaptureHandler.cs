@@ -42,6 +42,7 @@ namespace MMALSharp.Handlers
         {
             this.WorkingData.AddRange(context.Data);
             _totalProcessed += context.Data.Length;
+            base.Process(context);
         }
 
         /// <summary>

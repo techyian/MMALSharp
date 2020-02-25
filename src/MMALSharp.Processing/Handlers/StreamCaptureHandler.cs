@@ -33,6 +33,8 @@ namespace MMALSharp.Handlers
                 this.CurrentStream.Write(context.Data, 0, context.Data.Length);
             else
                 throw new IOException("Stream not writable.");
+
+            base.Process(context);
         }
 
         /// <inheritdoc />
@@ -56,6 +58,8 @@ namespace MMALSharp.Handlers
                             this.ImageContext.Data = arr;
                             this.ImageContext.StoreFormat = this.StoreFormat;
                             
+                            MMALLog.Logger.LogDebug("Applying image processing.");
+
                             this.OnManipulate(new FrameProcessingContext(this.ImageContext));
                         }
 

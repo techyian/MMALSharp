@@ -13,7 +13,7 @@ namespace MMALSharp.Handlers
     /// <summary>
     /// Experimental FFmpeg specific capture handler.
     /// </summary>
-    public class FFmpegCaptureHandler : IOutputCaptureHandler, IVideoCaptureHandler
+    public class FFmpegCaptureHandler : IVideoCaptureHandler
     {
         private Process _process;
         
@@ -135,7 +135,7 @@ namespace MMALSharp.Handlers
             {
                 _process.Kill();             
                 throw;         
-            }            
+            }
         }
 
         /// <summary>
