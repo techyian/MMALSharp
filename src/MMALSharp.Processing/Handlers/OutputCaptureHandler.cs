@@ -47,7 +47,8 @@ namespace MMALSharp.Handlers
         protected int Processed { get; set; }
 
         /// <summary>
-        /// Used to process the image data from an output port.
+        /// Used to process the image data from an output port. Users who extend this class should call the base class
+        /// to ensure the ImageContext property is assigned with the current frame's context.
         /// </summary>
         /// <param name="context">Contains the data and metadata for an image frame.</param>
         public virtual void Process(ImageContext context)
