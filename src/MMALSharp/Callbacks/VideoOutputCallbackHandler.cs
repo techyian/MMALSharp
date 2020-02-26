@@ -110,7 +110,7 @@ namespace MMALSharp.Callbacks
                 if (this.CaptureHandler is IMotionVectorCaptureHandler)
                 {
                     var handler = this.CaptureHandler as IMotionVectorCaptureHandler;
-                    handler.ProcessMotionVectors(buffer.GetBufferData());
+                    handler?.ProcessMotionVectors(buffer.GetBufferData());
                 }
             }
             else
