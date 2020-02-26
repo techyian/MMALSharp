@@ -5,7 +5,6 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
 using Microsoft.Extensions.Logging;
 using MMALSharp.Common;
 using MMALSharp.Common.Utility;
@@ -30,7 +29,7 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// The circular buffer object responsible for storing image data.
         /// </summary>
-        public CircularBuffer<byte> Buffer { get; }
+        public CircularBuffer<byte> Buffer { get; private set; }
         
         /// <summary>
         /// Creates a new instance of the <see cref="CircularBufferCaptureHandler"/> class with the specified Circular buffer capacity and directory/extension of the working file.
@@ -77,16 +76,33 @@ namespace MMALSharp.Handlers
                     {
                         _receivedIFrame = true;
                     }
-
-                    if (_recordToFileStream && _receivedIFrame)
+                    
+                    if (_receivedIFrame)
                     {
                         // We need to have received an IFrame for the recording to be valid.
                         this.CurrentStream.Write(context.Data, 0, context.Data.Length);
                         this.Processed += context.Data.Length;
                     }
+
+                    if (_receivedIFrame && this.Buffer.Size > 0)
+                    {
+                        // The buffer contains data.
+                        MMALLog.Logger.LogInformation($"Buffer contains data. Writing {this.Buffer.Size} bytes.");
+                        this.CurrentStream.Write(this.Buffer.ToArray(), 0, this.Buffer.Size);
+                        this.Processed += this.Buffer.Size;
+                        this.Buffer = new CircularBuffer<byte>(this.Buffer.Capacity);
+                    }
                 }
                 else
                 {
+                    if (this.Buffer.Size > 0)
+                    {
+                        // The buffer contains data.
+                        this.CurrentStream.Write(this.Buffer.ToArray(), 0, this.Buffer.Size);
+                        this.Processed += this.Buffer.Size;
+                        this.Buffer = new CircularBuffer<byte>(this.Buffer.Capacity);
+                    }
+
                     this.CurrentStream.Write(context.Data, 0, context.Data.Length);
                     this.Processed += context.Data.Length;
                 }
@@ -97,7 +113,8 @@ namespace MMALSharp.Handlers
                 _analyser.Apply(context);
             }
 
-            base.Process(context);
+            // Not calling base method to stop data being written to the stream when not recording.
+            this.ImageContext = context;
         }
 
         /// <summary>
@@ -130,13 +147,6 @@ namespace MMALSharp.Handlers
             _recordToFileStream = true;            
             _recordingElapsed = new Stopwatch();
             _recordingElapsed.Start();
-            
-            if (this.ImageContext.Encoding != MMALEncoding.H264)
-            {
-                // Write what's currently in the Circular buffer to the FileStream.
-                this.CurrentStream.Write(this.Buffer.ToArray(), 0, this.Buffer.Size);
-                this.Processed += this.Buffer.Size;
-            }
         }
 
         /// <summary>
@@ -176,28 +186,6 @@ namespace MMALSharp.Handlers
                     this.StopRecording();
                 }
             }
-        }
-
-        private string ProvideFilename(string directory, string extension)
-        {
-            var dir = directory.TrimEnd('/');
-            var ext = extension.TrimStart('.');
-
-            System.IO.Directory.CreateDirectory(dir);
-
-            var now = DateTime.Now.ToString("dd-MMM-yy HH-mm-ss");
-
-            int i = 1;
-
-            var fileName = $"{dir}/{now}.{ext}";
-
-            while (File.Exists(fileName))
-            {
-                fileName = $"{dir}/{now} {i}.{ext}";
-                i++;
-            }
-
-            return fileName;
         }
     }
 }
