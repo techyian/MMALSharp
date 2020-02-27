@@ -471,18 +471,19 @@ namespace MMALSharp
         /// <returns>The created <see cref="MMALOverlayRenderer"/> object.</returns>
         public MMALOverlayRenderer AddOverlay(MMALVideoRenderer parent, PreviewOverlayConfiguration config, byte[] source)
             => new MMALOverlayRenderer(parent, config, source);
-        
+
         /// <summary>
         /// Call to enable motion detection.
         /// </summary>
         /// <param name="handler">The motion capture handler.</param>
         /// <param name="config">The motion configuration object.</param>
         /// <param name="onDetect">The callback when motion is detected.</param>
+        /// <param name="onStopDetect">An optional callback which is called when the record duration has passed.</param>
         /// <returns>The camera instance.</returns>
-        public MMALCamera WithMotionDetection(IMotionCaptureHandler handler, MotionConfig config, Action onDetect)
+        public MMALCamera WithMotionDetection(IMotionCaptureHandler handler, MotionConfig config, Action onDetect, Action onStopDetect = null)
         {
             MMALCameraConfig.InlineMotionVectors = true;
-            handler.DetectMotion(config, onDetect);
+            handler.ConfigureMotionDetection(config, onDetect, onStopDetect);
             return this;
         }
 

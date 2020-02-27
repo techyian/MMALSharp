@@ -110,11 +110,7 @@ namespace MMALSharp.Processors.Effects
             {
                 PixelFormat format = default;
 
-                if (imageContext.PixelFormat == MMALEncoding.RGB16)
-                {
-                    format = PixelFormat.Format16bppRgb565;
-                }
-
+                // RGB16 doesn't appear to be supported by GDI?
                 if (imageContext.PixelFormat == MMALEncoding.RGB24)
                 {
                     format = PixelFormat.Format24bppRgb;

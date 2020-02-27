@@ -4,7 +4,6 @@
 // </copyright>
 
 using System;
-using MMALSharp.Processors.Effects;
 
 namespace MMALSharp.Processors.Motion
 {
@@ -14,14 +13,9 @@ namespace MMALSharp.Processors.Motion
     public class MotionConfig
     {
         /// <summary>
-        /// The edge detection sensitivity.
-        /// </summary>
-        public EDStrength Sensitivity { get; set; }
-
-        /// <summary>
         /// How long should we record for when detected.
         /// </summary>
-        public DateTime RecordDuration { get; set; }
+        public TimeSpan RecordDuration { get; set; }
 
         /// <summary>
         /// The threshold to use.
@@ -31,12 +25,10 @@ namespace MMALSharp.Processors.Motion
         /// <summary>
         /// Creates a new instance of <see cref="MotionConfig"/>.
         /// </summary>
-        /// <param name="sensitivity">The edge detection sensitivity.</param>
         /// <param name="recordDuration">The record duration.</param>
         /// <param name="threshold">The threshold.</param>
-        public MotionConfig(EDStrength sensitivity, DateTime recordDuration, int threshold)
+        public MotionConfig(TimeSpan recordDuration, int threshold)
         {
-            this.Sensitivity = sensitivity;
             this.RecordDuration = recordDuration;
             this.Threshold = threshold;
         }

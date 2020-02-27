@@ -5,7 +5,6 @@
 
 using MMALSharp.Processors.Motion;
 using System;
-using MMALSharp.Common;
 
 namespace MMALSharp.Handlers
 {
@@ -20,10 +19,21 @@ namespace MMALSharp.Handlers
         MotionType MotionType { get; set; }
 
         /// <summary>
-        /// Call to enable motion detection.
+        /// Call to configure motion detection.
         /// </summary>
         /// <param name="config">The motion configuration.</param>
         /// <param name="onDetect">A callback for when motion is detected.</param>
-        void DetectMotion(MotionConfig config, Action onDetect);
+        /// <param name="onStopDetect">An optional callback for when the record duration has passed.</param>
+        void ConfigureMotionDetection(MotionConfig config, Action onDetect, Action onStopDetect = null);
+
+        /// <summary>
+        /// Enables motion detection. When configured, this will instruct the capture handler to detect motion.
+        /// </summary>
+        void EnableMotionDetection();
+
+        /// <summary>
+        /// Disables motion detection. When configured, this will instruct the capture handler not to detect motion.
+        /// </summary>
+        void DisableMotionDetection();
     }
 }

@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MMALSharp.Common;
 using MMALSharp.Common.Utility;
-using MMALSharp.Processors.Effects;
 
 namespace MMALSharp.Processors.Motion
 {
@@ -75,12 +74,7 @@ namespace MMALSharp.Processors.Motion
                 if (context.Eos)
                 {
                     this.FullTestFrame = true;
-                    MMALLog.Logger.LogDebug("EOS reached for test frame. Applying edge detection.");
-
-                    // We want to apply Edge Detection to the test frame to make it easier to detect changes.
-                    var edgeDetection = new EdgeDetection(this.MotionConfig.Sensitivity);
-                    this.ImageContext.Data = this.TestFrame.ToArray();
-                    edgeDetection.ApplyConvolution(edgeDetection.Kernel, EdgeDetection.KernelWidth, EdgeDetection.KernelHeight, this.ImageContext);
+                    MMALLog.Logger.LogDebug("EOS reached for test frame.");
                 }
             }
 
@@ -92,19 +86,27 @@ namespace MMALSharp.Processors.Motion
                 this.CheckForChanges(this.OnDetect);
             }
         }
-        
+
+        /// <summary>
+        /// Resets the test and working frames this analyser is using.
+        /// </summary>
+        public void ResetAnalyser()
+        {
+            this.TestFrame = new List<byte>();
+            this.WorkingData = new List<byte>();
+            this.FullFrame = false;
+            this.FullTestFrame = false;
+        }
+
         private void CheckForChanges(Action onDetect)
         {
-            var edgeDetection = new EdgeDetection(EDStrength.Medium);
-            this.ImageContext.Data = this.WorkingData.ToArray();
-            edgeDetection.ApplyConvolution(EdgeDetection.MediumStrengthKernel, 3, 3, this.ImageContext);
+            this.PrepareDifferenceImage(this.ImageContext, this.MotionConfig.Threshold);
+
             var diff = this.Analyse();
-
-            MMALLog.Logger.LogDebug($"Diff size: {diff}");
-
+            
             if (diff >= this.MotionConfig.Threshold)
             {
-                MMALLog.Logger.LogInformation("Motion detected!");
+                MMALLog.Logger.LogInformation($"Motion detected! Frame difference {diff}.");
                 onDetect();
             }
         }
@@ -115,11 +117,7 @@ namespace MMALSharp.Processors.Motion
             {
                 PixelFormat format = default;
 
-                if (this.ImageContext.PixelFormat == MMALEncoding.RGB16)
-                {
-                    format = PixelFormat.Format16bppRgb565;
-                }
-
+                // RGB16 doesn't appear to be supported by GDI?
                 if (this.ImageContext.PixelFormat == MMALEncoding.RGB24)
                 {
                     format = PixelFormat.Format24bppRgb;
@@ -198,8 +196,111 @@ namespace MMALSharp.Processors.Motion
 
                 testBmp.UnlockBits(testBmpData);
                 currentBmp.UnlockBits(currentBmpData);
-             
+
                 return diff;
+            }
+        }
+
+        private void PrepareDifferenceImage(ImageContext context, int threshold)
+        {
+            BitmapData bmpData = null;
+            IntPtr pNative = IntPtr.Zero;
+            int bytes;
+            byte[] store = null;
+
+            using (var ms = new MemoryStream(context.Data))
+            using (var bmp = this.LoadBitmap(ms))
+            {
+                bmpData = bmp.LockBits(new Rectangle(0, 0,
+                        bmp.Width,
+                        bmp.Height),
+                    ImageLockMode.ReadWrite,
+                    bmp.PixelFormat);
+
+                if (context.Raw)
+                {
+                    this.InitBitmapData(bmpData, ms.ToArray());
+                }
+
+                pNative = bmpData.Scan0;
+
+                // Split image into 4 quadrants and process individually.
+                var quadA = new Rectangle(0, 0, bmpData.Width / 2, bmpData.Height / 2);
+                var quadB = new Rectangle(bmpData.Width / 2, 0, bmpData.Width / 2, bmpData.Height / 2);
+                var quadC = new Rectangle(0, bmpData.Height / 2, bmpData.Width / 2, bmpData.Height / 2);
+                var quadD = new Rectangle(bmpData.Width / 2, bmpData.Height / 2, bmpData.Width / 2, bmpData.Height / 2);
+
+                bytes = bmpData.Stride * bmp.Height;
+
+                var rgbValues = new byte[bytes];
+
+                // Copy the RGB values into the array.
+                Marshal.Copy(pNative, rgbValues, 0, bytes);
+
+                var bpp = Image.GetPixelFormatSize(bmp.PixelFormat) / 8;
+
+                var t1 = Task.Run(() =>
+                {
+                    this.ApplyThreshold(quadA, bmpData, bpp, threshold);
+                });
+                var t2 = Task.Run(() =>
+                {
+                    this.ApplyThreshold(quadB, bmpData, bpp, threshold);
+                });
+                var t3 = Task.Run(() =>
+                {
+                    this.ApplyThreshold(quadC, bmpData, bpp, threshold);
+                });
+                var t4 = Task.Run(() =>
+                {
+                    this.ApplyThreshold(quadD, bmpData, bpp, threshold);
+                });
+
+                Task.WaitAll(t1, t2, t3, t4);
+
+                if (context.Raw)
+                {
+                    store = new byte[bytes];
+                    Marshal.Copy(pNative, store, 0, bytes);
+                }
+
+                bmp.UnlockBits(bmpData);
+            }
+
+            context.Data = store;
+        }
+
+        private void ApplyThreshold(Rectangle quad, BitmapData bmpData, int pixelDepth, int threshold)
+        {
+            unsafe
+            {
+                // Declare an array to hold the bytes of the bitmap.
+                var stride = bmpData.Stride;
+
+                byte* ptr1 = (byte*)bmpData.Scan0;
+
+                for (int column = quad.X; column < quad.X + quad.Width; column++)
+                {
+                    for (int row = quad.Y; row < quad.Y + quad.Height; row++)
+                    {
+                        var rgb1 = ptr1[(column * pixelDepth) + (row * stride)] +
+                                   ptr1[(column * pixelDepth) + (row * stride) + 1] +
+                                   ptr1[(column * pixelDepth) + (row * stride) + 2];
+
+                        if (rgb1 > threshold)
+                        {
+                            ptr1[(column * pixelDepth) + (row * stride)] = 255;
+                            ptr1[(column * pixelDepth) + (row * stride) + 1] = 255;
+                            ptr1[(column * pixelDepth) + (row * stride) + 2] = 255;
+                        }
+                        else
+                        {
+                            ptr1[(column * pixelDepth) + (row * stride)] = 0;
+                            ptr1[(column * pixelDepth) + (row * stride) + 1] = 0;
+                            ptr1[(column * pixelDepth) + (row * stride) + 2] = 0;
+                        }
+                    }
+                }
             }
         }
 
@@ -228,7 +329,7 @@ namespace MMALSharp.Processors.Motion
                         ptr2[(column * pixelDepth) + (row * stride2) + 1] +
                         ptr2[(column * pixelDepth) + (row * stride2) + 2];
                         
-                        if (rgb2 > rgb1 + threshold)
+                        if (rgb2 - rgb1 > threshold)
                         {
                             diff++;
 
@@ -252,6 +353,17 @@ namespace MMALSharp.Processors.Motion
                                 highestX = column;
                             }
                         }
+
+                        // If the threshold has been exceeded, we want to exit from this method immediately for performance reasons.
+                        if (diff > threshold)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (diff > threshold)
+                    {
+                        break;
                     }
                 }
 

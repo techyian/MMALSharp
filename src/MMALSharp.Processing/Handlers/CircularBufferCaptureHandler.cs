@@ -25,6 +25,7 @@ namespace MMALSharp.Handlers
         private Stopwatch _recordingElapsed;
         private IFrameAnalyser _analyser;
         private MotionConfig _config;
+        private Action _onStopDetect;
                 
         /// <summary>
         /// The circular buffer object responsible for storing image data.
@@ -65,8 +66,6 @@ namespace MMALSharp.Handlers
                 {
                     this.Buffer.PushBack(context.Data[i]);
                 }
-
-                this.CheckRecordingProgress();
             }
             else
             {
@@ -107,11 +106,13 @@ namespace MMALSharp.Handlers
                     this.Processed += context.Data.Length;
                 }
             }
-
+            
             if (_shouldDetectMotion && !_recordToFileStream)
             {
-                _analyser.Apply(context);
+                _analyser?.Apply(context);
             }
+
+            this.CheckRecordingProgress();
 
             // Not calling base method to stop data being written to the stream when not recording.
             this.ImageContext = context;
@@ -122,11 +123,12 @@ namespace MMALSharp.Handlers
         /// </summary>
         /// <param name="config">The motion configuration.</param>
         /// <param name="onDetect">A callback for when motion is detected.</param>
-        public void DetectMotion(MotionConfig config, Action onDetect)
+        /// <param name="onStopDetect">An optional callback for when the record duration has passed.</param>
+        public void ConfigureMotionDetection(MotionConfig config, Action onDetect, Action onStopDetect = null)
         {
             _config = config;
-            _shouldDetectMotion = true;
-
+            _onStopDetect = onStopDetect;
+            
             if (this.MotionType == MotionType.FrameDiff)
             {
                 _analyser = new FrameDiffAnalyser(config, onDetect);
@@ -135,6 +137,28 @@ namespace MMALSharp.Handlers
             {
                 // TODO: Motion vector analyser
             }
+
+            this.EnableMotionDetection();
+        }
+
+        /// <summary>
+        /// Enables motion detection. When configured, this will instruct the capture handler to detect motion.
+        /// </summary>
+        public void EnableMotionDetection()
+        {
+            _shouldDetectMotion = true;
+
+            MMALLog.Logger.LogInformation("Enabling motion detection.");
+        }
+
+        /// <summary>
+        /// Disables motion detection. When configured, this will instruct the capture handler not to detect motion.
+        /// </summary>
+        public void DisableMotionDetection()
+        {
+            _shouldDetectMotion = false;
+
+            MMALLog.Logger.LogInformation("Disabling motion detection.");
         }
 
         /// <summary>
@@ -165,10 +189,7 @@ namespace MMALSharp.Handlers
         /// <inheritdoc />
         public override void Dispose()
         {
-            if (_shouldDetectMotion)
-            {
-                this.CurrentStream?.Dispose();
-            }
+            this.CurrentStream?.Dispose();
         }
 
         /// <inheritdoc />
@@ -181,9 +202,22 @@ namespace MMALSharp.Handlers
         {
             if (_recordingElapsed != null && _config != null)
             {
-                if (_recordingElapsed.Elapsed >= _config.RecordDuration.TimeOfDay)
+                if (_recordingElapsed.Elapsed >= _config.RecordDuration)
                 {
-                    this.StopRecording();
+                    if (_onStopDetect != null)
+                    {
+                        _onStopDetect();
+                    }
+                    else
+                    {
+                        this.StopRecording();
+                    }
+
+                    if (_analyser is FrameDiffAnalyser)
+                    {
+                        var fdAnalyser = _analyser as FrameDiffAnalyser;
+                        fdAnalyser?.ResetAnalyser();
+                    }
                 }
             }
         }
