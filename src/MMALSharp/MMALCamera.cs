@@ -252,7 +252,10 @@ namespace MMALSharp
                 {
                     await this.ProcessAsync(this.Camera.StillPort).ConfigureAwait(false);
 
-                    handler.NewFile();
+                    if (!cancellationToken.IsCancellationRequested)
+                    {
+                        handler.NewFile();
+                    }
                 }
             }
         }
@@ -314,7 +317,10 @@ namespace MMALSharp
 
                     await this.ProcessAsync(this.Camera.StillPort).ConfigureAwait(false);
 
-                    handler.NewFile();
+                    if (!timelapse.CancellationToken.IsCancellationRequested)
+                    {
+                        handler.NewFile();
+                    }
                 }
             }
         }
