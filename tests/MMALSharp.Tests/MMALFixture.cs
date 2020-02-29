@@ -6,6 +6,9 @@
 using System;
 using System.IO;
 using System.Linq;
+using Microsoft.Extensions.Logging;
+using MMALSharp.Common.Utility;
+using NLog.Extensions.Logging;
 using Xunit;
 
 namespace MMALSharp.Tests
@@ -17,6 +20,16 @@ namespace MMALSharp.Tests
 
         public MMALFixture()
         {
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+
+                builder
+                    .ClearProviders()
+                    .SetMinimumLevel(LogLevel.Trace)
+                    .AddNLog("NLog.config");
+            });
+
+            MMALLog.LoggerFactory = loggerFactory;
         }
 
         public void CheckAndAssertFilepath(string filepath)
