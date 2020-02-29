@@ -89,8 +89,6 @@ namespace MMALSharp.Callbacks
             // Ensure that if we need to split then this is done before processing the buffer data.
             if (this.Split != null)
             {
-                MMALLog.Logger.LogInformation("Split not null.");
-
                 if (!this.LastSplit.HasValue)
                 {
                     LastSplit = DateTime.Now;
