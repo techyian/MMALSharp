@@ -6,7 +6,7 @@
     <AssemblyName>MMALSharp</AssemblyName>
     <PackageId>MMALSharp</PackageId>
     <RootNamespace>MMALSharp</RootNamespace>
-    <Copyright>Ian Auty (c) 2016-2019</Copyright>
+    <Copyright>Ian Auty (c) 2016-2020</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Ian Auty</Authors>
     <PackageTags>raspberry-pi</PackageTags>
