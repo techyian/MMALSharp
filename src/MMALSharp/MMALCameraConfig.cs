@@ -187,9 +187,10 @@ namespace MMALSharp
         public static Resolution VideoResolution { get; set; } = Resolution.As1080p;
 
         /// <summary>
-        /// Enable video stabilisation.
+        /// Enable video stabilisation. The purpose of video stabilisation is to filter the video frame
+        /// however this comes at a cost of frames being cropped by a small amount to compensate.
         /// </summary> 
-        public static bool VideoStabilisation { get; set; } = true;
+        public static bool VideoStabilisation { get; set; } = false;
 
         /// <summary>
         /// Used to force behaviour of frame rate control.
