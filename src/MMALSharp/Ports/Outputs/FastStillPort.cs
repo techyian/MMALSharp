@@ -92,7 +92,7 @@ namespace MMALSharp.Ports.Outputs
             }
             
             // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
-            this.ReleaseBuffer(bufferImpl);
+            this.ReleaseBuffer(bufferImpl, this.ComponentReference.ForceStopProcessing || failed);
 
             // If this buffer signals the end of data stream, allow waiting thread to continue.
             if (this.ComponentReference.ForceStopProcessing || failed)

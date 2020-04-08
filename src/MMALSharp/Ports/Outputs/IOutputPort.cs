@@ -40,7 +40,8 @@ namespace MMALSharp.Ports.Outputs
         /// Release an output port buffer, get a new one from the queue and send it for processing.
         /// </summary>
         /// <param name="bufferImpl">A managed buffer object.</param>
-        void ReleaseBuffer(IBuffer bufferImpl);
+        /// <param name="eos">Flag that this buffer is the end of stream.</param>
+        void ReleaseBuffer(IBuffer bufferImpl, bool eos);
 
         /// <summary>
         /// Call to register a new callback handler with this port.

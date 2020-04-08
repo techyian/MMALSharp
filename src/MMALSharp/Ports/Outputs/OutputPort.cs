@@ -169,9 +169,16 @@ namespace MMALSharp.Ports.Outputs
         /// Release an output port buffer, get a new one from the queue and send it for processing.
         /// </summary>
         /// <param name="bufferImpl">A managed buffer object.</param>
-        public virtual void ReleaseBuffer(IBuffer bufferImpl)
+        /// <param name="eos">Flag that this buffer is the end of stream.</param>
+        public virtual void ReleaseBuffer(IBuffer bufferImpl, bool eos)
         {
             bufferImpl.Release();
+            
+            if (eos)
+            {
+                // If we have reached the end of stream, we don't want to send a buffer to the output port again.
+                return;
+            }
 
             IBuffer newBuffer = null;
 
@@ -297,7 +304,7 @@ namespace MMALSharp.Ports.Outputs
             }
             
             // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
-            this.ReleaseBuffer(bufferImpl);
+            this.ReleaseBuffer(bufferImpl, eos);
 
             // If this buffer signals the end of data stream, allow waiting thread to continue.
             if (eos || failed)

@@ -72,7 +72,7 @@ namespace MMALSharp.Ports.Outputs
                     }
                     else
                     {
-                        this.ReleaseBuffer(bufferImpl);
+                        this.ReleaseBuffer(bufferImpl, eos);
                     }
                 }
                 else
@@ -87,7 +87,7 @@ namespace MMALSharp.Ports.Outputs
                     }
 
                     // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.                    
-                    this.ReleaseBuffer(bufferImpl);
+                    this.ReleaseBuffer(bufferImpl, eos);
                 }
             }
             else
