@@ -144,6 +144,11 @@ namespace MMALSharp.Ports
         int CropHeight { get; }
 
         /// <summary>
+        /// Query the port domain type.
+        /// </summary>
+        MMALFormat.MMAL_ES_TYPE_T FormatType { get; }
+
+        /// <summary>
         /// The encoding type that this port will process data in.
         /// </summary>
         int NativeEncodingType { get; }

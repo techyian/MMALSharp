@@ -63,7 +63,7 @@ namespace MMALSharp.Ports.Outputs
         {
             base.Configure(config, copyFrom, handler);
 
-            if (config.EncodingType == MMALEncoding.JPEG)
+            if (config != null && config.EncodingType == MMALEncoding.JPEG)
             {
                 this.SetParameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_Q_FACTOR, config.Quality);
             }

@@ -18,6 +18,7 @@ using MMALSharp.Common.Utility;
 using MMALSharp.Config;
 using MMALSharp.Ports;
 using MMALSharp.Processors;
+using MMALSharp.Tests.Data;
 using Xunit;
 
 namespace MMALSharp.Tests
@@ -477,6 +478,92 @@ namespace MMALSharp.Tests
                 // Camera warm up time
                 await Task.Delay(2000);
                 
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(ImageFxData.Data), MemberType = typeof(ImageFxData))]
+        public async Task ImageFxComponentFromCameraStillPort(MMAL_PARAM_IMAGEFX_T effect, bool throwsException)
+        {
+            TestHelper.BeginTest($"Image - ImageFxComponentFromCameraStillPort - {effect}");
+            TestHelper.SetConfigurationDefaults();
+            TestHelper.CleanDirectory("/home/pi/images/tests");
+
+            using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "jpg"))
+            using (var preview = new MMALNullSinkComponent())
+            using (var imageFx = new MMALImageFxComponent())
+            using (var imgEncoder = new MMALImageEncoder())
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+
+                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, 90);
+                var fxConfig = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420);
+
+                imageFx.ConfigureOutputPort(fxConfig, null);
+                imgEncoder.ConfigureOutputPort(portConfig, imgCaptureHandler);
+
+                if (throwsException)
+                {
+                    Assert.Throws<MMALInvalidException>(() =>
+                    {
+                        imageFx.ImageEffect = effect;
+                    });
+                }
+                else
+                {
+                    imageFx.ImageEffect = effect;
+                }
+
+                // Create our component pipeline.         
+                Fixture.MMALCamera.Camera.StillPort
+                    .ConnectTo(imageFx);
+                Fixture.MMALCamera.Camera.PreviewPort
+                    .ConnectTo(preview);
+
+                imageFx.Outputs[0].ConnectTo(imgEncoder);
+                
+                // Camera warm up time
+                await Task.Delay(2000);
+
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
+            }
+        }
+
+        [Fact]
+        public async Task ImageFxComponentFromCameraStillPortSetColourEnhancement()
+        {
+            TestHelper.BeginTest("Image - ImageFxComponentFromCameraStillPortSetColourEnhancement");
+            TestHelper.SetConfigurationDefaults();
+            TestHelper.CleanDirectory("/home/pi/images/tests");
+
+            using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "jpg"))
+            using (var preview = new MMALNullSinkComponent())
+            using (var imageFx = new MMALImageFxComponent())
+            using (var imgEncoder = new MMALImageEncoder())
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+
+                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, 90);
+                var fxConfig = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420);
+
+                imageFx.ConfigureOutputPort(fxConfig, null);
+                imgEncoder.ConfigureOutputPort(portConfig, imgCaptureHandler);
+                
+                imageFx.ImageEffect = MMAL_PARAM_IMAGEFX_T.MMAL_PARAM_IMAGEFX_SOLARIZE;
+                imageFx.ColourEnhancement = new ColourEffects(true, Color.Blue);
+                
+                // Create our component pipeline.         
+                Fixture.MMALCamera.Camera.StillPort
+                    .ConnectTo(imageFx);
+                Fixture.MMALCamera.Camera.PreviewPort
+                    .ConnectTo(preview);
+
+                imageFx.Outputs[0].ConnectTo(imgEncoder);
+
+                // Camera warm up time
+                await Task.Delay(2000);
+
                 await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
             }
         }

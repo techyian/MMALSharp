@@ -13,6 +13,8 @@ using MMALSharp.Config;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports;
+using MMALSharp.Ports.Outputs;
+using MMALSharp.Tests.Data;
 using Xunit;
 
 namespace MMALSharp.Tests
@@ -392,5 +394,49 @@ namespace MMALSharp.Tests
             }
         }
 
+        [Theory]
+        [MemberData(nameof(ImageFxData.Data), MemberType = typeof(ImageFxData))]
+        public async Task ImageFxComponentFromCameraVideoPort(MMAL_PARAM_IMAGEFX_T effect, bool throwsException)
+        {
+            TestHelper.BeginTest($"Video - ImageFxComponentFromCameraVideoPort - {effect}");
+            TestHelper.SetConfigurationDefaults();
+            TestHelper.CleanDirectory("/home/pi/videos/tests");
+
+            using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "raw"))
+            using (var preview = new MMALNullSinkComponent())
+            using (var imageFx = new MMALImageFxComponent())
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+                
+                var fxConfig = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420);
+
+                imageFx.ConfigureOutputPort<VideoPort>(0, fxConfig, vidCaptureHandler);
+
+                if (throwsException)
+                {
+                    Assert.Throws<MMALInvalidException>(() =>
+                    {
+                        imageFx.ImageEffect = effect;
+                    });
+                }
+                else
+                {
+                    imageFx.ImageEffect = effect;
+                }
+
+                // Create our component pipeline.         
+                Fixture.MMALCamera.Camera.VideoPort
+                    .ConnectTo(imageFx);
+                Fixture.MMALCamera.Camera.PreviewPort
+                    .ConnectTo(preview);
+
+                // Camera warm up time
+                await Task.Delay(2000);
+
+                var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.VideoPort, cts.Token);
+            }
+        }
     }
 }

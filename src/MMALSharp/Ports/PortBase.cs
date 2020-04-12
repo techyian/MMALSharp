@@ -189,6 +189,15 @@ namespace MMALSharp.Ports
         public int CropHeight => this.Ptr->Format->Es->Video.Crop.Height;
 
         /// <summary>
+        /// Query / Set the port domain type.
+        /// </summary>
+        public MMALFormat.MMAL_ES_TYPE_T FormatType
+        {
+            get => this.Ptr->Format->Type;
+            internal set => this.Ptr->Format->Type = value;
+        }
+
+        /// <summary>
         /// The encoding type that this port will process data in.
         /// </summary>
         public int NativeEncodingType

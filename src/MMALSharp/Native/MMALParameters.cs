@@ -811,16 +811,18 @@ namespace MMALSharp.Native
         public MMAL_PARAMETER_HEADER_T Hdr;
 
         private MMAL_PARAM_IMAGEFX_T effect;
-        private uint numEffectParams;
-        private uint[] effectParameter;
+        private int numEffectParams;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MMALParametersCamera.MMAL_MAX_IMAGEFX_PARAMETERS)]
+        private int[] effectParameter;
 
         public MMAL_PARAM_IMAGEFX_T Effect => this.effect;
 
-        public uint NumEffectParams => this.numEffectParams;
+        public int NumEffectParams => this.numEffectParams;
 
-        public uint[] EffectParameter => this.effectParameter;
+        public int[] EffectParameter => this.effectParameter;
 
-        public MMAL_PARAMETER_IMAGEFX_PARAMETERS_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_IMAGEFX_T effect, uint numEffectParams, uint[] effectParameter)
+        public MMAL_PARAMETER_IMAGEFX_PARAMETERS_T(MMAL_PARAMETER_HEADER_T hdr, MMAL_PARAM_IMAGEFX_T effect, int numEffectParams, int[] effectParameter)
         {
             this.Hdr = hdr;
             this.effect = effect;
@@ -2475,11 +2477,11 @@ namespace MMALSharp.Native
         public const string MMAL_COMPONENT_DEFAULT_MIRACAST = "vc.miracast";
         public const string MMAL_COMPONENT_DEFAULT_CLOCK = "vc.clock";
         public const string MMAL_COMPONENT_DEFAULT_CAMERA_INFO = "vc.camera_info";
-
-        // @waveform80 The following two components aren't in the MMAL headers, but do exist
+        
+        // These components are not present in the userland headers but do exist.
         public const string MMAL_COMPONENT_DEFAULT_NULL_SINK = "vc.null_sink";
         public const string MMAL_COMPONENT_DEFAULT_RESIZER = "vc.ril.resize";
-
+        public const string MMAL_COMPONENT_DEFAULT_IMAGE_FX = "vc.ril.image_fx";
         public const string MMAL_COMPONENT_ISP = "vc.ril.isp";
     }
 
