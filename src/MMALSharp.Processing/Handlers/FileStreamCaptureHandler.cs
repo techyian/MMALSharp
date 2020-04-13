@@ -63,6 +63,9 @@ namespace MMALSharp.Handlers
                 i++;
             }
 
+            var fileInfo = new FileInfo(fileName);
+
+            this.CurrentFilename = Path.GetFileNameWithoutExtension(fileInfo.Name);
             this.CurrentStream = File.Create(fileName);
         }
 

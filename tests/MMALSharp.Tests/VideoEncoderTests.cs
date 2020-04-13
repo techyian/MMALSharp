@@ -500,5 +500,41 @@ namespace MMALSharp.Tests
                 Fixture.CheckAndAssertFilepath(vidCaptureHandler.GetFilepath());
             }
         }
+
+        [Fact]
+        public async Task TakeVideoAndStoreTimestamps()
+        {
+            TestHelper.BeginTest("Video - TakeVideoAndStoreTimestamps");
+            TestHelper.SetConfigurationDefaults();
+            TestHelper.CleanDirectory("/home/pi/videos/tests");
+            
+            using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "h264", true))
+            using (var preview = new MMALVideoRenderer())
+            using (var vidEncoder = new MMALVideoEncoder())
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+
+                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 0, MMALVideoEncoder.MaxBitrateLevel4, null);
+
+                vidEncoder.ConfigureOutputPort(portConfig, vidCaptureHandler);
+
+                // Create our component pipeline.         
+                Fixture.MMALCamera.Camera.VideoPort
+                    .ConnectTo(vidEncoder);
+                Fixture.MMALCamera.Camera.PreviewPort
+                    .ConnectTo(preview);
+
+                // Camera warm up time
+                await Task.Delay(2000);
+
+                CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+
+                // Record video for 15 seconds
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.VideoPort, cts.Token);
+
+                Fixture.CheckAndAssertFilepath(vidCaptureHandler.GetFilepath());
+                Fixture.CheckAndAssertFilepath($"{vidCaptureHandler.Directory}/{vidCaptureHandler.CurrentFilename}.pts");
+            }
+        }
     }
 }

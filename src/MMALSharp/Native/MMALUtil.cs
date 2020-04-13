@@ -17,7 +17,7 @@ namespace MMALSharp.Native
         /// Timestamps in MMAL are defined as signed 64 bits integer values representing microseconds.
         /// However a pre-defined special value is used to signal that a timestamp is not known.
         /// </summary>
-        public static long MMAL_TIME_UNKNOWN => 1 << 63;
+        public static long MMAL_TIME_UNKNOWN => (long)1 << 63;
 
         public enum MMAL_STATUS_T
         {

@@ -52,5 +52,10 @@ namespace MMALSharp.Common
         /// Indicates if this frame contains IFrame data.
         /// </summary>
         public bool IFrame { get; set; }
+
+        /// <summary>
+        /// The timestamp value.
+        /// </summary>
+        public long? Pts { get; set; }
     }
 }

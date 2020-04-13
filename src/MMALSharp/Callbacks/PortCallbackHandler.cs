@@ -3,7 +3,6 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using System;
 using Microsoft.Extensions.Logging;
 using MMALSharp.Common;
 using MMALSharp.Common.Utility;
@@ -22,6 +21,9 @@ namespace MMALSharp.Callbacks
         where TPort : IPort
         where TCaptureHandler : IOutputCaptureHandler
     {
+        private long? _ptsStartTime;
+        private long? _ptsLastTime;
+
         /// <summary>
         /// The working port.
         /// </summary>
@@ -50,10 +52,26 @@ namespace MMALSharp.Callbacks
             {
                 MMALLog.Logger.LogDebug($"In managed {this.WorkingPort.PortType.GetPortType()} callback");
             }
-            
+
+            long? pts = null;
+
             var data = buffer.GetBufferData();
             var eos = buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) || buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
             var containsIFrame = buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG);
+
+            if (this is IVideoOutputCallbackHandler &&
+                !buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG) &&
+                buffer.Pts != MMALUtil.MMAL_TIME_UNKNOWN &&
+                (buffer.Pts != _ptsLastTime || !_ptsLastTime.HasValue))
+            {
+                if (!_ptsStartTime.HasValue)
+                {
+                    _ptsStartTime = buffer.Pts;
+                }
+
+                _ptsLastTime = buffer.Pts;
+                pts = buffer.Pts - _ptsStartTime.Value;
+            }
 
             MMALLog.Logger.LogDebug("Attempting to process data.");
 
@@ -65,7 +83,8 @@ namespace MMALSharp.Callbacks
                 Resolution = this.WorkingPort.Resolution,
                 Encoding = this.WorkingPort.EncodingType,
                 PixelFormat = this.WorkingPort.PixelFormat,
-                Raw = this.WorkingPort.EncodingType.EncType == MMALEncoding.EncodingType.PixelFormat
+                Raw = this.WorkingPort.EncodingType.EncType == MMALEncoding.EncodingType.PixelFormat,
+                Pts = pts
             });
 
             if (eos)
