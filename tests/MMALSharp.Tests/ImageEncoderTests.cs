@@ -527,6 +527,8 @@ namespace MMALSharp.Tests
                 await Task.Delay(2000);
 
                 await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
+
+                Fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
             }
         }
 

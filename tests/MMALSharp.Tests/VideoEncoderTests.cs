@@ -436,6 +436,68 @@ namespace MMALSharp.Tests
                 var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
 
                 await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.VideoPort, cts.Token);
+
+                Fixture.CheckAndAssertFilepath(vidCaptureHandler.GetFilepath());
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(ImageFxData.Data), MemberType = typeof(ImageFxData))]
+        public async Task ImageFxComponentFromCameraVideoPortWithSplitterAndEncoder(MMAL_PARAM_IMAGEFX_T effect, bool throwsException)
+        {
+            TestHelper.BeginTest($"Video - ImageFxComponentFromCameraVideoPortWithSplitterAndEncoder - {effect}");
+            TestHelper.SetConfigurationDefaults();
+            TestHelper.CleanDirectory("/home/pi/videos/tests");
+
+            using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "h264"))
+            using (var preview = new MMALNullSinkComponent())
+            using (var imageFx = new MMALImageFxComponent())
+            using (var splitter = new MMALSplitterComponent())
+            using (var vidEncoder = new MMALVideoEncoder())
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+
+                var vidEncoderConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420);
+                var splitterConfig = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420);
+                var fxConfig = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420);
+
+                imageFx.ConfigureOutputPort<VideoPort>(0, fxConfig, null);
+
+                splitter.ConfigureInputPort(new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420), imageFx.Outputs[0], null);
+                splitter.ConfigureOutputPort<VideoPort>(0, splitterConfig, null);
+
+                vidEncoder.ConfigureInputPort(new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420), splitter.Outputs[0], null);
+                vidEncoder.ConfigureOutputPort(0, vidEncoderConfig, vidCaptureHandler);
+
+                if (throwsException)
+                {
+                    Assert.Throws<MMALInvalidException>(() =>
+                    {
+                        imageFx.ImageEffect = effect;
+                    });
+                }
+                else
+                {
+                    imageFx.ImageEffect = effect;
+                }
+
+                // Create our component pipeline.         
+                Fixture.MMALCamera.Camera.VideoPort
+                    .ConnectTo(imageFx);
+                Fixture.MMALCamera.Camera.PreviewPort
+                    .ConnectTo(preview);
+
+                imageFx.Outputs[0].ConnectTo(splitter);
+                splitter.Outputs[0].ConnectTo(vidEncoder);
+
+                // Camera warm up time
+                await Task.Delay(2000);
+
+                var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.VideoPort, cts.Token);
+
+                Fixture.CheckAndAssertFilepath(vidCaptureHandler.GetFilepath());
             }
         }
     }
