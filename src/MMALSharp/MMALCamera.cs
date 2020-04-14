@@ -354,6 +354,7 @@ namespace MMALSharp
                 {
                     if (port.ConnectedReference == null)
                     {
+                        this.Camera.SetShutterSpeed(MMALCameraConfig.ShutterSpeed);
                         port.Start();
                         tasks.Add(port.Trigger.Task);
                     }
