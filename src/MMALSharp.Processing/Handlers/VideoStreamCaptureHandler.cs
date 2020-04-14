@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 using MMALSharp.Common;
 using MMALSharp.Processors.Motion;
 
@@ -98,12 +97,6 @@ namespace MMALSharp.Handlers
                     throw new IOException("Stream not writable.");
                 }                    
             }
-        }
-
-        /// <inheritdoc />
-        public override void Dispose()
-        {
-            base.Dispose();
         }
     }
 }
