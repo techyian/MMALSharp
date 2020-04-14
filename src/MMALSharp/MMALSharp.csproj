@@ -14,7 +14,7 @@
     <PackageLicenseUrl>https://github.com/techyian/MMALSharp/blob/dev/LICENSE.txt</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/techyian/MMALSharp</RepositoryUrl>
-    <VersionPrefix>0.6.0</VersionPrefix>
+    <VersionPrefix>0.7.0</VersionPrefix>
     <CodeAnalysisRuleSet>..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 	<ProjectGuid>{47af9428-8246-4267-bc76-5fc648848e40}</ProjectGuid> <!--Project guid for Sonar-->

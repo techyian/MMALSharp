@@ -1,6 +1,6 @@
 #Dev
 -
-    version: '0.6.{build}'
+    version: '0.7.{build}'
 
     # prevent the double build when a branch has an active PR
     skip_branch_with_pr: true
@@ -53,7 +53,7 @@
 #Release
 - 
 
-    version: '0.6.{build}'
+    version: '0.7.{build}'
 
     # prevent the double build when a branch has an active PR
     skip_branch_with_pr: true
