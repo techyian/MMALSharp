@@ -187,9 +187,9 @@ namespace MMALSharp.Components
                                                                 this.CameraInfo.MaxHeight,
                                                                 0,
                                                                 1,
-                                                                MMALCameraConfig.VideoResolution.Width,
-                                                                MMALCameraConfig.VideoResolution.Height,
-                                                                3 + Math.Max(0, (MMALCameraConfig.VideoFramerate.Num - 30) / 10),
+                                                                MMALCameraConfig.Resolution.Width,
+                                                                MMALCameraConfig.Resolution.Height,
+                                                                3 + Math.Max(0, (MMALCameraConfig.Framerate.Num - 30) / 10),
                                                                 0,
                                                                 0,
                                                                 MMALCameraConfig.ClockMode);
@@ -223,9 +223,9 @@ namespace MMALSharp.Components
         /// </summary>
         private void InitialisePreview()
         {
-            var portConfig = new MMALPortConfig(MMALCameraConfig.PreviewEncoding, MMALCameraConfig.PreviewSubformat,
-                MMALCameraConfig.VideoResolution.Width, MMALCameraConfig.VideoResolution.Height,
-                MMALCameraConfig.VideoFramerate.Num, 0, 0, false, null, 0, 0);
+            var portConfig = new MMALPortConfig(MMALCameraConfig.Encoding, MMALCameraConfig.EncodingSubFormat,
+                MMALCameraConfig.Resolution.Width, MMALCameraConfig.Resolution.Height,
+                MMALCameraConfig.Framerate.Num, 0, 0, false, null, 0, 0);
 
             MMALLog.Logger.LogDebug("Commit preview");
 
@@ -248,8 +248,8 @@ namespace MMALSharp.Components
         /// <param name="handler">The capture handler to associate with this port.</param>
         private void InitialiseVideo(IOutputCaptureHandler handler)
         {
-            int currentWidth = MMALCameraConfig.VideoResolution.Width;
-            int currentHeight = MMALCameraConfig.VideoResolution.Height;
+            int currentWidth = MMALCameraConfig.Resolution.Width;
+            int currentHeight = MMALCameraConfig.Resolution.Height;
 
             if (currentWidth == 0 || currentWidth > this.CameraInfo.MaxWidth)
             {
@@ -261,9 +261,9 @@ namespace MMALSharp.Components
                 currentHeight = this.CameraInfo.MaxHeight;
             }
 
-            var portConfig = new MMALPortConfig(MMALCameraConfig.VideoEncoding, MMALCameraConfig.VideoSubformat,
+            var portConfig = new MMALPortConfig(MMALCameraConfig.Encoding, MMALCameraConfig.EncodingSubFormat,
                 currentWidth, currentHeight,
-                MMALCameraConfig.VideoFramerate.Num, 0, 0, false, null,
+                MMALCameraConfig.Framerate.Num, 0, 0, false, null,
                 Math.Max(this.VideoPort.BufferNumRecommended, 3),
                 Math.Max(this.VideoPort.BufferSizeRecommended, this.VideoPort.BufferSizeMin),
                 new Rectangle(0, 0, currentWidth, currentHeight));
@@ -289,8 +289,8 @@ namespace MMALSharp.Components
         /// <param name="handler">The capture handler to associate with the still port.</param>
         private void InitialiseStill(IOutputCaptureHandler handler)
         {
-            int currentWidth = MMALCameraConfig.StillResolution.Width;
-            int currentHeight = MMALCameraConfig.StillResolution.Height;
+            int currentWidth = MMALCameraConfig.Resolution.Width;
+            int currentHeight = MMALCameraConfig.Resolution.Height;
 
             if (currentWidth == 0 || currentWidth > this.CameraInfo.MaxWidth)
             {
@@ -302,18 +302,18 @@ namespace MMALSharp.Components
                 currentHeight = this.CameraInfo.MaxHeight;
             }
 
-            MMALCameraConfig.StillResolution = new Resolution(currentWidth, currentHeight);
+            MMALCameraConfig.Resolution = new Resolution(currentWidth, currentHeight);
 
             MMALPortConfig portConfig = null;
 
-            if (MMALCameraConfig.StillEncoding == MMALEncoding.RGB32 ||
-                MMALCameraConfig.StillEncoding == MMALEncoding.RGB24 ||
-                MMALCameraConfig.StillEncoding == MMALEncoding.RGB16)
+            if (MMALCameraConfig.Encoding == MMALEncoding.RGB32 ||
+                MMALCameraConfig.Encoding == MMALEncoding.RGB24 ||
+                MMALCameraConfig.Encoding == MMALEncoding.RGB16)
             {
                 MMALLog.Logger.LogWarning("Encoding set to RGB. Setting width padding to multiple of 16.");
 
-                var resolution = MMALCameraConfig.StillResolution.Pad(16, 16);
-                var encoding = MMALCameraConfig.StillEncoding;
+                var resolution = MMALCameraConfig.Resolution.Pad(16, 16);
+                var encoding = MMALCameraConfig.Encoding;
 
                 try
                 {
@@ -330,17 +330,17 @@ namespace MMALSharp.Components
                 }
 
                 portConfig = new MMALPortConfig(encoding, null, resolution.Width, resolution.Height,
-                    MMALCameraConfig.StillFramerate.Num, 0, 0, false, null,
+                    MMALCameraConfig.Framerate.Num, 0, 0, false, null,
                     Math.Max(this.StillPort.BufferNumRecommended, 3),
                     Math.Max(this.StillPort.BufferSizeRecommended, this.StillPort.BufferSizeMin),
                     new Rectangle(0, 0, currentWidth, currentHeight));
             }
             else
             {
-                var resolution = MMALCameraConfig.StillResolution.Pad();
+                var resolution = MMALCameraConfig.Resolution.Pad();
 
-                portConfig = new MMALPortConfig(MMALCameraConfig.StillEncoding, MMALCameraConfig.StillSubFormat, resolution.Width, resolution.Height, 
-                    MMALCameraConfig.StillFramerate.Num, 0, 0, false, null,
+                portConfig = new MMALPortConfig(MMALCameraConfig.Encoding, MMALCameraConfig.EncodingSubFormat, resolution.Width, resolution.Height, 
+                    MMALCameraConfig.Framerate.Num, 0, 0, false, null,
                     Math.Max(this.StillPort.BufferNumRecommended, 3),
                     Math.Max(this.StillPort.BufferSizeRecommended, this.StillPort.BufferSizeMin),
                     new Rectangle(0, 0, currentWidth, currentHeight));

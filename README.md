@@ -38,7 +38,6 @@ Below is an example on how to configure NLog in a .NET Core 3.0+ console app. No
 ```csharp
 var loggerFactory = LoggerFactory.Create(builder =>
 {
-
 	builder                
 	.ClearProviders()
 	.SetMinimumLevel(LogLevel.Trace)                
@@ -56,7 +55,6 @@ Also see [here](https://github.com/NLog/NLog/wiki/Getting-started-with-.NET-Core
 Take a JPEG image using YUV420 encoding:
 
 ```csharp
-
 public void TakePicture()
 {
     // Singleton initialized lazily. Reference once in your application.
@@ -71,13 +69,11 @@ public void TakePicture()
     // on the camera.
     cam.Cleanup();
 }
-
 ```
 
 Take a H.264 video using YUV420 encoding at 30 fps:
 
 ```csharp
-
 public void TakeVideo()
 {
     // Singleton initialized lazily. Reference once in your application.
@@ -94,9 +90,18 @@ public void TakeVideo()
     // on the camera.
     cam.Cleanup();
 }
-
 ```
 
+## Basic Configuration
+
+Below are common global configuration properties which you may want to edit:
+
+```csharp
+MMALCameraConfig.Resolution = new Resolution(640, 480); // Set to 640 x 480. Default is 1280 x 720.
+MMALCameraConfig.Framerate = new MMAL_RATIONAL_T(20, 1); // Set to 20fps. Default is 30fps.
+MMALCameraConfig.ShutterSpeed = 2000000; // Set to 2s exposure time. Default is 0 (auto).
+MMALCameraConfig.ISO = 400; // Set ISO to 400. Default is 0 (auto).
+```
 
 ## Documentation
 

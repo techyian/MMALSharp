@@ -27,8 +27,8 @@ namespace MMALSharp.Ports.Outputs
             {
                 if (value.Width == 0 || value.Height == 0)
                 {
-                    this.Width = MMALCameraConfig.StillResolution.Pad().Width;
-                    this.Height = MMALCameraConfig.StillResolution.Pad().Height;
+                    this.Width = MMALCameraConfig.Resolution.Pad().Width;
+                    this.Height = MMALCameraConfig.Resolution.Pad().Height;
                 }
                 else
                 {

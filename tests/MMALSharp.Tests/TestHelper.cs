@@ -34,15 +34,12 @@ namespace MMALSharp.Tests
             MMALCameraConfig.ShutterSpeed = 0;
             MMALCameraConfig.SensorMode = MMALSensorMode.Mode0;
             MMALCameraConfig.VideoStabilisation = true;
-            MMALCameraConfig.VideoEncoding = MMALEncoding.OPAQUE;
-            MMALCameraConfig.VideoSubformat = MMALEncoding.I420;
-            MMALCameraConfig.VideoFramerate = new MMAL_RATIONAL_T(10, 1);
-            MMALCameraConfig.StillEncoding = MMALEncoding.OPAQUE;
-            MMALCameraConfig.StillSubFormat = MMALEncoding.I420;
+            MMALCameraConfig.Framerate = new MMAL_RATIONAL_T(10, 1);
+            MMALCameraConfig.Encoding = MMALEncoding.OPAQUE;
+            MMALCameraConfig.EncodingSubFormat = MMALEncoding.I420;
             MMALCameraConfig.VideoColorSpace = MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT709;
             MMALCameraConfig.InlineMotionVectors = false;
-            MMALCameraConfig.StillResolution = Resolution.As03MPixel;
-            MMALCameraConfig.VideoResolution = Resolution.As03MPixel;
+            MMALCameraConfig.Resolution = Resolution.As03MPixel;
         }
 
         public static void CleanDirectory(string directory)

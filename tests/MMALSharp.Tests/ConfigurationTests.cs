@@ -281,7 +281,7 @@ namespace MMALSharp.Tests
         [MMALTestsAttribute]
         public void SetThenGetShutterSpeed(int shutterSpeed)
         {   
-            MMALCameraConfig.StillFramerate = new MMAL_RATIONAL_T(0, 0);
+            MMALCameraConfig.Framerate = new MMAL_RATIONAL_T(0, 0);
             MMALCameraConfig.SensorMode = MMALSensorMode.Mode1;
             MMALCameraConfig.AwbMode = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_OFF;
             MMALCameraConfig.ShutterSpeed = shutterSpeed;

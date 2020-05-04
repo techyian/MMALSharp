@@ -117,7 +117,7 @@ namespace MMALSharp.Demo
                 var encoderConfig = new MMALPortConfig(encoding, pixelFormat, 90);
 
                 // Create our component pipeline.         
-                resizer.ConfigureInputPort(new MMALPortConfig(MMALCameraConfig.StillEncoding, MMALCameraConfig.StillSubFormat), this.Cam.Camera.StillPort, null);
+                resizer.ConfigureInputPort(new MMALPortConfig(MMALCameraConfig.Encoding, MMALCameraConfig.EncodingSubFormat), this.Cam.Camera.StillPort, null);
                 resizer.ConfigureOutputPort(resizerConfig, null);
                 imgEncoder.ConfigureOutputPort(encoderConfig, imgCaptureHandler);
                     

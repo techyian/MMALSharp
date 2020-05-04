@@ -149,42 +149,31 @@ namespace MMALSharp
         public static MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T ClockMode { get; set; } =
             MMAL_PARAMETER_CAMERA_CONFIG_TIMESTAMP_MODE_T.MMAL_PARAM_TIMESTAMP_MODE_RESET_STC;
 
-        /*
-         * -----------------------------------------------------------------------------------------------------------
-         * Camera preview port specific properties.
-         * -----------------------------------------------------------------------------------------------------------
-        */
+        /// <summary>
+        /// The camera encoding type.
+        /// </summary>
+        public static MMALEncoding Encoding { get; set; } = MMALEncoding.OPAQUE;
 
         /// <summary>
-        /// The encoding type to use with the Preview renderer.
+        /// The camera encoding sub format.
         /// </summary>
-        public static MMALEncoding PreviewEncoding { get; set; } = MMALEncoding.OPAQUE;
+        public static MMALEncoding EncodingSubFormat { get; set; } = MMALEncoding.I420;
 
         /// <summary>
-        /// The pixel format to use with the Preview renderer.
+        /// The working resolution of the camera.
         /// </summary>
-        public static MMALEncoding PreviewSubformat { get; set; } = MMALEncoding.I420;
+        public static Resolution Resolution { get; set; } = Resolution.As720p;
+
+        /// <summary>
+        /// The working framerate of the camera.
+        /// </summary>
+        public static MMAL_RATIONAL_T Framerate { get; set; } = new MMAL_RATIONAL_T(30, 1);
 
         /*
          * -----------------------------------------------------------------------------------------------------------
          * Camera video port specific properties.
          * -----------------------------------------------------------------------------------------------------------
         */
-
-        /// <summary>
-        /// The encoding type to use for Video captures.
-        /// </summary>
-        public static MMALEncoding VideoEncoding { get; set; } = MMALEncoding.OPAQUE;
-
-        /// <summary>
-        /// The pixel format to use for Video captures.
-        /// </summary>
-        public static MMALEncoding VideoSubformat { get; set; } = MMALEncoding.I420;
-
-        /// <summary>
-        /// The Resolution to use for Video captures.
-        /// </summary>
-        public static Resolution VideoResolution { get; set; } = Resolution.As1080p;
 
         /// <summary>
         /// Enable video stabilisation. The purpose of video stabilisation is to filter the video frame
@@ -236,11 +225,6 @@ namespace MMALSharp
         public static MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T IntraRefresh { get; set; } = MMALParametersVideo.MMAL_VIDEO_INTRA_REFRESH_T.MMAL_VIDEO_INTRA_REFRESH_DISABLED;
 
         /// <summary>
-        /// Specifies the frames per second to record
-        /// </summary>
-        public static MMAL_RATIONAL_T VideoFramerate { get; set; } = new MMAL_RATIONAL_T(30, 1);
-
-        /// <summary>
         /// The working video color space, specific to the camera's video port. 
         /// </summary>
         public static MMALEncoding VideoColorSpace { get; set; }
@@ -250,26 +234,6 @@ namespace MMALSharp
          * Camera still port specific properties.
          * -----------------------------------------------------------------------------------------------------------
         */
-
-        /// <summary>
-        /// The encoding type to use for Still captures.
-        /// </summary>
-        public static MMALEncoding StillEncoding { get; set; } = MMALEncoding.OPAQUE;
-
-        /// <summary>
-        /// The pixel format to use for Still captures. Irrelevant when not using OPAQUE encoding.
-        /// </summary>
-        public static MMALEncoding StillSubFormat { get; set; } = MMALEncoding.I420;
-
-        /// <summary>
-        /// The Resolution to use for Still captures.
-        /// </summary>
-        public static Resolution StillResolution { get; set; } = Resolution.As5MPixel;
-
-        /// <summary>
-        /// The frame rate to use for Still captures.
-        /// </summary>
-        public static MMAL_RATIONAL_T StillFramerate { get; set; } = new MMAL_RATIONAL_T(0, 1);
 
         /// <summary>
         /// Indicates whether the camera's still port should feature Burst Mode, i.e. MMAL_PARAMETER_CAMERA_BURST_CAPTURE.

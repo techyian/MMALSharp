@@ -94,7 +94,7 @@ namespace MMALSharp
             {
                 this.ConfigureCameraSettings();
 
-                var splitterOutputConfig = new MMALPortConfig(MMALCameraConfig.VideoEncoding, MMALCameraConfig.VideoSubformat, 0);
+                var splitterOutputConfig = new MMALPortConfig(MMALCameraConfig.Encoding, MMALCameraConfig.EncodingSubFormat, 0);
 
                 // Force port type to SplitterVideoPort to prevent resolution from being set against splitter component.
                 splitter.ConfigureOutputPort<SplitterVideoPort>(0, splitterOutputConfig, handler);
@@ -104,7 +104,7 @@ namespace MMALSharp
                 this.Camera.PreviewPort.ConnectTo(renderer);
 
                 MMALLog.Logger.LogInformation($"Preparing to take raw video. Resolution: {this.Camera.VideoPort.Resolution.Width} x {this.Camera.VideoPort.Resolution.Height}. " +
-                                    $"Encoder: {MMALCameraConfig.VideoEncoding.EncodingName}. Pixel Format: {MMALCameraConfig.VideoSubformat.EncodingName}.");
+                                    $"Encoder: {MMALCameraConfig.Encoding.EncodingName}. Pixel Format: {MMALCameraConfig.EncodingSubFormat.EncodingName}.");
 
                 // Camera warm up time
                 await Task.Delay(2000).ConfigureAwait(false);
@@ -175,7 +175,7 @@ namespace MMALSharp
                 this.Camera.PreviewPort.ConnectTo(renderer);
                 
                 MMALLog.Logger.LogInformation($"Preparing to take raw picture - Resolution: {this.Camera.StillPort.Resolution.Width} x {this.Camera.StillPort.Resolution.Height}. " +
-                                  $"Encoder: {MMALCameraConfig.StillEncoding.EncodingName}. Pixel Format: {MMALCameraConfig.StillSubFormat.EncodingName}.");
+                                  $"Encoder: {MMALCameraConfig.Encoding.EncodingName}. Pixel Format: {MMALCameraConfig.EncodingSubFormat.EncodingName}.");
 
                 // Camera warm up time
                 await Task.Delay(2000).ConfigureAwait(false);
@@ -312,7 +312,7 @@ namespace MMALSharp
 
                     await Task.Delay(interval).ConfigureAwait(false);
 
-                    MMALLog.Logger.LogInformation($"Preparing to take picture. Resolution: {MMALCameraConfig.StillResolution.Width} x {MMALCameraConfig.StillResolution.Height}. " +
+                    MMALLog.Logger.LogInformation($"Preparing to take picture. Resolution: {MMALCameraConfig.Resolution.Width} x {MMALCameraConfig.Resolution.Height}. " +
                                         $"Encoder: {encodingType.EncodingName}. Pixel Format: {pixelFormat.EncodingName}.");
 
                     await this.ProcessAsync(this.Camera.StillPort).ConfigureAwait(false);

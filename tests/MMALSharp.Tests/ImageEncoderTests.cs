@@ -103,8 +103,8 @@ namespace MMALSharp.Tests
             TestHelper.BeginTest("TakePictureRawSensor", encodingType.EncodingName, pixelFormat.EncodingName);
             TestHelper.SetConfigurationDefaults();
 
-            MMALCameraConfig.StillEncoding = encodingType;
-            MMALCameraConfig.StillSubFormat = pixelFormat;
+            MMALCameraConfig.Encoding = encodingType;
+            MMALCameraConfig.EncodingSubFormat = pixelFormat;
             
             TestHelper.CleanDirectory("/home/pi/images/tests");
             
@@ -346,9 +346,9 @@ namespace MMALSharp.Tests
             TestHelper.CleanDirectory("/home/pi/images/tests");
             TestHelper.CleanDirectory("/home/pi/images/tests/staticoverlay");
 
-            MMALCameraConfig.StillResolution = Resolution.As03MPixel;
-            MMALCameraConfig.StillEncoding = MMALEncoding.I420;
-            MMALCameraConfig.StillSubFormat = MMALEncoding.I420;
+            MMALCameraConfig.Resolution = Resolution.As03MPixel;
+            MMALCameraConfig.Encoding = MMALEncoding.I420;
+            MMALCameraConfig.EncodingSubFormat = MMALEncoding.I420;
             
             var filename = string.Empty;
             
@@ -367,8 +367,8 @@ namespace MMALSharp.Tests
                 Opacity = 1
             };
 
-            MMALCameraConfig.StillResolution = Resolution.As1080p;
-            MMALCameraConfig.StillEncoding = MMALEncoding.OPAQUE;
+            MMALCameraConfig.Resolution = Resolution.As1080p;
+            MMALCameraConfig.Encoding = MMALEncoding.OPAQUE;
                 
             using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "jpg"))
             using (var imgEncoder = new MMALImageEncoder())
