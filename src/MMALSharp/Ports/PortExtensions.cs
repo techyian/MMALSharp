@@ -148,7 +148,7 @@ namespace MMALSharp
         /// <param name="value">The value of the parameter.</param>
         internal static unsafe void SetParameter(this IPort port, int key, dynamic value)
         {
-            var t = MMALParameterHelpers.ParameterHelper.Where(c => c.ParamValue == key).FirstOrDefault();
+            var t = MMALParameterHelpers.ParameterHelper.FirstOrDefault(c => c.ParamValue == key);
 
             if (t == null)
             {
