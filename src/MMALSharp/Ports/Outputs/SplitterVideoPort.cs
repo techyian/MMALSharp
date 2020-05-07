@@ -93,11 +93,11 @@ namespace MMALSharp.Ports.Outputs
 
                 this.EncodingType = config.EncodingType;
                 this.PixelFormat = config.PixelFormat;
-                
-                this.Commit();
 
                 this.BufferNum = Math.Max(this.BufferNumMin, config.BufferNum > 0 ? config.BufferNum : this.BufferNumRecommended);
                 this.BufferSize = Math.Max(this.BufferSizeMin, config.BufferSize > 0 ? config.BufferSize : this.BufferSizeRecommended);
+
+                this.Commit();
             }
             
             this.CallbackHandler = new VideoOutputCallbackHandler(this, (IVideoCaptureHandler)handler, null);

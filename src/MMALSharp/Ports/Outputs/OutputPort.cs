@@ -135,11 +135,11 @@ namespace MMALSharp.Ports.Outputs
                     }
                 }
 
-                // It is important to re-commit changes to width and height.
-                this.Commit();
-
                 this.BufferNum = Math.Max(this.BufferNumMin, config.BufferNum > 0 ? config.BufferNum : this.BufferNumRecommended);
                 this.BufferSize = Math.Max(this.BufferSizeMin, config.BufferSize > 0 ? config.BufferSize : this.BufferSizeRecommended);
+
+                // It is important to re-commit changes to width and height.
+                this.Commit();
             }
             
             this.CallbackHandler = new DefaultOutputPortCallbackHandler(this, handler);

@@ -347,20 +347,22 @@ namespace MMALSharp
             // Enable all connections associated with these components
             foreach (var component in handlerComponents)
             {
-                component.EnableConnections();
                 component.ForceStopProcessing = false;
 
                 foreach (var port in component.ProcessingPorts.Values)
                 {
                     if (port.ConnectedReference == null)
                     {
-                        this.Camera.SetShutterSpeed(MMALCameraConfig.ShutterSpeed);
                         port.Start();
                         tasks.Add(port.Trigger.Task);
                     }
                 }
+
+                component.EnableConnections();
             }
-            
+
+            this.Camera.SetShutterSpeed(MMALCameraConfig.ShutterSpeed);
+
             // We now begin capturing on the camera, processing will commence based on the pipeline configured.
             this.StartCapture(cameraPort);
             
