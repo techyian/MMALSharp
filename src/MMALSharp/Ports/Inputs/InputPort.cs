@@ -115,9 +115,7 @@ namespace MMALSharp.Ports.Inputs
                 }
 
                 this.EncodingType = config.EncodingType;
-
-                this.Commit();
-
+                
                 if (config.ZeroCopy)
                 {
                     this.ZeroCopy = true;
@@ -126,6 +124,9 @@ namespace MMALSharp.Ports.Inputs
 
                 this.BufferNum = Math.Max(this.BufferNumMin, config.BufferNum > 0 ? config.BufferNum : this.BufferNumRecommended);
                 this.BufferSize = Math.Max(this.BufferSizeMin, config.BufferSize > 0 ? config.BufferSize : this.BufferSizeRecommended);
+
+                this.Commit();
+
                 this.CallbackHandler = new DefaultInputPortCallbackHandler(this, handler);
             }
         }
