@@ -76,7 +76,7 @@ namespace MMALSharp.Ports.Outputs
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.LogDebug($"In native {nameof(VideoPort)} output callback");
+                MMALLog.Logger.LogDebug($"{this.Name}: In native {nameof(VideoPort)} output callback");
             }
 
             var bufferImpl = new MMALBufferImpl(buffer);
@@ -95,7 +95,7 @@ namespace MMALSharp.Ports.Outputs
 
             if (eos && !this.Trigger.Task.IsCompleted)
             {
-                MMALLog.Logger.LogDebug($"{this.ComponentReference.Name} {this.Name} Timeout exceeded, triggering signal.");
+                MMALLog.Logger.LogDebug($"{this.Name}: Timeout exceeded, triggering signal.");
                 Task.Run(() => { this.Trigger.SetResult(true); });
             }
         }

@@ -73,7 +73,7 @@ namespace MMALSharp.Ports.Outputs
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.LogDebug($"In native {nameof(StillPort)} output callback");
+                MMALLog.Logger.LogDebug($"{this.Name}: In native {nameof(StillPort)} output callback");
             }
 
             base.NativeOutputPortCallback(port, buffer);

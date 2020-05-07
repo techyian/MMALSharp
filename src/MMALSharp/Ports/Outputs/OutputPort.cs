@@ -80,7 +80,7 @@ namespace MMALSharp.Ports.Outputs
                 catch
                 {
                     // If commit fails using new settings, attempt to reset using old temp MMAL_VIDEO_FORMAT_T.
-                    MMALLog.Logger.LogWarning("Commit of output port failed. Attempting to reset values.");
+                    MMALLog.Logger.LogWarning($"{this.Name}: Commit of output port failed. Attempting to reset values.");
                     this.Ptr->Format->Es->Video = tempVid;
                     this.Commit();
                 }
@@ -155,7 +155,7 @@ namespace MMALSharp.Ports.Outputs
         {
             if (this.ConnectedReference != null)
             {
-                MMALLog.Logger.LogWarning("A connection has already been established on this port");
+                MMALLog.Logger.LogWarning($"{this.Name}: A connection has already been established on this port");
                 return;
             }
 
@@ -188,12 +188,12 @@ namespace MMALSharp.Ports.Outputs
                 {
                     if (!this.Enabled)
                     {
-                        MMALLog.Logger.LogDebug("Port not enabled.");
+                        MMALLog.Logger.LogDebug($"{this.Name}: Port not enabled.");
                     }
 
                     if (this.BufferPool == null)
                     {
-                        MMALLog.Logger.LogDebug("Buffer pool null.");
+                        MMALLog.Logger.LogDebug($"{this.Name}: Buffer pool null.");
                     }
                 }
                 
@@ -207,7 +207,7 @@ namespace MMALSharp.Ports.Outputs
                     }
                     else
                     {
-                        MMALLog.Logger.LogWarning("Buffer null. Continuing.");
+                        MMALLog.Logger.LogWarning($"{this.Name}: Buffer null. Continuing.");
                     }
                 }
             }
@@ -218,7 +218,7 @@ namespace MMALSharp.Ports.Outputs
                     newBuffer.Release();
                 }
 
-                MMALLog.Logger.LogWarning($"Unable to send buffer header. {e.Message}");
+                MMALLog.Logger.LogWarning($"{this.Name}: Unable to send buffer header. {e.Message}");
             }
         }
 
@@ -245,7 +245,7 @@ namespace MMALSharp.Ports.Outputs
                 
                 if (this.CallbackHandler == null)
                 {
-                    MMALLog.Logger.LogWarning("Callback null");
+                    MMALLog.Logger.LogWarning($"{this.Name}: Callback null");
 
                     this.EnablePort(IntPtr.Zero);
                 }
@@ -262,7 +262,7 @@ namespace MMALSharp.Ports.Outputs
             
             if (!this.Enabled)
             {
-                throw new PiCameraError("Unknown error occurred whilst enabling port");
+                throw new PiCameraError($"{this.Name}: Unknown error occurred whilst enabling port");
             }
         }
 
@@ -271,7 +271,7 @@ namespace MMALSharp.Ports.Outputs
         /// </summary>
         public void Start()
         {
-            MMALLog.Logger.LogDebug($"Starting output port {this.Name}");
+            MMALLog.Logger.LogDebug($"{this.Name}: Starting output port.");
             this.Trigger = new TaskCompletionSource<bool>();
             this.Enable();
         }
@@ -285,7 +285,7 @@ namespace MMALSharp.Ports.Outputs
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.LogDebug("In native output callback");
+                MMALLog.Logger.LogDebug($"{this.Name}: In native output callback");
             }
             
             var bufferImpl = new MMALBufferImpl(buffer);
@@ -309,7 +309,7 @@ namespace MMALSharp.Ports.Outputs
             // If this buffer signals the end of data stream, allow waiting thread to continue.
             if (eos || failed)
             {
-                MMALLog.Logger.LogDebug($"{this.ComponentReference.Name} {this.Name} End of stream. Signaling completion...");
+                MMALLog.Logger.LogDebug($"{this.Name}: End of stream. Signaling completion...");
                 
                 Task.Run(() => { this.Trigger.SetResult(true); });
             }

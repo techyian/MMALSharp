@@ -47,7 +47,7 @@ namespace MMALSharp.Ports.Outputs
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.LogDebug($"In native {nameof(FileEncodeOutputPort)} callback");
+                MMALLog.Logger.LogDebug($"{this.Name}: In native {nameof(FileEncodeOutputPort)} callback");
             }
             
             var bufferImpl = new MMALBufferImpl(buffer);
@@ -83,7 +83,7 @@ namespace MMALSharp.Ports.Outputs
                     }
                     else
                     {
-                        MMALLog.Logger.LogDebug("Buffer length empty.");
+                        MMALLog.Logger.LogDebug($"{this.Name}: Buffer length empty.");
                     }
 
                     // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.                    
@@ -92,13 +92,13 @@ namespace MMALSharp.Ports.Outputs
             }
             else
             {
-                MMALLog.Logger.LogDebug($"Invalid output buffer received");
+                MMALLog.Logger.LogDebug($"{this.Name}: Invalid output buffer received");
             }
 
             // If this buffer signals the end of data stream, allow waiting thread to continue.
             if (eos)
             {
-                MMALLog.Logger.LogDebug($"{this.ComponentReference.Name} {this.Name} End of stream. Signaling completion...");
+                MMALLog.Logger.LogDebug($"{this.Name}: End of stream. Signaling completion...");
 
                 Task.Run(() => { this.Trigger.SetResult(true); });
             }
@@ -106,7 +106,7 @@ namespace MMALSharp.Ports.Outputs
 
         private void ProcessFormatChangedEvent(IBuffer buffer)
         {
-            MMALLog.Logger.LogInformation("Received MMAL_EVENT_FORMAT_CHANGED event");
+            MMALLog.Logger.LogInformation($"{this.Name}: Received MMAL_EVENT_FORMAT_CHANGED event");
 
             var ev = MMALEventFormat.GetEventFormat(buffer);
 
@@ -116,7 +116,7 @@ namespace MMALSharp.Ports.Outputs
             MMALLog.Logger.LogInformation("-- To -- ");
             this.LogFormat(ev, null);
             
-            MMALLog.Logger.LogDebug("Finished processing MMAL_EVENT_FORMAT_CHANGED event");
+            MMALLog.Logger.LogDebug($"{this.Name}: Finished processing MMAL_EVENT_FORMAT_CHANGED event");
         }
 
         private void LogFormat(MMALEventFormat format, IPort port)

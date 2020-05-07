@@ -142,11 +142,11 @@ namespace MMALSharp.Ports.Inputs
 
                 IntPtr ptrCallback = Marshal.GetFunctionPointerForDelegate(this.NativeCallback);
 
-                MMALLog.Logger.LogDebug("Enabling input port.");
+                MMALLog.Logger.LogDebug($"{this.Name}: Enabling input port.");
 
                 if (this.CallbackHandler == null)
                 {
-                    MMALLog.Logger.LogWarning("Callback null");
+                    MMALLog.Logger.LogWarning($"{this.Name}: Callback null");
                     this.EnablePort(IntPtr.Zero);
                 }
                 else
@@ -159,7 +159,7 @@ namespace MMALSharp.Ports.Inputs
 
             if (!this.Enabled)
             {
-                throw new PiCameraError("Unknown error occurred whilst enabling port");
+                throw new PiCameraError($"{this.Name}: Unknown error occurred whilst enabling port");
             }
         }
         
@@ -195,7 +195,7 @@ namespace MMALSharp.Ports.Inputs
 
                 if (result.EOF || this.ComponentReference.ForceStopProcessing)
                 {
-                    MMALLog.Logger.LogDebug("Received EOF. Releasing.");
+                    MMALLog.Logger.LogDebug($"{this.Name}: Received EOF. Releasing.");
 
                     Task.Run(() => { this.Trigger.SetResult(true); });
                 }
@@ -207,7 +207,7 @@ namespace MMALSharp.Ports.Inputs
         /// </summary>
         public void Start()
         {
-            MMALLog.Logger.LogDebug($"Starting input port {this.Name}");
+            MMALLog.Logger.LogDebug($"{this.Name}: Starting input port.");
             this.Trigger = new TaskCompletionSource<bool>();
             this.Enable();
         }
@@ -225,7 +225,7 @@ namespace MMALSharp.Ports.Inputs
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.LogDebug("In native input callback");
+                MMALLog.Logger.LogDebug($"{this.Name}: In native input callback.");
             }
 
             var bufferImpl = new MMALBufferImpl(buffer);

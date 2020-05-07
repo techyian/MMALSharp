@@ -76,7 +76,7 @@ namespace MMALSharp.Ports.Outputs
         {
             if (MMALCameraConfig.Debug)
             {
-                MMALLog.Logger.LogDebug($"In native {nameof(FastStillPort)} output callback");
+                MMALLog.Logger.LogDebug($"{this.Name}: In native {nameof(FastStillPort)} output callback.");
             }
             
             var bufferImpl = new MMALBufferImpl(buffer);
@@ -97,7 +97,7 @@ namespace MMALSharp.Ports.Outputs
             // If this buffer signals the end of data stream, allow waiting thread to continue.
             if (this.ComponentReference.ForceStopProcessing || failed)
             {
-                MMALLog.Logger.LogDebug($"{this.ComponentReference.Name} {this.Name} Signaling completion of continuous still frame capture...");
+                MMALLog.Logger.LogDebug($"{this.Name}: Signaling completion of continuous still frame capture...");
                 Task.Run(() => { this.Trigger.SetResult(true); });
             }
         }
