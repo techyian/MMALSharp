@@ -73,8 +73,11 @@ namespace MMALSharp.Callbacks
                 pts = buffer.Pts - _ptsStartTime.Value;
             }
 
-            MMALLog.Logger.LogDebug("Attempting to process data.");
-
+            if (MMALCameraConfig.Debug)
+            {
+                MMALLog.Logger.LogDebug("Attempting to process data.");
+            }
+            
             this.CaptureHandler?.Process(new ImageContext
             {
                 Data = data,

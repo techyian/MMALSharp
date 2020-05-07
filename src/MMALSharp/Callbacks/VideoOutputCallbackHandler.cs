@@ -77,7 +77,10 @@ namespace MMALSharp.Callbacks
         /// <param name="buffer">The working buffer header.</param>
         public override void Callback(IBuffer buffer)
         {
-            MMALLog.Logger.LogDebug("In video output callback");
+            if (MMALCameraConfig.Debug)
+            {
+                MMALLog.Logger.LogDebug("In video output callback");
+            }
             
             if (this.PrepareSplit && buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_CONFIG))
             {
