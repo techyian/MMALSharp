@@ -10,7 +10,7 @@ namespace MMALSharp
     /// <summary>
     /// Represents a queue of buffer headers.
     /// </summary>
-    public interface IBufferQueue
+    public interface IBufferQueue : IMMALObject
     {
         /// <summary>
         /// Native pointer to the buffer header queue this object represents.
