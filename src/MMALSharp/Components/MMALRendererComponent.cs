@@ -277,8 +277,12 @@ namespace MMALSharp.Components
                 {
                     throw new PiCameraError($"Incompatible encoding type for use with Preview Render overlay {this.Inputs[0].NativeEncodingType.ParseEncoding().EncodingName}.");
                 }
-
-                var portConfig = new MMALPortConfig(config.Encoding, null, width, height, 0, 0, 0, false, null, 0, 0);
+                
+                var portConfig = new MMALPortConfig(
+                    config.Encoding,
+                    null,
+                    width: width,
+                    height: height);
 
                 this.ConfigureInputPort(portConfig, null);
 

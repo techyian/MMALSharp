@@ -7,7 +7,6 @@ using System;
 using System.Drawing;
 using MMALSharp.Common;
 using MMALSharp.Config;
-using MMALSharp.Native;
 
 namespace MMALSharp.Ports
 {
@@ -25,14 +24,14 @@ namespace MMALSharp.Ports
         /// The pixel format this output port will send data in.
         /// </summary>
         public MMALEncoding PixelFormat { get; }
-        
+
         /// <summary>
-        /// User provided width of output frame.
+        /// The input/output width value.
         /// </summary>
         public int Width { get; }
 
         /// <summary>
-        /// User provided height of output frame.
+        /// The input/output height value.
         /// </summary>
         public int Height { get; }
         
@@ -40,9 +39,9 @@ namespace MMALSharp.Ports
         /// The framerate of the outputted data.
         /// </summary>
         public int Framerate { get; }
-        
+
         /// <summary>
-        /// The quality of our outputted data. 
+        /// The quality value. Can be used with JPEG encoding (value between 1-100). Can be used with H.264 encoding which affects the quantization parameter (typical values between 10-40, see wiki for info). Set both bitrate param and quality param to 0 for variable bitrate.
         /// </summary>
         public int Quality { get; }
         
@@ -87,94 +86,37 @@ namespace MMALSharp.Ports
         public bool StoreMotionVectors { get; }
 
         /// <summary>
-        /// Create a new instance of <see cref="MMALPortConfig"/> with parameters useful for image capture.
-        /// </summary>
-        /// <param name="encodingType">The encoding type.</param>
-        /// <param name="pixelFormat">The pixel format.</param>
-        /// <param name="quality">The output quality. Only affects JPEG quality for image stills.</param>
-        public MMALPortConfig(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality = 0)
-        {
-            this.EncodingType = encodingType;
-            this.PixelFormat = pixelFormat;
-            this.Quality = quality;
-        }
-
-        /// <summary>
-        /// Create a new instance of <see cref="MMALPortConfig"/> with parameters useful for video capture.
-        /// </summary>
-        /// <param name="encodingType">The encoding type.</param>
-        /// <param name="pixelFormat">The pixel format.</param>
-        /// <param name="quality">The output quality. Affects the quantization parameter for H.264 encoding. Set bitrate 0 and set this for variable bitrate.</param>
-        /// <param name="bitrate">The output bitrate.</param>
-        /// <param name="timeout">Video record timeout. This is useful if you have multiple video recording streams which you want to stop at different times.</param>
-        /// <param name="split">Video split configuration object.</param>
-        /// <param name="storeMotionVectors">Indicates whether to store motion vectors. Applies to H.264 video encoding.</param>
-        public MMALPortConfig(MMALEncoding encodingType, MMALEncoding pixelFormat, int quality, int bitrate, DateTime? timeout, Split split = null, bool storeMotionVectors = false)
-        {
-            this.EncodingType = encodingType;
-            this.PixelFormat = pixelFormat;
-            this.Quality = quality;
-            this.Bitrate = bitrate;
-            this.Timeout = timeout;
-            this.Split = split;
-            this.StoreMotionVectors = storeMotionVectors;
-        }
-
-        /// <summary>
-        /// Create a new instance of <see cref="MMALPortConfig"/> with parameters useful for standalone image/video processing.
-        /// </summary>
-        /// <param name="encodingType">The encoding type.</param>
-        /// <param name="pixelFormat">The pixel format.</param>
-        /// <param name="width">The output width.</param>
-        /// <param name="height">The output height.</param>
-        /// <param name="framerate">The output framerate.</param>
-        /// <param name="quality">The output quality.</param>
-        /// <param name="bitrate">The output bitrate.</param>
-        /// <param name="zeroCopy">Specify zero copy.</param>
-        /// <param name="timeout">Video record timeout.</param>
-        /// <param name="bufferNum">Requested number of buffer headers.</param>
-        /// <param name="bufferSize">Requested size of buffer headers.</param>
-        /// <param name="crop">The Region of Interest requested.</param>
-        /// <param name="storeMotionVectors">Indicates whether to store motion vectors. Applies to H.264 video encoding.</param>
-        public MMALPortConfig(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, int framerate,
-                                int quality, int bitrate, bool zeroCopy, DateTime? timeout, int bufferNum = 0, int bufferSize = 0, Rectangle? crop = null,
-                                bool storeMotionVectors = false)
-        {
-            this.EncodingType = encodingType;
-            this.PixelFormat = pixelFormat;
-            this.Width = width;
-            this.Height = height;
-            this.Framerate = framerate;
-            this.Quality = quality;
-            this.Bitrate = bitrate;
-            this.ZeroCopy = zeroCopy;
-            this.Timeout = timeout;
-            this.BufferNum = bufferNum;
-            this.BufferSize = bufferSize;
-            this.Crop = crop;
-            this.StoreMotionVectors = storeMotionVectors;
-        }
-
-        /// <summary>
         /// Create a new instance of <see cref="MMALPortConfig"/>.
         /// </summary>
         /// <param name="encodingType">The encoding type.</param>
         /// <param name="pixelFormat">The pixel format.</param>
-        /// <param name="width">The output width.</param>
-        /// <param name="height">The output height.</param>
-        /// <param name="framerate">The output framerate.</param>
-        /// <param name="quality">The output quality.</param>
-        /// <param name="bitrate">The output bitrate.</param>
-        /// <param name="zeroCopy">Specify zero copy.</param>
-        /// <param name="timeout">Video record timeout.</param>
+        /// <param name="quality">The quality value. Can be used with JPEG encoding (value between 1-100). Can be used with H.264 encoding which affects the quantization parameter (typical values between 10-40, see wiki for info). Set both bitrate param and quality param to 0 for variable bitrate.</param>
+        /// <param name="bitrate">The working bitrate, applies to Video Encoder only.</param>
+        /// <param name="timeout">Video record timeout. This is useful if you have multiple video recording streams which you want to stop at different times.</param>
         /// <param name="split">Video split configuration object.</param>
+        /// <param name="storeMotionVectors">Indicates whether to store motion vectors. Applies to H.264 video encoding.</param>
+        /// <param name="width">The input/output width value.</param>
+        /// <param name="height">The input/output height value.</param>
+        /// <param name="framerate">Framerate value. Only useful when not using the camera component to specify input framerate.</param>
+        /// <param name="zeroCopy">Instruct MMAL to not copy buffers to ARM memory (useful for large buffers and handling raw data).</param>
         /// <param name="bufferNum">Requested number of buffer headers.</param>
         /// <param name="bufferSize">Requested size of buffer headers.</param>
         /// <param name="crop">The Region of Interest requested.</param>
-        /// <param name="storeMotionVectors">Indicates whether to store motion vectors. Applies to H.264 video encoding.</param>
-        public MMALPortConfig(MMALEncoding encodingType, MMALEncoding pixelFormat, int width, int height, int framerate,
-            int quality, int bitrate, bool zeroCopy, DateTime? timeout, Split split, int bufferNum, int bufferSize, Rectangle? crop,
-            bool storeMotionVectors)
+        public MMALPortConfig(
+            MMALEncoding encodingType, 
+            MMALEncoding pixelFormat, 
+            int quality = 0, 
+            int bitrate = 0, 
+            DateTime? timeout = null, 
+            Split split = null, 
+            bool storeMotionVectors = false,
+            int width = 0, 
+            int height = 0,
+            int framerate = 0,
+            bool zeroCopy = false,
+            int bufferNum = 0, 
+            int bufferSize = 0, 
+            Rectangle? crop = null)
         {
             this.EncodingType = encodingType;
             this.PixelFormat = pixelFormat;

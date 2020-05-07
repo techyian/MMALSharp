@@ -68,7 +68,6 @@ namespace MMALSharp.Components
             this.Quality = config.Quality;
 
             var bufferSize = 0;
-            var framerate = 0;
             
             if (config.EncodingType == MMALEncoding.H264)
             {
@@ -83,9 +82,21 @@ namespace MMALSharp.Components
             var bitrate = this.GetValidBitrate(outputPort, config);
 
             // Force framerate to be 0 in case it was provided by user.
-            config = new MMALPortConfig(config.EncodingType, config.PixelFormat, config.Width, config.Height, framerate,
-                                        config.Quality, bitrate, config.ZeroCopy, config.Timeout, config.Split, config.BufferNum, bufferSize, config.Crop,
-                                        config.StoreMotionVectors);
+            config = new MMALPortConfig(
+                config.EncodingType, 
+                config.PixelFormat, 
+                config.Quality, 
+                bitrate, 
+                config.Timeout, 
+                config.Split, 
+                config.StoreMotionVectors, 
+                config.Width, 
+                config.Height, 
+                config.Framerate, 
+                config.ZeroCopy, 
+                config.BufferNum, 
+                bufferSize, 
+                config.Crop);
 
             base.ConfigureOutputPort(outputPort, config, handler);
 

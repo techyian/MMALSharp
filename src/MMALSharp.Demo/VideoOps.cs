@@ -58,7 +58,7 @@ namespace MMALSharp.Demo
             {
                 this.Cam.ConfigureCameraSettings();
 
-                var portConfig = new MMALPortConfig(encoding, pixelFormat, 0, bitrate, null);
+                var portConfig = new MMALPortConfig(encoding, pixelFormat, bitrate: bitrate);
                 
                 vidEncoder.ConfigureOutputPort(portConfig, vidCaptureHandler);
 

@@ -55,7 +55,7 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                var portConfig = new MMALPortConfig(encodingType, pixelFormat, 10, 25000000, null);
+                var portConfig = new MMALPortConfig(encodingType, pixelFormat, quality: 10, bitrate: 25000000);
 
                 vidEncoder.ConfigureOutputPort(portConfig, vidCaptureHandler);
 
@@ -98,7 +98,7 @@ namespace MMALSharp.Tests
                     Value = 15
                 };
 
-                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, 25000000, null, split);
+                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, quality: 10, bitrate: 25000000, split: split);
 
                 vidEncoder.ConfigureOutputPort(portConfig, vidCaptureHandler);
 
@@ -133,7 +133,7 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                var portConfig = new MMALPortConfig(MMALEncoding.MJPEG, MMALEncoding.I420, 10, 25000000, null);
+                var portConfig = new MMALPortConfig(MMALEncoding.MJPEG, MMALEncoding.I420, quality: 10, bitrate: 25000000);
 
                 vidEncoder.ConfigureOutputPort(portConfig, vidCaptureHandler);
 
@@ -160,7 +160,7 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                var portConfig = new MMALPortConfig(MMALEncoding.MJPEG, MMALEncoding.I420, 10, 25000000, null);
+                var portConfig = new MMALPortConfig(MMALEncoding.MJPEG, MMALEncoding.I420, quality: 10, bitrate: 25000000);
 
                 vidEncoder.ConfigureOutputPort(portConfig, vidCaptureHandler);
 
@@ -199,14 +199,14 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                var splitterPortConfig = new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420, 0, 13000000, null);
-                var portConfig1 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, 13000000, DateTime.Now.AddSeconds(20));
-                var portConfig2 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 20, 13000000, DateTime.Now.AddSeconds(15));
-                var portConfig3 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 30, 13000000, DateTime.Now.AddSeconds(10));
-                var portConfig4 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 40, 13000000, DateTime.Now.AddSeconds(10));
+                var splitterPortConfig = new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420, quality: 0, bitrate: 13000000);
+                var portConfig1 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, quality: 10, bitrate: 13000000, timeout: DateTime.Now.AddSeconds(20));
+                var portConfig2 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, quality: 20, bitrate: 13000000, timeout: DateTime.Now.AddSeconds(15));
+                var portConfig3 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, quality: 30, bitrate: 13000000, timeout: DateTime.Now.AddSeconds(10));
+                var portConfig4 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, quality: 40, bitrate: 13000000, timeout: DateTime.Now.AddSeconds(10));
 
                 // Create our component pipeline.         
-                splitter.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420, 0), Fixture.MMALCamera.Camera.VideoPort, null);
+                splitter.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420), Fixture.MMALCamera.Camera.VideoPort, null);
                 splitter.ConfigureOutputPort(0, splitterPortConfig, null);
                 splitter.ConfigureOutputPort(1, splitterPortConfig, null);
                 splitter.ConfigureOutputPort(2, splitterPortConfig, null);
@@ -266,11 +266,11 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                var splitterPortConfig = new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420, 0, 13000000, null);
-                var portConfig1 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, 13000000, DateTime.Now.AddSeconds(20));
-                var portConfig2 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 20, 13000000, DateTime.Now.AddSeconds(15));
-                var portConfig3 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 30, 13000000, DateTime.Now.AddSeconds(10));
-                var portConfig4 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 40, 13000000, DateTime.Now.AddSeconds(10));
+                var splitterPortConfig = new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420, bitrate: 13000000);
+                var portConfig1 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, quality: 10, bitrate: 13000000, timeout: DateTime.Now.AddSeconds(20));
+                var portConfig2 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, quality: 20, bitrate: 13000000, timeout: DateTime.Now.AddSeconds(15));
+                var portConfig3 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, quality: 30, bitrate: 13000000, timeout: DateTime.Now.AddSeconds(10));
+                var portConfig4 = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, quality: 40, bitrate: 13000000, timeout: DateTime.Now.AddSeconds(10));
 
                 // Create our component pipeline.         
                 splitter.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420), Fixture.MMALCamera.Camera.VideoPort, null);
@@ -332,7 +332,7 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                var portConfig = new MMALPortConfig(encodingType, pixelFormat, 10, 25000000, null, storeMotionVectors: true);
+                var portConfig = new MMALPortConfig(encodingType, pixelFormat, quality: 10, bitrate: 25000000, storeMotionVectors: true);
 
                 vidEncoder.ConfigureOutputPort(portConfig, vidCaptureHandler);
 
@@ -371,7 +371,7 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                var portConfig = new MMALPortConfig(encodingType, pixelFormat, 10, 25000000, null, storeMotionVectors: true);
+                var portConfig = new MMALPortConfig(encodingType, pixelFormat, quality: 10, bitrate: 25000000, storeMotionVectors: true);
 
                 vidEncoder.ConfigureOutputPort(portConfig, circularBufferHandler);
 
@@ -514,7 +514,7 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 0, MMALVideoEncoder.MaxBitrateLevel4, null);
+                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, bitrate: MMALVideoEncoder.MaxBitrateLevel4);
 
                 vidEncoder.ConfigureOutputPort(portConfig, vidCaptureHandler);
 

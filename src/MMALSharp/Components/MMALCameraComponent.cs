@@ -223,9 +223,12 @@ namespace MMALSharp.Components
         /// </summary>
         private void InitialisePreview()
         {
-            var portConfig = new MMALPortConfig(MMALCameraConfig.Encoding, MMALCameraConfig.EncodingSubFormat,
-                MMALCameraConfig.Resolution.Width, MMALCameraConfig.Resolution.Height,
-                MMALCameraConfig.Framerate.Num, 0, 0, false, null, 0, 0);
+            var portConfig = new MMALPortConfig(
+                MMALCameraConfig.Encoding,
+                MMALCameraConfig.EncodingSubFormat,
+                width: MMALCameraConfig.Resolution.Width,
+                height: MMALCameraConfig.Resolution.Height,
+                framerate: MMALCameraConfig.Framerate.Num);
 
             MMALLog.Logger.LogDebug("Commit preview");
 
@@ -261,12 +264,15 @@ namespace MMALSharp.Components
                 currentHeight = this.CameraInfo.MaxHeight;
             }
 
-            var portConfig = new MMALPortConfig(MMALCameraConfig.Encoding, MMALCameraConfig.EncodingSubFormat,
-                currentWidth, currentHeight,
-                MMALCameraConfig.Framerate.Num, 0, 0, false, null,
-                Math.Max(this.VideoPort.BufferNumRecommended, 3),
-                Math.Max(this.VideoPort.BufferSizeRecommended, this.VideoPort.BufferSizeMin),
-                new Rectangle(0, 0, currentWidth, currentHeight));
+            var portConfig = new MMALPortConfig(
+                MMALCameraConfig.Encoding, 
+                MMALCameraConfig.EncodingSubFormat,
+                width: currentWidth,
+                height: currentHeight,
+                framerate: MMALCameraConfig.Framerate.Num,
+                bufferNum: Math.Max(this.VideoPort.BufferNumRecommended, 3),
+                bufferSize: Math.Max(this.VideoPort.BufferSizeRecommended, this.VideoPort.BufferSizeMin),
+                crop: new Rectangle(0, 0, currentWidth, currentHeight));
 
             MMALLog.Logger.LogDebug("Commit video");
 
@@ -328,22 +334,30 @@ namespace MMALSharp.Components
                     MMALLog.Logger.LogWarning("Using old firmware. Setting encoding to BGR24");
                     encoding = MMALEncoding.BGR24;
                 }
-
-                portConfig = new MMALPortConfig(encoding, null, resolution.Width, resolution.Height,
-                    MMALCameraConfig.Framerate.Num, 0, 0, false, null,
-                    Math.Max(this.StillPort.BufferNumRecommended, 3),
-                    Math.Max(this.StillPort.BufferSizeRecommended, this.StillPort.BufferSizeMin),
-                    new Rectangle(0, 0, currentWidth, currentHeight));
+                
+                portConfig = new MMALPortConfig(
+                    encoding,
+                    null,
+                    width: currentWidth,
+                    height: currentHeight,
+                    framerate: MMALCameraConfig.Framerate.Num,
+                    bufferNum: Math.Max(this.StillPort.BufferNumRecommended, 3),
+                    bufferSize: Math.Max(this.StillPort.BufferSizeRecommended, this.StillPort.BufferSizeMin),
+                    crop: new Rectangle(0, 0, currentWidth, currentHeight));
             }
             else
             {
                 var resolution = MMALCameraConfig.Resolution.Pad();
 
-                portConfig = new MMALPortConfig(MMALCameraConfig.Encoding, MMALCameraConfig.EncodingSubFormat, resolution.Width, resolution.Height, 
-                    MMALCameraConfig.Framerate.Num, 0, 0, false, null,
-                    Math.Max(this.StillPort.BufferNumRecommended, 3),
-                    Math.Max(this.StillPort.BufferSizeRecommended, this.StillPort.BufferSizeMin),
-                    new Rectangle(0, 0, currentWidth, currentHeight));
+                portConfig = new MMALPortConfig(
+                    MMALCameraConfig.Encoding, 
+                    MMALCameraConfig.EncodingSubFormat,
+                    width: resolution.Width,
+                    height: resolution.Height,
+                    framerate: MMALCameraConfig.Framerate.Num,
+                    bufferNum: Math.Max(this.StillPort.BufferNumRecommended, 3),
+                    bufferSize: Math.Max(this.StillPort.BufferSizeRecommended, this.StillPort.BufferSizeMin),
+                    crop: new Rectangle(0, 0, currentWidth, currentHeight));
             }
             
             MMALLog.Logger.LogDebug("Commit still");

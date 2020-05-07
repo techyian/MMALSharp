@@ -94,7 +94,7 @@ namespace MMALSharp
             {
                 this.ConfigureCameraSettings();
 
-                var splitterOutputConfig = new MMALPortConfig(MMALCameraConfig.Encoding, MMALCameraConfig.EncodingSubFormat, 0);
+                var splitterOutputConfig = new MMALPortConfig(MMALCameraConfig.Encoding, MMALCameraConfig.EncodingSubFormat);
 
                 // Force port type to SplitterVideoPort to prevent resolution from being set against splitter component.
                 splitter.ConfigureOutputPort<SplitterVideoPort>(0, splitterOutputConfig, handler);
@@ -132,7 +132,7 @@ namespace MMALSharp
             {
                 this.ConfigureCameraSettings();
 
-                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, MMALVideoEncoder.MaxBitrateLevel4, null, split);
+                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, MMALVideoEncoder.MaxBitrateLevel4, split: split);
 
                 vidEncoder.ConfigureOutputPort(portConfig, handler);
 

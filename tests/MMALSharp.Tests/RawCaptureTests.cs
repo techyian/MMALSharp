@@ -36,7 +36,7 @@ namespace MMALSharp.Tests
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
                 // Use the resizer to resize 1080p to 640x480.
-                var portConfig = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420, 640, 480, 0, 0, 0, false, null);
+                var portConfig = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420, width: 640, height: 480);
 
                 resizer.ConfigureOutputPort<VideoPort>(0, portConfig, vidCaptureHandler);
 
@@ -73,7 +73,7 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                var splitterPortConfig = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420, 0, 0, null);
+                var splitterPortConfig = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420);
 
                 // Create our component pipeline.         
                 splitter.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420, 0), Fixture.MMALCamera.Camera.VideoPort, null);
@@ -114,7 +114,7 @@ namespace MMALSharp.Tests
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
                 var splitterPortConfig = new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420);
-                var resizerPortConfig = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420, 1024, 768, 0, 0, 0, false, DateTime.Now.AddSeconds(15));
+                var resizerPortConfig = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420, width: 1024, height: 768, timeout: DateTime.Now.AddSeconds(15));
 
                 // Create our component pipeline.         
                 splitter.ConfigureInputPort(new MMALPortConfig(MMALEncoding.OPAQUE, MMALEncoding.I420), Fixture.MMALCamera.Camera.VideoPort, null);

@@ -40,7 +40,7 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                var portConfig = new MMALPortConfig(encodingType, pixelFormat, 90);
+                var portConfig = new MMALPortConfig(encodingType, pixelFormat, quality: 90);
 
                 imgEncoder.ConfigureOutputPort(portConfig, imgCaptureHandler);
 
@@ -78,7 +78,7 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                var portConfig = new MMALPortConfig(encodingType, pixelFormat, 90);
+                var portConfig = new MMALPortConfig(encodingType, pixelFormat, quality: 90);
 
                 imgEncoder.ConfigureOutputPort(portConfig, imgCaptureHandler);
 
@@ -116,7 +116,7 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                var portConfig = new MMALPortConfig(encodingType, pixelFormat, 90);
+                var portConfig = new MMALPortConfig(encodingType, pixelFormat, quality: 90);
 
                 imgEncoder.ConfigureOutputPort(portConfig, imgCaptureHandler);
 
@@ -155,7 +155,7 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, 90);
+                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, quality: 90);
 
                 imgEncoder.ConfigureOutputPort(portConfig, imgCaptureHandler);
 

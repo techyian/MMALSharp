@@ -35,7 +35,7 @@ namespace MMALSharp.Tests
             {
                 Fixture.MMALCamera.ConfigureCameraSettings();
 
-                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, 10, 25000000, null);
+                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, quality: 10, bitrate: 25000000);
 
                 vidEncoder.ConfigureOutputPort(portConfig, ffCaptureHandler);
 
