@@ -93,13 +93,10 @@ namespace MMALSharp.Ports.Outputs
             // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
             this.ReleaseBuffer(bufferImpl, eos);
 
-            if (eos)
+            if (eos && !this.Trigger.Task.IsCompleted)
             {
-                if (!this.Trigger.Task.IsCompleted)
-                {
-                    MMALLog.Logger.LogDebug($"{this.ComponentReference.Name} {this.Name} Timeout exceeded, triggering signal.");
-                    Task.Run(() => { this.Trigger.SetResult(true); });
-                }
+                MMALLog.Logger.LogDebug($"{this.ComponentReference.Name} {this.Name} Timeout exceeded, triggering signal.");
+                Task.Run(() => { this.Trigger.SetResult(true); });
             }
         }
     }
