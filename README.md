@@ -103,6 +103,16 @@ MMALCameraConfig.ShutterSpeed = 2000000; // Set to 2s exposure time. Default is 
 MMALCameraConfig.ISO = 400; // Set ISO to 400. Default is 0 (auto).
 ```
 
+## Performance
+
+The performance of MMALSharp is very good due to being a wrapper around the native MMAL library with minimal additional operations being carried out whilst the camera is in use. BenchmarkDotNet reports
+a mean time of 527.0ms to capture a JPEG still at 640 x 480 resolution following configuration and warmup of the camera, with even faster still capture performance being gained if you capture from
+the camera's video port [instead](https://github.com/techyian/MMALSharp/wiki/Advanced-Examples#rapid-image-capture).
+
+**SD Card IO performance** - Having a high performance SD card is crucial to get the most out of using this library, especially when saving to multiple FileStreams with the splitter component. You may 
+find when outputting to multiple FileStreams that the SD Card IO is a bottleneck and using a faster storage medium would be beneficial such as a ramdisk mount. On the Raspberry Pi 4, using an external
+USB 3 Hard Drive would also be a great option for the best performance possible.
+
 ## Documentation
 
 For full installation instructions for Mono and .NET Core, including configuration and examples - please visit the [Wiki](https://github.com/techyian/MMALSharp/wiki).
