@@ -70,6 +70,7 @@ namespace MMALSharp.Common
             MMALEncoding.BAYER_SBGGR16,
             MMALEncoding.BAYER_SBGGR10DPCM8,
             MMALEncoding.YUVUV128,
+            MMALEncoding.YUV10COL,
             MMALEncoding.OPAQUE,
             MMALEncoding.EGL_IMAGE,
             MMALEncoding.PCM_UNSIGNED_BE,
@@ -255,6 +256,7 @@ namespace MMALSharp.Common
         public static readonly MMALEncoding BAYER_SBGGR16 = new MMALEncoding("BYR2", EncodingType.PixelFormat);
         public static readonly MMALEncoding BAYER_SBGGR10DPCM8 = new MMALEncoding("bBA8", EncodingType.PixelFormat);
         public static readonly MMALEncoding YUVUV128 = new MMALEncoding("SAND", EncodingType.PixelFormat);
+        public static readonly MMALEncoding YUV10COL = new MMALEncoding("Y10C", EncodingType.PixelFormat);
 
         /// <summary>
         /// An opaque buffer is a Broadcom specific format that references a GPU internal bitmap. It is typed as <see cref="EncodingType.Internal"/>.
