@@ -125,7 +125,8 @@ namespace MMALSharp.Common
             MMALEncoding.MMAL_COLOR_SPACE_SMPTE240M,
             MMALEncoding.MMAL_COLOR_SPACE_BT470_2_M,
             MMALEncoding.MMAL_COLOR_SPACE_BT470_2_BG,
-            MMALEncoding.MMAL_COLOR_SPACE_JFIF_Y16_255
+            MMALEncoding.MMAL_COLOR_SPACE_JFIF_Y16_255,
+            MMALEncoding.MMAL_COLOR_SPACE_REC2020
         });
 
         /// <summary>
@@ -317,5 +318,6 @@ namespace MMALSharp.Common
         public static readonly MMALEncoding MMAL_COLOR_SPACE_BT470_2_M = new MMALEncoding("Y__M", EncodingType.ColorSpace);
         public static readonly MMALEncoding MMAL_COLOR_SPACE_BT470_2_BG = new MMALEncoding("Y_BG", EncodingType.ColorSpace);
         public static readonly MMALEncoding MMAL_COLOR_SPACE_JFIF_Y16_255 = new MMALEncoding("YY16", EncodingType.ColorSpace);
+        public static readonly MMALEncoding MMAL_COLOR_SPACE_REC2020 = new MMALEncoding("2020", EncodingType.ColorSpace);
     }
 }
