@@ -32,22 +32,22 @@ namespace MMALSharp
         /// <summary>
         /// Configure the sharpness of the image.
         /// </summary>
-        public static double Sharpness { get; set; }
+        public static int Sharpness { get; set; }
 
         /// <summary>
         /// Configure the contrast of the image.
         /// </summary>  
-        public static double Contrast { get; set; }
+        public static int Contrast { get; set; }
 
         /// <summary>
         /// Configure the brightness of the image.
         /// </summary>
-        public static double Brightness { get; set; } = 50;
+        public static int Brightness { get; set; } = 50;
 
         /// <summary>
         /// Configure the saturation of the image.
         /// </summary>  
-        public static double Saturation { get; set; }
+        public static int Saturation { get; set; }
 
         /// <summary>
         /// Configure the light sensitivity of the sensor.

@@ -37,7 +37,7 @@ namespace MMALSharp.Tests
         [InlineData(45)]
         [InlineData(-100)]
         [MMALTestsAttribute]
-        public void SetThenGetBrightness(double brightness)
+        public void SetThenGetBrightness(int brightness)
         {
             MMALCameraConfig.Brightness = brightness;
 
@@ -58,7 +58,7 @@ namespace MMALSharp.Tests
         [InlineData(38)]
         [InlineData(101)]
         [MMALTestsAttribute]
-        public void SetThenGetSharpness(double sharpness)
+        public void SetThenGetSharpness(int sharpness)
         { 
             MMALCameraConfig.Sharpness = sharpness;
 
@@ -79,7 +79,7 @@ namespace MMALSharp.Tests
         [InlineData(54)]
         [InlineData(-200)]
         [MMALTestsAttribute]
-        public void SetThenGetContrast(double contrast)
+        public void SetThenGetContrast(int contrast)
         {  
             MMALCameraConfig.Contrast = contrast;
 
@@ -100,7 +100,7 @@ namespace MMALSharp.Tests
         [InlineData(55)]
         [InlineData(90)]
         [MMALTestsAttribute]
-        public void SetThenGetSaturation(double saturation)
+        public void SetThenGetSaturation(int saturation)
         {    
             MMALCameraConfig.Saturation = saturation;
             Fixture.MMALCamera.ConfigureCameraSettings();

@@ -424,16 +424,16 @@ namespace MMALSharp
         /// </summary>
         /// <param name="camera">The camera component.</param>
         /// <returns>The saturation value.</returns>
-        public static double GetSaturation(this MMALCameraComponent camera)
+        public static int GetSaturation(this MMALCameraComponent camera)
         {
             return camera.Control.GetParameter(MMAL_PARAMETER_SATURATION);
         }
 
-        internal static void SetSaturation(this MMALCameraComponent camera, double saturation)
+        internal static void SetSaturation(this MMALCameraComponent camera, int saturation)
         {
             MMALLog.Logger.LogDebug($"Setting saturation: {saturation}");
 
-            var value = new MMAL_RATIONAL_T((int)saturation, 100);
+            var value = new MMAL_RATIONAL_T(saturation, 100);
 
             if (saturation >= -100 && saturation <= 100)
             {
@@ -450,16 +450,16 @@ namespace MMALSharp
         /// </summary>
         /// <param name="camera">The camera component.</param>
         /// <returns>The sharpness value.</returns>
-        public static double GetSharpness(this MMALCameraComponent camera)
+        public static int GetSharpness(this MMALCameraComponent camera)
         {
             return camera.Control.GetParameter(MMAL_PARAMETER_SHARPNESS);
         }
 
-        internal static void SetSharpness(this MMALCameraComponent camera, double sharpness)
+        internal static void SetSharpness(this MMALCameraComponent camera, int sharpness)
         {
             MMALLog.Logger.LogDebug($"Setting sharpness: {sharpness}");
 
-            var value = new MMAL_RATIONAL_T((int)sharpness, 100);
+            var value = new MMAL_RATIONAL_T(sharpness, 100);
 
             if (sharpness >= -100 && sharpness <= 100)
             {
@@ -476,16 +476,16 @@ namespace MMALSharp
         /// </summary>
         /// <param name="camera">The camera component.</param>
         /// <returns>The contrast value.</returns>
-        public static double GetContrast(this MMALCameraComponent camera)
+        public static int GetContrast(this MMALCameraComponent camera)
         {
             return camera.Control.GetParameter(MMAL_PARAMETER_CONTRAST);
         }
 
-        internal static void SetContrast(this MMALCameraComponent camera, double contrast)
+        internal static void SetContrast(this MMALCameraComponent camera, int contrast)
         {
             MMALLog.Logger.LogDebug($"Setting contrast: {contrast}");
 
-            var value = new MMAL_RATIONAL_T((int)contrast, 100);
+            var value = new MMAL_RATIONAL_T(contrast, 100);
 
             if (contrast >= -100 && contrast <= 100)
             {
@@ -507,16 +507,16 @@ namespace MMALSharp
         /// </summary>
         /// <param name="camera">The camera component.</param>
         /// <returns>The brightness value.</returns>
-        public static double GetBrightness(this MMALCameraComponent camera)
+        public static int GetBrightness(this MMALCameraComponent camera)
         {
             return camera.Control.GetParameter(MMAL_PARAMETER_BRIGHTNESS);
         }
 
-        internal static void SetBrightness(this MMALCameraComponent camera, double brightness)
+        internal static void SetBrightness(this MMALCameraComponent camera, int brightness)
         {
             MMALLog.Logger.LogDebug($"Setting brightness: {brightness}");
 
-            var value = new MMAL_RATIONAL_T((int)brightness, 100);
+            var value = new MMAL_RATIONAL_T(brightness, 100);
 
             if (brightness >= 0 && brightness <= 100)
             {
