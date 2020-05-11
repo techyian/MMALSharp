@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Runtime.InteropServices;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Config;
@@ -349,6 +350,48 @@ namespace MMALSharp.Tests
                 Assert.True(Math.Round(((double)stillRange.FpsLow.Num / stillRange.FpsLow.Den) * 1000) == 167);
                 Assert.True(Math.Round(((double)stillRange.FpsHigh.Num / stillRange.FpsHigh.Den) * 1000) == 999);
             }            
+        }
+
+        [Theory]
+        [InlineData(2)]
+        [InlineData(7)]
+        [InlineData(9)]
+        [InlineData(0.5)]
+        [MMALTests]
+        public void SetThenGetAnalogGain(double analogGain)
+        {
+            MMALCameraConfig.AnalogGain = analogGain;
+            
+            if (analogGain >= 1.0 && analogGain <= 8.0)
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+                Assert.True(Fixture.MMALCamera.Camera.GetAnalogGain() == analogGain);
+            }
+            else
+            {
+                Assert.ThrowsAny<Exception>(() => Fixture.MMALCamera.ConfigureCameraSettings());
+            }
+        }
+
+        [Theory]
+        [InlineData(255)]
+        [InlineData(1)]
+        [InlineData(256)]
+        [InlineData(0.5)]
+        [MMALTests]
+        public void SetThenGetDigitalGain(double digitalGain)
+        {
+            MMALCameraConfig.DigitalGain = digitalGain;
+            
+            if (digitalGain >= 1.0 && digitalGain <= 255.0)
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+                Assert.True(Fixture.MMALCamera.Camera.GetDigitalGain() == digitalGain);
+            }
+            else
+            {
+                Assert.ThrowsAny<Exception>(() => Fixture.MMALCamera.ConfigureCameraSettings());
+            }
         }
     }
 }

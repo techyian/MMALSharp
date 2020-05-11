@@ -397,6 +397,8 @@ namespace MMALSharp.Components
             this.SetFlips(MMALCameraConfig.Flips);
             this.SetZoom(MMALCameraConfig.ROI);
             this.SetBurstMode(MMALCameraConfig.StillBurstMode);
+            this.SetAnalogGain(MMALCameraConfig.AnalogGain);
+            this.SetDigitalGain(MMALCameraConfig.DigitalGain);
         }
     }
 }

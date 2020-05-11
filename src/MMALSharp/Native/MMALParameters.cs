@@ -332,6 +332,16 @@ namespace MMALSharp.Native
         public const int MMAL_PARAMETER_CAMERA_RX_TIMING = MMALParametersCommon.MMAL_PARAMETER_GROUP_CAMERA + 78;
         public const int MMAL_PARAMETER_DPF_CONFIG = MMALParametersCommon.MMAL_PARAMETER_GROUP_CAMERA + 79;
         public const int MMAL_PARAMETER_JPEG_RESTART_INTERVAL = MMALParametersCommon.MMAL_PARAMETER_GROUP_CAMERA + 80;
+        public const int MMAL_PARAMETER_CAMERA_ISP_BLOCK_OVERRIDE = MMALParametersCommon.MMAL_PARAMETER_GROUP_CAMERA + 81;
+        public const int MMAL_PARAMETER_LENS_SHADING_OVERRIDE = MMALParametersCommon.MMAL_PARAMETER_GROUP_CAMERA + 82;
+        public const int MMAL_PARAMETER_BLACK_LEVEL = MMALParametersCommon.MMAL_PARAMETER_GROUP_CAMERA + 83;
+        public const int MMAL_PARAMETER_RESIZE_PARAMS = MMALParametersCommon.MMAL_PARAMETER_GROUP_CAMERA + 84;
+        public const int MMAL_PARAMETER_CROP = MMALParametersCommon.MMAL_PARAMETER_GROUP_CAMERA + 85;
+        public const int MMAL_PARAMETER_OUTPUT_SHIFT = MMALParametersCommon.MMAL_PARAMETER_GROUP_CAMERA + 86;
+        public const int MMAL_PARAMETER_CCM_SHIFT = MMALParametersCommon.MMAL_PARAMETER_GROUP_CAMERA + 87;
+        public const int MMAL_PARAMETER_CUSTOM_CCM = MMALParametersCommon.MMAL_PARAMETER_GROUP_CAMERA + 88;
+        public const int MMAL_PARAMETER_ANALOG_GAIN = MMALParametersCommon.MMAL_PARAMETER_GROUP_CAMERA + 89;
+        public const int MMAL_PARAMETER_DIGITAL_GAIN = MMALParametersCommon.MMAL_PARAMETER_GROUP_CAMERA + 90;
 
         public const int MMAL_MAX_IMAGEFX_PARAMETERS = 6;
 

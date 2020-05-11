@@ -10,7 +10,10 @@ namespace MMALSharp
 {
     internal static class MMALParameterHelpers
     {
-        public static List<Parameter> ParameterHelper = new List<Parameter>
+        /// <summary>
+        /// Contains a list of parameters which can be used with <see cref="PortExtensions.GetParameter"/> and <see cref="PortExtensions.SetParameter"/>.
+        /// </summary>
+        public static IReadOnlyCollection<Parameter> ParameterHelper = new List<Parameter>
         {
             new Parameter(MMALParametersCamera.MMAL_PARAMETER_ANTISHAKE, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_ANTISHAKE"),
             new Parameter(MMALParametersCamera.MMAL_PARAMETER_BRIGHTNESS, typeof(MMAL_PARAMETER_RATIONAL_T), "MMAL_PARAMETER_BRIGHTNESS"),
@@ -75,7 +78,13 @@ namespace MMALSharp
             new Parameter(MMALParametersVideo.MMAL_PARAMETER_VIDEO_REQUEST_I_FRAME, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_VIDEO_REQUEST_I_FRAME"),
             new Parameter(MMALParametersCamera.MMAL_PARAMETER_VIDEO_STABILISATION, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_VIDEO_STABILISATION"),
             new Parameter(MMALParametersCommon.MMAL_PARAMETER_ZERO_COPY, typeof(MMAL_PARAMETER_BOOLEAN_T), "MMAL_PARAMETER_ZERO_COPY"),
-            new Parameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_RESTART_INTERVAL, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_JPEG_RESTART_INTERVAL")
+            new Parameter(MMALParametersCamera.MMAL_PARAMETER_JPEG_RESTART_INTERVAL, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_JPEG_RESTART_INTERVAL"),
+            new Parameter(MMALParametersCamera.MMAL_PARAMETER_CAMERA_ISP_BLOCK_OVERRIDE, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_CAMERA_ISP_BLOCK_OVERRIDE"),
+            new Parameter(MMALParametersCamera.MMAL_PARAMETER_BLACK_LEVEL, typeof(MMAL_PARAMETER_UINT32_T), "MMAL_PARAMETER_BLACK_LEVEL"),
+            new Parameter(MMALParametersCamera.MMAL_PARAMETER_OUTPUT_SHIFT, typeof(MMAL_PARAMETER_INT32_T), "MMAL_PARAMETER_OUTPUT_SHIFT"),
+            new Parameter(MMALParametersCamera.MMAL_PARAMETER_CCM_SHIFT, typeof(MMAL_PARAMETER_INT32_T), "MMAL_PARAMETER_CCM_SHIFT"),
+            new Parameter(MMALParametersCamera.MMAL_PARAMETER_ANALOG_GAIN, typeof(MMAL_PARAMETER_RATIONAL_T), "MMAL_PARAMETER_ANALOG_GAIN"),
+            new Parameter(MMALParametersCamera.MMAL_PARAMETER_DIGITAL_GAIN, typeof(MMAL_PARAMETER_RATIONAL_T), "MMAL_PARAMETER_DIGITAL_GAIN")
         };
     }
 }

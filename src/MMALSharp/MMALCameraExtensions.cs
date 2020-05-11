@@ -717,40 +717,6 @@ namespace MMALSharp
         }
 
         /// <summary>
-        /// Gets the Analog Gain value currently being used by the camera.
-        /// </summary>
-        /// <param name="camera">The camera component.</param>
-        /// <returns>The Analog Gain value.</returns>
-        public static double GetAnalogGain(this MMALCameraComponent camera)
-        {
-            MMAL_PARAMETER_CAMERA_SETTINGS_T settings = new MMAL_PARAMETER_CAMERA_SETTINGS_T(
-                new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CAMERA_SETTINGS, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_SETTINGS_T>()),
-                0, new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0),
-                new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0), 0);
-
-            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Control.Ptr, &settings.Hdr), "Unable to get camera settings");
-
-            return Convert.ToDouble(settings.AnalogGain.Num / settings.AnalogGain.Den);
-        }
-
-        /// <summary>
-        /// Gets the Digital Gain value currently being used by the camera.
-        /// </summary>
-        /// <param name="camera">The camera component.</param>
-        /// <returns>The Digital Gain value.</returns>
-        public static double GetDigitalGain(this MMALCameraComponent camera)
-        {
-            MMAL_PARAMETER_CAMERA_SETTINGS_T settings = new MMAL_PARAMETER_CAMERA_SETTINGS_T(
-                new MMAL_PARAMETER_HEADER_T(MMAL_PARAMETER_CAMERA_SETTINGS, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_SETTINGS_T>()),
-                0, new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0),
-                new MMAL_RATIONAL_T(0, 0), new MMAL_RATIONAL_T(0, 0), 0);
-
-            MMALCheck(MMALPort.mmal_port_parameter_get(camera.Control.Ptr, &settings.Hdr), "Unable to get camera settings");
-
-            return Convert.ToDouble(settings.DigitalGain.Num / settings.DigitalGain.Den);
-        }
-
-        /// <summary>
         /// Gets the AWB Red Gain value currently being used by the camera.
         /// </summary>
         /// <param name="camera">The camera component.</param>
@@ -1041,6 +1007,50 @@ namespace MMALSharp
         internal static void SetBurstMode(this MMALCameraComponent camera, bool burstMode)
         {
             camera.StillPort.SetParameter(MMAL_PARAMETER_CAMERA_BURST_CAPTURE, burstMode);
+        }
+
+        /// <summary>
+        /// Used to retrieve the analog gain value from the sensor.
+        /// </summary>
+        /// <param name="camera">The camera component.</param>
+        /// <returns>The analog gain value.</returns>
+        public static double GetAnalogGain(this MMALCameraComponent camera)
+        {
+            return (double)camera.Control.GetParameter(MMAL_PARAMETER_ANALOG_GAIN);
+        }
+
+        internal static void SetAnalogGain(this MMALCameraComponent camera, double analogGain)
+        {
+            if (analogGain > 0 && (analogGain < 1.0 || analogGain > 8.0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(analogGain), "Invalid analog gain settings. Value must be between 1.0 and 8.0.");
+            }
+
+            var num = (int)analogGain * 65536;
+
+            camera.Control.SetParameter(MMAL_PARAMETER_ANALOG_GAIN, new MMAL_RATIONAL_T(num, 65536));
+        }
+
+        /// <summary>
+        /// Used to retrieve the digital gain value from the ISP.
+        /// </summary>
+        /// <param name="camera">The camera component.</param>
+        /// <returns>The digital gain value.</returns>
+        public static double GetDigitalGain(this MMALCameraComponent camera)
+        {
+            return (double)camera.Control.GetParameter(MMAL_PARAMETER_DIGITAL_GAIN);
+        }
+
+        internal static void SetDigitalGain(this MMALCameraComponent camera, double digitalGain)
+        {
+            if (digitalGain > 0 && (digitalGain < 1.0 || digitalGain > 255.0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(digitalGain), "Invalid digital gain settings. Value must be between 1.0 and 255.0.");
+            }
+
+            var num = (int)digitalGain * 65536;
+
+            camera.Control.SetParameter(MMAL_PARAMETER_DIGITAL_GAIN, new MMAL_RATIONAL_T(num, 65536));
         }
     }
 }

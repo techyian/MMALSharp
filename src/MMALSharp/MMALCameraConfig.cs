@@ -117,6 +117,22 @@ namespace MMALSharp
         public static double AwbGainsB { get; set; }
 
         /// <summary>
+        /// Requires exposure mode to be left at "auto" (or at least not "off"). Used to set the analog gain value directly on the sensor.
+        /// <para>
+        /// Floating point value from 1.0 to 8.0 for the OV5647 sensor on Camera Module V1, and 1.0 to 12.0 for the IMX219 sensor on Camera Module V2 and the IMX447 on the HQ Camera.
+        /// </para>
+        /// </summary>
+        public static double AnalogGain { get; set; }
+
+        /// <summary>
+        /// Requires exposure mode to be left at "auto" (or at least not "off"). Used to set the digital gain value applied by the ISP.
+        /// <para>
+        /// Floating point value from 1.0 to 255.0, but values over about 4.0 will produce overexposed images.
+        /// </para>
+        /// </summary>
+        public static double DigitalGain { get; set; }
+
+        /// <summary>
         /// Adjust dynamic range compression.
         /// 
         /// DRC changes the images by increasing the range of dark areas, and decreasing the brighter areas. This can improve the image in low light areas.        
