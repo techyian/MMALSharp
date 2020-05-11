@@ -426,7 +426,7 @@ namespace MMALSharp
         /// <returns>The saturation value.</returns>
         public static int GetSaturation(this MMALCameraComponent camera)
         {
-            return camera.Control.GetParameter(MMAL_PARAMETER_SATURATION);
+            return (int)camera.Control.GetParameter(MMAL_PARAMETER_SATURATION);
         }
 
         internal static void SetSaturation(this MMALCameraComponent camera, int saturation)
@@ -452,7 +452,7 @@ namespace MMALSharp
         /// <returns>The sharpness value.</returns>
         public static int GetSharpness(this MMALCameraComponent camera)
         {
-            return camera.Control.GetParameter(MMAL_PARAMETER_SHARPNESS);
+            return (int)camera.Control.GetParameter(MMAL_PARAMETER_SHARPNESS);
         }
 
         internal static void SetSharpness(this MMALCameraComponent camera, int sharpness)
@@ -478,7 +478,7 @@ namespace MMALSharp
         /// <returns>The contrast value.</returns>
         public static int GetContrast(this MMALCameraComponent camera)
         {
-            return camera.Control.GetParameter(MMAL_PARAMETER_CONTRAST);
+            return (int)camera.Control.GetParameter(MMAL_PARAMETER_CONTRAST);
         }
 
         internal static void SetContrast(this MMALCameraComponent camera, int contrast)
@@ -509,7 +509,7 @@ namespace MMALSharp
         /// <returns>The brightness value.</returns>
         public static int GetBrightness(this MMALCameraComponent camera)
         {
-            return camera.Control.GetParameter(MMAL_PARAMETER_BRIGHTNESS);
+            return (int)camera.Control.GetParameter(MMAL_PARAMETER_BRIGHTNESS);
         }
 
         internal static void SetBrightness(this MMALCameraComponent camera, int brightness)
