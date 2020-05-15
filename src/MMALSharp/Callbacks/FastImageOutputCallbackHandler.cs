@@ -3,8 +3,6 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using System;
-using MMALSharp.Components.EncoderComponents;
 using MMALSharp.Handlers;
 using MMALSharp.Native;
 using MMALSharp.Ports.Outputs;
@@ -29,13 +27,6 @@ namespace MMALSharp.Callbacks
         /// <inheritdoc />
         public override void Callback(IBuffer buffer)
         {
-            var componentRef = this.WorkingPort.ComponentReference as IImageEncoder;
-
-            if (componentRef == null)
-            {
-                throw new ArgumentException($"Working port component is not of type {nameof(IImageEncoder)}");
-            }
-
             base.Callback(buffer);
             
             var eos = buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) ||
