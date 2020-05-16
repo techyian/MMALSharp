@@ -151,18 +151,21 @@ namespace MMALSharp.Ports.Outputs
         /// <param name="destinationComponent">The component we want to connect to.</param>
         /// <param name="inputPort">The input port of the component we want to connect to.</param>
         /// <param name="useCallback">Flag to use connection callback (adversely affects performance).</param>
-        public virtual void ConnectTo(IDownstreamComponent destinationComponent, int inputPort = 0, bool useCallback = false)
+        /// <returns>The connection instance between the source output and destination input ports.</returns>
+        public virtual IConnection ConnectTo(IDownstreamComponent destinationComponent, int inputPort = 0, bool useCallback = false)
         {
             if (this.ConnectedReference != null)
             {
                 MMALLog.Logger.LogWarning($"{this.Name}: A connection has already been established on this port");
-                return;
+                return this.ConnectedReference;
             }
 
             var connection = MMALConnectionImpl.CreateConnection(this, destinationComponent.Inputs[inputPort], destinationComponent, useCallback);
             this.ConnectedReference = connection;
 
             destinationComponent.Inputs[inputPort].ConnectTo(this, connection);
+
+            return connection;
         }
 
         /// <summary>

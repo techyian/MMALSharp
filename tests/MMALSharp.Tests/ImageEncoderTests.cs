@@ -569,5 +569,39 @@ namespace MMALSharp.Tests
                 await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
             }
         }
+
+        [Fact]
+        public async Task TakePictureWithCustomConnectionCallbackHandler()
+        {
+            TestHelper.BeginTest("TakePictureWithCustomConnectionCallbackHandler");
+            TestHelper.SetConfigurationDefaults();
+
+            using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "jpg"))
+            using (var preview = new MMALNullSinkComponent())
+            using (var imgEncoder = new MMALImageEncoder())
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+
+                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, quality: 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig, imgCaptureHandler);
+
+                // Create our component pipeline.
+                var connection = Fixture.MMALCamera.Camera.StillPort
+                    .ConnectTo(imgEncoder, 0, true);
+                
+                Fixture.MMALCamera.Camera.PreviewPort
+                    .ConnectTo(preview);
+
+                // Register our custom connection callback handler.
+                connection.RegisterCallbackHandler(new CustomConnectionCallbackHandler(connection));
+
+                // Camera warm up time
+                await Task.Delay(2000);
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
+
+                Fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
+            }
+        }
     }
 }

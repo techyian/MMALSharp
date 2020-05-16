@@ -29,7 +29,8 @@ namespace MMALSharp.Ports.Outputs
         /// <param name="component">The component we want to connect to.</param>
         /// <param name="inputPort">The input port of the component we want to connect to.</param>
         /// <param name="useCallback">Flag to use connection callback (adversely affects performance).</param>
-        void ConnectTo(IDownstreamComponent component, int inputPort = 0, bool useCallback = false);
+        /// <returns>The connection instance between the source output and destination input ports.</returns>
+        IConnection ConnectTo(IDownstreamComponent component, int inputPort = 0, bool useCallback = false);
 
         /// <summary>
         /// Enable the port specified.

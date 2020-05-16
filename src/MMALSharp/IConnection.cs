@@ -76,12 +76,6 @@ namespace MMALSharp
         long TimeDisable { get; }
 
         /// <summary>
-        /// The managed connection callback method.
-        /// </summary>
-        /// <param name="buffer">The working buffer header.</param>
-        void ManagedConnectionCallback(IBuffer buffer);
-
-        /// <summary>
         /// Enable a connection. The format of the two ports must have been committed before calling this function, although note that on creation, 
         /// the connection automatically copies and commits the output port's format to the input port.
         /// </summary>
@@ -98,5 +92,12 @@ namespace MMALSharp
         /// the connection shall then be destroyed.
         /// </summary>
         void Destroy();
+
+        /// <summary>
+        /// Associates a <see cref="IConnectionCallbackHandler"/> for use with this connection instance. This will only be used
+        /// if callbacks have been enabled against this connection.
+        /// </summary>
+        /// <param name="handler">The callback handler to use.</param>
+        void RegisterCallbackHandler(IConnectionCallbackHandler handler);
     }
 }

@@ -24,7 +24,7 @@ namespace MMALSharp
         /// <summary>
         /// The connection callback handler.
         /// </summary>
-        public IConnectionCallbackHandler CallbackHandler { get; }
+        public IConnectionCallbackHandler CallbackHandler { get; internal set; }
 
         /// <summary>
         /// The pool of buffer headers in this connection.
@@ -50,11 +50,6 @@ namespace MMALSharp
         /// The output port of this connection.
         /// </summary>
         public IOutputPort OutputPort { get; }
-        
-        /// <summary>
-        /// Monitor lock for connection callback method.
-        /// </summary>
-        protected static object ConnectionLock = new object();
         
         #region Connection struct wrapper properties
 
@@ -111,7 +106,10 @@ namespace MMALSharp
         /// <param name="input">The downstream component's input port.</param>
         /// <param name="inputComponent">The upstream component.</param>
         /// <param name="outputComponent">The downstream component.</param>
-        /// <param name="useCallback">Configure the connection to intercept native callbacks. Note: will adversely impact performance.</param>
+        /// <param name="useCallback">
+        /// Configure the connection to intercept native callbacks. Note: will adversely impact performance. In addition, this will implicitly enable
+        /// zero copy functionality on both the source and sink ports.
+        /// </param>
         protected MMALConnectionImpl(MMAL_CONNECTION_T* ptr, IOutputPort output, IInputPort input, IDownstreamComponent inputComponent, IComponent outputComponent, bool useCallback)
         {
             this.Ptr = ptr;
@@ -133,16 +131,7 @@ namespace MMALSharp
                 this.OutputPort.SendAllBuffers(this.ConnectionPool);
             }
         }
-
-        /// <summary>
-        /// The managed connection callback method.
-        /// </summary>
-        /// <param name="buffer">The working buffer header.</param>
-        public virtual void ManagedConnectionCallback(IBuffer buffer)
-        {
-            MMALLog.Logger.LogDebug("Inside Managed connection callback");
-        }
-
+        
         /// <inheritdoc />
         public override string ToString()
         {
@@ -199,6 +188,16 @@ namespace MMALSharp
         }
 
         /// <summary>
+        /// Associates a <see cref="IConnectionCallbackHandler"/> for use with this connection instance. This will only be used
+        /// if callbacks have been enabled against this connection.
+        /// </summary>
+        /// <param name="handler">The callback handler to use.</param>
+        public void RegisterCallbackHandler(IConnectionCallbackHandler handler)
+        {
+            this.CallbackHandler = handler;
+        }
+
+        /// <summary>
         /// Facility to create a connection between two port objects.
         /// </summary>
         /// <param name="output">The output port of the connection.</param>
@@ -228,18 +227,35 @@ namespace MMALSharp
         /// <param name="connection">The native pointer to a MMAL_CONNECTION_T struct.</param>
         /// <returns>The value of all flags set against this connection.</returns>
         protected virtual int NativeConnectionCallback(MMAL_CONNECTION_T* connection)
-        {
-            lock (MMALConnectionImpl.ConnectionLock)
+        {            
+            if (MMALCameraConfig.Debug)
+            {
+                MMALLog.Logger.LogDebug("Inside native connection callback");
+            }
+            
+            var queue = new MMALQueueImpl(connection->Queue);
+            var bufferImpl = queue.GetBuffer();
+
+            if (bufferImpl.CheckState())
             {
                 if (MMALCameraConfig.Debug)
                 {
-                    MMALLog.Logger.LogDebug("Inside native connection callback");
+                    bufferImpl.PrintProperties();
                 }
-                
-                var queue = new MMALQueueImpl(connection->Queue);
-                var bufferImpl = queue.GetBuffer();
 
-                if (bufferImpl != null)
+                if (bufferImpl.Length > 0)
+                {
+                    this.CallbackHandler.InputCallback(bufferImpl);
+                }
+
+                this.InputPort.SendBuffer(bufferImpl);
+            }
+            else
+            {
+                queue = new MMALQueueImpl(connection->Pool->Queue);
+                bufferImpl = queue.GetBuffer();
+
+                if (bufferImpl.CheckState())
                 {
                     if (MMALCameraConfig.Debug)
                     {
@@ -248,37 +264,17 @@ namespace MMALSharp
 
                     if (bufferImpl.Length > 0)
                     {
-                        this.CallbackHandler.InputCallback(bufferImpl);
+                        this.CallbackHandler.OutputCallback(bufferImpl);
                     }
 
-                    this.InputPort.SendBuffer(bufferImpl);
+                    this.OutputPort.SendBuffer(bufferImpl);
                 }
                 else
                 {
-                    queue = new MMALQueueImpl(connection->Pool->Queue);
-                    bufferImpl = queue.GetBuffer();
-
-                    if (bufferImpl != null)
-                    {
-                        if (MMALCameraConfig.Debug)
-                        {
-                            bufferImpl.PrintProperties();
-                        }
-
-                        if (bufferImpl.Length > 0)
-                        {
-                            this.CallbackHandler.OutputCallback(bufferImpl);
-                        }
-
-                        this.OutputPort.SendBuffer(bufferImpl);
-                    }
-                    else
-                    {
-                        MMALLog.Logger.LogDebug("Buffer could not be obtained by connection callback");
-                    }
+                    MMALLog.Logger.LogInformation("Buffer could not be obtained by connection callback");
                 }
             }
-
+            
             return (int)connection->Flags;
         }
         
