@@ -237,7 +237,7 @@ namespace MMALSharp.Components
             // Use Raspistill values.
             if (MMALCameraConfig.ShutterSpeed > 6000000)
             {
-                this.PreviewPort.SetFramerateRange(new MMAL_RATIONAL_T(50, 1000), new MMAL_RATIONAL_T(166, 1000));
+                this.PreviewPort.SetFramerateRange(new MMAL_RATIONAL_T(5, 1000), new MMAL_RATIONAL_T(166, 1000));
             }
             else if (MMALCameraConfig.ShutterSpeed > 1000000)
             {
@@ -281,7 +281,7 @@ namespace MMALSharp.Components
             // Use Raspistill values.
             if (MMALCameraConfig.ShutterSpeed > 6000000)
             {
-                this.VideoPort.SetFramerateRange(new MMAL_RATIONAL_T(50, 1000), new MMAL_RATIONAL_T(166, 1000));
+                this.VideoPort.SetFramerateRange(new MMAL_RATIONAL_T(5, 1000), new MMAL_RATIONAL_T(166, 1000));
             }
             else if (MMALCameraConfig.ShutterSpeed > 1000000)
             {
@@ -366,7 +366,7 @@ namespace MMALSharp.Components
             // Use Raspistill values.
             if (MMALCameraConfig.ShutterSpeed > 6000000)
             {
-                this.StillPort.SetFramerateRange(new MMAL_RATIONAL_T(50, 1000), new MMAL_RATIONAL_T(166, 1000));
+                this.StillPort.SetFramerateRange(new MMAL_RATIONAL_T(5, 1000), new MMAL_RATIONAL_T(166, 1000));
             }
             else if (MMALCameraConfig.ShutterSpeed > 1000000)
             {
