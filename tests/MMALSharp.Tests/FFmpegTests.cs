@@ -48,7 +48,11 @@ namespace MMALSharp.Tests
                 var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1));
 
                 // Take video for 1 minute.
-                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.VideoPort, cts.Token);
+                await Task.WhenAll(new[]
+                {
+                    ffCaptureHandler.ManageProcessLifecycleAsync(cts.Token),
+                    Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.VideoPort, cts.Token),
+                });
 
                 Fixture.CheckAndAssertFilepath("/home/pi/videos/tests/testing1234.avi");
             }

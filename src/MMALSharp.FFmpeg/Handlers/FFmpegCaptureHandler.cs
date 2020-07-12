@@ -3,34 +3,32 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using System;
-using System.Diagnostics;
-using System.Text;
-using MMALSharp.Common;
-
 namespace MMALSharp.Handlers
 {
     /// <summary>
-    /// Experimental FFmpeg specific capture handler.
+    /// Helper-methods for invoking ExternalProcessCaptureHandler to output to VLC.
     /// </summary>
-    public class FFmpegCaptureHandler : IVideoCaptureHandler
+    public static class FFmpegCaptureHandler
     {
-        private Process _process;
-        
-        /// <summary>
-        /// The total size of data that has been processed by this capture handler.
-        /// </summary>
-        protected int Processed { get; set; }
-                
         /// <summary>
         /// Streams video from the standard output stream via FFmpeg to an RTMP server.
         /// </summary>
         /// <param name="streamName">The meta name of the stream.</param>
         /// <param name="streamUrl">The url of your RTMP server - the url to stream to.</param>
-        /// <returns>A new instance of <see cref="FFmpegCaptureHandler"/> with process arguments to push to an RTMP stream.</returns>
-        public static FFmpegCaptureHandler RTMPStreamer(string streamName, string streamUrl)
+        /// <param name="echoOutput">Whether to echo stdout and stderr to the console or suppress it. Defaults to true.</param>
+        /// <returns>An initialized instance of <see cref="ExternalProcessCaptureHandler"/></returns>
+        public static ExternalProcessCaptureHandler RTMPStreamer(string streamName, string streamUrl, bool echoOutput = true)
         {
-            return new FFmpegCaptureHandler($"-i - -vcodec copy -an -f flv -metadata streamName={streamName} {streamUrl}");
+            var opts = new ExternalProcessCaptureHandlerOptions
+            {
+                Filename = "ffmpeg",
+                Arguments = $"-i - -vcodec copy -an -f flv -metadata streamName={streamName} {streamUrl}",
+                EchoOutput = echoOutput,
+                DrainOutputDelayMs = 500, // default
+                TerminationSignals = ExternalProcessCaptureHandlerOptions.signalsFFmpeg
+            };
+
+            return new ExternalProcessCaptureHandler(opts);
         }
 
         /// <summary>
@@ -38,131 +36,49 @@ namespace MMALSharp.Handlers
         /// </summary>
         /// <param name="directory">The directory to store the output video file.</param>
         /// <param name="filename">The name of the video file.</param>
-        /// <returns>A new instance of <see cref="FFmpegCaptureHandler"/> with process arguments to convert raw video into a compatible AVI container.</returns>
-        public static FFmpegCaptureHandler RawVideoToAvi(string directory, string filename)
+        /// <param name="echoOutput">Whether to echo stdout and stderr to the console or suppress it. Defaults to true.</param>
+        /// <returns>An initialized instance of <see cref="ExternalProcessCaptureHandler"/></returns>
+        public static ExternalProcessCaptureHandler RawVideoToAvi(string directory, string filename, bool echoOutput = true)
         {            
-            System.IO.Directory.CreateDirectory(directory);                        
-            
-            return new FFmpegCaptureHandler($"-re -i - -c:v copy -an -f avi -y {directory.TrimEnd()}/{filename}.avi");
-        }
+            System.IO.Directory.CreateDirectory(directory);
 
-        /// <summary>
-        /// Creates a new instance of <see cref="FFmpegCaptureHandler"/> with the specified process arguments.
-        /// </summary>
-        /// <param name="argument">The <see cref="ProcessStartInfo"/> argument.</param>
-        public FFmpegCaptureHandler(string argument)
-        {
-            var processStartInfo = new ProcessStartInfo
+            var opts = new ExternalProcessCaptureHandlerOptions
             {
-                UseShellExecute = false,
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true,
-                FileName = "ffmpeg",
-                Arguments = argument
+                Filename = "ffmpeg",
+                // -re option should not be specified here, it's meant to rate-limit scenarios like streaming a pre-recorded file; see: https://stackoverflow.com/a/48497672/152997
+                Arguments = $"-i - -c:v copy -an -f avi -y {directory.TrimEnd()}/{filename}.avi",
+                EchoOutput = echoOutput,
+                DrainOutputDelayMs = 500, // default
+                TerminationSignals = ExternalProcessCaptureHandlerOptions.signalsFFmpeg
             };
 
-            _process = new Process();
-            _process.StartInfo = processStartInfo;
-                        
-            Console.InputEncoding = Encoding.ASCII;
-                
-            _process.EnableRaisingEvents = true;
-            _process.OutputDataReceived += (object sendingProcess, DataReceivedEventArgs e) =>
+            return new ExternalProcessCaptureHandler(opts);
+        }
+
+        /// <summary>
+        /// Transcodes the standard output stream via FFmpeg into an MP4 format with options that create a "fragmented" MP4 (more keyframes than usual, and no trailing
+        /// MOOV atom trailing-header). Because FFmpeg doesn't do a clean shutdown when running as a child process, it is currently unable to output a "clean" standard
+        /// MP4 without these settings, it will not generate the final MOOV trailing-header. This also means the fragmented MP4 may lose a couple seconds at the end
+        /// of the final video.
+        /// </summary>
+        /// <param name="directory">The directory to store the output video file.</param>
+        /// <param name="filename">The name of the video file.</param>
+        /// <param name="echoOutput">Whether to echo stdout and stderr to the console or suppress it. Defaults to true.</param>
+        /// <returns>An initialized instance of <see cref="ExternalProcessCaptureHandler"/></returns>
+        public static ExternalProcessCaptureHandler RawVideoToMP4(string directory, string filename, bool echoOutput = true)
+        {
+            System.IO.Directory.CreateDirectory(directory);
+
+            var opts = new ExternalProcessCaptureHandlerOptions
             {
-                if (e.Data != null)
-                {                        
-                    Console.WriteLine(e.Data);                       
-                }
+                Filename = "ffmpeg",
+                Arguments = $"-framerate 24 -i - -b:v 2500k -c copy -movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov {directory.TrimEnd()}/{filename}.mp4",
+                EchoOutput = true,
+                DrainOutputDelayMs = 500, // default
+                TerminationSignals = ExternalProcessCaptureHandlerOptions.signalsFFmpeg
             };
 
-            _process.ErrorDataReceived += (object sendingProcess, DataReceivedEventArgs e) =>
-            {
-                if (e.Data != null)
-                {
-                    Console.WriteLine(e.Data);
-                }
-            };
-                
-            _process.Start();
-
-            _process.BeginOutputReadLine();
-            _process.BeginErrorReadLine();            
-        }
-
-        /// <summary>
-        /// Returns whether this capture handler features the split file functionality.
-        /// </summary>
-        /// <returns>True if can split.</returns>
-        public bool CanSplit() => false;
-        
-        /// <summary>
-        /// Not used.
-        /// </summary>
-        public void PostProcess() { }
-
-        /// <summary>
-        /// Not used.
-        /// </summary>
-        /// <returns>A NotImplementedException.</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public string GetDirectory()
-            => throw new NotImplementedException();
-
-        /// <summary>
-        /// Not used.
-        /// </summary>
-        /// <param name="allocSize">N/A.</param>
-        /// <returns>A NotImplementedException.</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public ProcessResult Process(uint allocSize)
-            => throw new NotImplementedException();
-
-        /// <summary>
-        /// Writes frame data to the StandardInput stream to be processed by FFmpeg.
-        /// </summary>
-        /// <param name="context">Contains the data and metadata for an image frame.</param>
-        public void Process(ImageContext context)
-        {
-            try
-            {
-                _process.StandardInput.BaseStream.Write(context.Data, 0, context.Data.Length);
-                _process.StandardInput.BaseStream.Flush();
-                this.Processed += context.Data.Length;
-            }
-            catch
-            {
-                _process.Kill();             
-                throw;         
-            }
-        }
-
-        /// <summary>
-        /// Not used.
-        /// </summary>
-        /// <exception cref="NotImplementedException"></exception>
-        public void Split()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Returns the total number of bytes processed by this capture handler.
-        /// </summary>
-        /// <returns>The total number of bytes processed by this capture handler.</returns>
-        public string TotalProcessed()
-        {
-            return $"{this.Processed}";
-        }
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            if (!_process.HasExited)
-            {
-                _process.Kill();
-            }
+            return new ExternalProcessCaptureHandler(opts);
         }
     }
 }
