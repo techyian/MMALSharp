@@ -173,7 +173,7 @@ namespace MMALSharp.Handlers
             await Task.WhenAny(new[]
             {
                 // this Task is the one that will be cancelled by the ProcessAsync timeout
-                WaitForCancellationAsync(cancellationToken),
+                cancellationToken.AsTask(),
 
                 // we control this token so this will keep running when the above expires
                 ConsoleWriteLineAsync(outputToken.Token)
@@ -238,19 +238,6 @@ namespace MMALSharp.Handlers
         private void DiscardBuffer(object sendingProcess, DataReceivedEventArgs e)
         { }
 
-        private async Task WaitForCancellationAsync(CancellationToken cancellationToken)
-        {
-            // https://github.com/dotnet/runtime/issues/14991#issuecomment-388776983
-            TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(() => 
-            {
-                    taskCompletionSource.TrySetResult(true);
-            }))
-            {
-                await taskCompletionSource.Task;
-            }
-        }
-
         // When console output is buffered, this asynchronously outputs the buffer without
         // blocking the Process, unlike immediate inline calls to Console.WriteLine.
         private async Task ConsoleWriteLineAsync(CancellationToken cancellationToken)
@@ -268,7 +255,7 @@ namespace MMALSharp.Handlers
                 }
                 else
                 {
-                    await WaitForCancellationAsync(cancellationToken);
+                    await cancellationToken.AsTask();
                 }
             }
             catch (OperationCanceledException)
