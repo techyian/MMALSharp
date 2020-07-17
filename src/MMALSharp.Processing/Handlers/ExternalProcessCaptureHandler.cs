@@ -37,19 +37,16 @@ namespace MMALSharp.Handlers
         /// </summary>
         public ExternalProcessCaptureHandler(ExternalProcessCaptureHandlerOptions options)
         {
-            if(MMALLog.Logger != null)
+            MMALLog.Logger.LogTrace("Starting ExternalProcessCaptureHandler");
+            MMALLog.Logger.LogTrace($"  File: {options.Filename}");
+            MMALLog.Logger.LogTrace($"  Args: {options.Arguments}");
+            if(options.TerminationSignals.Length == 0)
             {
-                MMALLog.Logger.LogTrace("Starting ExternalProcessCaptureHandler");
-                MMALLog.Logger.LogTrace($"  File: {options.Filename}");
-                MMALLog.Logger.LogTrace($"  Args: {options.Arguments}");
-                if(options.TerminationSignals.Length == 0)
-                {
-                    MMALLog.Logger.LogTrace($"  Signal count: 0 (process will be killed upon Dispose)");
-                }
-                else
-                {
-                    MMALLog.Logger.LogTrace($"  Signal count: {options.TerminationSignals.Length}");
-                }
+                MMALLog.Logger.LogTrace($"  Signal count: 0 (process will be killed upon Dispose)");
+            }
+            else
+            {
+                MMALLog.Logger.LogTrace($"  Signal count: {options.TerminationSignals.Length}");
             }
 
             _options = options;
@@ -147,18 +144,14 @@ namespace MMALSharp.Handlers
         /// </summary>
         /// <exception cref="NotImplementedException"></exception>
         public void Split()
-        {
-            throw new NotImplementedException();
-        }
+            => throw new NotImplementedException();
 
         /// <summary>
         /// Returns the total number of bytes processed by this capture handler.
         /// </summary>
         /// <returns>The total number of bytes processed by this capture handler.</returns>
         public string TotalProcessed()
-        {
-            return $"{this.Processed}";
-        }
+            => $"{this.Processed}";
 
         /// <summary>
         /// Manages echoing the output buffer and handles attempts to cleanly terminate the
@@ -169,7 +162,7 @@ namespace MMALSharp.Handlers
         public async Task ManageProcessLifecycleAsync(CancellationToken cancellationToken)
         {
             var outputToken = new CancellationTokenSource();
-            
+
             await Task.WhenAny(new[]
             {
                 // this Task is the one that will be cancelled by the ProcessAsync timeout
@@ -177,15 +170,19 @@ namespace MMALSharp.Handlers
 
                 // we control this token so this will keep running when the above expires
                 ConsoleWriteLineAsync(outputToken.Token)
-            });
+            }).ConfigureAwait(false);
 
             // now we can do a clean shutdown; ConsoleWriteLineAsync is still running
             if (_options.TerminationSignals.Length > 0)
             {
-                MMALLog.Logger?.LogTrace($"Sending process termination signals");
+                MMALLog.Logger.LogTrace($"Sending process termination signals");
                 foreach (var sigint in _options.TerminationSignals)
                 {
-                    if (_process.HasExited) break;
+                    if (_process.HasExited)
+                    {
+                        break;
+                    }
+
                     Syscall.kill(_process.Id, sigint);
                 }
             }
@@ -194,9 +191,11 @@ namespace MMALSharp.Handlers
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             while (!_process.HasExited && stopwatch.ElapsedMilliseconds < _options.DrainOutputDelayMs)
+            {
                 await Task.Delay(50);
+            }
 
-            MMALLog.Logger?.LogTrace($"Process exited? {_process.HasExited}");
+            MMALLog.Logger.LogTrace($"Process exited? {_process.HasExited}");
 
             // now we terminate ConsoleWriteLineAsync
             outputToken.Cancel();
@@ -207,14 +206,14 @@ namespace MMALSharp.Handlers
         {
             if (!_process.HasExited)
             {
-                MMALLog.Logger?.LogTrace($"Killing PID: {_process.Id}");
+                MMALLog.Logger.LogTrace($"Killing PID: {_process.Id}");
                 _process.Kill();
             }
 
-            MMALLog.Logger?.LogTrace($"Disposing PID: {_process.Id}");
+            MMALLog.Logger.LogTrace($"Disposing PID: {_process.Id}");
             _process.Dispose();
 
-            MMALLog.Logger?.LogTrace("Disposed ExternalProcessCaptureHandler");
+            MMALLog.Logger.LogTrace("Disposed ExternalProcessCaptureHandler");
         }
 
         // Using "async void" is ok for an event-handler. The purpose of a Task is to communicate the
@@ -228,7 +227,9 @@ namespace MMALSharp.Handlers
                 // Technically the faster TryWrite method is guaranteed to work for an
                 // unbounded channel, but in this case non-blocking async is more important.
                 if (_stdoutBuffer != null && e.Data != null)
+                {
                     await _stdoutBuffer.Writer.WriteAsync(e.Data);
+                }
             }
             catch
             { }
@@ -248,83 +249,18 @@ namespace MMALSharp.Handlers
                 {
                     while (await _stdoutBuffer.Reader.WaitToReadAsync(cancellationToken).ConfigureAwait(false))
                     {
-                        var data = await _stdoutBuffer.Reader.ReadAsync();
+                        var data = await _stdoutBuffer.Reader.ReadAsync().ConfigureAwait(false);
                         Console.WriteLine(data);
-                        MMALLog.Logger?.LogTrace(data);
+                        MMALLog.Logger.LogTrace(data);
                     }
                 }
                 else
                 {
-                    await cancellationToken.AsTask();
+                    await cancellationToken.AsTask().ConfigureAwait(false);
                 }
             }
             catch (OperationCanceledException)
             { } // token cancellation, disregard
         }
-    }
-
-    /// <summary>
-    /// Options to pass to the constructor of <see cref="ExternalProcessCaptureHandler"/>.
-    /// </summary>
-    public class ExternalProcessCaptureHandlerOptions
-    {
-        /// <summary>
-        /// In theory, ffmpeg responds to a pair of SIGINT signals with a clean shutdown, although in
-        /// practice this doesn't appear to work when ffmpeg is running as a child process.
-        /// </summary>
-        public static Signum[] signalsFFmpeg = new[] { Signum.SIGINT, Signum.SIGINT };
-
-        /// <summary>
-        /// Clean termination signals for a VLC / cvlc process.
-        /// </summary>
-        public static Signum[] signalsVLC = new[] { Signum.SIGINT };
-
-        // --------------------------------------------------------------------------------------------
-        //
-        // VLC termination signals are documented here:
-        // https://wiki.videolan.org/Hacker_Guide/Interfaces/#A_typical_VLC_run_course
-        //
-        // With ffmpeg realtime transcoding, the following combinations are all likely to result in
-        // a corrupt video file (for example, MP4 encoding will be missing the end-header MOOV atom).
-        // Testing also shows it doesn't help to delay between sending the signals.
-        //
-        // Termination signal combos tested include SIGINT followed by:
-        //    SIGINT, SIGABRT, SIGALRM, SIGBUS, SIGTERM, SIGHUP - immediate stop, no output of any kind
-        //    SIGQUIT - ouputs a message, tries to write trailer (MOOV atom), aborts
-        //
-        // Certain simpler video formats like AVI may either complete successfully, or at least play
-        // without obvious issues but they are still likely to be "technically" corrupted at the end.
-        //
-        // --------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// The name of the process to be launched (e.g. ffmpeg, cvlc, etc.)
-        /// </summary>
-        public string Filename = string.Empty;
-
-        /// <summary>
-        /// Command line arguments used to start the process.
-        /// </summary>
-        public string Arguments = string.Empty;
-
-        /// <summary>
-        /// When true, stdout and stderr data is asynchronously buffered and output. When false, output is
-        /// completely suppressed, which may improve release-build performance. If true and MMAL is also
-        /// configured for logging, process output will also be logged.
-        /// </summary>
-        public bool EchoOutput = true;
-
-        /// <summary>
-        /// When the <see cref= "ExternalProcessCaptureHandler.ManageProcessLifecycle" /> token is canceled,
-        /// a short delay will ensure any final output from the process is echoed. Ignored if EchoOutput is
-        /// false. This delay occurs after any TerminationSignals are issued.
-        /// </summary>
-        public int DrainOutputDelayMs = 500;
-
-        /// <summary>
-        /// If present, when the <see cref="ExternalProcessCaptureHandler.ManageProcessLifecycle"/> token is
-        /// canceled, these signals will be sent to the process. Some processes expect a CTRL+C (SIGINT).
-        /// </summary>
-        public Signum[] TerminationSignals = new Signum[] { };
     }
 }

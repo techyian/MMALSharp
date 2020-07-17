@@ -6,7 +6,7 @@
 namespace MMALSharp.Handlers
 {
     /// <summary>
-    /// Helper-methods for invoking ExternalProcessCaptureHandler to output to VLC.
+    /// Helper-methods for invoking ExternalProcessCaptureHandler to output to ffmpeg.
     /// </summary>
     public static class FFmpegCaptureHandler
     {
@@ -25,7 +25,7 @@ namespace MMALSharp.Handlers
                 Arguments = $"-i - -vcodec copy -an -f flv -metadata streamName={streamName} {streamUrl}",
                 EchoOutput = echoOutput,
                 DrainOutputDelayMs = 500, // default
-                TerminationSignals = ExternalProcessCaptureHandlerOptions.signalsFFmpeg
+                TerminationSignals = ExternalProcessCaptureHandlerOptions.SignalsFFmpeg
             };
 
             return new ExternalProcessCaptureHandler(opts);
@@ -49,7 +49,7 @@ namespace MMALSharp.Handlers
                 Arguments = $"-i - -c:v copy -an -f avi -y {directory.TrimEnd()}/{filename}.avi",
                 EchoOutput = echoOutput,
                 DrainOutputDelayMs = 500, // default
-                TerminationSignals = ExternalProcessCaptureHandlerOptions.signalsFFmpeg
+                TerminationSignals = ExternalProcessCaptureHandlerOptions.SignalsFFmpeg
             };
 
             return new ExternalProcessCaptureHandler(opts);
@@ -64,18 +64,20 @@ namespace MMALSharp.Handlers
         /// <param name="directory">The directory to store the output video file.</param>
         /// <param name="filename">The name of the video file.</param>
         /// <param name="echoOutput">Whether to echo stdout and stderr to the console or suppress it. Defaults to true.</param>
+        /// <param name="bitrate">Output bitrate. Defaults to 2500 (25Mbps).</param>
+        /// <param name="fps">Output framerate. Defaults to 24.</param>
         /// <returns>An initialized instance of <see cref="ExternalProcessCaptureHandler"/></returns>
-        public static ExternalProcessCaptureHandler RawVideoToMP4(string directory, string filename, bool echoOutput = true)
+        public static ExternalProcessCaptureHandler RawVideoToMP4(string directory, string filename, bool echoOutput = true, int bitrate = 2500, int fps = 24)
         {
             System.IO.Directory.CreateDirectory(directory);
 
             var opts = new ExternalProcessCaptureHandlerOptions
             {
                 Filename = "ffmpeg",
-                Arguments = $"-framerate 24 -i - -b:v 2500k -c copy -movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov {directory.TrimEnd()}/{filename}.mp4",
+                Arguments = $"-framerate {fps} -i - -b:v {bitrate}k -c copy -movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov {directory.TrimEnd()}/{filename}.mp4",
                 EchoOutput = true,
                 DrainOutputDelayMs = 500, // default
-                TerminationSignals = ExternalProcessCaptureHandlerOptions.signalsFFmpeg
+                TerminationSignals = ExternalProcessCaptureHandlerOptions.SignalsFFmpeg
             };
 
             return new ExternalProcessCaptureHandler(opts);
