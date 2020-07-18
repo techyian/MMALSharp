@@ -192,7 +192,7 @@ namespace MMALSharp.Handlers
             stopwatch.Start();
             while (!_process.HasExited && stopwatch.ElapsedMilliseconds < _options.DrainOutputDelayMs)
             {
-                await Task.Delay(50);
+                await Task.Delay(50).ConfigureAwait(false);
             }
 
             MMALLog.Logger.LogTrace($"Process exited? {_process.HasExited}");
@@ -228,7 +228,7 @@ namespace MMALSharp.Handlers
                 // unbounded channel, but in this case non-blocking async is more important.
                 if (_stdoutBuffer != null && e.Data != null)
                 {
-                    await _stdoutBuffer.Writer.WriteAsync(e.Data);
+                    await _stdoutBuffer.Writer.WriteAsync(e.Data).ConfigureAwait(false);
                 }
             }
             catch
