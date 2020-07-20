@@ -50,7 +50,7 @@ namespace MMALSharp.Tests
                 // Take video for 1 minute.
                 await Task.WhenAll(new[]
                 {
-                    ffCaptureHandler.ManageProcessLifecycleAsync(cts.Token),
+                    ffCaptureHandler.ProcessExternalAsync(cts.Token),
                     Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.VideoPort, cts.Token),
                 });
 

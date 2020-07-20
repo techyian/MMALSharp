@@ -159,7 +159,7 @@ namespace MMALSharp.Handlers
         /// and execute both of these with Task.WhenAll.
         /// </summary>
         /// <param name="cancellationToken">The same timeout token used for MMALCamera.ProcessAsync</param>
-        public async Task ManageProcessLifecycleAsync(CancellationToken cancellationToken)
+        public async Task ProcessExternalAsync(CancellationToken cancellationToken)
         {
             var outputToken = new CancellationTokenSource();
 

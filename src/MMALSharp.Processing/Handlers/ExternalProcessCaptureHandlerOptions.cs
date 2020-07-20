@@ -59,14 +59,14 @@ namespace MMALSharp.Handlers
         public bool EchoOutput = true;
 
         /// <summary>
-        /// When the <see cref= "ExternalProcessCaptureHandler.ManageProcessLifecycleAsync" /> token is canceled,
+        /// When the <see cref= "ExternalProcessCaptureHandler.ProcessExternalAsync" /> token is canceled,
         /// a short delay will ensure any final output from the process is echoed. Ignored if EchoOutput is
         /// false. This delay occurs after any TerminationSignals are issued.
         /// </summary>
         public int DrainOutputDelayMs = 500;
 
         /// <summary>
-        /// If present, when the <see cref="ExternalProcessCaptureHandler.ManageProcessLifecycleAsync"/> token is
+        /// If present, when the <see cref="ExternalProcessCaptureHandler.ProcessExternalAsync"/> token is
         /// canceled, these signals will be sent to the process. Some processes expect a CTRL+C (SIGINT).
         /// </summary>
         public Signum[] TerminationSignals = new Signum[] { };
