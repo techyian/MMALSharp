@@ -1,8 +1,12 @@
-﻿using MMALSharp.Config;
-using MMALSharp.Native;
+﻿// <copyright file="IMMALPortConfig.cs" company="Techyian">
+// Copyright (c) Ian Auty and contributors. All rights reserved.
+// Licensed under the MIT License. Please see LICENSE.txt for License info.
+// </copyright>
+
 using System;
 using System.Drawing;
 using MMALSharp.Common;
+using MMALSharp.Config;
 
 namespace MMALSharp.Ports
 {
