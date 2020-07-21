@@ -6,6 +6,9 @@ using MMALSharp.Common;
 
 namespace MMALSharp.Ports
 {
+    /// <summary>
+    /// Represents a port configuration object.
+    /// </summary>
     public interface IMMALPortConfig
     {
         /// <summary>

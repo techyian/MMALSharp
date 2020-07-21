@@ -22,7 +22,6 @@ namespace MMALSharp.Tests
         {
             var loggerFactory = LoggerFactory.Create(builder =>
             {
-
                 builder
                     .ClearProviders()
                     .SetMinimumLevel(LogLevel.Trace)

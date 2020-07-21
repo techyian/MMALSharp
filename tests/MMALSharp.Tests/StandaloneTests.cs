@@ -122,7 +122,6 @@ namespace MMALSharp.Tests
             // The outputted file is then fed into a decoder component where we decode to raw YUV420.
             // The next outputted file is then fed into an encoder component where we re-encode to MJPEG using YUV420 encoding.
             // This test showcases each operation as a single unit of work.
-
             TestHelper.BeginTest("Video - EncodeDecodeFromFile");
             TestHelper.SetConfigurationDefaults();
             TestHelper.CleanDirectory("/home/pi/videos/tests");

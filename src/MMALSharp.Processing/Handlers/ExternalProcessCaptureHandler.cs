@@ -35,6 +35,7 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// Creates a new instance of <see cref="ExternalProcessCaptureHandler"/> with the specified options.
         /// </summary>
+        /// <param name="options">Configuration options for <see cref="ExternalProcessCaptureHandler"/>.</param>
         public ExternalProcessCaptureHandler(ExternalProcessCaptureHandlerOptions options)
         {
             MMALLog.Logger.LogTrace("Starting ExternalProcessCaptureHandler");
@@ -159,6 +160,7 @@ namespace MMALSharp.Handlers
         /// and execute both of these with Task.WhenAll.
         /// </summary>
         /// <param name="cancellationToken">The same timeout token used for MMALCamera.ProcessAsync</param>
+        /// <returns>The external process running task.</returns>
         public async Task ProcessExternalAsync(CancellationToken cancellationToken)
         {
             var outputToken = new CancellationTokenSource();

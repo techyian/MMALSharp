@@ -82,7 +82,7 @@ namespace MMALSharp
 
         /// <summary>
         /// Self-contained method for recording raw video frames directly from the camera's video port.
-        /// Uses the encoding and pixel format as set in <see cref="MMALCameraConfig.VideoEncoding"/> and <see cref="MMALCameraConfig.VideoSubformat"/>.
+        /// Uses the encoding and pixel format as set in <see cref="MMALCameraConfig.Encoding"/> and <see cref="MMALCameraConfig.EncodingSubFormat"/>.
         /// </summary>
         /// <param name="handler">The video capture handler to apply to the encoder.</param>
         /// <param name="cancellationToken">A cancellationToken to signal when to stop video capture.</param>        

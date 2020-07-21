@@ -39,14 +39,13 @@ namespace MMALSharp.Handlers
         /// <param name="echoOutput">Whether to echo stdout and stderr to the console or suppress it. Defaults to true.</param>
         /// <returns>An initialized instance of <see cref="ExternalProcessCaptureHandler"/></returns>
         public static ExternalProcessCaptureHandler RawVideoToAvi(string directory, string filename, bool echoOutput = true)
-        {            
+        {
             System.IO.Directory.CreateDirectory(directory);
 
             var opts = new ExternalProcessCaptureHandlerOptions
             {
                 Filename = "ffmpeg",
-                // -re option should not be specified here, it's meant to rate-limit scenarios like streaming a pre-recorded file; see: https://stackoverflow.com/a/48497672/152997
-                Arguments = $"-i - -c:v copy -an -f avi -y {directory.TrimEnd()}/{filename}.avi",
+                Arguments = $"-i - -c:v copy -an -f avi -y {directory.TrimEnd()}/{filename}.avi", // -re option should not be specified here, it's meant to rate-limit scenarios like streaming a pre-recorded file; see: https://stackoverflow.com/a/48497672/152997
                 EchoOutput = echoOutput,
                 DrainOutputDelayMs = 500, // default
                 TerminationSignals = ExternalProcessCaptureHandlerOptions.SignalsFFmpeg

@@ -42,7 +42,7 @@ namespace MMALSharp.Components
         /// Creates a new instance of <see cref="MMALImageFxComponent"/>.
         /// </summary>
         public unsafe MMALImageFxComponent()
-            : base (MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_FX)
+            : base(MMALParameters.MMAL_COMPONENT_DEFAULT_IMAGE_FX)
         {
             // Default to use still image port behaviour.
             this.Inputs.Add(new InputPort((IntPtr)(&(*this.Ptr->Input[0])), this, Guid.NewGuid()));
