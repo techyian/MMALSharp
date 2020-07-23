@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -21,10 +22,12 @@ namespace MMALSharp.Processors.Motion
     /// </summary>
     public class FrameDiffAnalyser : FrameAnalyser
     {
+        private Stopwatch _testFrameAge;
+        
         internal Action OnDetect { get; set; }
 
         /// <summary>
-        /// Working storage for the Test Frame. This is the original static image we are comparing to.
+        /// Working storage for the Test Frame. This is the image we are comparing against new incoming frames.
         /// </summary>
         protected List<byte> TestFrame { get; set; }
         
@@ -53,6 +56,8 @@ namespace MMALSharp.Processors.Motion
             this.TestFrame = new List<byte>();
             this.MotionConfig = config;
             this.OnDetect = onDetect;
+
+            _testFrameAge = new Stopwatch();
         }
 
         /// <inheritdoc />
@@ -62,7 +67,7 @@ namespace MMALSharp.Processors.Motion
 
             if (this.FullTestFrame)
             {
-                MMALLog.Logger.LogDebug("Have full test frame");
+                MMALLog.Logger.LogDebug("Have full test frame.");
                 
                 // If we have a full test frame stored then we can start storing subsequent frame data to check.
                 base.Apply(context);
@@ -74,15 +79,20 @@ namespace MMALSharp.Processors.Motion
                 if (context.Eos)
                 {
                     this.FullTestFrame = true;
+
+                    if(this.MotionConfig.TestFrameInterval != TimeSpan.Zero)
+                    {
+                        _testFrameAge.Restart();
+                    }
+
                     MMALLog.Logger.LogDebug("EOS reached for test frame.");
                 }
             }
 
-            if (this.FullFrame)
+            if (this.FullFrame && !TestFrameExpired())
             {
                 MMALLog.Logger.LogDebug("Have full frame, checking for changes.");
 
-                // TODO: Check for changes.
                 this.CheckForChanges(this.OnDetect);
             }
         }
@@ -96,6 +106,25 @@ namespace MMALSharp.Processors.Motion
             this.WorkingData = new List<byte>();
             this.FullFrame = false;
             this.FullTestFrame = false;
+
+            _testFrameAge.Reset();
+        }
+
+        private bool TestFrameExpired()
+        {
+            if(this.MotionConfig.TestFrameInterval == TimeSpan.Zero || _testFrameAge.Elapsed < this.MotionConfig.TestFrameInterval)
+            {
+                return false;
+            }
+
+            MMALLog.Logger.LogDebug("Have full frame, updating test frame.");
+
+            this.TestFrame = this.WorkingData;
+            this.WorkingData = new List<byte>();
+
+            _testFrameAge.Restart();
+
+            return true;
         }
 
         private void CheckForChanges(Action onDetect)
