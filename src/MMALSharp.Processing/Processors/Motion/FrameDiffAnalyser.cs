@@ -113,29 +113,26 @@ namespace MMALSharp.Processors.Motion
 
         private void PrepareTestFrame()
         {
-            using (var stream = new MemoryStream(this.WorkingData.ToArray()))
+            var frame = this.GetBlankBitmap();
+
+            if (_firstFrame)
             {
-                var frame = this.GetBlankBitmap();
+                // one-time collection of basic frame dimensions
+                _frameWidth = frame.Width;
+                _frameHeight = frame.Height;
+                _frameBpp = Image.GetPixelFormatSize(frame.PixelFormat) / 8;
+                (this.TestFrame, _frameStride) = this.ProcessWorkingData();
 
-                if (_firstFrame)
+                if(!string.IsNullOrWhiteSpace(this.MotionConfig.MotionMaskPathname))
                 {
-                    // one-time collection of basic frame dimensions
-                    _frameWidth = frame.Width;
-                    _frameHeight = frame.Height;
-                    _frameBpp = Image.GetPixelFormatSize(frame.PixelFormat) / 8;
-                    (this.TestFrame, _frameStride) = this.ProcessWorkingData();
-
-                    if(!string.IsNullOrWhiteSpace(this.MotionConfig.MotionMaskPathname))
-                    {
-                        this.PrepareMask();
-                    }
-
-                    _firstFrame = false;
+                    this.PrepareMask();
                 }
-                else
-                {
-                    this.TestFrame = this.ProcessWorkingData().bytes;
-                }
+
+                _firstFrame = false;
+            }
+            else
+            {
+                this.TestFrame = this.ProcessWorkingData().bytes;
             }
 
             if (this.MotionConfig.TestFrameInterval != TimeSpan.Zero)
