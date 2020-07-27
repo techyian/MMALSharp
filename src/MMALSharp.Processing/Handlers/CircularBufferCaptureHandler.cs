@@ -4,7 +4,8 @@
 // </copyright>
 
 using System;
-using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MMALSharp.Common;
 using MMALSharp.Common.Utility;
@@ -22,16 +23,25 @@ namespace MMALSharp.Handlers
         private int _bufferSize;
         private bool _shouldDetectMotion;
         private bool _receivedIFrame;
-        private Stopwatch _recordingElapsed;
         private IFrameAnalyser _analyser;
-        private MotionConfig _config;
-        private Action _onStopDetect;
-                
+        private MotionConfig _motionConfig;
+
         /// <summary>
         /// The circular buffer object responsible for storing image data.
         /// </summary>
         public CircularBuffer<byte> Buffer { get; private set; }
-        
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="CircularBufferCaptureHandler"/> class with the specified Circular buffer capacity without file output.
+        /// </summary>
+        /// <param name="bufferSize">The buffer's size.</param>
+        public CircularBufferCaptureHandler(int bufferSize)
+            : base()
+        {
+            _bufferSize = bufferSize;
+            this.Buffer = new CircularBuffer<byte>(bufferSize);
+        }
+
         /// <summary>
         /// Creates a new instance of the <see cref="CircularBufferCaptureHandler"/> class with the specified Circular buffer capacity and directory/extension of the working file.
         /// </summary>
@@ -56,7 +66,7 @@ namespace MMALSharp.Handlers
             _bufferSize = bufferSize;
             this.Buffer = new CircularBuffer<byte>(bufferSize);
         }
-       
+
         /// <inheritdoc />
         public override void Process(ImageContext context)
         {
@@ -75,13 +85,6 @@ namespace MMALSharp.Handlers
                     {
                         _receivedIFrame = true;
                     }
-                    
-                    if (_receivedIFrame)
-                    {
-                        // We need to have received an IFrame for the recording to be valid.
-                        this.CurrentStream.Write(context.Data, 0, context.Data.Length);
-                        this.Processed += context.Data.Length;
-                    }
 
                     if (_receivedIFrame && this.Buffer.Size > 0)
                     {
@@ -90,6 +93,13 @@ namespace MMALSharp.Handlers
                         this.CurrentStream.Write(this.Buffer.ToArray(), 0, this.Buffer.Size);
                         this.Processed += this.Buffer.Size;
                         this.Buffer = new CircularBuffer<byte>(this.Buffer.Capacity);
+                    }
+
+                    if (_receivedIFrame)
+                    {
+                        // We need to have received an IFrame for the recording to be valid.
+                        this.CurrentStream.Write(context.Data, 0, context.Data.Length);
+                        this.Processed += context.Data.Length;
                     }
                 }
                 else
@@ -106,44 +116,36 @@ namespace MMALSharp.Handlers
                     this.Processed += context.Data.Length;
                 }
             }
-            
+
             if (_shouldDetectMotion && !_recordToFileStream)
             {
                 _analyser?.Apply(context);
             }
 
-            this.CheckRecordingProgress();
-
             // Not calling base method to stop data being written to the stream when not recording.
             this.ImageContext = context;
         }
 
-        /// <summary>
-        /// Call to enable motion detection.
-        /// </summary>
-        /// <param name="config">The motion configuration.</param>
-        /// <param name="onDetect">A callback for when motion is detected.</param>
-        /// <param name="onStopDetect">An optional callback for when the record duration has passed.</param>
-        public void ConfigureMotionDetection(MotionConfig config, Action onDetect, Action onStopDetect = null)
+        /// <inheritdoc/>
+        public void ConfigureMotionDetection(MotionConfig config, Action onDetect)
         {
-            _config = config;
-            _onStopDetect = onStopDetect;
-            
-            if (this.MotionType == MotionType.FrameDiff)
+            _motionConfig = config;
+
+            switch(this.MotionType)
             {
-                _analyser = new FrameDiffAnalyser(config, onDetect);
-            }
-            else
-            {
-                // TODO: Motion vector analyser
+                case MotionType.FrameDiff:
+                    _analyser = new FrameDiffAnalyser(config, onDetect);
+                    break;
+
+                case MotionType.MotionVector:
+                    // TODO Motion vector analyser
+                    break;
             }
 
             this.EnableMotionDetection();
         }
 
-        /// <summary>
-        /// Enables motion detection. When configured, this will instruct the capture handler to detect motion.
-        /// </summary>
+        /// <inheritdoc/>
         public void EnableMotionDetection()
         {
             _shouldDetectMotion = true;
@@ -151,26 +153,49 @@ namespace MMALSharp.Handlers
             MMALLog.Logger.LogInformation("Enabling motion detection.");
         }
 
-        /// <summary>
-        /// Disables motion detection. When configured, this will instruct the capture handler not to detect motion.
-        /// </summary>
+        /// <inheritdoc/>
         public void DisableMotionDetection()
         {
             _shouldDetectMotion = false;
+
+            (_analyser as FrameDiffAnalyser)?.ResetAnalyser();
 
             MMALLog.Logger.LogInformation("Disabling motion detection.");
         }
 
         /// <summary>
         /// Call to start recording to FileStream.
-        /// </summary>        
-        public void StartRecording()
+        /// </summary>
+        /// <param name="initRecording">Optional Action to execute when recording starts, for example, to request an h.264 I-frame.</param>
+        /// <param name="cancellationToken">When the token is canceled, <see cref="StopRecording"/> is called. If a token is not provided, the caller must stop the recording.</param>
+        /// <returns>Task representing the recording process if a CancellationToken was provided, otherwise a completed Task.</returns>
+        public async Task StartRecording(Action initRecording = null, CancellationToken cancellationToken = default)
         {
-            MMALLog.Logger.LogInformation("Start recording.");
+            if (this.CurrentStream == null)
+            {
+                throw new InvalidOperationException($"Recording unavailable, {nameof(CircularBufferCaptureHandler)} was not created with output-file arguments");
+            }
 
-            _recordToFileStream = true;            
-            _recordingElapsed = new Stopwatch();
-            _recordingElapsed.Start();
+            _recordToFileStream = true;
+
+            if (initRecording != null)
+            {
+                initRecording.Invoke();
+            }
+
+            if(cancellationToken != CancellationToken.None)
+            {
+                try
+                {
+                    await cancellationToken.AsTask().ConfigureAwait(false);
+                }
+                catch(TaskCanceledException)
+                {
+                    // normal, but capture here because we may be running in the async void lambda (onDetect)
+                }
+
+                StopRecording();
+            }
         }
 
         /// <summary>
@@ -178,12 +203,17 @@ namespace MMALSharp.Handlers
         /// </summary>
         public void StopRecording()
         {
+            if (this.CurrentStream == null)
+            {
+                throw new InvalidOperationException($"Recording unavailable, {nameof(CircularBufferCaptureHandler)} was not created with output-file arguments");
+            }
+
             MMALLog.Logger.LogInformation("Stop recording.");
 
             _recordToFileStream = false;
             _receivedIFrame = false;
-            _recordingElapsed?.Stop();
-            _recordingElapsed?.Reset();
+
+            (_analyser as FrameDiffAnalyser)?.ResetAnalyser();
         }
 
         /// <inheritdoc />
@@ -196,30 +226,6 @@ namespace MMALSharp.Handlers
         public override string TotalProcessed()
         {
             return $"{this.Processed}";
-        }
-
-        private void CheckRecordingProgress()
-        {
-            if (_recordingElapsed != null && _config != null)
-            {
-                if (_recordingElapsed.Elapsed >= _config.RecordDuration)
-                {
-                    if (_onStopDetect != null)
-                    {
-                        _onStopDetect();
-                    }
-                    else
-                    {
-                        this.StopRecording();
-                    }
-
-                    if (_analyser is FrameDiffAnalyser)
-                    {
-                        var fdAnalyser = _analyser as FrameDiffAnalyser;
-                        fdAnalyser?.ResetAnalyser();
-                    }
-                }
-            }
         }
     }
 }

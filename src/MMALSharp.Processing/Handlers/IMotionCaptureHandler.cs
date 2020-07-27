@@ -23,8 +23,7 @@ namespace MMALSharp.Handlers
         /// </summary>
         /// <param name="config">The motion configuration.</param>
         /// <param name="onDetect">A callback for when motion is detected.</param>
-        /// <param name="onStopDetect">An optional callback for when the record duration has passed.</param>
-        void ConfigureMotionDetection(MotionConfig config, Action onDetect, Action onStopDetect = null);
+        void ConfigureMotionDetection(MotionConfig config, Action onDetect);
 
         /// <summary>
         /// Enables motion detection. When configured, this will instruct the capture handler to detect motion.

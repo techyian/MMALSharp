@@ -29,7 +29,17 @@ namespace MMALSharp.Handlers
         /// Indicates whether this capture handler stores video timestamps.
         /// </summary>
         protected bool StoreVideoTimestamps { get; }
-        
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="VideoStreamCaptureHandler"/> class without provisions for writing to a file. Supports
+        /// subclasses in which file output is optional.
+        /// </summary>
+        public VideoStreamCaptureHandler()
+            : base()
+        {
+            this.StoreVideoTimestamps = false;
+        }
+
         /// <summary>
         /// Creates a new instance of the <see cref="VideoStreamCaptureHandler"/> class with the specified directory and filename extension.
         /// </summary>
@@ -56,6 +66,11 @@ namespace MMALSharp.Handlers
         /// <inheritdoc />
         public override void Process(ImageContext context)
         {
+            if (this.CurrentStream == null)
+            {
+                return;
+            }
+
             base.Process(context);
 
             if (this.StoreVideoTimestamps && context.Pts.HasValue)
@@ -77,6 +92,11 @@ namespace MMALSharp.Handlers
         /// <param name="stream">The <see cref="FileStream"/> to write to.</param>
         public void InitialiseMotionStore(Stream stream)
         {
+            if (this.CurrentStream == null)
+            {
+                return;
+            }
+
             this.MotionVectorStore = stream;
         }
 

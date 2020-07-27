@@ -3,6 +3,8 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using Microsoft.Extensions.Logging;
+using MMALSharp.Common.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,6 +41,15 @@ namespace MMALSharp.Handlers
         public string CurrentFilename { get; set; }
 
         /// <summary>
+        /// Creates a new instance of the <see cref="FileStreamCaptureHandler"/> class without provisions for writing to a file. Supports
+        /// subclasses in which file output is optional.
+        /// </summary>
+        public FileStreamCaptureHandler()
+        {
+            MMALLog.Logger.LogDebug($"{nameof(FileStreamCaptureHandler)} empty ctor invoked, no file will be written");
+        }
+
+        /// <summary>
         /// Creates a new instance of the <see cref="FileStreamCaptureHandler"/> class with the specified directory and filename extension. Filenames will be in the
         /// format "dd-MMM-yy HH-mm-ss" taken from this moment in time.
         /// </summary>
@@ -48,6 +59,8 @@ namespace MMALSharp.Handlers
         {
             this.Directory = directory.TrimEnd('/');
             this.Extension = extension.TrimStart('.');
+
+            MMALLog.Logger.LogDebug($"{nameof(FileStreamCaptureHandler)} created for directory {this.Directory} and extension {this.Extension}");
 
             System.IO.Directory.CreateDirectory(this.Directory);
             
@@ -89,6 +102,8 @@ namespace MMALSharp.Handlers
             
             this.Extension = ext;
 
+            MMALLog.Logger.LogDebug($"{nameof(FileStreamCaptureHandler)} created for directory {this.Directory} and extension {this.Extension}");
+
             _customFilename = true;
 
             System.IO.Directory.CreateDirectory(this.Directory);
@@ -100,19 +115,26 @@ namespace MMALSharp.Handlers
         /// Gets the filename that a FileStream points to.
         /// </summary>
         /// <returns>The filename.</returns>
-        public string GetFilename() => Path.GetFileNameWithoutExtension(this.CurrentStream.Name);
+        public string GetFilename() => 
+            (this.CurrentStream != null) ? Path.GetFileNameWithoutExtension(this.CurrentStream.Name) : string.Empty;
 
         /// <summary>
         /// Gets the filepath that a FileStream points to.
         /// </summary>
         /// <returns>The filepath.</returns>
-        public string GetFilepath() => this.CurrentStream.Name;
+        public string GetFilepath() => 
+            this.CurrentStream?.Name ?? string.Empty;
 
         /// <summary>
         /// Creates a new File (FileStream), assigns it to the Stream instance of this class and disposes of any existing stream. 
         /// </summary>
         public virtual void NewFile()
         {
+            if(this.CurrentStream == null)
+            {
+                return;
+            }
+
             this.CurrentStream?.Dispose();
 
             string newFilename = string.Empty;
@@ -144,6 +166,11 @@ namespace MMALSharp.Handlers
         /// <inheritdoc />
         public override void PostProcess()
         {
+            if (this.CurrentStream == null)
+            {
+                return;
+            }
+
             this.ProcessedFiles.Add(new ProcessedFileResult(this.Directory, this.GetFilename(), this.Extension));
             base.PostProcess();
         }
