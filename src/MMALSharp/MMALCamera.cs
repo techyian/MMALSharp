@@ -1,5 +1,5 @@
 ﻿// <copyright file="MMALCamera.cs" company="Techyian">
-// Copyright (c) Ian Auty. All rights reserved.
+// Copyright (c) Ian Auty and contributors. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
@@ -481,12 +481,11 @@ namespace MMALSharp
         /// <param name="handler">The motion capture handler.</param>
         /// <param name="config">The motion configuration object.</param>
         /// <param name="onDetect">The callback when motion is detected.</param>
-        /// <param name="onStopDetect">An optional callback which is called when the record duration has passed.</param>
         /// <returns>The camera instance.</returns>
-        public MMALCamera WithMotionDetection(IMotionCaptureHandler handler, MotionConfig config, Action onDetect, Action onStopDetect = null)
+        public MMALCamera WithMotionDetection(IMotionCaptureHandler handler, MotionConfig config, Action onDetect)
         {
             MMALCameraConfig.InlineMotionVectors = true;
-            handler.ConfigureMotionDetection(config, onDetect, onStopDetect);
+            handler.ConfigureMotionDetection(config, onDetect);
             return this;
         }
 
