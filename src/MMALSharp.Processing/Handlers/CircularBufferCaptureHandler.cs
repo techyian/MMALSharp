@@ -166,9 +166,10 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// Call to start recording to FileStream.
         /// </summary>
+        /// <param name="initRecording">Optional Action to execute when recording starts, for example, to request an h.264 I-frame.</param>
         /// <param name="cancellationToken">When the token is canceled, <see cref="StopRecording"/> is called. If a token is not provided, the caller must stop the recording.</param>
         /// <returns>Task representing the recording process if a CancellationToken was provided, otherwise a completed Task.</returns>
-        public async Task StartRecording(CancellationToken cancellationToken = default)
+        public async Task StartRecording(Action initRecording = null, CancellationToken cancellationToken = default)
         {
             if (this.CurrentStream == null)
             {
@@ -176,6 +177,11 @@ namespace MMALSharp.Handlers
             }
 
             _recordToFileStream = true;
+
+            if (initRecording != null)
+            {
+                initRecording.Invoke();
+            }
 
             if(cancellationToken != CancellationToken.None)
             {
