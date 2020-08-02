@@ -57,5 +57,10 @@ namespace MMALSharp.Common
         /// The timestamp value.
         /// </summary>
         public long? Pts { get; set; }
+        
+        /// <summary>
+        /// The pixel format stride.
+        /// </summary>
+        public int Stride { get; set; }
     }
 }

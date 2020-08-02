@@ -113,15 +113,15 @@ namespace MMALSharp.Processors.Motion
 
         private void PrepareTestFrame()
         {
-            var frame = this.GetBlankBitmap();
-
             if (_firstFrame)
             {
                 // one-time collection of basic frame dimensions
-                _frameWidth = frame.Width;
-                _frameHeight = frame.Height;
-                _frameBpp = Image.GetPixelFormatSize(frame.PixelFormat) / 8;
-                (this.TestFrame, _frameStride) = this.ProcessWorkingData();
+                _frameWidth = this.ImageContext.Resolution.Width;
+                _frameHeight = this.ImageContext.Resolution.Height;
+                _frameBpp = this.GetBpp() / 8;
+                _frameStride = this.ImageContext.Stride;
+
+                this.TestFrame = this.WorkingData.ToArray();
 
                 if(!string.IsNullOrWhiteSpace(this.MotionConfig.MotionMaskPathname))
                 {
@@ -132,13 +132,36 @@ namespace MMALSharp.Processors.Motion
             }
             else
             {
-                this.TestFrame = this.ProcessWorkingData().bytes;
+                this.TestFrame = this.WorkingData.ToArray();
             }
 
             if (this.MotionConfig.TestFrameInterval != TimeSpan.Zero)
             {
                 _testFrameAge.Restart();
             }
+        }
+
+        private int GetBpp()
+        {
+            PixelFormat format = default;
+
+            // RGB16 doesn't appear to be supported by GDI?
+            if (this.ImageContext.PixelFormat == MMALEncoding.RGB24)
+            {
+                return 24;
+            }
+
+            if (this.ImageContext.PixelFormat == MMALEncoding.RGB32 || this.ImageContext.PixelFormat == MMALEncoding.RGBA)
+            {
+                return 32;
+            }
+
+            if (format == default)
+            {
+                throw new Exception("Unsupported pixel format.");
+            }
+
+            return 0;
         }
 
         private void PrepareMask()
@@ -193,55 +216,6 @@ namespace MMALSharp.Processors.Motion
             }
         }
 
-        private (byte[] bytes, int stride) ProcessWorkingData()
-        {
-            var bitmap = this.GetBlankBitmap();
-            BitmapData bmpData = null;
-            try
-            {
-                bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
-                var workingData = this.WorkingData.ToArray();
-                var pNative = bmpData.Scan0;
-                Marshal.Copy(workingData, 0, pNative, workingData.Length);
-                int size = bmpData.Stride * bitmap.Height;
-                var bytes = new byte[size];
-                Marshal.Copy(pNative, bytes, 0, size);
-                return (bytes, bmpData.Stride);
-            }
-            finally
-            {
-                bitmap?.UnlockBits(bmpData);
-            }
-        }
-
-        private Bitmap GetBlankBitmap()
-        {
-            PixelFormat format = default;
-
-            // RGB16 doesn't appear to be supported by GDI?
-            if (this.ImageContext.PixelFormat == MMALEncoding.RGB24)
-            {
-                format = PixelFormat.Format24bppRgb;
-            }
-
-            if (this.ImageContext.PixelFormat == MMALEncoding.RGB32)
-            {
-                format = PixelFormat.Format32bppRgb;
-            }
-
-            if (this.ImageContext.PixelFormat == MMALEncoding.RGBA)
-            {
-                format = PixelFormat.Format32bppArgb;
-            }
-
-            if (format == default)
-            {
-                throw new Exception("Unsupported pixel format for Bitmap");
-            }
-
-            return new Bitmap(this.ImageContext.Resolution.Width, this.ImageContext.Resolution.Height, format);
-        }
-
         private int Analyse()
         {
             var quadA = new Rectangle(0, 0, _frameWidth / 2, _frameHeight / 2);
@@ -249,7 +223,7 @@ namespace MMALSharp.Processors.Motion
             var quadC = new Rectangle(0, _frameHeight / 2, _frameWidth / 2, _frameHeight / 2);
             var quadD = new Rectangle(_frameWidth / 2, _frameHeight / 2, _frameWidth / 2, _frameHeight / 2);
 
-            var currentBytes = this.ProcessWorkingData().bytes;
+            var currentBytes = this.WorkingData.ToArray();
 
             int diff = 0;
 
