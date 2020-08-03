@@ -22,15 +22,25 @@ namespace MMALSharp.Processors.Motion
     /// </summary>
     public class FrameDiffAnalyser : FrameAnalyser
     {
+        // When true, PrepareTestFrame does additional start-up processing
+        private bool _firstFrame = true;
+
+        // Frame dimensions collected when the first full frame is complete
+        private int _frameWidth;
+        private int _frameHeight;
+        private int _frameStride;
+        private int _frameBpp;
+
+        private byte[] _mask;
         private Stopwatch _testFrameAge;
-        
+
         internal Action OnDetect { get; set; }
 
         /// <summary>
-        /// Working storage for the Test Frame. This is the image we are comparing against new incoming frames.
+        ///  This is the image we are comparing against new incoming frames.
         /// </summary>
-        protected List<byte> TestFrame { get; set; }
-        
+        protected byte[] TestFrame { get; set; }
+
         /// <summary>
         /// Indicates whether we have a full test frame.
         /// </summary>
@@ -53,7 +63,6 @@ namespace MMALSharp.Processors.Motion
         /// <param name="onDetect">A callback when changes are detected.</param>
         public FrameDiffAnalyser(MotionConfig config, Action onDetect)
         {
-            this.TestFrame = new List<byte>();
             this.MotionConfig = config;
             this.OnDetect = onDetect;
 
@@ -65,35 +74,27 @@ namespace MMALSharp.Processors.Motion
         {
             this.ImageContext = context;
 
-            if (this.FullTestFrame)
-            {
-                MMALLog.Logger.LogDebug("Have full test frame.");
-                
-                // If we have a full test frame stored then we can start storing subsequent frame data to check.
-                base.Apply(context);
-            }
-            else
-            {
-                this.TestFrame.AddRange(context.Data);
+            base.Apply(context);
 
+            if (!this.FullTestFrame)
+            {
                 if (context.Eos)
                 {
                     this.FullTestFrame = true;
-
-                    if(this.MotionConfig.TestFrameInterval != TimeSpan.Zero)
-                    {
-                        _testFrameAge.Restart();
-                    }
-
+                    this.PrepareTestFrame();
                     MMALLog.Logger.LogDebug("EOS reached for test frame.");
                 }
             }
-
-            if (this.FullFrame && !TestFrameExpired())
+            else
             {
-                MMALLog.Logger.LogDebug("Have full frame, checking for changes.");
+                MMALLog.Logger.LogDebug("Have full test frame.");
 
-                this.CheckForChanges(this.OnDetect);
+                if (this.FullFrame && !this.TestFrameExpired())
+                {
+                    MMALLog.Logger.LogDebug("Have full frame, checking for changes.");
+
+                    this.CheckForChanges(this.OnDetect);
+                }
             }
         }
 
@@ -102,7 +103,7 @@ namespace MMALSharp.Processors.Motion
         /// </summary>
         public void ResetAnalyser()
         {
-            this.TestFrame = new List<byte>();
+            this.TestFrame = null;
             this.WorkingData = new List<byte>();
             this.FullFrame = false;
             this.FullTestFrame = false;
@@ -110,29 +111,104 @@ namespace MMALSharp.Processors.Motion
             _testFrameAge.Reset();
         }
 
+        private void PrepareTestFrame()
+        {
+            if (_firstFrame)
+            {
+                // one-time collection of basic frame dimensions
+                _frameWidth = this.ImageContext.Resolution.Width;
+                _frameHeight = this.ImageContext.Resolution.Height;
+                _frameBpp = this.GetBpp() / 8;
+                _frameStride = this.ImageContext.Stride;
+
+                this.TestFrame = this.WorkingData.ToArray();
+
+                if(!string.IsNullOrWhiteSpace(this.MotionConfig.MotionMaskPathname))
+                {
+                    this.PrepareMask();
+                }
+
+                _firstFrame = false;
+            }
+            else
+            {
+                this.TestFrame = this.WorkingData.ToArray();
+            }
+
+            if (this.MotionConfig.TestFrameInterval != TimeSpan.Zero)
+            {
+                _testFrameAge.Restart();
+            }
+        }
+
+        private int GetBpp()
+        {
+            PixelFormat format = default;
+
+            // RGB16 doesn't appear to be supported by GDI?
+            if (this.ImageContext.PixelFormat == MMALEncoding.RGB24)
+            {
+                return 24;
+            }
+
+            if (this.ImageContext.PixelFormat == MMALEncoding.RGB32 || this.ImageContext.PixelFormat == MMALEncoding.RGBA)
+            {
+                return 32;
+            }
+
+            if (format == default)
+            {
+                throw new Exception("Unsupported pixel format.");
+            }
+
+            return 0;
+        }
+
+        private void PrepareMask()
+        {
+            using (var fs = new FileStream(this.MotionConfig.MotionMaskPathname, FileMode.Open, FileAccess.Read))
+            using (var mask = new Bitmap(fs))
+            {
+                // Verify it matches our frame dimensions
+                var maskBpp = Image.GetPixelFormatSize(mask.PixelFormat) / 8;
+                if (mask.Width != _frameWidth || mask.Height != _frameHeight || maskBpp != _frameBpp)
+                {
+                    throw new Exception("Motion-detection mask must match raw stream width, height, and format (bits per pixel)");
+                }
+
+                // Store the byte array
+                BitmapData bmpData = null;
+                try
+                {
+                    bmpData = mask.LockBits(new Rectangle(0, 0, mask.Width, mask.Height), ImageLockMode.ReadOnly, mask.PixelFormat);
+                    var pNative = bmpData.Scan0;
+                    int size = bmpData.Stride * mask.Height;
+                    _mask = new byte[size];
+                    Marshal.Copy(pNative, _mask, 0, size);
+                }
+                finally
+                {
+                    mask.UnlockBits(bmpData);
+                }
+            }
+        }
+
         private bool TestFrameExpired()
         {
-            if(this.MotionConfig.TestFrameInterval == TimeSpan.Zero || _testFrameAge.Elapsed < this.MotionConfig.TestFrameInterval)
+            if (this.MotionConfig.TestFrameInterval == TimeSpan.Zero || _testFrameAge.Elapsed < this.MotionConfig.TestFrameInterval)
             {
                 return false;
             }
 
             MMALLog.Logger.LogDebug("Have full frame, updating test frame.");
-
-            this.TestFrame = this.WorkingData;
-            this.WorkingData = new List<byte>();
-
-            _testFrameAge.Restart();
-
+            this.PrepareTestFrame();
             return true;
         }
 
         private void CheckForChanges(Action onDetect)
         {
-            this.PrepareDifferenceImage(this.ImageContext, this.MotionConfig.Threshold);
-
             var diff = this.Analyse();
-            
+
             if (diff >= this.MotionConfig.Threshold)
             {
                 MMALLog.Logger.LogInformation($"Motion detected! Frame difference {diff}.");
@@ -140,264 +216,82 @@ namespace MMALSharp.Processors.Motion
             }
         }
 
-        private Bitmap LoadBitmap(MemoryStream stream)
-        {
-            if (this.ImageContext.Raw)
-            {
-                PixelFormat format = default;
-
-                // RGB16 doesn't appear to be supported by GDI?
-                if (this.ImageContext.PixelFormat == MMALEncoding.RGB24)
-                {
-                    format = PixelFormat.Format24bppRgb;
-                }
-
-                if (this.ImageContext.PixelFormat == MMALEncoding.RGB32)
-                {
-                    format = PixelFormat.Format32bppRgb;
-                }
-
-                if (this.ImageContext.PixelFormat == MMALEncoding.RGBA)
-                {
-                    format = PixelFormat.Format32bppArgb;
-                }
-
-                if (format == default)
-                {
-                    throw new Exception("Unsupported pixel format for Bitmap");
-                }
-
-                return new Bitmap(this.ImageContext.Resolution.Width, this.ImageContext.Resolution.Height, format);
-            }
-            
-            return new Bitmap(stream);
-        }
-
-        private void InitBitmapData(BitmapData bmpData, byte[] data)
-        {
-            var pNative = bmpData.Scan0;
-            Marshal.Copy(data, 0, pNative, data.Length);
-        }
-
         private int Analyse()
         {
-            using (var testMemStream = new MemoryStream(this.TestFrame.ToArray()))
-            using (var currentMemStream = new MemoryStream(this.WorkingData.ToArray()))
-            using (var testBmp = this.LoadBitmap(testMemStream))
-            using (var currentBmp = this.LoadBitmap(currentMemStream))
+            var quadA = new Rectangle(0, 0, _frameWidth / 2, _frameHeight / 2);
+            var quadB = new Rectangle(_frameWidth / 2, 0, _frameWidth / 2, _frameHeight / 2);
+            var quadC = new Rectangle(0, _frameHeight / 2, _frameWidth / 2, _frameHeight / 2);
+            var quadD = new Rectangle(_frameWidth / 2, _frameHeight / 2, _frameWidth / 2, _frameHeight / 2);
+
+            var currentBytes = this.WorkingData.ToArray();
+
+            int diff = 0;
+
+            var t1 = Task.Run(() =>
             {
-                var testBmpData = testBmp.LockBits(new Rectangle(0, 0, testBmp.Width, testBmp.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, testBmp.PixelFormat);
-                var currentBmpData = currentBmp.LockBits(new Rectangle(0, 0, currentBmp.Width, currentBmp.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, currentBmp.PixelFormat);
+                diff += this.CheckDiff(quadA, currentBytes);
+            });
+            var t2 = Task.Run(() =>
+            {
+                diff += this.CheckDiff(quadB, currentBytes);
+            });
+            var t3 = Task.Run(() =>
+            {
+                diff += this.CheckDiff(quadC, currentBytes);
+            });
+            var t4 = Task.Run(() =>
+            {
+                diff += this.CheckDiff(quadD, currentBytes);
+            });
 
-                if (this.ImageContext.Raw)
-                {
-                    this.InitBitmapData(testBmpData, this.TestFrame.ToArray());
-                    this.InitBitmapData(currentBmpData, this.WorkingData.ToArray());
-                }
+            Task.WaitAll(t1, t2, t3, t4);
 
-                var quadA = new Rectangle(0, 0, testBmpData.Width / 2, testBmpData.Height / 2);
-                var quadB = new Rectangle(testBmpData.Width / 2, 0, testBmpData.Width / 2, testBmpData.Height / 2);
-                var quadC = new Rectangle(0, testBmpData.Height / 2, testBmpData.Width / 2, testBmpData.Height / 2);
-                var quadD = new Rectangle(testBmpData.Width / 2, testBmpData.Height / 2, testBmpData.Width / 2, testBmpData.Height / 2);
-
-                int diff = 0;
-
-                var bpp = Image.GetPixelFormatSize(testBmp.PixelFormat) / 8;
-
-                var t1 = Task.Run(() =>
-                {
-                    diff += this.CheckDiff(quadA, testBmpData, currentBmpData, bpp, this.MotionConfig.Threshold);
-                });
-                var t2 = Task.Run(() =>
-                {
-                    diff += this.CheckDiff(quadB, testBmpData, currentBmpData, bpp, this.MotionConfig.Threshold);
-                });
-                var t3 = Task.Run(() =>
-                {
-                    diff += this.CheckDiff(quadC, testBmpData, currentBmpData, bpp, this.MotionConfig.Threshold);
-                });
-                var t4 = Task.Run(() =>
-                {
-                    diff += this.CheckDiff(quadD, testBmpData, currentBmpData, bpp, this.MotionConfig.Threshold);
-                });
-
-                Task.WaitAll(t1, t2, t3, t4);
-
-                testBmp.UnlockBits(testBmpData);
-                currentBmp.UnlockBits(currentBmpData);
-
-                return diff;
-            }
+            return diff;
         }
 
-        private void PrepareDifferenceImage(ImageContext context, int threshold)
+        private int CheckDiff(Rectangle quad, byte[] currentFrame)
         {
-            BitmapData bmpData = null;
-            IntPtr pNative = IntPtr.Zero;
-            int bytes;
-            byte[] store = null;
+            int diff = 0;
 
-            using (var ms = new MemoryStream(context.Data))
-            using (var bmp = this.LoadBitmap(ms))
+            for (int column = quad.X; column < quad.X + quad.Width; column++)
             {
-                bmpData = bmp.LockBits(new Rectangle(0, 0,
-                        bmp.Width,
-                        bmp.Height),
-                    ImageLockMode.ReadWrite,
-                    bmp.PixelFormat);
-
-                if (context.Raw)
+                for (int row = quad.Y; row < quad.Y + quad.Height; row++)
                 {
-                    this.InitBitmapData(bmpData, ms.ToArray());
-                }
+                    var index = (column * _frameBpp) + (row * _frameStride);
 
-                pNative = bmpData.Scan0;
-
-                // Split image into 4 quadrants and process individually.
-                var quadA = new Rectangle(0, 0, bmpData.Width / 2, bmpData.Height / 2);
-                var quadB = new Rectangle(bmpData.Width / 2, 0, bmpData.Width / 2, bmpData.Height / 2);
-                var quadC = new Rectangle(0, bmpData.Height / 2, bmpData.Width / 2, bmpData.Height / 2);
-                var quadD = new Rectangle(bmpData.Width / 2, bmpData.Height / 2, bmpData.Width / 2, bmpData.Height / 2);
-
-                bytes = bmpData.Stride * bmp.Height;
-
-                var rgbValues = new byte[bytes];
-
-                // Copy the RGB values into the array.
-                Marshal.Copy(pNative, rgbValues, 0, bytes);
-
-                var bpp = Image.GetPixelFormatSize(bmp.PixelFormat) / 8;
-
-                var t1 = Task.Run(() =>
-                {
-                    this.ApplyThreshold(quadA, bmpData, bpp, threshold);
-                });
-                var t2 = Task.Run(() =>
-                {
-                    this.ApplyThreshold(quadB, bmpData, bpp, threshold);
-                });
-                var t3 = Task.Run(() =>
-                {
-                    this.ApplyThreshold(quadC, bmpData, bpp, threshold);
-                });
-                var t4 = Task.Run(() =>
-                {
-                    this.ApplyThreshold(quadD, bmpData, bpp, threshold);
-                });
-
-                Task.WaitAll(t1, t2, t3, t4);
-
-                if (context.Raw)
-                {
-                    store = new byte[bytes];
-                    Marshal.Copy(pNative, store, 0, bytes);
-                }
-
-                bmp.UnlockBits(bmpData);
-            }
-
-            context.Data = store;
-        }
-
-        private void ApplyThreshold(Rectangle quad, BitmapData bmpData, int pixelDepth, int threshold)
-        {
-            unsafe
-            {
-                // Declare an array to hold the bytes of the bitmap.
-                var stride = bmpData.Stride;
-
-                byte* ptr1 = (byte*)bmpData.Scan0;
-
-                for (int column = quad.X; column < quad.X + quad.Width; column++)
-                {
-                    for (int row = quad.Y; row < quad.Y + quad.Height; row++)
+                    if(_mask != null)
                     {
-                        var rgb1 = ptr1[(column * pixelDepth) + (row * stride)] +
-                                   ptr1[(column * pixelDepth) + (row * stride) + 1] +
-                                   ptr1[(column * pixelDepth) + (row * stride) + 2];
+                        var rgbMask = _mask[index] + _mask[index + 1] + _mask[index + 2];
 
-                        if (rgb1 > threshold)
+                        if (rgbMask == 0)
                         {
-                            ptr1[(column * pixelDepth) + (row * stride)] = 255;
-                            ptr1[(column * pixelDepth) + (row * stride) + 1] = 255;
-                            ptr1[(column * pixelDepth) + (row * stride) + 2] = 255;
-                        }
-                        else
-                        {
-                            ptr1[(column * pixelDepth) + (row * stride)] = 0;
-                            ptr1[(column * pixelDepth) + (row * stride) + 1] = 0;
-                            ptr1[(column * pixelDepth) + (row * stride) + 2] = 0;
-                        }
-                    }
-                }
-            }
-        }
-
-        private int CheckDiff(Rectangle quad, BitmapData bmpData, BitmapData bmpData2, int pixelDepth, int threshold)
-        {
-            unsafe
-            {
-                var stride1 = bmpData.Stride;
-                var stride2 = bmpData2.Stride;
-
-                byte* ptr1 = (byte*)bmpData.Scan0;
-                byte* ptr2 = (byte*)bmpData2.Scan0;
-              
-                int diff = 0;
-                int lowestX = 0, highestX = 0, lowestY = 0, highestY = 0;
-
-                for (int column = quad.X; column < quad.X + quad.Width; column++)
-                {
-                    for (int row = quad.Y; row < quad.Y + quad.Height; row++)
-                    {
-                        var rgb1 = ptr1[(column * pixelDepth) + (row * stride1)] +
-                        ptr1[(column * pixelDepth) + (row * stride1) + 1] +
-                        ptr1[(column * pixelDepth) + (row * stride1) + 2];
-
-                        var rgb2 = ptr2[(column * pixelDepth) + (row * stride2)] +
-                        ptr2[(column * pixelDepth) + (row * stride2) + 1] +
-                        ptr2[(column * pixelDepth) + (row * stride2) + 2];
-                        
-                        if (rgb2 - rgb1 > threshold)
-                        {
-                            diff++;
-
-                            if (row < lowestY || lowestY == 0)
-                            {
-                                lowestY = row;
-                            }
-
-                            if (row > highestY)
-                            {
-                                highestY = row;
-                            }
-
-                            if (column < lowestX || lowestX == 0)
-                            {
-                                lowestX = column;
-                            }
-
-                            if (column > highestX)
-                            {
-                                highestX = column;
-                            }
-                        }
-
-                        // If the threshold has been exceeded, we want to exit from this method immediately for performance reasons.
-                        if (diff > threshold)
-                        {
-                            break;
+                            continue;
                         }
                     }
 
-                    if (diff > threshold)
+                    var rgb1 = TestFrame[index] + TestFrame[index + 1] + TestFrame[index + 2];
+
+                    var rgb2 = currentFrame[index] + currentFrame[index + 1] + currentFrame[index + 2];
+
+                    if (rgb2 - rgb1 > MotionConfig.Threshold)
                     {
-                        break;
+                        diff++;
+                    }
+
+                    // If the threshold has been exceeded, we want to exit from this method immediately for performance reasons.
+                    if (diff > MotionConfig.Threshold)
+                    {
+                        return diff;
                     }
                 }
 
-                return diff;
+                if (diff > MotionConfig.Threshold)
+                {
+                    return diff;
+                }
             }
+
+            return diff;
         }
     }
 }

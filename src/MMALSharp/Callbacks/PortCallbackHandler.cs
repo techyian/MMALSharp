@@ -87,7 +87,8 @@ namespace MMALSharp.Callbacks
                 Encoding = this.WorkingPort.EncodingType,
                 PixelFormat = this.WorkingPort.PixelFormat,
                 Raw = this.WorkingPort.EncodingType.EncType == MMALEncoding.EncodingType.PixelFormat,
-                Pts = pts
+                Pts = pts,
+                Stride = MMALUtil.mmal_encoding_width_to_stride(WorkingPort.PixelFormat?.EncodingVal ?? this.WorkingPort.EncodingType.EncodingVal, this.WorkingPort.Resolution.Width)
             });
 
             if (eos)

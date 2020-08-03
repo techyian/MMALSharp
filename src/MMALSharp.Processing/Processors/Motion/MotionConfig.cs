@@ -24,14 +24,22 @@ namespace MMALSharp.Processors.Motion
         public TimeSpan TestFrameInterval { get; set; }
 
         /// <summary>
+        /// The name of a BMP file to apply as a motion-detection mask. The file must match the raw stream's
+        /// width, height, and color depth. Black pixels (RGB 0,0,0) are not tested for motion.
+        /// </summary>
+        public string MotionMaskPathname { get; set; }
+
+        /// <summary>
         /// Creates a new instance of <see cref="MotionConfig"/>.
         /// </summary>
         /// <param name="threshold">Motion sensitivity threshold. The default is 130 (suitable for many indoor scenes).</param>
         /// <param name="testFrameInterval">Frequency at which the test frame is updated. The default is 10 seconds.</param>
-        public MotionConfig(int threshold = 130, TimeSpan testFrameInterval = default)
+        /// <param name="motionMaskPathname">Pathname to an optional motion-detection mask bitmap.</param>
+        public MotionConfig(int threshold = 130, TimeSpan testFrameInterval = default, string motionMaskPathname = null)
         {
             this.Threshold = threshold;
             this.TestFrameInterval = testFrameInterval.Equals(TimeSpan.Zero) ? TimeSpan.FromSeconds(10) : testFrameInterval;
+            this.MotionMaskPathname = motionMaskPathname;
         }
     }
 }

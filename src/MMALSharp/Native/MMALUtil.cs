@@ -102,7 +102,7 @@ namespace MMALSharp.Native
         public static extern uint mmal_encoding_stride_to_width(uint encoding, uint stride);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_encoding_width_to_stride", CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint mmal_encoding_width_to_stride(uint encoding, uint width);
+        public static extern int mmal_encoding_width_to_stride(int encoding, int width);
 
         [DllImport("libmmal.so", EntryPoint = "mmal_encoding_get_slice_variant", CallingConvention = CallingConvention.Cdecl)]
         public static extern uint mmal_encoding_get_slice_variant(uint encoding);
