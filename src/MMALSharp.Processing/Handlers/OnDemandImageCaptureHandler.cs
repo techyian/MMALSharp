@@ -1,4 +1,4 @@
-﻿// <copyright file="ImageStreamCaptureHandler.cs" company="Techyian">
+﻿// <copyright file="OnDemandImageCaptureHandler.cs" company="Techyian">
 // Copyright (c) Ian Auty and contributors. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
