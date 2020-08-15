@@ -32,9 +32,9 @@ namespace MMALSharp.Callbacks
             var eos = buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) ||
                       buffer.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS);
 
-            if (eos && this.CaptureHandler is IFileStreamCaptureHandler)
+            if (eos)
             {
-                ((IFileStreamCaptureHandler)this.CaptureHandler).NewFile();
+                (this.CaptureHandler as IFileStreamCaptureHandler)?.NewFrame();
             }
         }
     }

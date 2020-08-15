@@ -9,16 +9,47 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace MMALSharp.Handlers
 {
     /// <summary>
     /// Processes image data to a <see cref="FileStream"/>.
     /// </summary>
-    public class FileStreamCaptureHandler : StreamCaptureHandler<FileStream>, IFileStreamCaptureHandler
+    public class FileStreamCaptureHandler : MemoryStreamCaptureHandler, IFileStreamCaptureHandler
     {
         private readonly bool _customFilename;
         private int _increment;
+        private bool _skippingFirstPartialFrame = true;
+        private bool _continuousCapture;
+
+        /// <summary>
+        /// When true, the next full frame will be written. If <see cref="ContinuousCapture"/> is not also
+        /// true, this property will be reset to false after writing the image so that only one image is written.
+        /// </summary>
+        public bool CaptureNextFrame { get; set; }
+
+        /// <summary>
+        /// When true, every frame is written to storage.
+        /// </summary>
+        public bool ContinuousCapture 
+        {
+            get => _continuousCapture; 
+
+            set
+            {
+                _continuousCapture = value;
+                if(_continuousCapture)
+                {
+                    CaptureNextFrame = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Defines the image files' DateTime format string that is applied when the object is constructed with directory and extension arguments.
+        /// </summary>
+        public string FilenameDateTimeFormat { get; set; } = "dd-MMM-yy HH-mm-ss";
 
         /// <summary>
         /// A list of files that have been processed by this capture handler.
@@ -36,9 +67,14 @@ namespace MMALSharp.Handlers
         public string Extension { get; set; }
 
         /// <summary>
-        /// The name of the current file associated with the FileStream.
+        /// The filename to write next (if applicable).
         /// </summary>
         public string CurrentFilename { get; set; }
+
+        /// <summary>
+        /// The full pathname of the most recently written image file (if any).
+        /// </summary>
+        public string LastWrittenPathname { get; set; }
 
         /// <summary>
         /// Creates a new instance of the <see cref="FileStreamCaptureHandler"/> class without provisions for writing to a file. Supports
@@ -51,82 +87,73 @@ namespace MMALSharp.Handlers
 
         /// <summary>
         /// Creates a new instance of the <see cref="FileStreamCaptureHandler"/> class with the specified directory and filename extension. Filenames will be in the
-        /// format "dd-MMM-yy HH-mm-ss" taken from this moment in time.
+        /// format defined by the <see cref="FilenameDateTimeFormat"/> property.
         /// </summary>
         /// <param name="directory">The directory to save captured data.</param>
         /// <param name="extension">The filename extension for saving files.</param>
-        public FileStreamCaptureHandler(string directory, string extension) 
+        /// <param name="continuousCapture">When true, every frame is written to a file.</param>
+        public FileStreamCaptureHandler(string directory, string extension, bool continuousCapture = true)
         {
             this.Directory = directory.TrimEnd('/');
             this.Extension = extension.TrimStart('.');
+            this.ContinuousCapture = continuousCapture;
 
             MMALLog.Logger.LogDebug($"{nameof(FileStreamCaptureHandler)} created for directory {this.Directory} and extension {this.Extension}");
 
             System.IO.Directory.CreateDirectory(this.Directory);
-            
-            var now = DateTime.Now.ToString("dd-MMM-yy HH-mm-ss");
-            
-            int i = 1;
 
-            var fileName = $"{this.Directory}/{now}.{this.Extension}";
-
-            while (File.Exists(fileName))
-            {
-                fileName = $"{this.Directory}/{now} {i}.{this.Extension}";
-                i++;
-            }
-
-            var fileInfo = new FileInfo(fileName);
-
-            this.CurrentFilename = Path.GetFileNameWithoutExtension(fileInfo.Name);
-            this.CurrentStream = File.Create(fileName);
+            this.LastWrittenPathname = string.Empty;
+            this.CurrentStream = new MemoryStream();
         }
 
         /// <summary>
-        /// Creates a new instance of the <see cref="FileStreamCaptureHandler"/> class with the specified file path.
+        /// Creates a new instance of the <see cref="FileStreamCaptureHandler"/> class with the specified file pathname. An auto-incrementing number is added to each
+        /// new filename.
         /// </summary>
         /// <param name="fullPath">The absolute full path to save captured data to.</param>
-        public FileStreamCaptureHandler(string fullPath)
+        /// <param name="continuousCapture">When true, every frame is written to a file.</param>
+        public FileStreamCaptureHandler(string fullPath, bool continuousCapture = true)
         {
-            var fileInfo = new FileInfo(fullPath);
-
-            this.Directory = fileInfo.DirectoryName;
-            this.CurrentFilename = Path.GetFileNameWithoutExtension(fileInfo.Name);
 
             var ext = fullPath.Split('.').LastOrDefault();
-            
             if (string.IsNullOrEmpty(ext))
             {
                 throw new ArgumentNullException(nameof(ext), "Could not get file extension from path string.");
             }
-            
+
+            this.ContinuousCapture = continuousCapture;
             this.Extension = ext;
+            var fileInfo = new FileInfo(fullPath);
+            this.Directory = fileInfo.DirectoryName;
 
-            MMALLog.Logger.LogDebug($"{nameof(FileStreamCaptureHandler)} created for directory {this.Directory} and extension {this.Extension}");
-
+            this.CurrentFilename = Path.GetFileNameWithoutExtension(fileInfo.Name);
             _customFilename = true;
+
+            MMALLog.Logger.LogDebug($"{nameof(FileStreamCaptureHandler)} created for pathname {fullPath}");
 
             System.IO.Directory.CreateDirectory(this.Directory);
 
-            this.CurrentStream = File.Create(fullPath);
+            this.LastWrittenPathname = string.Empty;
+            this.CurrentStream = new MemoryStream();
         }
 
         /// <summary>
-        /// Gets the filename that a FileStream points to.
+        /// Gets the filename of the most recently stored image file.
         /// </summary>
         /// <returns>The filename.</returns>
-        public string GetFilename() => 
-            (this.CurrentStream != null) ? Path.GetFileNameWithoutExtension(this.CurrentStream.Name) : string.Empty;
+        public string GetFilename() =>
+            (!string.IsNullOrEmpty(this.LastWrittenPathname)) ? Path.GetFileNameWithoutExtension(this.LastWrittenPathname) : string.Empty;
 
         /// <summary>
-        /// Gets the filepath that a FileStream points to.
+        /// Gets the pathname of the most recently stored image file.
         /// </summary>
         /// <returns>The filepath.</returns>
-        public string GetFilepath() => 
-            this.CurrentStream?.Name ?? string.Empty;
+        public string GetFilepath() =>
+            this.LastWrittenPathname;
 
         /// <summary>
-        /// Creates a new File (FileStream), assigns it to the Stream instance of this class and disposes of any existing stream. 
+        /// Outputs the current frame to a file. If a full frame hasn't been captured, a flag is set to capture the frame
+        /// once the end of stream is indicated.
         /// </summary>
         public virtual void NewFile()
         {
@@ -135,20 +162,24 @@ namespace MMALSharp.Handlers
                 return;
             }
 
-            this.CurrentStream?.Dispose();
+            // Wait for EOS
+            if(!CaptureNextFrame)
+            {
+                CaptureNextFrame = true;
+                return;
+            }
 
-            string newFilename = string.Empty;
-            
-            if (_customFilename)
+            string newFilename;
+            if (!string.IsNullOrEmpty(CurrentFilename))
             {
                 // If we're taking photos from video port, we don't want to be hammering File.Exists as this is added I/O overhead. Camera can take multiple photos per second
                 // so we can't do this when filename uses the current DateTime.
                 _increment++;
-                newFilename = $"{this.Directory}/{this.CurrentFilename} {_increment}.{this.Extension}";
+                newFilename = $"{this.Directory}/{_customFilename} {_increment}.{this.Extension}";
             }
             else
             {
-                string tempFilename = DateTime.Now.ToString("dd-MMM-yy HH-mm-ss");
+                string tempFilename = DateTime.Now.ToString(FilenameDateTimeFormat);
                 int i = 1;
 
                 newFilename = $"{this.Directory}/{tempFilename}.{this.Extension}";
@@ -160,7 +191,34 @@ namespace MMALSharp.Handlers
                 }
             }
 
-            this.CurrentStream = File.Create(newFilename);
+            using (FileStream fs = new FileStream(newFilename, FileMode.Create, FileAccess.Write))
+            {
+                this.CurrentStream.WriteTo(fs);
+            }
+
+            this.LastWrittenPathname = newFilename;
+        }
+
+        /// <summary>
+        /// If capture is active, output a new file.
+        /// </summary>
+        public virtual void NewFrame()
+        {
+            if (_skippingFirstPartialFrame)
+            {
+                _skippingFirstPartialFrame = false;
+                return;
+            }
+
+            if(_continuousCapture || this.CaptureNextFrame)
+                this.NewFile();
+
+            this.CaptureNextFrame = _continuousCapture;
+
+            if (this.CurrentStream != null)
+            {
+                this.CurrentStream.SetLength(0);
+            }
         }
 
         /// <inheritdoc />

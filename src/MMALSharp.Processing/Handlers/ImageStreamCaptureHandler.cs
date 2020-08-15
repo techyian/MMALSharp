@@ -13,18 +13,22 @@ namespace MMALSharp.Handlers
     public class ImageStreamCaptureHandler : FileStreamCaptureHandler
     {
         /// <summary>
-        /// Creates a new instance of the <see cref="ImageStreamCaptureHandler"/> class with the specified directory and filename extension.
+        /// Creates a new instance of the <see cref="ImageStreamCaptureHandler"/> class with the specified directory and filename extension. Filenames will be in the
+        /// format defined by the <see cref="FilenameDateTimeFormat"/> property.
         /// </summary>
         /// <param name="directory">The directory to save captured images.</param>
         /// <param name="extension">The filename extension for saving files.</param>
-        public ImageStreamCaptureHandler(string directory, string extension)
-            : base(directory, extension) { }
+        /// <param name="continuousCapture">When true, every frame is written to a file.</param>
+        public ImageStreamCaptureHandler(string directory, string extension, bool continuousCapture = true)
+            : base(directory, extension, continuousCapture) { }
 
         /// <summary>
-        /// Creates a new instance of the <see cref="ImageStreamCaptureHandler"/> class with the specified file path.
+        /// Creates a new instance of the <see cref="ImageStreamCaptureHandler"/> class with the specified file pathname. An auto-incrementing number is added to each
+        /// new filename.
         /// </summary>
         /// <param name="fullPath">The absolute full path to save captured data to.</param>
-        public ImageStreamCaptureHandler(string fullPath)
-            : base(fullPath) { }
+        /// <param name="continuousCapture">When true, every frame is written to a file.</param>
+        public ImageStreamCaptureHandler(string fullPath, bool continuousCapture = true)
+            : base(fullPath, continuousCapture) { }
     }
 }

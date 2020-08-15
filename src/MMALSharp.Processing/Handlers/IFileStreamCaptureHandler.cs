@@ -16,6 +16,11 @@ namespace MMALSharp.Handlers
         void NewFile();
 
         /// <summary>
+        /// The callback handler has received an end-of-stream marker.
+        /// </summary>
+        void NewFrame();
+
+        /// <summary>
         /// Gets the filepath that a FileStream points to.
         /// </summary>
         /// <returns>The filepath.</returns>
