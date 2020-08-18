@@ -130,7 +130,7 @@ namespace MMALSharp.Handlers
         /// </summary>
         public virtual void NewFile()
         {
-            if(this.CurrentStream == null)
+            if (this.CurrentStream == null)
             {
                 return;
             }

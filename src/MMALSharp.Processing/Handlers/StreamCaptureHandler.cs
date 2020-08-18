@@ -42,7 +42,7 @@ namespace MMALSharp.Handlers
         {
             try
             {
-                if (this.CurrentStream != null && this.CurrentStream.Length > 0)
+                if (this.CurrentStream != null && this.CurrentStream.CanRead && this.CurrentStream.Length > 0)
                 {
                     if (this.OnManipulate != null && this.ImageContext != null)
                     {
