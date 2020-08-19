@@ -9,26 +9,17 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MMALSharp.Common;
 using MMALSharp.Common.Utility;
-using MMALSharp.Processors;
-using MMALSharp.Processors.Motion;
 
 namespace MMALSharp.Handlers
 {
     /// <summary>
     /// Represents a capture handler working as a circular buffer.
     /// </summary>
-    public sealed class CircularBufferCaptureHandler : VideoStreamCaptureHandler, IMotionCaptureHandler
+    public sealed class CircularBufferCaptureHandler : VideoStreamCaptureHandler
     {
         private bool _recordToFileStream;
         private int _bufferSize;
-        private bool _shouldDetectMotion;
         private bool _receivedIFrame;
-        private int _recordNumFrames;
-        private int _numFramesRecorded;
-        private bool _splitFrames;
-        private bool _beginRecordFrame;        
-        private IFrameAnalyser _analyser;
-        private MotionConfig _motionConfig;
 
         /// <summary>
         /// The circular buffer object responsible for storing image data.
@@ -81,37 +72,6 @@ namespace MMALSharp.Handlers
                     this.Buffer.PushBack(context.Data[i]);
                 }
             }
-            else if (_recordNumFrames > 0)
-            {
-                // We will begin storing data immediately after we receive an EOS, this means we're sure to record frame data from the beginning of the stream.
-                if (_beginRecordFrame)
-                {
-                    this.CurrentStream.Write(context.Data, 0, context.Data.Length);
-                    this.Processed += context.Data.Length;
-
-                    if (context.Eos)
-                    {
-                        // We've reached the end of the frame. Check if we want to create a new file and increment number of recorded frames.
-                        _numFramesRecorded++;
-
-                        if (_numFramesRecorded >= _recordNumFrames)
-                        {
-                            // Effectively stop recording individual frames at this point.
-                            _beginRecordFrame = false;
-                        }            
-                    }
-                }
-
-                if (context.Eos && _numFramesRecorded < _recordNumFrames)
-                {                    
-                    _beginRecordFrame = true;
-
-                    if (_splitFrames)
-                    {
-                        this.Split();
-                    }
-                }
-            }
             else
             {
                 if (context.Encoding == MMALEncoding.H264)
@@ -152,50 +112,8 @@ namespace MMALSharp.Handlers
                 }
             }
 
-            if (_shouldDetectMotion && !_recordToFileStream)
-            {
-                _analyser?.Apply(context);
-            }
-
             // Not calling base method to stop data being written to the stream when not recording.
             this.ImageContext = context;
-        }
-
-        /// <inheritdoc/>
-        public void ConfigureMotionDetection(MotionConfig config, Action onDetect)
-        {
-            _motionConfig = config;
-
-            switch(this.MotionType)
-            {
-                case MotionType.FrameDiff:
-                    _analyser = new FrameDiffAnalyser(config, onDetect);
-                    break;
-
-                case MotionType.MotionVector:
-                    // TODO Motion vector analyser
-                    break;
-            }
-
-            this.EnableMotionDetection();
-        }
-
-        /// <inheritdoc/>
-        public void EnableMotionDetection()
-        {
-            _shouldDetectMotion = true;
-
-            MMALLog.Logger.LogInformation("Enabling motion detection.");
-        }
-
-        /// <inheritdoc/>
-        public void DisableMotionDetection()
-        {
-            _shouldDetectMotion = false;
-
-            (_analyser as FrameDiffAnalyser)?.ResetAnalyser();
-
-            MMALLog.Logger.LogInformation("Disabling motion detection.");
         }
 
         /// <summary>
@@ -203,10 +121,8 @@ namespace MMALSharp.Handlers
         /// </summary>
         /// <param name="initRecording">Optional Action to execute when recording starts, for example, to request an h.264 I-frame.</param>
         /// <param name="cancellationToken">When the token is canceled, <see cref="StopRecording"/> is called. If a token is not provided, the caller must stop the recording.</param>
-        /// <param name="recordNumFrames">Optional number of full frames to record. If value is 0, <paramref name="cancellationToken"/> parameter will be used to manage timeout.</param>
-        /// <param name="splitFrames">Optional flag to state full frames should be split to new files.</param>
         /// <returns>Task representing the recording process if a CancellationToken was provided, otherwise a completed Task.</returns>
-        public async Task StartRecording(Action initRecording = null, CancellationToken cancellationToken = default, int recordNumFrames = 0, bool splitFrames = false)
+        public async Task StartRecording(Action initRecording = null, CancellationToken cancellationToken = default)
         {
             if (this.CurrentStream == null)
             {
@@ -214,9 +130,7 @@ namespace MMALSharp.Handlers
             }
 
             _recordToFileStream = true;
-            _recordNumFrames = recordNumFrames;            
-            _splitFrames = splitFrames;
-            
+
             if (initRecording != null)
             {
                 initRecording.Invoke();
@@ -251,12 +165,6 @@ namespace MMALSharp.Handlers
 
             _recordToFileStream = false;
             _receivedIFrame = false;
-            _beginRecordFrame = false;
-            _recordNumFrames = 0;
-            _numFramesRecorded = 0;
-            _splitFrames = false;
-
-            (_analyser as FrameDiffAnalyser)?.ResetAnalyser();
         }
 
         /// <inheritdoc />
