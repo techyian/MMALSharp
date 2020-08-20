@@ -34,6 +34,22 @@ namespace MMALSharp.Processors.Motion
         private byte[] _mask;
         private Stopwatch _testFrameAge;
 
+        private struct DiffRect
+        {
+            internal int diff;
+            internal Rectangle rect;
+        }
+
+        private DiffRect[] _cell;
+        private byte[] _workingData;
+
+        /// <summary>
+        /// Controls how many cells the frames are divided into. The result is a power of two of this
+        /// value (so the default of 8 yields 64 cells). These cells are processed in parallel. This
+        /// should be a value that divides evenly into the X and Y resolutions of the motion stream.
+        /// </summary>
+        public int CellDivisor { get; set; } = 8;
+
         internal Action OnDetect { get; set; }
 
         /// <summary>
@@ -121,9 +137,25 @@ namespace MMALSharp.Processors.Motion
                 _frameBpp = this.GetBpp() / 8;
                 _frameStride = this.ImageContext.Stride;
 
+                // one-time setup of the diff cell parameters and arrays
+                _cell = new DiffRect[(int)Math.Pow(CellDivisor, 2)];
+                int cellWidth = _frameWidth / CellDivisor;
+                int cellHeight = _frameHeight / CellDivisor;
+                int i = 0;
+                for (int row = 0; row < CellDivisor; row++)
+                {
+                    int y = row * cellHeight;
+                    for (int col = 0; col < CellDivisor; col++)
+                    {
+                        int x = col * cellWidth;
+                        _cell[i].rect = new Rectangle(x, y, cellWidth, cellHeight);
+                        i++;
+                    }
+                }
+
                 this.TestFrame = this.WorkingData.ToArray();
 
-                if(!string.IsNullOrWhiteSpace(this.MotionConfig.MotionMaskPathname))
+                if (!string.IsNullOrWhiteSpace(this.MotionConfig.MotionMaskPathname))
                 {
                     this.PrepareMask();
                 }
@@ -218,48 +250,36 @@ namespace MMALSharp.Processors.Motion
 
         private int Analyse()
         {
-            var quadA = new Rectangle(0, 0, _frameWidth / 2, _frameHeight / 2);
-            var quadB = new Rectangle(_frameWidth / 2, 0, _frameWidth / 2, _frameHeight / 2);
-            var quadC = new Rectangle(0, _frameHeight / 2, _frameWidth / 2, _frameHeight / 2);
-            var quadD = new Rectangle(_frameWidth / 2, _frameHeight / 2, _frameWidth / 2, _frameHeight / 2);
+            _workingData = this.WorkingData.ToArray();
 
-            var currentBytes = this.WorkingData.ToArray();
+            var result = Parallel.ForEach(_cell, (src, loopState) => CheckDiff(src, loopState));
 
-            int diff = 0;
-
-            var t1 = Task.Run(() =>
+            // How Parallel Stop works: https://docs.microsoft.com/en-us/previous-versions/msp-n-p/ff963552(v=pandp.10)#parallel-stop
+            if (!result.IsCompleted && !result.LowestBreakIteration.HasValue)
             {
-                diff += this.CheckDiff(quadA, currentBytes);
-            });
-            var t2 = Task.Run(() =>
+                return int.MaxValue; // loop was stopped, so return a large diff
+            }
+            else
             {
-                diff += this.CheckDiff(quadB, currentBytes);
-            });
-            var t3 = Task.Run(() =>
-            {
-                diff += this.CheckDiff(quadC, currentBytes);
-            });
-            var t4 = Task.Run(() =>
-            {
-                diff += this.CheckDiff(quadD, currentBytes);
-            });
-
-            Task.WaitAll(t1, t2, t3, t4);
-
-            return diff;
+                int diff = 0;
+                foreach (var cell in _cell)
+                    diff += cell.diff;
+                return diff;
+            }
         }
 
-        private int CheckDiff(Rectangle quad, byte[] currentFrame)
+        private void CheckDiff(DiffRect cell, ParallelLoopState loopState)
         {
-            int diff = 0;
+            cell.diff = 0;
+            var rect = cell.rect;
 
-            for (int column = quad.X; column < quad.X + quad.Width; column++)
+            for (int col = rect.X; col < rect.X + rect.Width; col++)
             {
-                for (int row = quad.Y; row < quad.Y + quad.Height; row++)
+                for (int row = rect.Y; row < rect.Y + rect.Height; row++)
                 {
-                    var index = (column * _frameBpp) + (row * _frameStride);
+                    var index = (col * _frameBpp) + (row * _frameStride);
 
-                    if(_mask != null)
+                    if (_mask != null)
                     {
                         var rgbMask = _mask[index] + _mask[index + 1] + _mask[index + 2];
 
@@ -271,27 +291,27 @@ namespace MMALSharp.Processors.Motion
 
                     var rgb1 = TestFrame[index] + TestFrame[index + 1] + TestFrame[index + 2];
 
-                    var rgb2 = currentFrame[index] + currentFrame[index + 1] + currentFrame[index + 2];
+                    var rgb2 = _workingData[index] + _workingData[index + 1] + _workingData[index + 2];
 
                     if (rgb2 - rgb1 > MotionConfig.Threshold)
                     {
-                        diff++;
+                        cell.diff++;
                     }
 
-                    // If the threshold has been exceeded, we want to exit from this method immediately for performance reasons.
-                    if (diff > MotionConfig.Threshold)
+                    // If the threshold has been exceeded, exit immediately and preempt any CheckDiff calls not yet started.
+                    if (cell.diff > MotionConfig.Threshold)
                     {
-                        return diff;
+                        loopState.Stop();
+                        return;
                     }
                 }
 
-                if (diff > MotionConfig.Threshold)
+                if (cell.diff > MotionConfig.Threshold)
                 {
-                    return diff;
+                    loopState.Stop();
+                    return;
                 }
             }
-
-            return diff;
         }
     }
 }
