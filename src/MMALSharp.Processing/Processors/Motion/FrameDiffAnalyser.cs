@@ -43,7 +43,7 @@ namespace MMALSharp.Processors.Motion
         /// value (so the default of 8 yields 64 cells). These cells are processed in parallel. This
         /// should be a value that divides evenly into the X and Y resolutions of the motion stream.
         /// </summary>
-        public int CellDivisor { get; set; } = 8;
+        public int CellDivisor { get; set; } = 32;
 
         internal Action OnDetect { get; set; }
 
