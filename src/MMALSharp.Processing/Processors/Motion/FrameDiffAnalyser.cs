@@ -34,13 +34,8 @@ namespace MMALSharp.Processors.Motion
         private byte[] _mask;
         private Stopwatch _testFrameAge;
 
-        private struct DiffRect
-        {
-            internal int diff;
-            internal Rectangle rect;
-        }
-
-        private DiffRect[] _cell;
+        private int[] _cellDiff;
+        private Rectangle[] _cellRect;
         private byte[] _workingData;
 
         /// <summary>
@@ -138,7 +133,9 @@ namespace MMALSharp.Processors.Motion
                 _frameStride = this.ImageContext.Stride;
 
                 // one-time setup of the diff cell parameters and arrays
-                _cell = new DiffRect[(int)Math.Pow(CellDivisor, 2)];
+                int indices = (int)Math.Pow(CellDivisor, 2);
+                _cellRect = new Rectangle[indices];
+                _cellDiff = new int[indices];
                 int cellWidth = _frameWidth / CellDivisor;
                 int cellHeight = _frameHeight / CellDivisor;
                 int i = 0;
@@ -148,7 +145,7 @@ namespace MMALSharp.Processors.Motion
                     for (int col = 0; col < CellDivisor; col++)
                     {
                         int x = col * cellWidth;
-                        _cell[i].rect = new Rectangle(x, y, cellWidth, cellHeight);
+                        _cellRect[i] = new Rectangle(x, y, cellWidth, cellHeight);
                         i++;
                     }
                 }
@@ -252,7 +249,7 @@ namespace MMALSharp.Processors.Motion
         {
             _workingData = this.WorkingData.ToArray();
 
-            var result = Parallel.ForEach(_cell, (src, loopState) => CheckDiff(src, loopState));
+            var result = Parallel.ForEach(_cellDiff, (cell, loopState, loopIndex) => CheckDiff(loopIndex, loopState));
 
             // How Parallel Stop works: https://docs.microsoft.com/en-us/previous-versions/msp-n-p/ff963552(v=pandp.10)#parallel-stop
             if (!result.IsCompleted && !result.LowestBreakIteration.HasValue)
@@ -262,16 +259,16 @@ namespace MMALSharp.Processors.Motion
             else
             {
                 int diff = 0;
-                foreach (var cell in _cell)
-                    diff += cell.diff;
+                foreach (var cellDiff in _cellDiff)
+                    diff += cellDiff;
                 return diff;
             }
         }
 
-        private void CheckDiff(DiffRect cell, ParallelLoopState loopState)
+        private void CheckDiff(long cellIndex, ParallelLoopState loopState)
         {
-            cell.diff = 0;
-            var rect = cell.rect;
+            int diff = 0;
+            var rect = _cellRect[cellIndex];
 
             for (int col = rect.X; col < rect.X + rect.Width; col++)
             {
@@ -295,23 +292,27 @@ namespace MMALSharp.Processors.Motion
 
                     if (rgb2 - rgb1 > MotionConfig.Threshold)
                     {
-                        cell.diff++;
+                        diff++;
                     }
 
                     // If the threshold has been exceeded, exit immediately and preempt any CheckDiff calls not yet started.
-                    if (cell.diff > MotionConfig.Threshold)
+                    if (diff > MotionConfig.Threshold)
                     {
+                        _cellDiff[cellIndex] = diff;
                         loopState.Stop();
                         return;
                     }
                 }
 
-                if (cell.diff > MotionConfig.Threshold)
+                if (diff > MotionConfig.Threshold)
                 {
+                    _cellDiff[cellIndex] = diff;
                     loopState.Stop();
                     return;
                 }
             }
+
+            _cellDiff[cellIndex] = diff;
         }
     }
 }
