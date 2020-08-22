@@ -40,7 +40,7 @@ namespace MMALSharp.Processors.Motion
 
         /// <summary>
         /// Controls how many cells the frames are divided into. The result is a power of two of this
-        /// value (so the default of 8 yields 64 cells). These cells are processed in parallel. This
+        /// value (so the default of 32 yields 1024 cells). These cells are processed in parallel. This
         /// should be a value that divides evenly into the X and Y resolutions of the motion stream.
         /// </summary>
         public int CellDivisor { get; set; } = 32;
@@ -134,14 +134,17 @@ namespace MMALSharp.Processors.Motion
 
                 // one-time setup of the diff cell parameters and arrays
                 int indices = (int)Math.Pow(CellDivisor, 2);
-                _cellRect = new Rectangle[indices];
-                _cellDiff = new int[indices];
                 int cellWidth = _frameWidth / CellDivisor;
                 int cellHeight = _frameHeight / CellDivisor;
                 int i = 0;
+
+                _cellRect = new Rectangle[indices];
+                _cellDiff = new int[indices];
+                                
                 for (int row = 0; row < CellDivisor; row++)
                 {
                     int y = row * cellHeight;
+
                     for (int col = 0; col < CellDivisor; col++)
                     {
                         int x = col * cellWidth;
@@ -259,8 +262,12 @@ namespace MMALSharp.Processors.Motion
             else
             {
                 int diff = 0;
+
                 foreach (var cellDiff in _cellDiff)
+                {
                     diff += cellDiff;
+                }
+                    
                 return diff;
             }
         }
@@ -287,7 +294,6 @@ namespace MMALSharp.Processors.Motion
                     }
 
                     var rgb1 = TestFrame[index] + TestFrame[index + 1] + TestFrame[index + 2];
-
                     var rgb2 = _workingData[index] + _workingData[index + 1] + _workingData[index + 2];
 
                     if (rgb2 - rgb1 > MotionConfig.Threshold)
