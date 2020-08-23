@@ -76,40 +76,27 @@ namespace MMALSharp.Handlers
             {
                 if (context.Encoding == MMALEncoding.H264)
                 {
-                    if (context.IFrame)
-                    {
-                        _receivedIFrame = true;
-                    }
-
-                    if (_receivedIFrame && this.Buffer.Size > 0)
-                    {
-                        // The buffer contains data.
-                        MMALLog.Logger.LogInformation($"Buffer contains data. Writing {this.Buffer.Size} bytes.");
-                        this.CurrentStream.Write(this.Buffer.ToArray(), 0, this.Buffer.Size);
-                        this.Processed += this.Buffer.Size;
-                        this.Buffer = new CircularBuffer<byte>(this.Buffer.Capacity);
-                    }
-
-                    if (_receivedIFrame)
-                    {
-                        // We need to have received an IFrame for the recording to be valid.
-                        this.CurrentStream.Write(context.Data, 0, context.Data.Length);
-                        this.Processed += context.Data.Length;
-                    }
+                    _receivedIFrame = context.IFrame;
                 }
-                else
+
+                if (this.Buffer.Size > 0)
                 {
-                    if (this.Buffer.Size > 0)
+                    // The buffer contains data.
+                    if (this.CurrentStream != null && this.CurrentStream.CanWrite)
                     {
-                        // The buffer contains data.
                         this.CurrentStream.Write(this.Buffer.ToArray(), 0, this.Buffer.Size);
-                        this.Processed += this.Buffer.Size;
-                        this.Buffer = new CircularBuffer<byte>(this.Buffer.Capacity);
                     }
 
-                    this.CurrentStream.Write(context.Data, 0, context.Data.Length);
-                    this.Processed += context.Data.Length;
+                    this.Processed += this.Buffer.Size;
+                    this.Buffer = new CircularBuffer<byte>(this.Buffer.Capacity);
                 }
+
+                if (this.CurrentStream != null && this.CurrentStream.CanWrite)
+                {
+                    this.CurrentStream.Write(context.Data, 0, context.Data.Length);
+                }
+
+                this.Processed += context.Data.Length;
             }
 
             // Not calling base method to stop data being written to the stream when not recording.
