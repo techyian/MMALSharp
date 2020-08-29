@@ -366,7 +366,8 @@ namespace MMALSharp
             // Prepare arguments for the annotation-refresh task
             var ctsRefreshAnnotation = new CancellationTokenSource();
             var refreshInterval = (int)(MMALCameraConfig.Annotate?.RefreshRate ?? 0);
-            if(!(MMALCameraConfig.Annotate?.ShowDateText ?? false) && !(MMALCameraConfig.Annotate?.ShowTimeText ?? false))
+            
+            if (!(MMALCameraConfig.Annotate?.ShowDateText ?? false) && !(MMALCameraConfig.Annotate?.ShowTimeText ?? false))
             {
                 refreshInterval = 0;
             }
@@ -533,20 +534,20 @@ namespace MMALSharp
         {
             try
             {
-                if(msInterval == 0)
+                if (msInterval == 0)
                 {
                     await Task.Delay(Timeout.Infinite, cancellationToken).ConfigureAwait(false);
                 }
                 else
                 {
-                    while(!cancellationToken.IsCancellationRequested)
+                    while (!cancellationToken.IsCancellationRequested)
                     {
                         await Task.Delay(msInterval, cancellationToken).ConfigureAwait(false);
                         this.Camera.SetAnnotateSettings();
                     }
                 }
             }
-            catch(OperationCanceledException)
+            catch (OperationCanceledException)
             { // disregard token cancellation
             }
         }

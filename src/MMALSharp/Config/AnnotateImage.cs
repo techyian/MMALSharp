@@ -78,12 +78,12 @@ namespace MMALSharp.Config
         /// <summary>
         /// The text size to use.
         /// </summary>
-        public int TextSize { get; set; }
+        public int TextSize { get; set; } = 12;
 
         /// <summary>
         /// The <see cref="Color"/> of the text.
         /// </summary>
-        public Color TextColour { get; set; }
+        public Color TextColour { get; set; } = Color.White;
 
         /// <summary>
         /// The <see cref="Color"/> of the background. Note: AllowCustomBackgroundColour should be enabled
@@ -129,12 +129,12 @@ namespace MMALSharp.Config
         /// <summary>
         /// Show the current date.
         /// </summary>
-        public bool ShowDateText { get; set; }
+        public bool ShowDateText { get; set; } = true;
 
         /// <summary>
         /// Show the current time.
         /// </summary>
-        public bool ShowTimeText { get; set; }
+        public bool ShowTimeText { get; set; } = true;
 
         /// <summary>
         /// The DateTime format string applied when <see cref="ShowDateText"/> is true. The default is "dd/MM/yyyy".
@@ -166,6 +166,11 @@ namespace MMALSharp.Config
         /// Y Offset from the justification edge.
         /// </summary>
         public int YOffset { get; set; }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="AnnotateImage"/>.
+        /// </summary>
+        public AnnotateImage() { }
 
         /// <summary>
         /// Creates a new instance of <see cref="AnnotateImage"/>.
