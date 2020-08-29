@@ -42,6 +42,7 @@ namespace MMALSharp.Tests
             MMALCameraConfig.Resolution = Resolution.As03MPixel;
             MMALCameraConfig.AnalogGain = 0;
             MMALCameraConfig.DigitalGain = 0;
+            MMALCameraConfig.Annotate = null;
         }
 
         public static void CleanDirectory(string directory)
