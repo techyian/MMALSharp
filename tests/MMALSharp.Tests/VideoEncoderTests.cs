@@ -536,5 +536,42 @@ namespace MMALSharp.Tests
                 Fixture.CheckAndAssertFilepath($"{vidCaptureHandler.Directory}/{vidCaptureHandler.CurrentFilename}.pts");
             }
         }
+
+        [Fact]
+        public async Task AnnotateVideoRefreshSeconds()
+        {
+            TestHelper.BeginTest("Video - AnnotateVideo");
+            TestHelper.SetConfigurationDefaults();
+            TestHelper.CleanDirectory("/home/pi/videos/tests");
+
+            MMALCameraConfig.Annotate = new AnnotateImage();
+            MMALCameraConfig.Annotate.RefreshRate = DateTimeTextRefreshRate.Seconds;
+            MMALCameraConfig.Annotate.TimeFormat = "HH:mm:ss";
+
+            using (var vidCaptureHandler = new VideoStreamCaptureHandler("/home/pi/videos/tests", "h264"))
+            using (var vidEncoder = new MMALVideoEncoder())
+            using (var renderer = new MMALVideoRenderer())
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+
+                var portConfig = new MMALPortConfig(MMALEncoding.H264, MMALEncoding.I420, quality: 10, bitrate: MMALVideoEncoder.MaxBitrateLevel4);
+
+                // Create our component pipeline. Here we are using the H.264 standard with a YUV420 pixel format. The video will be taken at 25Mb/s.
+                vidEncoder.ConfigureOutputPort(portConfig, vidCaptureHandler);
+
+                Fixture.MMALCamera.Camera.VideoPort.ConnectTo(vidEncoder);
+                Fixture.MMALCamera.Camera.PreviewPort.ConnectTo(renderer);
+
+                // Camera warm up time
+                await Task.Delay(2000);
+
+                var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+                // Take video for 30 seconds.
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.VideoPort, cts.Token);
+
+                Fixture.CheckAndAssertFilepath(vidCaptureHandler.GetFilepath());
+            }
+        }
     }
 }
