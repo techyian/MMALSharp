@@ -363,16 +363,36 @@ namespace MMALSharp
 
             this.Camera.SetShutterSpeed(MMALCameraConfig.ShutterSpeed);
 
+            // Prepare arguments for the annotation-refresh task
+            var ctsRefreshAnnotation = new CancellationTokenSource();
+            var refreshInterval = (int)(MMALCameraConfig.Annotate?.RefreshRate ?? 0);
+            
+            if (!(MMALCameraConfig.Annotate?.ShowDateText ?? false) && !(MMALCameraConfig.Annotate?.ShowTimeText ?? false))
+            {
+                refreshInterval = 0;
+            }
+
             // We now begin capturing on the camera, processing will commence based on the pipeline configured.
             this.StartCapture(cameraPort);
             
             if (cancellationToken == CancellationToken.None)
             {
-                await Task.WhenAll(tasks).ConfigureAwait(false);
+                await Task.WhenAny(
+                    Task.WhenAll(tasks),
+                    RefreshAnnotations(refreshInterval, ctsRefreshAnnotation.Token)
+                    ).ConfigureAwait(false);
+
+                ctsRefreshAnnotation.Cancel();
             }
             else
             {
-                await Task.WhenAny(Task.WhenAll(tasks), cancellationToken.AsTask()).ConfigureAwait(false);
+                await Task.WhenAny(
+                    Task.WhenAll(tasks),
+                    RefreshAnnotations(refreshInterval, ctsRefreshAnnotation.Token),
+                    cancellationToken.AsTask()
+                    ).ConfigureAwait(false);
+
+                ctsRefreshAnnotation.Cancel();
 
                 foreach (var component in handlerComponents)
                 {
@@ -502,6 +522,34 @@ namespace MMALSharp
             this.Camera.Dispose();
 
             BcmHost.bcm_host_deinit();
+        }
+
+        /// <summary>
+        /// Periodically invokes <see cref="MMALCameraComponentExtensions.SetAnnotateSettings(MMALCameraComponent)"/> to update date/time annotations.
+        /// </summary>
+        /// <param name="msInterval">Update frequency in milliseconds, or 0 to disable.</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for a task to complete.</param>
+        /// <returns>The awaitable Task.</returns>
+        private async Task RefreshAnnotations(int msInterval, CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (msInterval == 0)
+                {
+                    await Task.Delay(Timeout.Infinite, cancellationToken).ConfigureAwait(false);
+                }
+                else
+                {
+                    while (!cancellationToken.IsCancellationRequested)
+                    {
+                        await Task.Delay(msInterval, cancellationToken).ConfigureAwait(false);
+                        this.Camera.SetAnnotateSettings();
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            { // disregard token cancellation
+            }
         }
 
         /// <summary>
