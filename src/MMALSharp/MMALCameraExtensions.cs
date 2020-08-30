@@ -246,12 +246,12 @@ namespace MMALSharp
 
                 if (MMALCameraConfig.Annotate.ShowTimeText)
                 {
-                    sb.Append(DateTime.Now.ToString("HH:mm") + " ");
+                    sb.Append(DateTime.Now.ToString(MMALCameraConfig.Annotate.TimeFormat) + " ");
                 }
 
                 if (MMALCameraConfig.Annotate.ShowDateText)
                 {
-                    sb.Append(DateTime.Now.ToString("dd/MM/yyyy") + " ");
+                    sb.Append(DateTime.Now.ToString(MMALCameraConfig.Annotate.DateFormat) + " ");
                 }
 
                 if (MMALCameraConfig.Annotate.ShowShutterSettings)
