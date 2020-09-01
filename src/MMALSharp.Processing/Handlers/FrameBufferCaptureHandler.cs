@@ -16,9 +16,8 @@ namespace MMALSharp.Handlers
     /// </summary>
     public class FrameBufferCaptureHandler : MemoryStreamCaptureHandler, IMotionCaptureHandler, IVideoCaptureHandler
     {
-        private MotionConfig _motionConfig;
         private bool _detectingMotion;
-        private FrameDiffAnalyser _motionAnalyser;
+        private FrameDiffDriver _driver;
 
         private bool _waitForFullFrame = true;
         private bool _writeFrameRequested = false;
@@ -99,7 +98,7 @@ namespace MMALSharp.Handlers
 
             if (_detectingMotion)
             {
-                _motionAnalyser.Apply(context);
+                _driver.Apply(context);
             }
 
             // accumulate frame data in the underlying memory stream
@@ -122,22 +121,35 @@ namespace MMALSharp.Handlers
         /// <inheritdoc />
         public void ConfigureMotionDetection(MotionConfig config, Action onDetect)
         {
-            _motionConfig = config;
-            _motionAnalyser = new FrameDiffAnalyser(config, onDetect);
+            _driver = new FrameDiffDriver(config, onDetect);
             this.EnableMotionDetection();
         }
 
         /// <inheritdoc />
         public void EnableMotionDetection()
         {
-            _detectingMotion = true;
-            _motionAnalyser?.ResetAnalyser();
+            if(_driver.OnDetectEnabled)
+            {
+                _detectingMotion = true;
+                _driver?.ResetAnalyser();
+            }
+            else
+            {
+                _driver.OnDetectEnabled = true;
+            }
         }
 
         /// <inheritdoc />
-        public void DisableMotionDetection()
+        public void DisableMotionDetection(bool disableCallbackOnly = false)
         {
-            _detectingMotion = false;
+            if(disableCallbackOnly)
+            {
+                _driver.OnDetectEnabled = false;
+            }
+            else
+            {
+                _detectingMotion = false;
+            }
         }
 
         /// <inheritdoc />
@@ -158,5 +170,14 @@ namespace MMALSharp.Handlers
             this.MostRecentFilename = filename;
             this.MostRecentPathname = pathname;
         }
+
+        // This is used for temporary local-development performance testing. See the
+        // commentedlines before and inside FrameDiffDriver around the Apply method.
+        // public override void Dispose()
+        // {
+        //     long perf = (long)((float)_driver.totalElapsed / _driver.frameCounter);
+        //     Console.WriteLine($"{perf} ms/frame, total {_driver.frameCounter} frames");
+        //     base.Dispose();
+        // }
     }
 }

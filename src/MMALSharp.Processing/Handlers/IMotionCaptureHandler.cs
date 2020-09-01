@@ -33,6 +33,7 @@ namespace MMALSharp.Handlers
         /// <summary>
         /// Disables motion detection. When configured, this will instruct the capture handler not to detect motion.
         /// </summary>
-        void DisableMotionDetection();
+        /// <param name="disableCallbackOnly">When true, motion detection will continue but the OnDetect callback will not be invoked.</param>
+        void DisableMotionDetection(bool disableCallbackOnly = false);
     }
 }
