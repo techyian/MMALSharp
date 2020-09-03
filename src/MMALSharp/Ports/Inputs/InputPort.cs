@@ -106,7 +106,7 @@ namespace MMALSharp.Ports.Inputs
 
                 if (config.Framerate > 0)
                 {
-                    this.FrameRate = new MMAL_RATIONAL_T(config.Framerate, 1);
+                    this.FrameRate = config.Framerate;
                 }
 
                 if (config.Bitrate > 0)

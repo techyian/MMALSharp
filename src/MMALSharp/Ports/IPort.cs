@@ -126,7 +126,12 @@ namespace MMALSharp.Ports
         /// <summary>
         /// The framerate we are processing data in.
         /// </summary>
-        MMAL_RATIONAL_T FrameRate { get; }
+        double FrameRate { get; }
+
+        /// <summary>
+        /// The framerate represented as a <see cref="MMAL_RATIONAL_T"/>.
+        /// </summary>
+        MMAL_RATIONAL_T FrameRateRational { get; }
 
         /// <summary>
         /// The working video color space, specific to video ports.
