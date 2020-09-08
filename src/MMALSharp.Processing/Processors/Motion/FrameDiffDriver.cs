@@ -212,7 +212,20 @@ namespace MMALSharp.Processors.Motion
 
                 this.PrepareMask();
 
-                _motionConfig.MotionAlgorithm.FirstFrameCompleted(this, this._frameMetrics);
+                // provide a copy (with raw full-frame defaults) that the algorithm can safely store and reuse
+                var fullFrameContextTemplate = new ImageContext
+                {
+                    Eos = true,
+                    IFrame = true,
+                    Resolution = new Resolution(_frameMetrics.FrameWidth, _frameMetrics.FrameHeight),
+                    Encoding = _imageContext.Encoding,
+                    PixelFormat = _imageContext.PixelFormat,
+                    Raw = _imageContext.Raw,
+                    Pts = null,
+                    Stride = _frameMetrics.FrameStride
+                };
+
+                _motionConfig.MotionAlgorithm.FirstFrameCompleted(this, this._frameMetrics, fullFrameContextTemplate);
             }
 
             if (_motionConfig.TestFrameInterval != TimeSpan.Zero)

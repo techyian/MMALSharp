@@ -45,6 +45,19 @@ namespace MMALSharp.Handlers
         { }
 
         /// <summary>
+        /// Creates a new <see cref="FrameBufferCaptureHandler"/> configured for motion detection using a raw video stream
+        /// where MMALStandalone.Instance is used (such as processing a pre-recorded file) rather than camera-based processing.
+        /// </summary>
+        /// <param name="motionConfig">The motion configuration.</param>
+        /// <param name="onDetect">A callback for when motion is detected.</param>
+        public FrameBufferCaptureHandler(MotionConfig motionConfig, Action onDetect)
+            : base()
+        {
+            _driver = new FrameDiffDriver(motionConfig, onDetect);
+            _detectingMotion = true;
+        }
+
+        /// <summary>
         /// Target directory when <see cref="WriteFrame"/> is invoked without a directory argument.
         /// </summary>
         public string FileDirectory { get; set; } = string.Empty;

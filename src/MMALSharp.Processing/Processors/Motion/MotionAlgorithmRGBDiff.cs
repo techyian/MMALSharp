@@ -3,6 +3,8 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
+using MMALSharp.Common;
+using MMALSharp.Handlers;
 using System;
 using System.Threading.Tasks;
 
@@ -18,7 +20,8 @@ namespace MMALSharp.Processors.Motion
         private int _cellPixelPercentage;
         private int _cellCountThreshold;
 
-        private Action<byte[]> _writeCallback;
+        private ImageContext _fullRawFrameImageContext;
+        private IOutputCaptureHandler _outputHandler;
         private byte[] _analysisBuffer;
 
         /// <summary>
@@ -48,15 +51,23 @@ namespace MMALSharp.Processors.Motion
         }
 
         /// <inheritdoc />
-        public void EnableAnalysis(Action<byte[]> analysisFrameBufferCallback = null)
+        public void EnableAnalysis(IOutputCaptureHandler handler = null)
         {
             _parameters.AnalysisMode = true;
-            _writeCallback = analysisFrameBufferCallback;
+            _outputHandler = handler;
         }
 
         /// <inheritdoc />
-        public void FirstFrameCompleted(FrameDiffDriver driver, FrameDiffMetrics metrics)
+        public void DisableAnalysis()
         {
+            _parameters.AnalysisMode = true;
+        }
+
+        /// <inheritdoc />
+        public void FirstFrameCompleted(FrameDiffDriver driver, FrameDiffMetrics metrics, ImageContext contextTemplate)
+        {
+            _fullRawFrameImageContext = contextTemplate;
+
             var cellWidth = metrics.FrameWidth / driver.CellDivisor;
             var cellHeight = metrics.FrameHeight / driver.CellDivisor;
             _parameters.CellPixelThreshold = (int)(cellWidth * cellHeight * (_cellPixelPercentage / 100f));
@@ -65,7 +76,10 @@ namespace MMALSharp.Processors.Motion
             // Not necessary for this analysis, CheckDiff overwrites the buffer completely
             // Array.Copy(driver.TestFrame, _analysisBuffer, _analysisBuffer.Length);
 
-            _writeCallback?.Invoke(driver.TestFrame);
+            _fullRawFrameImageContext.Data = driver.TestFrame;
+            _outputHandler?.Process(_fullRawFrameImageContext);
+            
+            _fullRawFrameImageContext.Data = _analysisBuffer;
         }
 
         /// <inheritdoc />
@@ -102,7 +116,7 @@ namespace MMALSharp.Processors.Motion
 
             if(_parameters.AnalysisMode)
             {
-                _writeCallback?.Invoke(_analysisBuffer);
+                _outputHandler?.Process(_fullRawFrameImageContext);
             }
 
             return detected;

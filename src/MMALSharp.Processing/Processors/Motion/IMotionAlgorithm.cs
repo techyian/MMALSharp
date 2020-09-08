@@ -3,7 +3,8 @@
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
 
-using System;
+using MMALSharp.Common;
+using MMALSharp.Handlers;
 
 namespace MMALSharp.Processors.Motion
 {
@@ -15,9 +16,14 @@ namespace MMALSharp.Processors.Motion
         /// <summary>
         /// Activates analysis mode.
         /// </summary>
-        /// <param name="analysisFrameBufferCallback">Optional. If specified, the algorithm analyses each frame, marking cell corners,
+        /// <param name="handler">Optional. If specified, the algorithm analyses each frame, marking cell corners,
         /// outlining cells with motion, and altering the output to grayscale highlights of the calculated diff per pixel.</param>
-        void EnableAnalysis(Action<byte[]> analysisFrameBufferCallback);
+        void EnableAnalysis(IOutputCaptureHandler handler);
+
+        /// <summary>
+        /// Deactivates analysis mode.
+        /// </summary>
+        void DisableAnalysis();
 
         /// <summary>
         /// Invoked after the buffer's <see cref="FrameDiffDriver.TestFrame"/> is available
@@ -26,7 +32,8 @@ namespace MMALSharp.Processors.Motion
         /// </summary>
         /// <param name="driver">The <see cref="FrameDiffDriver"/> invoking this method.</param>
         /// <param name="metrics">Motion configuration and properties of the frame data.</param>
-        void FirstFrameCompleted(FrameDiffDriver driver, FrameDiffMetrics metrics);
+        /// <param name="contextTemplate">A sample context object which should be stored to feed to a capture handler if analysis is enabled.</param>
+        void FirstFrameCompleted(FrameDiffDriver driver, FrameDiffMetrics metrics, ImageContext contextTemplate);
 
         /// <summary>
         /// Invoked when <see cref="FrameDiffDriver"/> has a full test frame and a
