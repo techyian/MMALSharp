@@ -82,7 +82,7 @@ namespace MMALSharp.Processors.Effects
 
                 Task.WaitAll(t1, t2, t3, t4);
 
-                if (context.Raw)
+                if (context.Raw && context.StoreFormat == null)
                 {
                     store = new byte[bytes];
                     Marshal.Copy(pNative, store, 0, bytes);
@@ -90,7 +90,7 @@ namespace MMALSharp.Processors.Effects
 
                 bmp.UnlockBits(bmpData);
 
-                if (!context.Raw)
+                if (!context.Raw || context.StoreFormat != null)
                 {
                     using (var ms2 = new MemoryStream())
                     {
@@ -128,7 +128,7 @@ namespace MMALSharp.Processors.Effects
 
                 if (format == default)
                 {
-                    throw new Exception("Unsupported pixel format for Bitmap");
+                    throw new Exception($"Unsupported pixel format for Bitmap: {imageContext.PixelFormat}.");
                 }
 
                 return new Bitmap(imageContext.Resolution.Width, imageContext.Resolution.Height, format);

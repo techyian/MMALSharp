@@ -337,7 +337,7 @@ namespace MMALSharp.Components
                 
                 portConfig = new MMALPortConfig(
                     encoding,
-                    null,
+                    encoding,
                     width: currentWidth,
                     height: currentHeight,
                     framerate: MMALCameraConfig.Framerate,
