@@ -99,7 +99,7 @@ namespace MMALSharp.Ports.Outputs
 
                 if (config.Framerate > 0)
                 {
-                    this.FrameRate = new MMAL_RATIONAL_T(config.Framerate, 1);
+                    this.FrameRate = config.Framerate;
                 }
 
                 if (config.Bitrate > 0)
@@ -296,10 +296,11 @@ namespace MMALSharp.Ports.Outputs
             bufferImpl.PrintProperties();
             
             var failed = bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
-            
+
             var eos = bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) ||
                       bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_EOS) ||
-                      this.ComponentReference.ForceStopProcessing;
+                      this.ComponentReference.ForceStopProcessing ||
+                      bufferImpl.Length == 0;
 
             if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !failed && !this.Trigger.Task.IsCompleted) || (eos && !this.Trigger.Task.IsCompleted))
             {

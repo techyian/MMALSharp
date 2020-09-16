@@ -38,7 +38,7 @@ namespace MMALSharp.Ports
         /// <summary>
         /// The framerate of the outputted data.
         /// </summary>
-        int Framerate { get; }
+        double Framerate { get; }
 
         /// <summary>
         /// The quality of our outputted data. 

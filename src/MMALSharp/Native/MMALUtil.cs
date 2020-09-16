@@ -2,7 +2,7 @@
 // Copyright (c) Ian Auty and contributors. All rights reserved.
 // Licensed under the MIT License. Please see LICENSE.txt for License info.
 // </copyright>
-
+using System;
 using System.Runtime.InteropServices;
 
 namespace MMALSharp.Native
@@ -180,15 +180,42 @@ namespace MMALSharp.Native
     [StructLayout(LayoutKind.Sequential)]
     public struct MMAL_RATIONAL_T
     {
-        private int num, den;
+        private int _num, _den;
 
-        public int Num => num;
-        public int Den => den;
+        public int Num => _num;
+        public int Den => _den;
+
+        /// <summary>
+        /// Creates a new <see cref="MMAL_RATIONAL_T"/> accepting a numerator value.
+        /// </summary>
+        /// <param name="num">The numerator.</param>
+        public MMAL_RATIONAL_T(double num)
+        {
+            if (num < 1)
+            {
+                var multiplier = 100;
+                var doubleNum = num * 100;
+
+                while (doubleNum < 1)
+                {
+                    doubleNum *= 10;
+                    multiplier *= 10;
+                }
+
+                _num = Convert.ToInt32(doubleNum);
+                _den = multiplier;
+            }
+            else
+            {
+                _num = Convert.ToInt32(num * 10);
+                _den = 10;
+            }
+        }
 
         public MMAL_RATIONAL_T(int num, int den)
         {
-            this.num = num;
-            this.den = den;
+            _num = num;
+            _den = den;
         }
     }
 }

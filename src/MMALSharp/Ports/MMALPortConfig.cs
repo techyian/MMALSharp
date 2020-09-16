@@ -38,7 +38,7 @@ namespace MMALSharp.Ports
         /// <summary>
         /// The framerate of the outputted data.
         /// </summary>
-        public int Framerate { get; }
+        public double Framerate { get; }
 
         /// <summary>
         /// The quality value. Can be used with JPEG encoding (value between 1-100). Can be used with H.264 encoding which affects the quantization parameter (typical values between 10-40, see wiki for info). Set both bitrate param and quality param to 0 for variable bitrate.
@@ -112,7 +112,7 @@ namespace MMALSharp.Ports
             bool storeMotionVectors = false,
             int width = 0, 
             int height = 0,
-            int framerate = 0,
+            double framerate = 0,
             bool zeroCopy = false,
             int bufferNum = 0, 
             int bufferSize = 0, 
