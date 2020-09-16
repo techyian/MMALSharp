@@ -41,7 +41,7 @@ namespace MMALSharp.Processors.Motion
             // Store this into the thread safe struct to pass to CheckDiff
             _parameters.RGBThreshold = rgbThreshold;
 
-            // Can't calculate actual pixels until we get metrics in FirstFrameCompleted
+            // Can't calculate actual pixels until we get metadata in FirstFrameCompleted
             _cellPixelPercentage = cellPixelPercentage;
 
             // Not used in the parallel processing stage, store locally
@@ -64,13 +64,11 @@ namespace MMALSharp.Processors.Motion
         }
 
         /// <inheritdoc />
-        public void FirstFrameCompleted(FrameDiffDriver driver, FrameDiffMetrics metrics, ImageContext contextTemplate)
+        public void FirstFrameCompleted(FrameDiffDriver driver, FrameAnalysisMetadata metadata, ImageContext contextTemplate)
         {
             _fullRawFrameImageContext = contextTemplate;
 
-            var cellWidth = metrics.FrameWidth / driver.CellDivisor;
-            var cellHeight = metrics.FrameHeight / driver.CellDivisor;
-            _parameters.CellPixelThreshold = (int)(cellWidth * cellHeight * (_cellPixelPercentage / 100f));
+            _parameters.CellPixelThreshold = (int)(metadata.CellWidth * metadata.CellHeight * (_cellPixelPercentage / 100f));
 
             _analysisBuffer = new byte[driver.TestFrame.Length];
             // Not necessary for this analysis, CheckDiff overwrites the buffer completely
@@ -83,14 +81,14 @@ namespace MMALSharp.Processors.Motion
         }
 
         /// <inheritdoc />
-        public void ResetAnalyser(FrameDiffDriver driver, FrameDiffMetrics metrics)
+        public void ResetAnalyser(FrameDiffDriver driver, FrameAnalysisMetadata metadata)
         { } // not necessary for this algorithm
 
         /// <inheritdoc />
-        public bool DetectMotion(FrameDiffDriver driver, FrameDiffMetrics metrics)
+        public bool DetectMotion(FrameDiffDriver driver, FrameAnalysisMetadata metadata)
         {
             Parallel.ForEach(driver.CellDiff, (cell, loopState, loopIndex)
-                => CheckDiff(loopIndex, driver, metrics, _parameters));
+                => CheckDiff(loopIndex, driver, metadata, _parameters));
 
             int diff = 0;
 
@@ -100,7 +98,7 @@ namespace MMALSharp.Processors.Motion
 
                 if (_parameters.AnalysisMode && driver.CellDiff[i] == 1)
                 {
-                    HighlightCell(255, 0, 255, driver, metrics, i, _analysisBuffer);
+                    HighlightCell(255, 0, 255, driver, metadata, i, _analysisBuffer);
                 }
             }
 
@@ -109,9 +107,9 @@ namespace MMALSharp.Processors.Motion
             // Draw a bar across the frame; red indicates motion, green indicates no motion
             if (_parameters.AnalysisMode && diff > 0)
             {
-                int x2 = (int)((diff / 1024f) * 639f);
+                int x2 = (int)(((diff * 2f) / (driver.CellDiff.Length / 2f)) * (metadata.Width / 2f));
                 (byte r, byte g) = detected ? ((byte)255, (byte)0) : ((byte)0, (byte)255);
-                DrawIndicatorBlock(r, g, 0, 0, x2, 0, 10, _analysisBuffer, metrics);
+                DrawIndicatorBlock(r, g, 0, 0, x2, 0, 10, _analysisBuffer, metadata);
             }
 
             if(_parameters.AnalysisMode)
@@ -122,9 +120,9 @@ namespace MMALSharp.Processors.Motion
             return detected;
         }
 
-        private void CheckDiff(long cellIndex, FrameDiffDriver driver, FrameDiffMetrics metrics, ThreadSafeParameters parameters)
+        private void CheckDiff(long cellIndex, FrameDiffDriver driver, FrameAnalysisMetadata metadata, ThreadSafeParameters parameters)
         {
-            // FrameDiffMetrics and ThreadSafeParameters are structures; they are by-value copies and all fields are value-types which makes them thread safe
+            // FrameAnalysisMetadata and ThreadSafeParameters are structures; they are by-value copies and all fields are value-types which makes them thread safe
 
             int diff = 0;
             var rect = driver.CellRect[cellIndex];
@@ -136,7 +134,7 @@ namespace MMALSharp.Processors.Motion
             {
                 for (var row = rect.Y; row < y2; row++)
                 {
-                    var index = (col * metrics.FrameBpp) + (row * metrics.FrameStride);
+                    var index = (col * metadata.Bpp) + (row * metadata.Stride);
 
                     // Disregard full-black cells in the mask bitmap
                     if (driver.FrameMask != null)

@@ -27,29 +27,29 @@ namespace MMALSharp.Processors.Motion
 
         /// <summary>
         /// Invoked after the buffer's <see cref="FrameDiffDriver.TestFrame"/> is available
-        /// for the first time and frame metrics have been collected. Allows the algorithm
+        /// for the first time and frame metadata has been collected. Allows the algorithm
         /// to modify the test frame, prepare matching local buffers, etc.
         /// </summary>
         /// <param name="driver">The <see cref="FrameDiffDriver"/> invoking this method.</param>
-        /// <param name="metrics">Motion configuration and properties of the frame data.</param>
+        /// <param name="metadata">Properties of the frame.</param>
         /// <param name="contextTemplate">A sample context object which should be stored to feed to a capture handler if analysis is enabled.</param>
-        void FirstFrameCompleted(FrameDiffDriver driver, FrameDiffMetrics metrics, ImageContext contextTemplate);
+        void FirstFrameCompleted(FrameDiffDriver driver, FrameAnalysisMetadata metadata, ImageContext contextTemplate);
 
         /// <summary>
         /// Invoked when <see cref="FrameDiffDriver"/> has a full test frame and a
         /// new full comparison frame available.
         /// </summary>
         /// <param name="driver">The <see cref="FrameDiffDriver"/> invoking this method.</param>
-        /// <param name="metrics">Motion configuration and properties of the frame data.</param>
+        /// <param name="metadata">Properties of the frame.</param>
         /// <returns>Indicates whether motion was detected.</returns>
-        bool DetectMotion(FrameDiffDriver driver, FrameDiffMetrics metrics);
+        bool DetectMotion(FrameDiffDriver driver, FrameAnalysisMetadata metadata);
 
         /// <summary>
         /// Invoked when <see cref="FrameDiffDriver"/> has been reset. The algorithm should also
         /// reset stateful data, if any.
         /// </summary>
         /// <param name="driver">The <see cref="FrameDiffDriver"/> invoking this method.</param>
-        /// <param name="metrics">Motion configuration and properties of the frame data.</param>
-        void ResetAnalyser(FrameDiffDriver driver, FrameDiffMetrics metrics);
+        /// <param name="metadata">Properties of the frame.</param>
+        void ResetAnalyser(FrameDiffDriver driver, FrameAnalysisMetadata metadata);
     }
 }

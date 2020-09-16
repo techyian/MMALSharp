@@ -17,20 +17,20 @@ namespace MMALSharp.Processors.Motion
         /// <param name="g">Green channel of the highlight RGB color</param>
         /// <param name="b">Blue channel of the highlight RGB color</param>
         /// <param name="driver">The <see cref="FrameDiffDriver"/> containing the buffer</param>
-        /// <param name="metrics">The <see cref="FrameDiffMetrics"/> structure with frame properties</param>
+        /// <param name="metadata">The <see cref="FrameAnalysisMetadata"/> structure with frame properties</param>
         /// <param name="index">The array index of the cell to highlight</param>
         /// <param name="buffer">The frame buffer to draw into</param>
-        protected void HighlightCell(byte r, byte g, byte b, FrameDiffDriver driver, FrameDiffMetrics metrics, int index, byte[] buffer)
+        protected void HighlightCell(byte r, byte g, byte b, FrameDiffDriver driver, FrameAnalysisMetadata metadata, int index, byte[] buffer)
         {
             for (int x = driver.CellRect[index].X; x < driver.CellRect[index].X + driver.CellRect[index].Width; x++)
             {
                 var y = driver.CellRect[index].Y;
-                var i = (x * metrics.FrameBpp) + (y * metrics.FrameStride);
+                var i = (x * metadata.Bpp) + (y * metadata.Stride);
                 buffer[i] = r;
                 buffer[i + 1] = g;
                 buffer[i + 2] = b;
                 y += driver.CellRect[index].Height - 1;
-                i = (x * metrics.FrameBpp) + (y * metrics.FrameStride);
+                i = (x * metadata.Bpp) + (y * metadata.Stride);
                 buffer[i] = r;
                 buffer[i + 1] = g;
                 buffer[i + 2] = b;
@@ -39,12 +39,12 @@ namespace MMALSharp.Processors.Motion
             for (int y = driver.CellRect[index].Y; y < driver.CellRect[index].Y + driver.CellRect[index].Height; y++)
             {
                 var x = driver.CellRect[index].X;
-                var i = (x * metrics.FrameBpp) + (y * metrics.FrameStride);
+                var i = (x * metadata.Bpp) + (y * metadata.Stride);
                 buffer[i] = r;
                 buffer[i + 1] = g;
                 buffer[i + 2] = b;
                 x += driver.CellRect[index].Width - 1;
-                i = (x * metrics.FrameBpp) + (y * metrics.FrameStride);
+                i = (x * metadata.Bpp) + (y * metadata.Stride);
                 buffer[i] = r;
                 buffer[i + 1] = g;
                 buffer[i + 2] = b;
@@ -62,14 +62,14 @@ namespace MMALSharp.Processors.Motion
         /// <param name="y1">Top row of the block</param>
         /// <param name="y2">Bottom row of the block</param>
         /// <param name="buffer">The frame buffer to draw into</param>
-        /// <param name="metrics">The <see cref="FrameDiffMetrics"/> structure with frame properties</param>
-        protected void DrawIndicatorBlock(byte r, byte g, byte b, int x1, int x2, int y1, int y2, byte[] buffer, FrameDiffMetrics metrics)
+        /// <param name="metrics">The <see cref="FrameAnalysisMetadata"/> structure with frame properties</param>
+        protected void DrawIndicatorBlock(byte r, byte g, byte b, int x1, int x2, int y1, int y2, byte[] buffer, FrameAnalysisMetadata metrics)
         {
             for (int x = x1; x <= x2; x++)
             {
                 for (int y = y1; y <= y2; y++)
                 {
-                    var i = (x * metrics.FrameBpp) + (y * metrics.FrameStride);
+                    var i = (x * metrics.Bpp) + (y * metrics.Stride);
                     buffer[i] = r;
                     buffer[i + 1] = g;
                     buffer[i + 2] = b;

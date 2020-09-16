@@ -5,11 +5,10 @@
 
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using MMALSharp.Common;
+using MMALSharp.Common.Utility;
 
 namespace MMALSharp.Processors.Effects
 {
@@ -18,6 +17,32 @@ namespace MMALSharp.Processors.Effects
     /// </summary>
     public abstract class ConvolutionBase
     {
+        private readonly int _horizontalCellCount;
+        private readonly int _verticalCellCount;
+
+        /// <summary>
+        /// Creates a <see cref="ConvolutionBase"/> object. This uses the default parallel processing
+        /// cell count based on the image resolution and the recommended values defined by the
+        /// <see cref="FrameAnalyser"/>. Requires use of one of the standard camera image resolutions.
+        /// </summary>
+        public ConvolutionBase()
+        {
+            _horizontalCellCount = 0;
+            _verticalCellCount = 0;
+        }
+
+        /// <summary>
+        /// Creates a <see cref="ConvolutionBase"/> object with custom parallel processing cell counts.
+        /// You must use this constructor if you are processing non-standard image resolutions.
+        /// </summary>
+        /// <param name="horizontalCellCount">The number of columns to divide the image into.</param>
+        /// <param name="verticalCellCount">The number of rows to divide the image into.</param>
+        public ConvolutionBase(int horizontalCellCount, int verticalCellCount)
+        {
+            _horizontalCellCount = horizontalCellCount;
+            _verticalCellCount = verticalCellCount;
+        }
+
         /// <summary>
         /// Apply a convolution based on the kernel passed in.
         /// </summary>
@@ -27,165 +52,76 @@ namespace MMALSharp.Processors.Effects
         /// <param name="context">An image context providing additional metadata on the data passed in.</param>
         public void ApplyConvolution(double[,] kernel, int kernelWidth, int kernelHeight, ImageContext context)
         {
-            BitmapData bmpData = null;
-            IntPtr pNative = IntPtr.Zero;
-            int bytes;
-            byte[] store = null;
-
-            using (var ms = new MemoryStream(context.Data))
-            using (var bmp = this.LoadBitmap(context, ms))
+            if (!context.Raw)
             {
-                bmpData = bmp.LockBits(new Rectangle(0, 0,
-                        bmp.Width,
-                        bmp.Height),
-                    ImageLockMode.ReadWrite,
-                    bmp.PixelFormat);
-
-                if (context.Raw)
-                {
-                    this.InitBitmapData(context, bmpData);
-                }
-
-                pNative = bmpData.Scan0;
-
-                // Split image into 4 quadrants and process individually.
-                var quadA = new Rectangle(0, 0, bmpData.Width / 2, bmpData.Height / 2);
-                var quadB = new Rectangle(bmpData.Width / 2, 0, bmpData.Width / 2, bmpData.Height / 2);
-                var quadC = new Rectangle(0, bmpData.Height / 2, bmpData.Width / 2, bmpData.Height / 2);
-                var quadD = new Rectangle(bmpData.Width / 2, bmpData.Height / 2, bmpData.Width / 2, bmpData.Height / 2);
-
-                bytes = bmpData.Stride * bmp.Height;
-
-                var rgbValues = new byte[bytes];
-
-                // Copy the RGB values into the array.
-                Marshal.Copy(pNative, rgbValues, 0, bytes);
-
-                var bpp = Image.GetPixelFormatSize(bmp.PixelFormat) / 8;
-
-                var t1 = Task.Run(() =>
-                {
-                    this.ProcessQuadrant(quadA, bmp, bmpData, rgbValues, kernel, kernelWidth, kernelHeight, bpp);
-                });
-                var t2 = Task.Run(() =>
-                {
-                    this.ProcessQuadrant(quadB, bmp, bmpData, rgbValues, kernel, kernelWidth, kernelHeight, bpp);
-                });
-                var t3 = Task.Run(() =>
-                {
-                    this.ProcessQuadrant(quadC, bmp, bmpData, rgbValues, kernel, kernelWidth, kernelHeight, bpp);
-                });
-                var t4 = Task.Run(() =>
-                {
-                    this.ProcessQuadrant(quadD, bmp, bmpData, rgbValues, kernel, kernelWidth, kernelHeight, bpp);
-                });
-
-                Task.WaitAll(t1, t2, t3, t4);
-
-                if (context.Raw)
-                {
-                    store = new byte[bytes];
-                    Marshal.Copy(pNative, store, 0, bytes);
-                }
-
-                bmp.UnlockBits(bmpData);
-
-                if (!context.Raw)
-                {
-                    using (var ms2 = new MemoryStream())
-                    {
-                        bmp.Save(ms2, context.StoreFormat);
-                        store = new byte[ms2.Length];
-                        Array.Copy(ms2.ToArray(), 0, store, 0, ms2.Length);
-                    }
-                }
-            }
-            
-            context.Data = store;
-        }
-
-        private Bitmap LoadBitmap(ImageContext imageContext, MemoryStream stream)
-        {
-            if (imageContext.Raw)
-            {
-                PixelFormat format = default;
-
-                // RGB16 doesn't appear to be supported by GDI?
-                if (imageContext.PixelFormat == MMALEncoding.RGB24)
-                {
-                    format = PixelFormat.Format24bppRgb;
-                }
-
-                if (imageContext.PixelFormat == MMALEncoding.RGB32)
-                {
-                    format = PixelFormat.Format32bppRgb;
-                }
-
-                if (imageContext.PixelFormat == MMALEncoding.RGBA)
-                {
-                    format = PixelFormat.Format32bppArgb;
-                }
-
-                if (format == default)
-                {
-                    throw new Exception("Unsupported pixel format for Bitmap");
-                }
-
-                return new Bitmap(imageContext.Resolution.Width, imageContext.Resolution.Height, format);
+                throw new Exception("Convolution effects require raw frame data");
             }
 
-            return new Bitmap(stream);
-        }
-
-        private void InitBitmapData(ImageContext imageContext, BitmapData bmpData)
-        {
-            var pNative = bmpData.Scan0;
-            Marshal.Copy(imageContext.Data, 0, pNative, imageContext.Data.Length);
-        }
-
-        private void ProcessQuadrant(Rectangle quad, Bitmap bmp, BitmapData bmpData, byte[] rgbValues, double[,] kernel, int kernelWidth, int kernelHeight, int pixelDepth)
-        {
-            unsafe
+            var analyser = new FrameAnalyser
             {
-                // Declare an array to hold the bytes of the bitmap.
-                var stride = bmpData.Stride;
+                HorizonalCellCount = _horizontalCellCount,
+                VerticalCellCount = _verticalCellCount,
+            };
+            analyser.Apply(context);
 
-                byte* ptr1 = (byte*)bmpData.Scan0;
+            Parallel.ForEach(analyser.CellRect, (cell, loopState, loopIndex)
+                => ProcessCell(cell, context.Data, kernel, kernelWidth, kernelHeight, analyser.Metadata));
 
-                for (int column = quad.X; column < quad.X + quad.Width; column++)
+            if(context.StoreFormat != null)
+            {
+                context.FormatRawImage();
+            }
+        }
+
+        private void ProcessCell(Rectangle rect, byte[] image, double[,] kernel, int kernelWidth, int kernelHeight, FrameAnalysisMetadata metadata)
+        {
+            // Rectangle and FrameAnalysisMetadata are structures; they are by-value copies and all fields are value-types which makes them thread safe
+
+            int x2 = rect.X + rect.Width;
+            int y2 = rect.Y + rect.Height;
+
+            int index;
+
+            for (var x = rect.X; x < x2; x++)
+            {
+                for (var y = rect.Y; y < y2; y++)
                 {
-                    for (int row = quad.Y; row < quad.Y + quad.Height; row++)
+                    double r = 0;
+                    double g = 0;
+                    double b = 0;
+
+                    if (x > kernelWidth && y > kernelHeight)
                     {
-                        if (column > kernelWidth && row > kernelHeight)
+                        for (var t = 0; t < kernelWidth; t++)
                         {
-                            int r1 = 0, g1 = 0, b1 = 0;
-
-                            for (var l = 0; l < kernelWidth; l++)
+                            for(var u = 0; u < kernelHeight; u++)
                             {
-                                for (var m = 0; m < kernelHeight; m++)
-                                {
-                                    r1 += (int)(rgbValues[(this.Bound(row + m, quad.Y + quad.Height) * stride) + (this.Bound(column + l, quad.X + quad.Width) * pixelDepth)] * kernel[l, m]);
-                                    g1 += (int)(rgbValues[(this.Bound(row + m, quad.Y + quad.Height) * stride) + (this.Bound(column + l, quad.X + quad.Width) * pixelDepth) + 1] * kernel[l, m]);
-                                    b1 += (int)(rgbValues[(this.Bound(row + m, quad.Y + quad.Height) * stride) + (this.Bound(column + l, quad.X + quad.Width) * pixelDepth) + 2] * kernel[l, m]);
-                                }
-                            }
+                                double k = kernel[t, u];
 
-                            ptr1[(column * pixelDepth) + (row * stride)] = (byte)Math.Max(0, r1);
-                            ptr1[(column * pixelDepth) + (row * stride) + 1] = (byte)Math.Max(0, g1);
-                            ptr1[(column * pixelDepth) + (row * stride) + 2] = (byte)Math.Max(0, b1);
+                                index = (Clamp(y + u, y2) * metadata.Stride) + (Clamp(x + t, x2) * metadata.Bpp);
+
+                                r += image[index] * k;
+                                g += image[index + 1] * k;
+                                b += image[index + 2] * k;
+                            }
                         }
-                        else
-                        {
-                            ptr1[(column * pixelDepth) + (row * stride)] = 0;
-                            ptr1[(column * pixelDepth) + (row * stride) + 1] = 0;
-                            ptr1[(column * pixelDepth) + (row * stride) + 2] = 0;
-                        }
+
+                        r = (r < 0) ? 0 : r;
+                        g = (g < 0) ? 0 : g;
+                        b = (b < 0) ? 0 : b;
                     }
+
+                    index = (x * metadata.Bpp) + (y * metadata.Stride);
+
+                    image[index] = (byte)r;
+                    image[index + 1] = (byte)g;
+                    image[index + 2] = (byte)b;
                 }
             }
         }
-        
-        private int Bound(int value, int endIndex)
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int Clamp(int value, int endIndex)
         {
             if (value < 0)
             {
@@ -196,7 +132,7 @@ namespace MMALSharp.Processors.Effects
             {
                 return value;
             }
-                
+
             return endIndex - 1;
         }
     }

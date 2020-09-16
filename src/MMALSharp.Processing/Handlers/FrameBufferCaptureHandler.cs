@@ -45,8 +45,9 @@ namespace MMALSharp.Handlers
         { }
 
         /// <summary>
-        /// Creates a new <see cref="FrameBufferCaptureHandler"/> configured for motion detection using a raw video stream
-        /// where MMALStandalone.Instance is used (such as processing a pre-recorded file) rather than camera-based processing.
+        /// Creates a new <see cref="FrameBufferCaptureHandler"/> configured for motion detection analysis (either using a recorded
+        /// raw video stream where MMALStandalone.Instance is used, or when the camera is used but triggering motion detection events
+        /// is unnecessary). If motion detection events are desired, use the camera's WithMotionDetection method.
         /// </summary>
         /// <param name="motionConfig">The motion configuration.</param>
         /// <param name="onDetect">A callback for when motion is detected.</param>

@@ -17,29 +17,16 @@ using MMALSharp.Common.Utility;
 namespace MMALSharp.Processors.Motion
 {
     /// <summary>
-    /// A frame difference motion detection base class which buffers a test frame and a current frame,
-    /// stores frame metrics, and invokes an <see cref="IMotionAlgorithm"/> to analyse full frames.
+    /// A frame difference motion detection class which buffers a test frame and a current frame,
+    /// and invokes an <see cref="IMotionAlgorithm"/> to detect motion.
     /// </summary>
     public class FrameDiffDriver : FrameAnalyser
     {
-        // Prefer fields over properties for parallel processing performance reasons.
-        // Parallel processing references unique array indices, so arrays do not need
-        // to be stored in the passed-by-value FrameDiffMetrics struct.
-
-        // Various frame properties are collected when the first full frame is available.
-        // A by-val copy of this struct is passed into the parallel processing algorithm. It is
-        // private rather than internal to prevent accidental parallel reads against this copy.
-        private FrameDiffMetrics _frameMetrics;
-
-        private Action _onDetect;
-        private bool _firstFrame = true;
-        private MotionConfig _motionConfig;
-        private bool _fullTestFrame;
-        private ImageContext _imageContext;
-        private Stopwatch _testFrameAge;
+        // Some members are fields rather than properties for parallel processing performance reasons.
+        // Array-based fields are threadsafe as long as multiple threads access unique array indices.
 
         /// <summary>
-        /// Fully are skipped when comparing the test frame to the current frame.
+        /// Fully black pixels are skipped when comparing the test frame to the current frame.
         /// </summary>
         internal byte[] FrameMask;
 
@@ -49,27 +36,14 @@ namespace MMALSharp.Processors.Motion
         internal byte[] TestFrame;
 
         /// <summary>
-        /// A byte array representation of the FrameAnalyser's own WorkingData object. Required
-        /// to provide fast thread-safe access for parallel analysis.
-        /// </summary>
-        internal byte[] CurrentFrame;
-
-        /// <summary>
         /// The number of pixels that differ in each cell between the test frame and current frame.
         /// </summary>
         internal int[] CellDiff;
 
-        /// <summary>
-        /// Represents the coordinates of each test cell for parallel analysis.
-        /// </summary>
-        internal Rectangle[] CellRect;
-
-        /// <summary>
-        /// Controls how many cells the frames are divided into. The result is a power of two of this
-        /// value (so the default of 32 yields 1024 cells). These cells are processed in parallel. This
-        /// should be a value that divides evenly into the X and Y resolutions of the motion stream.
-        /// </summary>
-        public int CellDivisor { get; set; } = 32;
+        private Action _onDetect;
+        private MotionConfig _motionConfig;
+        private bool _fullTestFrame;
+        private Stopwatch _testFrameAge;
 
         /// <summary>
         /// When true, the OnDetect Action will be invoked when motion is detected. Using this instead
@@ -107,8 +81,6 @@ namespace MMALSharp.Processors.Motion
         /// <inheritdoc />
         public override void Apply(ImageContext context)
         {
-            _imageContext = context;
-
             base.Apply(context);
 
             if (context.Eos)
@@ -120,19 +92,17 @@ namespace MMALSharp.Processors.Motion
                     {
                         MMALLog.Logger.LogDebug("EOS reached for test frame.");
 
-                        _fullTestFrame = true;
                         this.PrepareTestFrame();
+                        _fullTestFrame = true;
                     }
                     else
                     {
-                        MMALLog.Logger.LogDebug("Have full frame, checking for changes.");
-
-                        this.CurrentFrame = this.WorkingData.ToArray();
+                        MMALLog.Logger.LogDebug("Have full frame, invoking motion algorithm.");
 
                         // frameCounter++;
                         // frameTimer.Restart();
 
-                        var detected = _motionConfig.MotionAlgorithm.DetectMotion(this, _frameMetrics);
+                        var detected = _motionConfig.MotionAlgorithm.DetectMotion(this, Metadata);
 
                         // frameTimer.Stop();
                         // totalElapsed += frameTimer.ElapsedMilliseconds;
@@ -171,62 +141,40 @@ namespace MMALSharp.Processors.Motion
 
             _testFrameAge.Reset();
 
-            _motionConfig.MotionAlgorithm.ResetAnalyser(this, this._frameMetrics);
+            _motionConfig.MotionAlgorithm.ResetAnalyser(this, this.Metadata);
         }
 
-        // Copies the working buffer to the test frame buffer, and if this is the
-        // first test frame, collects various frame properties (size, BPP, etc).
+        /// <inheritdoc />
+        protected override void ProcessFirstFrame(ImageContext context)
+        {
+            base.ProcessFirstFrame(context);
+
+            this.PrepareTestFrame();
+
+            CellDiff = new int[CellRect.Length];
+
+            this.PrepareMask();
+
+            // Provide a copy with raw full-frame defaults that the algorithm can safely store and reuse
+            // if the algorithm is configured to output analysis frames to a capture handler's Apply method.
+            var fullFrameContextTemplate = new ImageContext
+            {
+                Eos = true,
+                IFrame = true,
+                Resolution = new Resolution(Metadata.Width, Metadata.Height),
+                Encoding = context.Encoding,
+                PixelFormat = context.PixelFormat,
+                Raw = context.Raw,
+                Pts = null,
+                Stride = Metadata.Stride
+            };
+
+            _motionConfig.MotionAlgorithm.FirstFrameCompleted(this, this.Metadata, fullFrameContextTemplate);
+        }
+
         private void PrepareTestFrame()
         {
             this.TestFrame = this.WorkingData.ToArray();
-
-            if (_firstFrame)
-            {
-                _firstFrame = false;
-
-                // one-time collection of basic frame dimensions
-                _frameMetrics.FrameWidth = _imageContext.Resolution.Width;
-                _frameMetrics.FrameHeight = _imageContext.Resolution.Height;
-                _frameMetrics.FrameBpp = this.GetBpp() / 8;
-                _frameMetrics.FrameStride = _imageContext.Stride;
-
-                // one-time setup of the diff cell parameters and arrays
-                int indices = (int)Math.Pow(CellDivisor, 2);
-                int cellWidth = _frameMetrics.FrameWidth / CellDivisor;
-                int cellHeight = _frameMetrics.FrameHeight / CellDivisor;
-                int i = 0;
-
-                CellRect = new Rectangle[indices];
-                CellDiff = new int[indices];
-
-                for (int row = 0; row < CellDivisor; row++)
-                {
-                    int y = row * cellHeight;
-                    for (int col = 0; col < CellDivisor; col++)
-                    {
-                        int x = col * cellWidth;
-                        CellRect[i] = new Rectangle(x, y, cellWidth, cellHeight);
-                        i++;
-                    }
-                }
-
-                this.PrepareMask();
-
-                // provide a copy (with raw full-frame defaults) that the algorithm can safely store and reuse
-                var fullFrameContextTemplate = new ImageContext
-                {
-                    Eos = true,
-                    IFrame = true,
-                    Resolution = new Resolution(_frameMetrics.FrameWidth, _frameMetrics.FrameHeight),
-                    Encoding = _imageContext.Encoding,
-                    PixelFormat = _imageContext.PixelFormat,
-                    Raw = _imageContext.Raw,
-                    Pts = null,
-                    Stride = _frameMetrics.FrameStride
-                };
-
-                _motionConfig.MotionAlgorithm.FirstFrameCompleted(this, this._frameMetrics, fullFrameContextTemplate);
-            }
 
             if (_motionConfig.TestFrameInterval != TimeSpan.Zero)
             {
@@ -251,29 +199,6 @@ namespace MMALSharp.Processors.Motion
             this.PrepareTestFrame();
         }
 
-        private int GetBpp()
-        {
-            PixelFormat format = default;
-
-            // RGB16 doesn't appear to be supported by GDI?
-            if (_imageContext.PixelFormat == MMALEncoding.RGB24)
-            {
-                return 24;
-            }
-
-            if (_imageContext.PixelFormat == MMALEncoding.RGB32 || _imageContext.PixelFormat == MMALEncoding.RGBA)
-            {
-                return 32;
-            }
-
-            if (format == default)
-            {
-                throw new Exception($"Unsupported pixel format: {_imageContext.PixelFormat}");
-            }
-
-            return 0;
-        }
-
         private void PrepareMask()
         {
             if (string.IsNullOrWhiteSpace(_motionConfig.MotionMaskPathname))
@@ -286,7 +211,7 @@ namespace MMALSharp.Processors.Motion
             {
                 // Verify it matches our frame dimensions
                 var maskBpp = Image.GetPixelFormatSize(mask.PixelFormat) / 8;
-                if (mask.Width != _frameMetrics.FrameWidth || mask.Height != _frameMetrics.FrameHeight || maskBpp != _frameMetrics.FrameBpp)
+                if (mask.Width != Metadata.Width || mask.Height != Metadata.Height || maskBpp != Metadata.Bpp)
                 {
                     throw new Exception("Motion-detection mask must match raw stream width, height, and format (bits per pixel)");
                 }
