@@ -20,14 +20,14 @@ namespace MMALSharp.Processors.Effects
         Horizontal = 0,
 
         /// <summary>
-        /// Highlights horizontal lines with a slight smoothing effect (less sensitive to noise).
-        /// </summary>
-        SobelHorizontal,
-
-        /// <summary>
         /// Higlights vertical lines.
         /// </summary>
         Vertical,
+
+        /// <summary>
+        /// Highlights horizontal lines with a slight smoothing effect (less sensitive to noise).
+        /// </summary>
+        SobelHorizontal,
 
         /// <summary>
         /// Highlights vertical lines with a slight smoothing effect (less sensitive to noise).

@@ -104,7 +104,8 @@ namespace MMALSharp.Processors
         /// <returns>The number of bytes</returns>
         public int GetBytesPerPixel(ImageContext context)
         {
-            PixelFormat format = default;
+            if(context.PixelFormat == null)
+                throw new Exception("Pixel format is null");
 
             // RGB16 doesn't appear to be supported by GDI?
             if (context.PixelFormat == MMALEncoding.RGB24)
@@ -117,12 +118,7 @@ namespace MMALSharp.Processors
                 return 32 / 8;
             }
 
-            if (format == default)
-            {
-                throw new Exception($"Unsupported pixel format: {context.PixelFormat}");
-            }
-
-            return 0;
+            throw new Exception($"Unsupported pixel format: {context.PixelFormat}");
         }
 
         /// <summary>
