@@ -163,10 +163,18 @@ namespace MMALSharp.Ports
         /// <summary>
         /// The framerate we are processing data in.
         /// </summary>
-        public MMAL_RATIONAL_T FrameRate
+        public double FrameRate
+        {
+            get => this.Ptr->Format->Es->Video.FrameRate.Num;
+            internal set => this.Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(value);
+        }
+
+        /// <summary>
+        /// The framerate represented as a <see cref="MMAL_RATIONAL_T"/>.
+        /// </summary>
+        public MMAL_RATIONAL_T FrameRateRational
         {
             get => this.Ptr->Format->Es->Video.FrameRate;
-            internal set => this.Ptr->Format->Es->Video.FrameRate = new MMAL_RATIONAL_T(value.Num, value.Den);
         }
 
         /// <summary>

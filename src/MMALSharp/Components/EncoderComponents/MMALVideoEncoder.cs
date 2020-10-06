@@ -197,8 +197,9 @@ namespace MMALSharp.Components
 
         private void ConfigureVideoProfile(int outputPort)
         {
+            var rational = new MMAL_RATIONAL_T(MMALCameraConfig.Framerate);
             var macroblocks = (MMALCameraConfig.Resolution.Width >> 4) * (MMALCameraConfig.Resolution.Height >> 4);
-            var macroblocksPSec = macroblocks * (MMALCameraConfig.Framerate.Num / MMALCameraConfig.Framerate.Den);
+            var macroblocksPSec = macroblocks * (rational.Num / rational.Den);
 
             List<VideoLevel> videoLevels = GetNormalLevelLimits();
 

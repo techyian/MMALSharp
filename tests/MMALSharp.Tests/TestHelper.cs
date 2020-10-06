@@ -34,7 +34,7 @@ namespace MMALSharp.Tests
             MMALCameraConfig.ShutterSpeed = 0;
             MMALCameraConfig.SensorMode = MMALSensorMode.Mode0;
             MMALCameraConfig.VideoStabilisation = true;
-            MMALCameraConfig.Framerate = new MMAL_RATIONAL_T(10, 1);
+            MMALCameraConfig.Framerate = 10;
             MMALCameraConfig.Encoding = MMALEncoding.OPAQUE;
             MMALCameraConfig.EncodingSubFormat = MMALEncoding.I420;
             MMALCameraConfig.VideoColorSpace = MMALEncoding.MMAL_COLOR_SPACE_ITUR_BT709;

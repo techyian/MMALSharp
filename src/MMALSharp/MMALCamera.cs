@@ -379,8 +379,7 @@ namespace MMALSharp
             {
                 await Task.WhenAny(
                     Task.WhenAll(tasks),
-                    RefreshAnnotations(refreshInterval, ctsRefreshAnnotation.Token)
-                    ).ConfigureAwait(false);
+                    RefreshAnnotations(refreshInterval, ctsRefreshAnnotation.Token)).ConfigureAwait(false);
 
                 ctsRefreshAnnotation.Cancel();
             }
@@ -389,8 +388,7 @@ namespace MMALSharp
                 await Task.WhenAny(
                     Task.WhenAll(tasks),
                     RefreshAnnotations(refreshInterval, ctsRefreshAnnotation.Token),
-                    cancellationToken.AsTask()
-                    ).ConfigureAwait(false);
+                    cancellationToken.AsTask()).ConfigureAwait(false);
 
                 ctsRefreshAnnotation.Cancel();
 
