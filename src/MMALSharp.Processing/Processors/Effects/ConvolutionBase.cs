@@ -4,9 +4,14 @@
 // </copyright>
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 
@@ -52,24 +57,31 @@ namespace MMALSharp.Processors.Effects
         /// <param name="context">An image context providing additional metadata on the data passed in.</param>
         public void ApplyConvolution(double[,] kernel, int kernelWidth, int kernelHeight, ImageContext context)
         {
-            if (!context.Raw)
-            {
-                throw new Exception("Convolution effects require raw frame data");
-            }
+            var localContext = context.Raw ? context : CloneToRawBitmap(context);
 
             var analyser = new FrameAnalyser
             {
                 HorizonalCellCount = _horizontalCellCount,
                 VerticalCellCount = _verticalCellCount,
             };
-            analyser.Apply(context);
+            analyser.Apply(localContext);
 
-            Parallel.ForEach(analyser.CellRect, (cell, loopState, loopIndex)
-                => ProcessCell(cell, context.Data, kernel, kernelWidth, kernelHeight, analyser.Metadata));
+            Parallel.ForEach(analyser.CellRect, (cell)
+                => ProcessCell(cell, localContext.Data, kernel, kernelWidth, kernelHeight, analyser.Metadata));
 
-            if(context.StoreFormat != null)
+            if (context.StoreFormat != null)
             {
-                context.FormatRawImage();
+                FormatRawBitmap(localContext, context);
+                context.Raw = false; // context is never raw after formatting
+            }
+            else
+            {
+                if(!context.Raw)
+                {
+                    context.Data = new byte[localContext.Data.Length];
+                    Array.Copy(localContext.Data, context.Data, context.Data.Length);
+                    context.Raw = true; // we just copied raw data to the source context
+                }
             }
         }
 
@@ -121,19 +133,135 @@ namespace MMALSharp.Processors.Effects
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int Clamp(int value, int endIndex)
+        private int Clamp(int value, int maxIndex)
         {
             if (value < 0)
             {
                 return 0;
             }
 
-            if (value < endIndex)
+            if (value < maxIndex)
             {
                 return value;
             }
 
-            return endIndex - 1;
+            return maxIndex - 1;
+        }
+
+        private ImageContext CloneToRawBitmap(ImageContext sourceContext)
+        {
+            var newContext = new ImageContext
+            {
+                Raw = true,
+                Eos = sourceContext.Eos,
+                IFrame = sourceContext.IFrame,
+                Encoding = sourceContext.Encoding,
+                Pts = sourceContext.Pts,
+                StoreFormat = sourceContext.StoreFormat
+            };
+
+            using (var ms = new MemoryStream(sourceContext.Data))
+            {
+                using (var sourceBmp = new Bitmap(ms))
+                {
+                    // sourceContext.Resolution isn't set by TakeStillPicture (width,height is 0,0).
+                    newContext.Resolution = new Resolution(sourceBmp.Width, sourceBmp.Height);
+
+                    // If the source bitmap has a raw-compatible format, use it, otherwise default to RGBA
+                    newContext.PixelFormat = PixelFormatToMMALEncoding(sourceBmp.PixelFormat, MMALEncoding.RGBA);
+                    var bmpTargetFormat = MMALEncodingToPixelFormat(newContext.PixelFormat);
+                    var rect = new Rectangle(0, 0, sourceBmp.Width, sourceBmp.Height);
+
+                    using (var newBmp = sourceBmp.Clone(rect, bmpTargetFormat))
+                    {
+                        BitmapData bmpData = null;
+                        try
+                        {
+                            bmpData = newBmp.LockBits(rect, ImageLockMode.ReadOnly, bmpTargetFormat);
+                            var ptr = bmpData.Scan0;
+                            int size = bmpData.Stride * newBmp.Height;
+                            newContext.Data = new byte[size];
+                            newContext.Stride = bmpData.Stride;
+                            Marshal.Copy(ptr, newContext.Data, 0, size);
+                        }
+                        finally
+                        {
+                            newBmp.UnlockBits(bmpData);
+                        }
+                    }
+                }
+            }
+
+            return newContext;
+        }
+
+        private void FormatRawBitmap(ImageContext sourceContext, ImageContext targetContext)
+        {
+            var pixfmt = MMALEncodingToPixelFormat(sourceContext.PixelFormat);
+
+            using (var bitmap = new Bitmap(sourceContext.Resolution.Width, sourceContext.Resolution.Height, pixfmt))
+            {
+                BitmapData bmpData = null;
+                try
+                {
+                    bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, bitmap.PixelFormat);
+                    var ptr = bmpData.Scan0;
+                    int size = bmpData.Stride * bitmap.Height;
+                    var data = sourceContext.Data;
+                    Marshal.Copy(data, 0, ptr, size);
+                }
+                finally
+                {
+                    bitmap.UnlockBits(bmpData);
+                }
+
+                using (var ms = new MemoryStream())
+                {
+                    bitmap.Save(ms, targetContext.StoreFormat);
+                    targetContext.Data = new byte[ms.Length];
+                    Array.Copy(ms.ToArray(), 0, targetContext.Data, 0, ms.Length);
+                }
+            }
+        }
+
+        private PixelFormat MMALEncodingToPixelFormat(MMALEncoding encoding)
+        {
+            if (encoding == MMALEncoding.RGB24)
+            {
+                return PixelFormat.Format24bppRgb;
+            }
+
+            if (encoding == MMALEncoding.RGB32)
+            {
+                return PixelFormat.Format32bppRgb;
+            }
+
+            if (encoding == MMALEncoding.RGBA)
+            {
+                return PixelFormat.Format32bppArgb;
+            }
+
+            throw new Exception($"Unsupported pixel format: {encoding}");
+        }
+
+        private MMALEncoding PixelFormatToMMALEncoding(PixelFormat format, MMALEncoding defaultEncoding)
+        {
+            if (format == PixelFormat.Format24bppRgb)
+            {
+                return MMALEncoding.RGB24;
+            }
+
+            if (format == PixelFormat.Format32bppRgb)
+            {
+                return MMALEncoding.RGB32;
+            }
+
+            if (format == PixelFormat.Format32bppArgb)
+            {
+                return MMALEncoding.RGBA;
+            }
+
+            return defaultEncoding;
         }
     }
 }
