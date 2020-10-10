@@ -44,11 +44,7 @@ namespace MMALSharp.Handlers
             {
                 if (this.CurrentStream != null && this.CurrentStream.CanRead && this.CurrentStream.Length > 0)
                 {
-                    // When the context data length is zero, the data in the stream is a partial frame due to a race condition
-                    // where the hardware has started the next frame before the library has begun the shutdown process. The buffer
-                    // which triggered the call to PostProcess (from PortCallbackHandler) has a zero length which is what we're
-                    // checking for here.
-                    if (this.OnManipulate != null && this.ImageContext != null && this.ImageContext.Data.Length > 0)
+                    if (this.OnManipulate != null && this.ImageContext != null)
                     {
                         byte[] arr = null;
 

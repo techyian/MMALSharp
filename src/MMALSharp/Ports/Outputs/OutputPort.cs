@@ -302,7 +302,7 @@ namespace MMALSharp.Ports.Outputs
                       this.ComponentReference.ForceStopProcessing ||
                       bufferImpl.Length == 0;
 
-            if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !failed && !this.Trigger.Task.IsCompleted) || (eos && !this.Trigger.Task.IsCompleted))
+            if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !failed && !this.Trigger.Task.IsCompleted) || (eos && !this.Trigger.Task.IsCompleted && bufferImpl.Length > 0))
             {
                 this.CallbackHandler.Callback(bufferImpl);
             }
