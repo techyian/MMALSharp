@@ -26,24 +26,50 @@ namespace MMALSharp.Processors
         /// Cells are subsections of an image frame which are processed in parallel. This dictionary contains a list
         /// of recommended cell count values based on image resolution. The dictionary key is a (width, height) tuple
         /// and the value is a (horizontal, vertical) tuple. Multiply the horizontal and vertical values for total cell
-        /// count. Approximately 800 to 1000 cells seems ideal for a Raspberry Pi 4B.
+        /// count. Approximately 800 to 1000 cells seems ideal for a Raspberry Pi 4B. Note that the buffer (width, height)
+        /// can differ from the camera resolution (the hardware requires a horizontal 32-byte boundery and vertical 16-byte
+        /// boundary). The padded buffer "resolutions" are also provided by this dictionary.
         /// </summary>
-        public static IReadOnlyDictionary<(int width, int height), (int horizontal, int vertical)> RecommendedCellCounts
+        public static readonly IReadOnlyDictionary<(int width, int height), (int horizontal, int vertical)> RecommendedCellCounts
             = new Dictionary<(int width, int height), (int horizontal, int vertical)>(13)
             {
-                { (1920, 1080), (30, 30) }, // 900 cells    64 x 36
-                { (2592, 1944), (36, 36) }, // 1296 cells   72 x 54
-                { (1296, 972),  (27, 27) }, // 729 cells    36 x 27
-                { (1296, 730),  (48, 10) }, // 480 cells    27 x 73
-                { (640, 480),   (32, 32) }, // 1024 cells   20 x 15
-                { (3280, 2464), (40, 22) }, // 880 cells    82 x 112
-                { (1640, 1232), (40, 22) }, // 880 cells    41 x 56
-                { (1640, 922),  (40, 23) }, // 920 cells    41 x 40.09 (922 has no useful divisor)
-                { (1280, 720),  (20, 36) }, // 720 cells    64 x 20
-                { (2028, 1080), (26, 36) }, // 936 cells    78 x 30
-                { (2028, 1520), (26, 38) }, // 988 cells    78 x 40
-                { (4056, 3040), (00, 32) }, // 988 cells   156 x 80
-                { (1012, 760),  (00, 00) }, // 874 cells    44 x 20
+                // For 1640 x 922, there is no useful divisor for the 922 pixel Y resolution. Dividing by 461 would
+                // yield an integer cell height of 2, but convolution requires at least 3 pixels. Instead we use 23
+                // which yields a cell height of just over 40, meaning the last row of pixels in each cell are not
+                // processed (the indexers are integers). However, the padded-buffer version (second list) has a
+                // vertical height of 928 which is divisible by 16.
+
+                                                      // pixels per cell
+                { (1920, 1080), (30, 30) }, // 900 cells    64 x 36     Y padded buffer (see list below)
+                { (2592, 1944), (36, 36) }, // 1296 cells   72 x 54     Y  padded
+                { (1296, 972),  (27, 27) }, // 729 cells    36 x 48     XY padded
+                { (1296, 730),  (72, 10) }, // 720 cells    18 x 73     XY padded
+                { (640,  480),  (32, 32) }, // 1024 cells   20 x 15     not padded
+                { (3280, 2464), (40, 22) }, // 880 cells    82 x 112    X padded
+                { (1640, 1232), (40, 22) }, // 880 cells    41 x 56     X padded
+                { (1640, 922),  (40, 23) }, // 920 cells    41 x 40.09  XY padded
+                { (1280, 720),  (20, 36) }, // 720 cells    64 x 20     not padded
+                { (2028, 1080), (26, 36) }, // 936 cells    78 x 30     XY padded
+                { (2028, 1520), (26, 38) }, // 988 cells    78 x 40     X padded
+                { (4056, 3040), (26, 32) }, // 832 cells   156 x 95     X padded
+                { (1012, 760),  (44, 19) }, // 836 cells    23 x 40     XY padded
+
+                // The raw image hardware buffer is padded to align to a 32-byte width and 16-byte height. This
+                // padded buffer size is what is stored into ImageContext.Resolution, not the requested camera
+                // pixel resolution. The following list represents the padded buffer sizes. The data in the buffer
+                // matches the camera resolution, the pixels added for padding are always empty (zero).
+
+                { (1920, 1088), (30, 32) }, // 960 cells     64 x 34    res 1920 x 1080
+                { (2592, 1952), (36, 32) }, // 1152 cells    72 x 61    res 2592 x 1944
+                { (1312, 976),  (32, 16) }, // 512 cells     41 x 61    res 1296 x 972
+                { (1312, 736),  (32, 23) }, // 736 cells     41 x 32    res 1296 x 730
+                { (3296, 2464), (32, 22) }, // 704 cells    103 x 112   res 3280 x 2464
+                { (1664, 1232), (52, 22) }, // 1144 cells    32 x 56    res 1640 x 1232
+                { (1664, 928),  (52, 16) }, // 832 cells     32 x 58    res 1640 x 922
+                { (2048, 1088), (32, 32) }, // 1024 cells    64 x 34    res 2028 x 1080
+                { (2048, 1520), (32, 38) }, // 1216 cells    64 x 40    res 2028 x 1520
+                { (4064, 3040), (32, 32) }, // 1024 cells   127 x 95    res 4056 x 3040
+                { (1024, 768),  (32, 24) }, // 768 cells     32 x 32    res 1012 x 760
             };
 
         /// <summary>
