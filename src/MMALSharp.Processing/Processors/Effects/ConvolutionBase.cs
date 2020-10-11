@@ -59,7 +59,7 @@ namespace MMALSharp.Processors.Effects
         {
             var localContext = context.Raw ? context : CloneToRawBitmap(context);
 
-            bool storeFromRaw = context.StoreFormat != null;
+            bool storeFromRaw = context.Raw && context.StoreFormat != null;
 
             var analyser = new FrameAnalyser
             {
@@ -71,7 +71,7 @@ namespace MMALSharp.Processors.Effects
             Parallel.ForEach(analyser.CellRect, (cell)
                 => ProcessCell(cell, localContext.Data, kernel, kernelWidth, kernelHeight, analyser.Metadata, storeFromRaw));
 
-            if (storeFromRaw)
+            if (context.StoreFormat != null)
             {
                 FormatRawBitmap(localContext, context);
                 context.Raw = false; // context is never raw after formatting
