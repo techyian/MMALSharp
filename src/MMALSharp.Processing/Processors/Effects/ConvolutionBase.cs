@@ -80,6 +80,9 @@ namespace MMALSharp.Processors.Effects
             {
                 if(!context.Raw)
                 {
+                    // TakePicture doesn't set the Resolution, copy it from the cloned version which stored it from Bitmap
+                    context.Resolution = new Resolution(localContext.Resolution.Width, localContext.Resolution.Height);
+
                     context.Data = new byte[localContext.Data.Length];
                     Array.Copy(localContext.Data, context.Data, context.Data.Length);
                     context.Raw = true; // we just copied raw data to the source context
@@ -181,7 +184,7 @@ namespace MMALSharp.Processors.Effects
             {
                 using (var sourceBmp = new Bitmap(ms))
                 {
-                    // sourceContext.Resolution isn't set by TakeStillPicture (width,height is 0,0).
+                    // sourceContext.Resolution isn't set by TakePicture (width,height is 0,0)
                     newContext.Resolution = new Resolution(sourceBmp.Width, sourceBmp.Height);
 
                     // If the source bitmap has a raw-compatible format, use it, otherwise default to RGBA
