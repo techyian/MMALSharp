@@ -59,6 +59,8 @@ namespace MMALSharp.Processors.Effects
         {
             var localContext = context.Raw ? context : CloneToRawBitmap(context);
 
+            bool storeFromRaw = context.StoreFormat != null;
+
             var analyser = new FrameAnalyser
             {
                 HorizonalCellCount = _horizontalCellCount,
@@ -67,9 +69,9 @@ namespace MMALSharp.Processors.Effects
             analyser.Apply(localContext);
 
             Parallel.ForEach(analyser.CellRect, (cell)
-                => ProcessCell(cell, localContext.Data, kernel, kernelWidth, kernelHeight, analyser.Metadata));
+                => ProcessCell(cell, localContext.Data, kernel, kernelWidth, kernelHeight, analyser.Metadata, storeFromRaw));
 
-            if (context.StoreFormat != null)
+            if (storeFromRaw)
             {
                 FormatRawBitmap(localContext, context);
                 context.Raw = false; // context is never raw after formatting
@@ -85,7 +87,7 @@ namespace MMALSharp.Processors.Effects
             }
         }
 
-        private void ProcessCell(Rectangle rect, byte[] image, double[,] kernel, int kernelWidth, int kernelHeight, FrameAnalysisMetadata metadata)
+        private void ProcessCell(Rectangle rect, byte[] image, double[,] kernel, int kernelWidth, int kernelHeight, FrameAnalysisMetadata metadata, bool storeFromRaw)
         {
             // Rectangle and FrameAnalysisMetadata are structures; they are by-value copies and all fields are value-types which makes them thread safe
 
@@ -93,6 +95,21 @@ namespace MMALSharp.Processors.Effects
             int y2 = rect.Y + rect.Height;
 
             int index;
+
+            // Indicates RGB needs to be swapped to BGR so that Bitmap.Save works correctly.
+            if (storeFromRaw)
+            {
+                for (var x = rect.X; x < x2; x++)
+                {
+                    for (var y = rect.Y; y < y2; y++)
+                    {
+                        index = (x * metadata.Bpp) + (y * metadata.Stride);
+                        byte swap = image[index];
+                        image[index] = image[index + 2];
+                        image[index + 2] = swap;
+                    }
+                }
+            }
 
             for (var x = rect.X; x < x2; x++)
             {
