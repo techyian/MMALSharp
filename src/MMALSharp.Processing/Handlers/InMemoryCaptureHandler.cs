@@ -22,7 +22,7 @@ namespace MMALSharp.Handlers
         /// The working data store.
         /// </summary>
         public List<byte> WorkingData { get; set; }
-               
+
         /// <summary>
         /// Creates a new instance of <see cref="InMemoryCaptureHandler"/>.
         /// </summary>
@@ -30,13 +30,13 @@ namespace MMALSharp.Handlers
         {
             this.WorkingData = new List<byte>();
         }
-        
+
         /// <inheritdoc />
         public override void Dispose()
         {
             MMALLog.Logger.LogInformation($"Successfully processed {Helpers.ConvertBytesToMegabytes(_totalProcessed)}.");
         }
-        
+
         /// <inheritdoc />
         public override void Process(ImageContext context)
         {

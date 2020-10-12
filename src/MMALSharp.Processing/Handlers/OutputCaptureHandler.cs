@@ -64,10 +64,10 @@ namespace MMALSharp.Handlers
         }
 
         /// <summary>
-        /// Allows manipulating of the image frame.
+        /// Allows manipulation of the image frame.
         /// </summary>
         /// <param name="context">A delegate to the manipulation you wish to carry out.</param>
-        /// <param name="storeFormat">The image format to save manipulated files in..</param>
+        /// <param name="storeFormat">The image format to save manipulated files in, or null to return raw data.</param>
         public void Manipulate(Action<IFrameProcessingContext> context, ImageFormat storeFormat)
         {
             this.OnManipulate = context;

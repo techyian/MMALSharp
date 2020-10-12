@@ -113,15 +113,6 @@ namespace MMALSharp.Handlers
             => throw new NotImplementedException();
 
         /// <summary>
-        /// Not used.
-        /// </summary>
-        /// <param name="allocSize">N/A.</param>
-        /// <returns>A NotImplementedException.</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public ProcessResult Process(uint allocSize)
-            => throw new NotImplementedException();
-
-        /// <summary>
         /// Writes frame data to the StandardInput stream for processing.
         /// </summary>
         /// <param name="context">Contains the data and metadata for an image frame.</param>

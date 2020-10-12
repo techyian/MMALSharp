@@ -74,7 +74,7 @@ namespace MMALSharp.Handlers
             {
                 Filename = "ffmpeg",
                 Arguments = $"-framerate {fps} -i - -b:v {bitrate}k -c copy -movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov {directory.TrimEnd()}/{filename}.mp4",
-                EchoOutput = true,
+                EchoOutput = echoOutput,
                 DrainOutputDelayMs = 500, // default
                 TerminationSignals = ExternalProcessCaptureHandlerOptions.SignalsFFmpeg
             };

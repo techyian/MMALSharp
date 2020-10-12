@@ -4,6 +4,8 @@
 // </copyright>
 
 using MMALSharp.Common;
+using System;
+using System.Diagnostics;
 
 namespace MMALSharp.Processors.Effects
 {
@@ -17,10 +19,20 @@ namespace MMALSharp.Processors.Effects
 
         private double[,] _kernel = new double[KernelWidth, KernelHeight]
         {
-            { 0, -1, 0 },
+            {  0, -1,  0 },
             { -1,  5, -1 },
-            { 0, -1, 0 }
+            {  0, -1,  0 },
         };
+
+        /// <inheritdoc />
+        public SharpenProcessor()
+            : base()
+        { }
+
+        /// <inheritdoc />
+        public SharpenProcessor(int horizontalCellCount, int verticalCellCount)
+            : base(horizontalCellCount, verticalCellCount)
+        { }
 
         /// <inheritdoc />
         public void Apply(ImageContext context)

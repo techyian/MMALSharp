@@ -23,7 +23,7 @@ namespace MMALSharp.Handlers
         /// A Stream instance that we can process image data to.
         /// </summary>
         public T CurrentStream { get; protected set; }
-        
+
         /// <inheritdoc />
         public override void Process(ImageContext context)
         {
@@ -64,11 +64,11 @@ namespace MMALSharp.Handlers
                         }
 
                         using (var ms = new MemoryStream(this.ImageContext.Data))
-                        {   
+                        {
                             this.CurrentStream.SetLength(0);
                             this.CurrentStream.Position = 0;
                             ms.CopyTo(this.CurrentStream);
-                        }    
+                        }
                     }
                 }
             }
@@ -77,7 +77,7 @@ namespace MMALSharp.Handlers
                 MMALLog.Logger.LogWarning($"Something went wrong while processing stream: {e.Message}. {e.InnerException?.Message}. {e.StackTrace}");
             }
         }
-        
+
         /// <inheritdoc />
         public override string TotalProcessed()
         {

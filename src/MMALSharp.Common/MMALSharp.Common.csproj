@@ -17,7 +17,8 @@
 	<VersionPrefix>0.7.0</VersionPrefix>
 	<CodeAnalysisRuleSet>..\..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>	
 	<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-	<ProjectGuid>{65a1440e-72e1-4943-b469-5cfba8cb5633}</ProjectGuid> <!--Project guid for Sonar-->
+	<ProjectGuid>{65a1440e-72e1-4943-b469-5cfba8cb5633}</ProjectGuid>
+	<!--Project guid for Sonar-->
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
