@@ -4,7 +4,6 @@
 // </copyright>
 
 using System;
-using System.Runtime.InteropServices;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
 using MMALSharp.Config;
@@ -282,7 +281,7 @@ namespace MMALSharp.Tests
         [MMALTestsAttribute]
         public void SetThenGetShutterSpeed(int shutterSpeed)
         {   
-            MMALCameraConfig.Framerate = new MMAL_RATIONAL_T(0, 0);
+            MMALCameraConfig.Framerate = 0;
             MMALCameraConfig.SensorMode = MMALSensorMode.Mode1;
             MMALCameraConfig.AwbMode = MMAL_PARAM_AWBMODE_T.MMAL_PARAM_AWBMODE_OFF;
             MMALCameraConfig.ShutterSpeed = shutterSpeed;
@@ -392,6 +391,20 @@ namespace MMALSharp.Tests
             {
                 Assert.ThrowsAny<Exception>(() => Fixture.MMALCamera.ConfigureCameraSettings());
             }
+        }
+
+        [Theory]
+        [InlineData(25)]
+        [InlineData(25.5)]
+        [InlineData(0.005)]
+        [MMALTests]
+        public void SetThenGetFramerate(double framerate)
+        {
+            MMALCameraConfig.Framerate = framerate;
+
+            Fixture.MMALCamera.ConfigureCameraSettings();
+
+            Assert.True((double)Fixture.MMALCamera.Camera.StillPort.FrameRateRational.Num / Fixture.MMALCamera.Camera.StillPort.FrameRateRational.Den == framerate);
         }
     }
 }

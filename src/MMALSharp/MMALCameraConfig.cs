@@ -183,7 +183,7 @@ namespace MMALSharp
         /// <summary>
         /// The working framerate of the camera.
         /// </summary>
-        public static MMAL_RATIONAL_T Framerate { get; set; } = new MMAL_RATIONAL_T(30, 1);
+        public static double Framerate { get; set; } = 30;
 
         /*
          * -----------------------------------------------------------------------------------------------------------

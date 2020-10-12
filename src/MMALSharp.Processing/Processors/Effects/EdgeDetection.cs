@@ -4,6 +4,8 @@
 // </copyright>
 
 using MMALSharp.Common;
+using System;
+using System.Diagnostics;
 
 namespace MMALSharp.Processors.Effects
 {
@@ -15,7 +17,7 @@ namespace MMALSharp.Processors.Effects
         /// <summary>
         /// Low strength.
         /// </summary>
-        Low,
+        Low = 0,
 
         /// <summary>
         /// Medium strength.
@@ -27,81 +29,65 @@ namespace MMALSharp.Processors.Effects
         /// </summary>
         High
     }
-    
+
     /// <summary>
     /// A kernel based image processor used to apply Edge detection convolution.
     /// </summary>
     public class EdgeDetection : ConvolutionBase, IFrameProcessor
     {
-        /// <summary>
-        /// The kernel's width.
-        /// </summary>
-        public const int KernelWidth = 3;
+        private const int _kernelWidth = 3;
+        private const int _kernelHeight = 3;
 
-        /// <summary>
-        /// The kernel's height.
-        /// </summary>
-        public const int KernelHeight = 3;
-
-        /// <summary>
-        /// A kernel used to apply a low strength edge detection convolution to an image.
-        /// </summary>
-        public static double[,] LowStrengthKernel = new double[KernelWidth, KernelHeight]
+        private readonly double[][,] _kernels =
         {
-            { -1, 0, 1 },
-            { 0, 0, 0 },
-            { 1, 0, -1 }
+            new double[,] // 0 - Low
+            {
+                { -1, 0, 1 },
+                { 0, 0, 0 },
+                { 1, 0, -1 }
+            },
+            new double[,] // 1 - Medium
+            {
+                { 0, 1, 0 },
+                { 1, -4, 1 },
+                { 0, 1, 0 }
+            },
+            new double[,] // 2 - High
+            {
+                { -1, -1, -1 },
+                { -1, 8, -1 },
+                { -1, -1, -1 }
+            },
         };
 
-        /// <summary>
-        /// A kernel used to apply a medium strength edge detection convolution to an image.
-        /// </summary>
-        public static double[,] MediumStrengthKernel = new double[KernelWidth, KernelHeight]
-        {
-            { 0, 1, 0 },
-            { 1, -4, 1 },
-            { 0, 1, 0 }
-        };
+        private readonly int _kernelType;
 
-        /// <summary>
-        /// A kernel used to apply a high strength edge detection convolution to an image.
-        /// </summary>
-        public static double[,] HighStrengthKernel = new double[KernelWidth, KernelHeight]
-        {
-            { -1, -1, -1 },
-            { -1, 8, -1 },
-            { -1, -1, -1 }
-        };
-
-        /// <summary>
-        /// The working kernel.
-        /// </summary>
-        public double[,] Kernel { get; }
-        
         /// <summary>
         /// Creates a new instance of <see cref="EdgeDetection"/> processor used to apply Edge detection convolution.
         /// </summary>
         /// <param name="strength">The Edge detection strength.</param>
         public EdgeDetection(EDStrength strength)
+            : base()
         {
-            switch (strength)
-            {
-                case EDStrength.Low:
-                    Kernel = LowStrengthKernel;
-                    break;
-                case EDStrength.Medium:
-                    Kernel = MediumStrengthKernel;
-                    break;
-                case EDStrength.High:
-                    Kernel = HighStrengthKernel;
-                    break;
-            }
+            _kernelType = (int)strength;
+        }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="EdgeDetection"/> processor used to apply Edge detection convolution.
+        /// </summary>
+        /// <param name="strength">The Edge detection strength.</param>
+        /// <param name="horizontalCellCount">The number of columns to divide the image into.</param>
+        /// <param name="verticalCellCount">The number of rows to divide the image into.</param>
+        public EdgeDetection(EDStrength strength, int horizontalCellCount, int verticalCellCount)
+            : base(horizontalCellCount, verticalCellCount)
+        {
+            _kernelType = (int)strength;
         }
 
         /// <inheritdoc />
         public void Apply(ImageContext context)
         {
-            this.ApplyConvolution(this.Kernel, KernelWidth, KernelHeight, context);
+            this.ApplyConvolution(_kernels[_kernelType], _kernelWidth, _kernelHeight, context);
         }
     }
 }
