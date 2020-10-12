@@ -33,7 +33,7 @@ namespace MMALSharp.Ports.Outputs
                 this.Height = value.Pad().Height;
             }
         }
-        
+
         /// <summary>
         /// Creates a new instance of <see cref="OutputPort"/>. 
         /// </summary>
@@ -278,7 +278,7 @@ namespace MMALSharp.Ports.Outputs
             this.Trigger = new TaskCompletionSource<bool>();
             this.Enable();
         }
-        
+
         /// <summary>
         /// The native callback MMAL passes buffer headers to.
         /// </summary>
@@ -290,11 +290,11 @@ namespace MMALSharp.Ports.Outputs
             {
                 MMALLog.Logger.LogDebug($"{this.Name}: In native output callback");
             }
-            
+
             var bufferImpl = new MMALBufferImpl(buffer);
 
             bufferImpl.PrintProperties();
-            
+
             var failed = bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_TRANSMISSION_FAILED);
 
             var eos = bufferImpl.AssertProperty(MMALBufferProperties.MMAL_BUFFER_HEADER_FLAG_FRAME_END) ||
@@ -302,11 +302,11 @@ namespace MMALSharp.Ports.Outputs
                       this.ComponentReference.ForceStopProcessing ||
                       bufferImpl.Length == 0;
 
-            if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !failed && !this.Trigger.Task.IsCompleted) || (eos && !this.Trigger.Task.IsCompleted))
+            if ((bufferImpl.CheckState() && bufferImpl.Length > 0 && !eos && !failed && !this.Trigger.Task.IsCompleted) || (eos && !this.Trigger.Task.IsCompleted && bufferImpl.Length > 0))
             {
                 this.CallbackHandler.Callback(bufferImpl);
             }
-            
+
             // Ensure we release the buffer before any signalling or we will cause a memory leak due to there still being a reference count on the buffer.
             this.ReleaseBuffer(bufferImpl, eos);
 
@@ -314,7 +314,7 @@ namespace MMALSharp.Ports.Outputs
             if (eos || failed)
             {
                 MMALLog.Logger.LogDebug($"{this.Name}: End of stream. Signaling completion...");
-                
+
                 Task.Run(() => { this.Trigger.SetResult(true); });
             }
         }

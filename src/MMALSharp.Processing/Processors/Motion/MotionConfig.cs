@@ -13,15 +13,20 @@ namespace MMALSharp.Processors.Motion
     public class MotionConfig
     {
         /// <summary>
-        /// The amount of change which will trigger a motion event.
+        /// Implements the logic used to detect motion.
         /// </summary>
-        public int Threshold { get; set; }
+        public IMotionAlgorithm MotionAlgorithm { get; set; }
 
         /// <summary>
         /// The frequency at which the test frame is updated. The test frame is the baseline against
         /// which the current frame is compared to detect motion.
         /// </summary>
         public TimeSpan TestFrameInterval { get; set; }
+
+        /// <summary>
+        /// The minimum duration with no motion detection events before the test frame will update.
+        /// </summary>
+        public TimeSpan TestFrameRefreshCooldown { get; set; }
 
         /// <summary>
         /// The name of a BMP file to apply as a motion-detection mask. The file must match the raw stream's
@@ -32,13 +37,19 @@ namespace MMALSharp.Processors.Motion
         /// <summary>
         /// Creates a new instance of <see cref="MotionConfig"/>.
         /// </summary>
-        /// <param name="threshold">Motion sensitivity threshold. The default is 130 (suitable for many indoor scenes).</param>
+        /// <param name="algorithm">An instance of the motion detection algorithm implementation.</param>
         /// <param name="testFrameInterval">Frequency at which the test frame is updated. The default is 10 seconds.</param>
+        /// <param name="testFrameCooldown">The minimum duration with no motion detection before the test frame updates. The default is 3 seconds.</param>
         /// <param name="motionMaskPathname">Pathname to an optional motion-detection mask bitmap.</param>
-        public MotionConfig(int threshold = 130, TimeSpan testFrameInterval = default, string motionMaskPathname = null)
+        public MotionConfig(
+            IMotionAlgorithm algorithm,
+            TimeSpan testFrameInterval = default, 
+            TimeSpan testFrameCooldown = default, 
+            string motionMaskPathname = null)
         {
-            this.Threshold = threshold;
+            this.MotionAlgorithm = algorithm;
             this.TestFrameInterval = testFrameInterval.Equals(TimeSpan.Zero) ? TimeSpan.FromSeconds(10) : testFrameInterval;
+            this.TestFrameRefreshCooldown = testFrameCooldown.Equals(TimeSpan.Zero) ? TimeSpan.FromSeconds(3) : testFrameCooldown;
             this.MotionMaskPathname = motionMaskPathname;
         }
     }

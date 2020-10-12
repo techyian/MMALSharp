@@ -4,6 +4,8 @@
 // </copyright>
 
 using MMALSharp.Common;
+using System;
+using System.Diagnostics;
 
 namespace MMALSharp.Processors.Effects
 {
@@ -15,7 +17,7 @@ namespace MMALSharp.Processors.Effects
         /// <summary>
         /// Use a 3x3 matrix.
         /// </summary>
-        Matrix3x3,
+        Matrix3x3 = 0,
 
         /// <summary>
         /// Use a 5x5 matrix.
@@ -28,48 +30,58 @@ namespace MMALSharp.Processors.Effects
     /// </summary>
     public class GaussianProcessor : ConvolutionBase, IFrameProcessor
     {
-        private readonly int _kernelWidth = 3;
-        private readonly int _kernelHeight = 3;
+        private readonly int _kernelType;
 
-        private double[,] Kernel { get; }
+        private readonly double[][,] _kernels =
+{
+            new double[3, 3] // 0 - Matrix3x3
+            {
+                { 0.0625, 0.125, 0.0625 },
+                { 0.125,  0.25,  0.125 },
+                { 0.0625, 0.125, 0.0625 },
+            },
+            new double[5, 5] // 1 - Matrix5x5
+            {
+                { 0.00390625, 0.015625, 0.0234375, 0.015625, 0.00390625 },
+                { 0.015625, 0.0625, 0.09375, 0.0625, 0.015625 },
+                { 0.0234375, 0.09375, 0.140625, 0.09375, 0.0234375 },
+                { 0.015625, 0.0625, 0.09375, 0.0625, 0.015625 },
+                { 0.00390625, 0.015625, 0.0234375, 0.015625, 0.00390625 },
+            },
+        };
+
+        private readonly (int width, int height)[] _sizes =
+        {
+            (3, 3), // 0 - Matrix3x3
+            (5, 5), // 1 - Matrix5x5
+        };
 
         /// <summary>
         /// Creates a new instance of <see cref="GaussianProcessor"/>.
         /// </summary>
         /// <param name="matrix">The Gaussian matrix to apply.</param>
         public GaussianProcessor(GaussianMatrix matrix)
+            : base()
         {
-            switch (matrix)
-            {
-                case GaussianMatrix.Matrix3x3:
-                    _kernelWidth = 3;
-                    _kernelHeight = 3;
-                    Kernel = new double[3, 3]
-                    {
-                        { 0.0625, 0.125, 0.0625 },
-                        { 0.125,  0.25,  0.125 },
-                        { 0.0625, 0.125, 0.0625 }
-                    };
-                    break;
-                case GaussianMatrix.Matrix5x5:
-                    _kernelWidth = 5;
-                    _kernelHeight = 5;
-                    Kernel = new double[5, 5]
-                    {
-                        { 0.00390625, 0.015625, 0.0234375, 0.015625, 0.00390625 },
-                        { 0.015625, 0.0625, 0.09375, 0.0625, 0.015625 },
-                        { 0.0234375, 0.09375, 0.140625, 0.09375, 0.0234375 },
-                        { 0.015625, 0.0625, 0.09375, 0.0625, 0.015625 },
-                        { 0.00390625, 0.015625, 0.0234375, 0.015625, 0.00390625 },
-                    };
-                    break;
-            }
+            _kernelType = (int)matrix;
+        }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="GaussianProcessor"/>.
+        /// </summary>
+        /// <param name="matrix">The Gaussian matrix to apply.</param>
+        /// <param name="horizontalCellCount">The number of columns to divide the image into.</param>
+        /// <param name="verticalCellCount">The number of rows to divide the image into.</param>
+        public GaussianProcessor(GaussianMatrix matrix, int horizontalCellCount, int verticalCellCount)
+            : base(horizontalCellCount, verticalCellCount)
+        {
+            _kernelType = (int)matrix;
         }
 
         /// <inheritdoc />
         public void Apply(ImageContext context)
         {
-            this.ApplyConvolution(this.Kernel, _kernelWidth, _kernelHeight, context);
+            this.ApplyConvolution(_kernels[_kernelType], _sizes[_kernelType].width, _sizes[_kernelType].height, context);
         }
     }
 }
