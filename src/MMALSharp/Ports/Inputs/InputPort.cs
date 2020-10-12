@@ -20,19 +20,8 @@ namespace MMALSharp.Ports.Inputs
     /// <summary>
     /// Represents an input port.
     /// </summary>
-    public class InputPort : PortBase<IInputCallbackHandler>, IInputPort
+    public class InputPort : GenericPort<IInputCallbackHandler>, IInputPort
     {
-        /// <inheritdoc />
-        public override Resolution Resolution
-        {
-            get => new Resolution(this.Width, this.Height);
-            internal set
-            {
-                this.Width = value.Pad().Width;
-                this.Height = value.Pad().Height;
-            }
-        }
-
         /// <summary>
         /// Creates a new instance of <see cref="InputPort"/>. 
         /// </summary>

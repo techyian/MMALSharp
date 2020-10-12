@@ -147,7 +147,7 @@ namespace MMALSharp.Ports
         public MMAL_ES_FORMAT_T Format => *this.Ptr->Format;
         
         /// <summary>
-        /// The Width/Height that this port will process data in.
+        /// The resolution that this port will process data in. Not aligned value.
         /// </summary>
         public abstract Resolution Resolution { get; internal set; }
 
@@ -241,16 +241,22 @@ namespace MMALSharp.Ports
             internal set => this.Ptr->Format->Es->Video.Par = value;
         }
 
-        internal int Width
+        /// <summary>
+        /// The width value stored against this port instance. Typically aligned to 32 pixels.
+        /// </summary>
+        public int NativeWidth
         {
             get => this.Ptr->Format->Es->Video.Width;
-            set => this.Ptr->Format->Es->Video.Width = value;
+            internal set => this.Ptr->Format->Es->Video.Width = value;
         }
 
-        internal int Height
+        /// <summary>
+        /// The height value stored against this port instance. Typically aligned to 16 pixels.
+        /// </summary>
+        public int NativeHeight
         {
             get => this.Ptr->Format->Es->Video.Height;
-            set => this.Ptr->Format->Es->Video.Height = value;
+            internal set => this.Ptr->Format->Es->Video.Height = value;
         }
 
         #endregion

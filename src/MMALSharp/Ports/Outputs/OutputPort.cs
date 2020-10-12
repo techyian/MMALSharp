@@ -21,19 +21,8 @@ namespace MMALSharp.Ports.Outputs
     /// <summary>
     /// Represents an output port.
     /// </summary>
-    public unsafe class OutputPort : PortBase<IOutputCallbackHandler>, IOutputPort
-    {
-        /// <inheritdoc />
-        public override Resolution Resolution
-        {
-            get => new Resolution(this.Width, this.Height);
-            internal set
-            {
-                this.Width = value.Pad().Width;
-                this.Height = value.Pad().Height;
-            }
-        }
-        
+    public unsafe class OutputPort : GenericPort<IOutputCallbackHandler>, IOutputPort
+    {                
         /// <summary>
         /// Creates a new instance of <see cref="OutputPort"/>. 
         /// </summary>

@@ -183,8 +183,8 @@ namespace MMALSharp.Components
             
             var camConfig = new MMAL_PARAMETER_CAMERA_CONFIG_T(
                 new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_CAMERA_CONFIG, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_CONFIG_T>()),
-                                                                this.CameraInfo.MaxWidth,
-                                                                this.CameraInfo.MaxHeight,
+                                                                MMALCameraConfig.Resolution.Width,
+                                                                MMALCameraConfig.Resolution.Height,
                                                                 0,
                                                                 1,
                                                                 MMALCameraConfig.Resolution.Width,
@@ -338,8 +338,8 @@ namespace MMALSharp.Components
                 portConfig = new MMALPortConfig(
                     encoding,
                     encoding,
-                    width: currentWidth,
-                    height: currentHeight,
+                    width: resolution.Width,
+                    height: resolution.Height,
                     framerate: MMALCameraConfig.Framerate,
                     bufferNum: Math.Max(this.StillPort.BufferNumRecommended, 3),
                     bufferSize: Math.Max(this.StillPort.BufferSizeRecommended, this.StillPort.BufferSizeMin),
