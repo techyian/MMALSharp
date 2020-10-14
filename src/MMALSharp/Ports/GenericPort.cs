@@ -17,14 +17,21 @@ namespace MMALSharp.Ports
     public class GenericPort<TCallback> : PortBase<TCallback>
         where TCallback : ICallbackHandler
     {
+        private Resolution _resolution;
+
         /// <inheritdoc />
         public override Resolution Resolution
         {
-            get => new Resolution(this.NativeWidth, this.NativeHeight);
+            get
+            {
+                return _resolution;
+            }
+
             internal set
             {
                 this.NativeWidth = value.Pad().Width;
                 this.NativeHeight = value.Pad().Height;
+                _resolution = new Resolution(value.Width, value.Height);
             }
         }
 
