@@ -683,5 +683,40 @@ namespace MMALSharp.Tests
                 Fixture.CheckAndAssertFilepath(imgCaptureHandler4.GetFilepath());
             }
         }
+
+        [Fact]
+        public async Task UserProvidedBufferNumAndSize()
+        {
+            TestHelper.BeginTest("UserProvidedBufferNumAndSize");
+            TestHelper.SetConfigurationDefaults();
+            TestHelper.CleanDirectory("/home/pi/images/tests");
+
+            MMALCameraConfig.UserBufferNum = 10;
+            MMALCameraConfig.UserBufferSize = 20000;
+
+            using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "jpg"))
+            using (var preview = new MMALNullSinkComponent())
+            using (var imgEncoder = new MMALImageEncoder())
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+
+                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, quality: 90);
+
+                imgEncoder.ConfigureOutputPort(portConfig, imgCaptureHandler);
+
+                // Create our component pipeline.         
+                Fixture.MMALCamera.Camera.StillPort
+                    .ConnectTo(imgEncoder);
+                Fixture.MMALCamera.Camera.PreviewPort
+                    .ConnectTo(preview);
+
+                // Camera warm up time
+                await Task.Delay(2000);
+
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
+
+                Fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
+            }
+        }
     }
 }
