@@ -171,6 +171,16 @@ namespace MMALSharp
         public static MMALEncoding Encoding { get; set; } = MMALEncoding.OPAQUE;
 
         /// <summary>
+        /// User requested number of buffers to be applied to the camera ports.
+        /// </summary>
+        public static int UserBufferNum { get; set; }
+
+        /// <summary>
+        /// User requested buffer size to be applied to the camera ports.
+        /// </summary>
+        public static int UserBufferSize { get; set; }
+
+        /// <summary>
         /// The camera encoding sub format.
         /// </summary>
         public static MMALEncoding EncodingSubFormat { get; set; } = MMALEncoding.I420;

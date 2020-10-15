@@ -270,8 +270,8 @@ namespace MMALSharp.Components
                 width: currentWidth,
                 height: currentHeight,
                 framerate: MMALCameraConfig.Framerate,
-                bufferNum: Math.Max(this.VideoPort.BufferNumRecommended, 3),
-                bufferSize: Math.Max(this.VideoPort.BufferSizeRecommended, this.VideoPort.BufferSizeMin),
+                bufferNum: Math.Max(MMALCameraConfig.UserBufferNum, Math.Max(this.VideoPort.BufferNumRecommended, 3)),
+                bufferSize: Math.Max(MMALCameraConfig.UserBufferSize, Math.Max(this.VideoPort.BufferSizeRecommended, this.VideoPort.BufferSizeMin)),
                 crop: new Rectangle(0, 0, currentWidth, currentHeight));
 
             MMALLog.Logger.LogDebug("Commit video");
@@ -341,8 +341,8 @@ namespace MMALSharp.Components
                     width: resolution.Width,
                     height: resolution.Height,
                     framerate: MMALCameraConfig.Framerate,
-                    bufferNum: Math.Max(this.StillPort.BufferNumRecommended, 3),
-                    bufferSize: Math.Max(this.StillPort.BufferSizeRecommended, this.StillPort.BufferSizeMin),
+                    bufferNum: Math.Max(MMALCameraConfig.UserBufferNum, Math.Max(this.StillPort.BufferNumRecommended, 3)),
+                    bufferSize: Math.Max(MMALCameraConfig.UserBufferSize, Math.Max(this.StillPort.BufferSizeRecommended, this.StillPort.BufferSizeMin)),
                     crop: new Rectangle(0, 0, currentWidth, currentHeight));
             }
             else
@@ -355,8 +355,8 @@ namespace MMALSharp.Components
                     width: resolution.Width,
                     height: resolution.Height,
                     framerate: MMALCameraConfig.Framerate,
-                    bufferNum: Math.Max(this.StillPort.BufferNumRecommended, 3),
-                    bufferSize: Math.Max(this.StillPort.BufferSizeRecommended, this.StillPort.BufferSizeMin),
+                    bufferNum: Math.Max(MMALCameraConfig.UserBufferNum, Math.Max(this.StillPort.BufferNumRecommended, 3)),
+                    bufferSize: Math.Max(MMALCameraConfig.UserBufferSize, Math.Max(this.StillPort.BufferSizeRecommended, this.StillPort.BufferSizeMin)),
                     crop: new Rectangle(0, 0, currentWidth, currentHeight));
             }
             
