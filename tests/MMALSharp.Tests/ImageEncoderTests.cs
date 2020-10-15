@@ -20,6 +20,7 @@ using MMALSharp.Ports;
 using MMALSharp.Processors;
 using MMALSharp.Tests.Data;
 using Xunit;
+using MMALSharp.Ports.Outputs;
 
 namespace MMALSharp.Tests
 {
@@ -601,6 +602,85 @@ namespace MMALSharp.Tests
                 await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
 
                 Fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
+            }
+        }
+
+        [Fact]
+        public async Task TakeMultiplePicturesFromSplitterComponent()
+        {
+            // This test relies on an ISP component being connected between a splitter component output port
+            // and an image encoder input port. If the ISP component is not used as a go-between, the splitter
+            // component appears to only accept 1 of its output ports being connected to an image encoder. I believe
+            // this may be a firmware restriction.
+            TestHelper.BeginTest("TakeMultiplePicturesFromSplitterComponent");
+            TestHelper.SetConfigurationDefaults();
+
+            using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "jpg"))
+            using (var imgCaptureHandler2 = new ImageStreamCaptureHandler("/home/pi/images/tests", "jpg"))
+            using (var imgCaptureHandler3 = new ImageStreamCaptureHandler("/home/pi/images/tests", "jpg"))
+            using (var imgCaptureHandler4 = new ImageStreamCaptureHandler("/home/pi/images/tests", "jpg"))
+            using (var imgEncoder = new MMALImageEncoder())
+            using (var imgEncoder2 = new MMALImageEncoder())
+            using (var imgEncoder3 = new MMALImageEncoder())
+            using (var imgEncoder4 = new MMALImageEncoder())
+            using (var splitter = new MMALSplitterComponent())
+            using (var isp1 = new MMALIspComponent())
+            using (var isp2 = new MMALIspComponent())
+            using (var isp3 = new MMALIspComponent())
+            using (var isp4 = new MMALIspComponent())
+            using (var nullSink = new MMALNullSinkComponent())
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+
+                var portConfig = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, quality: 90);
+                var portConfig2 = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, quality: 90);
+                var portConfig3 = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, quality: 90);
+                var portConfig4 = new MMALPortConfig(MMALEncoding.JPEG, MMALEncoding.I420, quality: 90);
+
+                var splitterConfig = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420);
+
+                var resizeConfig = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420, width: 1280, height: 720);
+                var resizeConfig2 = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420, width: 1024, height: 720);
+                var resizeConfig3 = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420, width: 640, height: 480);
+                var resizeConfig4 = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420, width: 620, height: 310);
+
+                // Create our component pipeline.      
+                splitter.ConfigureOutputPort<SplitterStillPort>(0, splitterConfig, null);
+                splitter.ConfigureOutputPort<SplitterStillPort>(1, splitterConfig, null);
+                splitter.ConfigureOutputPort<SplitterStillPort>(2, splitterConfig, null);
+                splitter.ConfigureOutputPort<SplitterStillPort>(3, splitterConfig, null);
+
+                isp1.ConfigureOutputPort(resizeConfig, null);
+                isp2.ConfigureOutputPort(resizeConfig2, null);
+                isp3.ConfigureOutputPort(resizeConfig3, null);
+                isp4.ConfigureOutputPort(resizeConfig4, null);
+
+                imgEncoder.ConfigureOutputPort(portConfig, imgCaptureHandler);
+                imgEncoder2.ConfigureOutputPort(portConfig2, imgCaptureHandler2);
+                imgEncoder3.ConfigureOutputPort(portConfig3, imgCaptureHandler3);
+                imgEncoder4.ConfigureOutputPort(portConfig4, imgCaptureHandler4);
+
+                Fixture.MMALCamera.Camera.StillPort.ConnectTo(splitter);
+                Fixture.MMALCamera.Camera.PreviewPort.ConnectTo(nullSink);
+
+                splitter.Outputs[0].ConnectTo(isp1);
+                splitter.Outputs[1].ConnectTo(isp2);
+                splitter.Outputs[2].ConnectTo(isp3);
+                splitter.Outputs[3].ConnectTo(isp4);
+
+                isp1.Outputs[0].ConnectTo(imgEncoder);
+                isp2.Outputs[0].ConnectTo(imgEncoder2);
+                isp3.Outputs[0].ConnectTo(imgEncoder3);
+                isp4.Outputs[0].ConnectTo(imgEncoder4);
+                                
+                // Camera warm up time
+                await Task.Delay(2000);
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
+
+                Fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
+                Fixture.CheckAndAssertFilepath(imgCaptureHandler2.GetFilepath());
+                Fixture.CheckAndAssertFilepath(imgCaptureHandler3.GetFilepath());
+                Fixture.CheckAndAssertFilepath(imgCaptureHandler4.GetFilepath());
             }
         }
     }
