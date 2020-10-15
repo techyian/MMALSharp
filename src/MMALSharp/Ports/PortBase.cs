@@ -89,9 +89,15 @@ namespace MMALSharp.Ports
         public MMAL_PORT_T* Ptr { get; }
 
         /// <summary>
-        /// Native name of port.
+        /// Returns the Native name and user provided name of port (if set).
         /// </summary>
-        public string Name => Marshal.PtrToStringAnsi((IntPtr)this.Ptr->Name);
+        public string Name 
+        {
+            get
+            {
+                return $"{Marshal.PtrToStringAnsi((IntPtr)this.Ptr->Name)} {this.PortConfig?.UserPortName}";
+            }
+        }
 
         /// <summary>
         /// Indicates whether this port is enabled.

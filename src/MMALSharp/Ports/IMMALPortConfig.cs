@@ -84,5 +84,10 @@ namespace MMALSharp.Ports
         /// Indicates whether motion vector data should be stored to a separate output stream. Only applies to Video recording.
         /// </summary>
         bool StoreMotionVectors { get; }
+
+        /// <summary>
+        /// User provided name for port. Helps with debugging.
+        /// </summary>
+        string UserPortName { get; }
     }
 }
