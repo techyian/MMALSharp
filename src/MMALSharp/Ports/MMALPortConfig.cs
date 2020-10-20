@@ -86,6 +86,11 @@ namespace MMALSharp.Ports
         public bool StoreMotionVectors { get; }
 
         /// <summary>
+        /// User provided name for port. Helps with debugging.
+        /// </summary>
+        public string UserPortName { get; set; }
+
+        /// <summary>
         /// Create a new instance of <see cref="MMALPortConfig"/>.
         /// </summary>
         /// <param name="encodingType">The encoding type.</param>
@@ -102,6 +107,7 @@ namespace MMALSharp.Ports
         /// <param name="bufferNum">Requested number of buffer headers.</param>
         /// <param name="bufferSize">Requested size of buffer headers.</param>
         /// <param name="crop">The Region of Interest requested.</param>
+        /// <param name="userPortName">User provided name for port. Helps with debugging..</param>
         public MMALPortConfig(
             MMALEncoding encodingType, 
             MMALEncoding pixelFormat, 
@@ -116,7 +122,8 @@ namespace MMALSharp.Ports
             bool zeroCopy = false,
             int bufferNum = 0, 
             int bufferSize = 0, 
-            Rectangle? crop = null)
+            Rectangle? crop = null,
+            string userPortName = "")
         {
             this.EncodingType = encodingType;
             this.PixelFormat = pixelFormat;
@@ -132,6 +139,7 @@ namespace MMALSharp.Ports
             this.BufferSize = bufferSize;
             this.Crop = crop;
             this.StoreMotionVectors = storeMotionVectors;
+            this.UserPortName = userPortName;
         }
     }
 }

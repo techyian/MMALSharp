@@ -19,21 +19,34 @@ namespace MMALSharp.Ports.Outputs
     /// </summary>
     public unsafe class StillPort : OutputPort, IStillPort
     {
+        private Resolution _resolution;
+
         /// <inheritdoc />
         public override Resolution Resolution
         {
-            get => new Resolution(this.Width, this.Height);
+            get
+            {
+                if (_resolution.Width == 0 || _resolution.Height == 0)
+                {
+                    _resolution = new Resolution(MMALCameraConfig.Resolution.Width, MMALCameraConfig.Resolution.Height);
+                }
+
+                return _resolution;
+            }
+
             internal set
             {
                 if (value.Width == 0 || value.Height == 0)
                 {
-                    this.Width = MMALCameraConfig.Resolution.Pad().Width;
-                    this.Height = MMALCameraConfig.Resolution.Pad().Height;
+                    this.NativeWidth = MMALCameraConfig.Resolution.Pad().Width;
+                    this.NativeHeight = MMALCameraConfig.Resolution.Pad().Height;
+                    _resolution = new Resolution(MMALCameraConfig.Resolution.Width, MMALCameraConfig.Resolution.Height);
                 }
                 else
                 {
-                    this.Width = value.Pad().Width;
-                    this.Height = value.Pad().Height;
+                    this.NativeWidth = value.Pad().Width;
+                    this.NativeHeight = value.Pad().Height;
+                    _resolution = new Resolution(value.Width, value.Height);
                 }
             }
         }

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using MMALSharp.Callbacks;
 using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using MMALSharp.Components;
@@ -93,7 +94,7 @@ namespace MMALSharp
 
             for (int i = 0; i < this.Ptr->PortNum; i++)
             {
-                this.Ports.Add(new GenericPort((IntPtr)(&(*this.Ptr->Port[i])), this, PortType.Generic, Guid.NewGuid()));
+                this.Ports.Add(new GenericPort<ICallbackHandler>((IntPtr)(&(*this.Ptr->Port[i])), this, PortType.Generic, Guid.NewGuid()));
             }
         }
 

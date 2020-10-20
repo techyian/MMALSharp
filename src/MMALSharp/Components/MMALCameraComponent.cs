@@ -183,8 +183,8 @@ namespace MMALSharp.Components
             
             var camConfig = new MMAL_PARAMETER_CAMERA_CONFIG_T(
                 new MMAL_PARAMETER_HEADER_T(MMALParametersCamera.MMAL_PARAMETER_CAMERA_CONFIG, Marshal.SizeOf<MMAL_PARAMETER_CAMERA_CONFIG_T>()),
-                                                                this.CameraInfo.MaxWidth,
-                                                                this.CameraInfo.MaxHeight,
+                                                                MMALCameraConfig.Resolution.Width,
+                                                                MMALCameraConfig.Resolution.Height,
                                                                 0,
                                                                 1,
                                                                 MMALCameraConfig.Resolution.Width,
@@ -270,8 +270,8 @@ namespace MMALSharp.Components
                 width: currentWidth,
                 height: currentHeight,
                 framerate: MMALCameraConfig.Framerate,
-                bufferNum: Math.Max(this.VideoPort.BufferNumRecommended, 3),
-                bufferSize: Math.Max(this.VideoPort.BufferSizeRecommended, this.VideoPort.BufferSizeMin),
+                bufferNum: Math.Max(MMALCameraConfig.UserBufferNum, Math.Max(this.VideoPort.BufferNumRecommended, 3)),
+                bufferSize: Math.Max(MMALCameraConfig.UserBufferSize, Math.Max(this.VideoPort.BufferSizeRecommended, this.VideoPort.BufferSizeMin)),
                 crop: new Rectangle(0, 0, currentWidth, currentHeight));
 
             MMALLog.Logger.LogDebug("Commit video");
@@ -338,11 +338,11 @@ namespace MMALSharp.Components
                 portConfig = new MMALPortConfig(
                     encoding,
                     encoding,
-                    width: currentWidth,
-                    height: currentHeight,
+                    width: resolution.Width,
+                    height: resolution.Height,
                     framerate: MMALCameraConfig.Framerate,
-                    bufferNum: Math.Max(this.StillPort.BufferNumRecommended, 3),
-                    bufferSize: Math.Max(this.StillPort.BufferSizeRecommended, this.StillPort.BufferSizeMin),
+                    bufferNum: Math.Max(MMALCameraConfig.UserBufferNum, Math.Max(this.StillPort.BufferNumRecommended, 3)),
+                    bufferSize: Math.Max(MMALCameraConfig.UserBufferSize, Math.Max(this.StillPort.BufferSizeRecommended, this.StillPort.BufferSizeMin)),
                     crop: new Rectangle(0, 0, currentWidth, currentHeight));
             }
             else
@@ -355,8 +355,8 @@ namespace MMALSharp.Components
                     width: resolution.Width,
                     height: resolution.Height,
                     framerate: MMALCameraConfig.Framerate,
-                    bufferNum: Math.Max(this.StillPort.BufferNumRecommended, 3),
-                    bufferSize: Math.Max(this.StillPort.BufferSizeRecommended, this.StillPort.BufferSizeMin),
+                    bufferNum: Math.Max(MMALCameraConfig.UserBufferNum, Math.Max(this.StillPort.BufferNumRecommended, 3)),
+                    bufferSize: Math.Max(MMALCameraConfig.UserBufferSize, Math.Max(this.StillPort.BufferSizeRecommended, this.StillPort.BufferSizeMin)),
                     crop: new Rectangle(0, 0, currentWidth, currentHeight));
             }
             

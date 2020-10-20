@@ -139,5 +139,42 @@ namespace MMALSharp.Tests
                 Fixture.CheckAndAssertFilepath(vidCaptureHandler.GetFilepath());
             }
         }
+
+        [Fact]
+        public async Task TakePicturesDirectlyFromSplitterComponent()
+        {
+            TestHelper.BeginTest("TakePicturesDirectlyFromSplitterComponent");
+            TestHelper.SetConfigurationDefaults();
+
+            using (var imgCaptureHandler = new ImageStreamCaptureHandler("/home/pi/images/tests", "raw"))
+            using (var imgCaptureHandler2 = new ImageStreamCaptureHandler("/home/pi/images/tests", "raw"))
+            using (var imgCaptureHandler3 = new ImageStreamCaptureHandler("/home/pi/images/tests", "raw"))
+            using (var imgCaptureHandler4 = new ImageStreamCaptureHandler("/home/pi/images/tests", "raw"))            
+            using (var splitter = new MMALSplitterComponent())            
+            using (var nullSink = new MMALNullSinkComponent())
+            {
+                Fixture.MMALCamera.ConfigureCameraSettings();
+                                
+                var splitterConfig = new MMALPortConfig(MMALEncoding.I420, MMALEncoding.I420);
+                                
+                // Create our component pipeline.      
+                splitter.ConfigureOutputPort<SplitterStillPort>(0, splitterConfig, imgCaptureHandler);
+                splitter.ConfigureOutputPort<SplitterStillPort>(1, splitterConfig, imgCaptureHandler2);
+                splitter.ConfigureOutputPort<SplitterStillPort>(2, splitterConfig, imgCaptureHandler3);
+                splitter.ConfigureOutputPort<SplitterStillPort>(3, splitterConfig, imgCaptureHandler4);
+                                
+                Fixture.MMALCamera.Camera.StillPort.ConnectTo(splitter);
+                Fixture.MMALCamera.Camera.PreviewPort.ConnectTo(nullSink);
+
+                // Camera warm up time
+                await Task.Delay(2000);
+                await Fixture.MMALCamera.ProcessAsync(Fixture.MMALCamera.Camera.StillPort);
+
+                Fixture.CheckAndAssertFilepath(imgCaptureHandler.GetFilepath());
+                Fixture.CheckAndAssertFilepath(imgCaptureHandler2.GetFilepath());
+                Fixture.CheckAndAssertFilepath(imgCaptureHandler3.GetFilepath());
+                Fixture.CheckAndAssertFilepath(imgCaptureHandler4.GetFilepath());
+            }
+        }
     }
 }

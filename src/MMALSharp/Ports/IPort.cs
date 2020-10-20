@@ -114,7 +114,7 @@ namespace MMALSharp.Ports
         MMAL_ES_FORMAT_T Format { get; }
 
         /// <summary>
-        /// The Width/Height that this port will process data in.
+        /// The resolution that this port will process data in. Not aligned value.
         /// </summary>
         Resolution Resolution { get; }
 
@@ -172,6 +172,16 @@ namespace MMALSharp.Ports
         /// The working aspect ratio of this port.
         /// </summary>
         MMAL_RATIONAL_T Par { get; }
+
+        /// <summary>
+        /// The width value stored against this port instance. Typically aligned to 32 pixels.
+        /// </summary>
+        int NativeWidth { get; }
+
+        /// <summary>
+        /// The height value stored against this port instance. Typically aligned to 16 pixels.
+        /// </summary>
+        int NativeHeight { get; }
 
         /// <summary>
         /// Indicates whether ZeroCopy mode should be enabled on this port. When enabled, data is not copied to the ARM processor and is handled directly by the GPU. Useful when

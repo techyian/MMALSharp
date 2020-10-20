@@ -13,14 +13,14 @@ using MMALSharp.Ports.Outputs;
 namespace MMALSharp.Components
 {
     /// <summary>
-    /// The Splitter Component is intended on being connected to the camera video output port. In turn, it
-    /// provides an additional 4 output ports which can be used to produce multiple image/video outputs
-    /// from the single camera video port.
+    /// The Splitter Component can be connected to either the camera's still or video port and in turn, it
+    /// provides an additional 4 output ports which can be used to produce multiple image/video outputs.
     /// </summary>
     public class MMALSplitterComponent : MMALDownstreamHandlerComponent
     {
         /// <summary>
-        /// Creates a new instance of <see cref="MMALSplitterComponent"/>.
+        /// Creates a new instance of <see cref="MMALSplitterComponent"/>. Defaults to video port behaviour; configure the output port
+        /// using <see cref="SplitterStillPort"/> as a generic constraint if this splitter is intended to be connected to the camera's still port.
         /// </summary>
         public unsafe MMALSplitterComponent()
             : base(MMALParameters.MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER)

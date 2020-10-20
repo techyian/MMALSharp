@@ -13,21 +13,30 @@ namespace MMALSharp.Ports
     /// <summary>
     /// Represents a generic MMAL port of any type.
     /// </summary>
-    public class GenericPort : PortBase<ICallbackHandler>
+    /// <typeparam name="TCallback">The callback handler type.</typeparam>
+    public class GenericPort<TCallback> : PortBase<TCallback>
+        where TCallback : ICallbackHandler
     {
+        private Resolution _resolution;
+
         /// <inheritdoc />
         public override Resolution Resolution
         {
-            get => new Resolution(this.Width, this.Height);
+            get
+            {
+                return _resolution;
+            }
+
             internal set
             {
-                this.Width = value.Pad().Width;
-                this.Height = value.Pad().Height;
+                this.NativeWidth = value.Pad().Width;
+                this.NativeHeight = value.Pad().Height;
+                _resolution = new Resolution(value.Width, value.Height);
             }
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="GenericPort"/>. 
+        /// Creates a new instance of <see cref="GenericPort{TCallback}"/>. 
         /// </summary>
         /// <param name="ptr">The native pointer.</param>
         /// <param name="comp">The component this port is associated with.</param>

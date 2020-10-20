@@ -18,27 +18,8 @@ namespace MMALSharp.Ports.Outputs
     /// <summary>
     /// Represents a still port used specifically when capturing rapid single image frames from the camera's video port.
     /// </summary>
-    public unsafe class FastStillPort : OutputPort, IVideoPort
-    {
-        /// <inheritdoc />
-        public override Resolution Resolution
-        {
-            get => new Resolution(this.Width, this.Height);
-            internal set
-            {
-                if (value.Width == 0 || value.Height == 0)
-                {
-                    this.Width = MMALCameraConfig.Resolution.Pad().Width;
-                    this.Height = MMALCameraConfig.Resolution.Pad().Height;
-                }
-                else
-                {
-                    this.Width = value.Pad().Width;
-                    this.Height = value.Pad().Height;
-                }
-            }
-        }
-
+    public unsafe class FastStillPort : VideoPort, IVideoPort
+    {        
         /// <summary>
         /// Creates a new instance of <see cref="FastStillPort"/>. 
         /// </summary>

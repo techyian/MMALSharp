@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using MMALSharp.Callbacks;
 using MMALSharp.Components;
 
 namespace MMALSharp.Ports.Clocks
@@ -11,7 +12,7 @@ namespace MMALSharp.Ports.Clocks
     /// <summary>
     /// Represents a clock port.
     /// </summary>
-    public class ClockPort : GenericPort
+    public class ClockPort : GenericPort<ICallbackHandler>
     {
         /// <summary>
         /// Creates a new instance of <see cref="ClockPort"/>. 
