@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -157,12 +156,6 @@ namespace MMALSharp.Handlers
         }
 
         /// <inheritdoc />
-        public override string TotalProcessed()
-        {
-            return $"{this.Processed}";
-        }
-
-        /// <inheritdoc />
         public override void Dispose()
         {
             // Check before the underlying stream handler disposes the stream.
@@ -172,7 +165,7 @@ namespace MMALSharp.Handlers
 
             // Disposing the stream leaves a zero-length file on disk if the
             // handler was not actively recording video and the buffer was valid.
-            if(wasBuffering)
+            if (wasBuffering)
             {
                 try
                 {
@@ -180,6 +173,12 @@ namespace MMALSharp.Handlers
                 }
                 catch { }
             }
+        }
+
+        /// <inheritdoc />
+        public override string TotalProcessed()
+        {
+            return $"{this.Processed}";
         }
     }
 }
