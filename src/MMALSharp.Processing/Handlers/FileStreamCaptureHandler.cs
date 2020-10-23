@@ -180,19 +180,5 @@ namespace MMALSharp.Handlers
         {
             return $"{this.Processed}";
         }
-
-        /// <inheritdoc />
-        public override void Dispose()
-        {
-            base.Dispose();
-
-            // Disposing the stream leaves a zero-length file on disk.
-            try
-            {
-                File.Delete(this.CurrentStream.Name);
-            }
-            catch { }
-        }
-
     }
 }

@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -158,6 +159,19 @@ namespace MMALSharp.Handlers
         public override string TotalProcessed()
         {
             return $"{this.Processed}";
+        }
+
+        /// <inheritdoc />
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            // Disposing the stream leaves a zero-length file on disk.
+            try
+            {
+                File.Delete(this.CurrentStream.Name);
+            }
+            catch { }
         }
     }
 }
