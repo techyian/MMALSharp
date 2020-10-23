@@ -36,7 +36,7 @@ namespace MMALSharp.Handlers
         public string Extension { get; set; }
 
         /// <summary>
-        /// The name of the current file associated with the FileStream.
+        /// The name of the file associated with the FileStream (without a path or extension).
         /// </summary>
         public string CurrentFilename { get; set; }
 
@@ -63,9 +63,9 @@ namespace MMALSharp.Handlers
             MMALLog.Logger.LogDebug($"{nameof(FileStreamCaptureHandler)} created for directory {this.Directory} and extension {this.Extension}");
 
             System.IO.Directory.CreateDirectory(this.Directory);
-            
+
             var now = DateTime.Now.ToString("dd-MMM-yy HH-mm-ss");
-            
+
             int i = 1;
 
             var fileName = $"{this.Directory}/{now}.{this.Extension}";
@@ -94,12 +94,12 @@ namespace MMALSharp.Handlers
             this.CurrentFilename = Path.GetFileNameWithoutExtension(fileInfo.Name);
 
             var ext = fullPath.Split('.').LastOrDefault();
-            
+
             if (string.IsNullOrEmpty(ext))
             {
                 throw new ArgumentNullException(nameof(ext), "Could not get file extension from path string.");
             }
-            
+
             this.Extension = ext;
 
             MMALLog.Logger.LogDebug($"{nameof(FileStreamCaptureHandler)} created for directory {this.Directory} and extension {this.Extension}");
@@ -112,14 +112,14 @@ namespace MMALSharp.Handlers
         }
 
         /// <summary>
-        /// Gets the filename that a FileStream points to.
+        /// Gets the filename that a FileStream points to without a path or extension.
         /// </summary>
         /// <returns>The filename.</returns>
         public string GetFilename() => 
             (this.CurrentStream != null) ? Path.GetFileNameWithoutExtension(this.CurrentStream.Name) : string.Empty;
 
         /// <summary>
-        /// Gets the filepath that a FileStream points to.
+        /// Gets the full file pathname that a FileStream points to.
         /// </summary>
         /// <returns>The filepath.</returns>
         public string GetFilepath() => 
@@ -180,5 +180,19 @@ namespace MMALSharp.Handlers
         {
             return $"{this.Processed}";
         }
+
+        /// <inheritdoc />
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            // Disposing the stream leaves a zero-length file on disk.
+            try
+            {
+                File.Delete(this.CurrentStream.Name);
+            }
+            catch { }
+        }
+
     }
 }

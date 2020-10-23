@@ -155,12 +155,6 @@ namespace MMALSharp.Handlers
         }
 
         /// <inheritdoc />
-        public override void Dispose()
-        {
-            this.CurrentStream?.Dispose();
-        }
-
-        /// <inheritdoc />
         public override string TotalProcessed()
         {
             return $"{this.Processed}";
