@@ -21,6 +21,7 @@ namespace MMALSharp.Handlers
         private bool _recordToFileStream;
         private int _bufferSize;
         private bool _receivedIFrame;
+        private bool _fileIsEmpty;
 
         /// <summary>
         /// The circular buffer object responsible for storing image data.
@@ -36,6 +37,9 @@ namespace MMALSharp.Handlers
         {
             _bufferSize = bufferSize;
             this.Buffer = new CircularBuffer<byte>(bufferSize);
+
+            // Prevent Dispose from trying to delete a non-existent file
+            _fileIsEmpty = true;
         }
 
         /// <summary>
@@ -49,6 +53,7 @@ namespace MMALSharp.Handlers
         {
             _bufferSize = bufferSize;
             this.Buffer = new CircularBuffer<byte>(bufferSize);
+            _fileIsEmpty = true;
         }
 
         /// <summary>
@@ -61,6 +66,7 @@ namespace MMALSharp.Handlers
         {
             _bufferSize = bufferSize;
             this.Buffer = new CircularBuffer<byte>(bufferSize);
+            _fileIsEmpty = true;
         }
 
         /// <inheritdoc />
@@ -86,6 +92,7 @@ namespace MMALSharp.Handlers
                     if (this.CurrentStream != null && this.CurrentStream.CanWrite)
                     {
                         this.CurrentStream.Write(this.Buffer.ToArray(), 0, this.Buffer.Size);
+                        _fileIsEmpty = false;
                     }
 
                     this.Processed += this.Buffer.Size;
@@ -95,6 +102,7 @@ namespace MMALSharp.Handlers
                 if (this.CurrentStream != null && this.CurrentStream.CanWrite)
                 {
                     this.CurrentStream.Write(context.Data, 0, context.Data.Length);
+                    _fileIsEmpty = false;
                 }
 
                 this.Processed += context.Data.Length;
@@ -156,16 +164,21 @@ namespace MMALSharp.Handlers
         }
 
         /// <inheritdoc />
+        public override void Split()
+        {
+            base.Split();
+            _fileIsEmpty = true;
+        }
+
+        /// <inheritdoc />
         public override void Dispose()
         {
-            // Check before the underlying stream handler disposes the stream.
-            var wasBuffering = this.CurrentStream == null && !_recordToFileStream;
-
             base.Dispose();
 
-            // Disposing the stream leaves a zero-length file on disk if the
-            // handler was not actively recording video and the buffer was valid.
-            if (wasBuffering)
+            // Disposing the stream can leave a zero-length file on disk if nothing
+            // was recorded into it -- but after recording has taken place, only
+            // calling Split will create a new empty file.
+            if (_fileIsEmpty)
             {
                 try
                 {
