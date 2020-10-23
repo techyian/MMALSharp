@@ -5,6 +5,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -164,14 +165,21 @@ namespace MMALSharp.Handlers
         /// <inheritdoc />
         public override void Dispose()
         {
+            // Check before the underlying stream handler disposes the stream.
+            var wasBuffering = this.CurrentStream == null && !_recordToFileStream;
+
             base.Dispose();
 
-            // Disposing the stream leaves a zero-length file on disk.
-            try
+            // Disposing the stream leaves a zero-length file on disk if the
+            // handler was not actively recording video and the buffer was valid.
+            if(wasBuffering)
             {
-                File.Delete(this.CurrentStream.Name);
+                try
+                {
+                    File.Delete(this.CurrentStream.Name);
+                }
+                catch { }
             }
-            catch { }
         }
     }
 }
