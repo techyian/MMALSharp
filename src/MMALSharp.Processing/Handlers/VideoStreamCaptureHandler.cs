@@ -76,8 +76,9 @@ namespace MMALSharp.Handlers
             if (this.StoreVideoTimestamps && context.Pts.HasValue)
             {
                 var str = $"{context.Pts / 1000}.{context.Pts % 1000:000}" + Environment.NewLine;
-               
+
                 File.AppendAllText($"{this.Directory}/{this.CurrentFilename}.pts", str);
+                this.FileIsEmpty = false;
             }
         }
 
@@ -85,7 +86,7 @@ namespace MMALSharp.Handlers
         /// Splits the current file by closing the current stream and opening a new one.
         /// </summary>
         public virtual void Split() => this.NewFile();
-        
+
         /// <summary>
         /// Used to set the current working motion vector store.
         /// </summary>

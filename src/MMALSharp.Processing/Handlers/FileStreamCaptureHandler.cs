@@ -4,6 +4,7 @@
 // </copyright>
 
 using Microsoft.Extensions.Logging;
+using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using System;
 using System.Collections.Generic;
@@ -36,9 +37,15 @@ namespace MMALSharp.Handlers
         public string Extension { get; set; }
 
         /// <summary>
-        /// The name of the current file associated with the FileStream.
+        /// The name of the file associated with the FileStream (without a path or extension).
         /// </summary>
         public string CurrentFilename { get; set; }
+
+        /// <summary>
+        /// When true, the Dispose method will delete the zero-length file identified by CurrentStream.Name.
+        /// Inheriting classes should set this to false any time they write to the file stream.
+        /// </summary>
+        protected bool FileIsEmpty { get; set; }
 
         /// <summary>
         /// Creates a new instance of the <see cref="FileStreamCaptureHandler"/> class without provisions for writing to a file. Supports
@@ -47,6 +54,9 @@ namespace MMALSharp.Handlers
         public FileStreamCaptureHandler()
         {
             MMALLog.Logger.LogDebug($"{nameof(FileStreamCaptureHandler)} empty ctor invoked, no file will be written");
+
+            // Prevent Dispose from attempting to delete a non-existent file.
+            this.FileIsEmpty = false;
         }
 
         /// <summary>
@@ -63,9 +73,9 @@ namespace MMALSharp.Handlers
             MMALLog.Logger.LogDebug($"{nameof(FileStreamCaptureHandler)} created for directory {this.Directory} and extension {this.Extension}");
 
             System.IO.Directory.CreateDirectory(this.Directory);
-            
+
             var now = DateTime.Now.ToString("dd-MMM-yy HH-mm-ss");
-            
+
             int i = 1;
 
             var fileName = $"{this.Directory}/{now}.{this.Extension}";
@@ -80,6 +90,7 @@ namespace MMALSharp.Handlers
 
             this.CurrentFilename = Path.GetFileNameWithoutExtension(fileInfo.Name);
             this.CurrentStream = File.Create(fileName);
+            this.FileIsEmpty = true;
         }
 
         /// <summary>
@@ -94,12 +105,12 @@ namespace MMALSharp.Handlers
             this.CurrentFilename = Path.GetFileNameWithoutExtension(fileInfo.Name);
 
             var ext = fullPath.Split('.').LastOrDefault();
-            
+
             if (string.IsNullOrEmpty(ext))
             {
                 throw new ArgumentNullException(nameof(ext), "Could not get file extension from path string.");
             }
-            
+
             this.Extension = ext;
 
             MMALLog.Logger.LogDebug($"{nameof(FileStreamCaptureHandler)} created for directory {this.Directory} and extension {this.Extension}");
@@ -109,17 +120,25 @@ namespace MMALSharp.Handlers
             System.IO.Directory.CreateDirectory(this.Directory);
 
             this.CurrentStream = File.Create(fullPath);
+            this.FileIsEmpty = true;
+        }
+
+        /// <inheritdoc />
+        public override void Process(ImageContext context)
+        {
+            base.Process(context);
+            this.FileIsEmpty = false;
         }
 
         /// <summary>
-        /// Gets the filename that a FileStream points to.
+        /// Gets the filename that a FileStream points to without a path or extension.
         /// </summary>
         /// <returns>The filename.</returns>
         public string GetFilename() => 
             (this.CurrentStream != null) ? Path.GetFileNameWithoutExtension(this.CurrentStream.Name) : string.Empty;
 
         /// <summary>
-        /// Gets the filepath that a FileStream points to.
+        /// Gets the full file pathname that a FileStream points to.
         /// </summary>
         /// <returns>The filepath.</returns>
         public string GetFilepath() => 
@@ -161,6 +180,7 @@ namespace MMALSharp.Handlers
             }
 
             this.CurrentStream = File.Create(newFilename);
+            this.FileIsEmpty = true;
         }
 
         /// <inheritdoc />
@@ -179,6 +199,24 @@ namespace MMALSharp.Handlers
         public override string TotalProcessed()
         {
             return $"{this.Processed}";
+        }
+
+        /// <inheritdoc />
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            // Disposing the stream can leave a zero-length file on disk if nothing
+            // was recorded into it -- but after recording has taken place, only
+            // calling NewFile (or Split for videos) will create a new empty file.
+            if (this.FileIsEmpty)
+            {
+                try
+                {
+                    File.Delete(this.CurrentStream.Name);
+                }
+                catch { }
+            }
         }
     }
 }

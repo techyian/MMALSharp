@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -85,6 +86,7 @@ namespace MMALSharp.Handlers
                     if (this.CurrentStream != null && this.CurrentStream.CanWrite)
                     {
                         this.CurrentStream.Write(this.Buffer.ToArray(), 0, this.Buffer.Size);
+                        this.FileIsEmpty = false;
                     }
 
                     this.Processed += this.Buffer.Size;
@@ -94,6 +96,7 @@ namespace MMALSharp.Handlers
                 if (this.CurrentStream != null && this.CurrentStream.CanWrite)
                 {
                     this.CurrentStream.Write(context.Data, 0, context.Data.Length);
+                    this.FileIsEmpty = false;
                 }
 
                 this.Processed += context.Data.Length;
@@ -152,12 +155,6 @@ namespace MMALSharp.Handlers
 
             _recordToFileStream = false;
             _receivedIFrame = false;
-        }
-
-        /// <inheritdoc />
-        public override void Dispose()
-        {
-            this.CurrentStream?.Dispose();
         }
 
         /// <inheritdoc />
