@@ -4,6 +4,7 @@
 // </copyright>
 
 using Microsoft.Extensions.Logging;
+using MMALSharp.Common;
 using MMALSharp.Common.Utility;
 using System;
 using System.Collections.Generic;
@@ -41,12 +42,21 @@ namespace MMALSharp.Handlers
         public string CurrentFilename { get; set; }
 
         /// <summary>
+        /// When true, the Dispose method will delete the zero-length file identified by CurrentStream.Name.
+        /// Inheriting classes should set this to false any time they write to the file stream.
+        /// </summary>
+        protected bool FileIsEmpty { get; set; }
+
+        /// <summary>
         /// Creates a new instance of the <see cref="FileStreamCaptureHandler"/> class without provisions for writing to a file. Supports
         /// subclasses in which file output is optional.
         /// </summary>
         public FileStreamCaptureHandler()
         {
             MMALLog.Logger.LogDebug($"{nameof(FileStreamCaptureHandler)} empty ctor invoked, no file will be written");
+
+            // Prevent Dispose from attempting to delete a non-existent file.
+            this.FileIsEmpty = false;
         }
 
         /// <summary>
@@ -80,6 +90,7 @@ namespace MMALSharp.Handlers
 
             this.CurrentFilename = Path.GetFileNameWithoutExtension(fileInfo.Name);
             this.CurrentStream = File.Create(fileName);
+            this.FileIsEmpty = true;
         }
 
         /// <summary>
@@ -109,6 +120,14 @@ namespace MMALSharp.Handlers
             System.IO.Directory.CreateDirectory(this.Directory);
 
             this.CurrentStream = File.Create(fullPath);
+            this.FileIsEmpty = true;
+        }
+
+        /// <inheritdoc />
+        public override void Process(ImageContext context)
+        {
+            base.Process(context);
+            this.FileIsEmpty = false;
         }
 
         /// <summary>
@@ -161,6 +180,7 @@ namespace MMALSharp.Handlers
             }
 
             this.CurrentStream = File.Create(newFilename);
+            this.FileIsEmpty = true;
         }
 
         /// <inheritdoc />
@@ -179,6 +199,24 @@ namespace MMALSharp.Handlers
         public override string TotalProcessed()
         {
             return $"{this.Processed}";
+        }
+
+        /// <inheritdoc />
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            // Disposing the stream can leave a zero-length file on disk if nothing
+            // was recorded into it -- but after recording has taken place, only
+            // calling NewFile (or Split for videos) will create a new empty file.
+            if (this.FileIsEmpty)
+            {
+                try
+                {
+                    File.Delete(this.CurrentStream.Name);
+                }
+                catch { }
+            }
         }
     }
 }
