@@ -83,48 +83,47 @@ namespace MMALSharp.Processors.Motion
         {
             base.Apply(context);
 
-            if (context.Eos)
+            if (context.Eos == false)
             {
-                // if zero bytes buffered, EOS is the end of a physical input video filestream
-                if (this.WorkingData.Count > 0)
+                return;
+            }
+
+            // if zero bytes buffered, EOS is the end of a physical input video filestream
+            if (this.WorkingData.Count == 0)
+            {
+                MMALLog.Logger.LogDebug("EOS reached, no working data buffered");
+                return;
+            }
+
+            if (!_fullTestFrame)
+            {
+                MMALLog.Logger.LogDebug("EOS reached for test frame.");
+
+                this.PrepareTestFrame();
+                _fullTestFrame = true;
+                return;
+            }
+
+            MMALLog.Logger.LogDebug("Have full frame, invoking motion algorithm.");
+
+            // frameCounter++;
+            // frameTimer.Restart();
+
+            var detected = _motionConfig.MotionAlgorithm.DetectMotion(this, Metadata);
+
+            // frameTimer.Stop();
+            // totalElapsed += frameTimer.ElapsedMilliseconds;
+
+            if (detected)
+            {
+                this.LastDetectionEvent.Restart();
+                if (this.OnDetectEnabled)
                 {
-                    if (!_fullTestFrame)
-                    {
-                        MMALLog.Logger.LogDebug("EOS reached for test frame.");
-
-                        this.PrepareTestFrame();
-                        _fullTestFrame = true;
-                    }
-                    else
-                    {
-                        MMALLog.Logger.LogDebug("Have full frame, invoking motion algorithm.");
-
-                        // frameCounter++;
-                        // frameTimer.Restart();
-
-                        var detected = _motionConfig.MotionAlgorithm.DetectMotion(this, Metadata);
-
-                        // frameTimer.Stop();
-                        // totalElapsed += frameTimer.ElapsedMilliseconds;
-
-                        if (detected)
-                        {
-                            this.LastDetectionEvent.Restart();
-
-                            if(this.OnDetectEnabled)
-                            {
-                                _onDetect?.Invoke();
-                            }
-                        }
-
-                        this.TryUpdateTestFrame();
-                    }
-                }
-                else
-                {
-                    MMALLog.Logger.LogDebug("EOS reached, no working data buffered");
+                    _onDetect?.Invoke();
                 }
             }
+
+            this.TryUpdateTestFrame();
         }
 
         /// <summary>
